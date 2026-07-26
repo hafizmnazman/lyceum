@@ -40,6 +40,28 @@ whether a university joins or not; joining gives the university the pen.
 
 ---
 
+## Screenshots
+
+**The workspace.** Home is an inbox: what needs you now, nothing else.
+
+![Inbox](docs/screenshots/03-inbox.png)
+
+**Trends.** The Signal agent triangulates four market snapshots and lands on
+the widest gap, receipts attached.
+
+![Trends](docs/screenshots/10-trends.png)
+
+**Real intake.** What was read beside what the agent made of it; nothing files
+until a human confirms.
+
+![Upload review](docs/screenshots/20-upload-review.png)
+
+**The public Relevance Index.** The rating exists before a university joins.
+
+![Relevance Index](docs/screenshots/02-index-public.png)
+
+---
+
 ## Getting started
 
 Requirements: Node.js 22.2+ (24 recommended) and a modern browser.
