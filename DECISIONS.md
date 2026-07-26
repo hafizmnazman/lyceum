@@ -85,16 +85,31 @@ where it is concrete it was followed exactly.
   (the whole demo under turbo: approval reached, prediction recorded, drill at
   P = 0.43, zero page errors).
 
-## Deferred / needs owner
+## Formerly deferred, now decided (owner asked for the calls to be made)
 
-- **Music**: the v2 generated ambient track was not carried over; the demo is
-  currently silent. Drop a royalty-free mp3 and wire `audio.ts` (the v2 file is
-  parked as `src/demo/audio.ts.v2bak`) if sound is wanted for the recording.
-- **PowerPoint strictness**: `lecture-slides.pptx` is minimal PresentationML.
-  LibreOffice opens it; desktop PowerPoint may offer a repair on so spartan a
-  deck. The intake parser (the thing being demonstrated) reads it perfectly.
-- **Live-mode recording**: the demo records on the deterministic path by
-  design. A live-mode take (key present, demo clock unpinned) would show real
-  streaming but lose reproducibility; the owner can choose per recording.
-- **Second programme / cross-programme ripple**: still single-programme, as in
-  v2. The field is carried; populate when a screen needs it.
+- **Music: shipped.** The v2 generator (`scripts/gen-music.mjs`, `npm run
+  gen:music`) is carried over and `public/demo-music.wav` is generated (an
+  original synthesised ambient loop, no copyright, cannot be flagged).
+  `src/demo/audio.ts` is restored with its three tiers (a user-dropped
+  `public/demo-music.mp3` wins, then the shipped wav, then a live Web Audio
+  pad) and wired into the overlay: music starts on the Play click, a mute
+  toggle sits beside Stop, and Stop or the end card silences it.
+- **PowerPoint strictness: accepted as is.** The pptx is a parsing sample; the
+  intake parser and LibreOffice both read it. Regenerating a fully
+  PowerPoint-strict deck buys nothing the demo shows.
+- **Live-mode recording: record the deterministic path.** Identical takes
+  matter more than live streaming on video; judges who want live streaming can
+  run it themselves with a key. Documented in JUDGES.md.
+- **Second programme: stays out of scope for Talentbank.** The contract
+  carries the field; a second programme is seed data away when a screen needs
+  the ripple, and nothing in the pitch depends on it.
+
+## For the judges
+
+- `JUDGES.md`: a five-minute guide with two paths (hands-off Play demo, and a
+  hands-on walkthrough of the same loop), plus what is worth poking (the
+  public index, dropping their own files, the data room, reset). The app runs
+  fully static (`npm run preview`), so judges need no keys and no server.
+- `lyceum-v3-as-built.md`: the complete as-built document (problem statement,
+  objectives, positioning, system, validation, limitations) written to be
+  lifted into the report.

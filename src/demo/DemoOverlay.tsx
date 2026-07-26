@@ -4,10 +4,11 @@
 // identical; Escape stops it and unpins.
 
 import { useEffect, useRef, useState } from "react";
-import { Pause, Play } from "lucide-react";
+import { Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { resetDemoState, resetSignalReveal, setClockPinned, useStore } from "../app/store.ts";
 import { estimateTotalMs, INTRO_HOLDS } from "./script.ts";
 import { runDemo } from "./runner.ts";
+import { demoAudio } from "./audio.ts";
 import { scaleMs } from "./timing.ts";
 
 type Phase = "idle" | "intro" | "walkthrough" | "done";
@@ -38,6 +39,7 @@ export function DemoOverlay() {
   const [cursor, setCursor] = useState({ x: -100, y: -100 });
   const [startedAt, setStartedAt] = useState(0);
   const [now, setNow] = useState(0);
+  const [muted, setMuted] = useState(false);
   const abortRef = useRef(false);
 
   // Escape aborts a running demo.
@@ -61,6 +63,7 @@ export function DemoOverlay() {
     setClockPinned(true);
     resetDemoState();
     resetSignalReveal();
+    demoAudio.start(muted); // inside the click gesture, so autoplay allows it
     setStartedAt(performance.now());
     setPhase("intro");
     for (let i = 0; i < INTRO_CARDS.length; i += 1) {
@@ -84,6 +87,7 @@ export function DemoOverlay() {
   function stop() {
     abortRef.current = true;
     setClockPinned(false);
+    demoAudio.stop();
     setPhase("idle");
     setCursor({ x: -100, y: -100 });
     setCaption("");
@@ -137,31 +141,52 @@ export function DemoOverlay() {
         />
       </div>
 
-      {/* stop control */}
-      <button
-        onClick={stop}
-        title="Stop the demo (Esc)"
-        style={{
-          position: "fixed",
-          bottom: 20,
-          right: 20,
-          zIndex: 130,
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          height: 34,
-          padding: "0 12px",
-          borderRadius: 999,
-          border: "1px solid var(--border)",
-          background: "var(--surface)",
-          boxShadow: "var(--shadow-1)",
-          cursor: "pointer",
-          fontSize: 12.5,
-          color: "var(--ink-2)",
-        }}
-      >
-        <Pause size={13} /> Stop
-      </button>
+      {/* stop + mute controls */}
+      <div style={{ position: "fixed", bottom: 20, right: 20, zIndex: 130, display: "flex", gap: 8 }}>
+        <button
+          onClick={() => {
+            const next = !muted;
+            setMuted(next);
+            demoAudio.setMuted(next);
+          }}
+          title={muted ? "Unmute" : "Mute"}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 34,
+            height: 34,
+            borderRadius: 999,
+            border: "1px solid var(--border)",
+            background: "var(--surface)",
+            boxShadow: "var(--shadow-1)",
+            cursor: "pointer",
+            color: "var(--ink-2)",
+          }}
+        >
+          {muted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+        </button>
+        <button
+          onClick={stop}
+          title="Stop the demo (Esc)"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            height: 34,
+            padding: "0 12px",
+            borderRadius: 999,
+            border: "1px solid var(--border)",
+            background: "var(--surface)",
+            boxShadow: "var(--shadow-1)",
+            cursor: "pointer",
+            fontSize: 12.5,
+            color: "var(--ink-2)",
+          }}
+        >
+          <Pause size={13} /> Stop
+        </button>
+      </div>
 
       {/* intro cards */}
       {phase === "intro" ? (

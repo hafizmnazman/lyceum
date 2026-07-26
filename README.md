@@ -81,6 +81,14 @@ node scripts/walk.mjs  # sign in, visit every screen, file a real upload, assert
 npm run smoke          # play the whole self-driving demo, assert the end state
 ```
 
+## For judges
+
+**[JUDGES.md](JUDGES.md)** is the five-minute guide: a hands-off path (one
+click, the app performs its whole storyline) and a hands-on path (the same
+loop, your clicks), plus what is worth poking. The full as-built document
+(problem statement, objectives, positioning, validation) is
+**[lyceum-v3-as-built.md](lyceum-v3-as-built.md)**.
+
 ## The self-driving demo
 
 One **Play demo** control (bottom right) plays the entire storyline over the
