@@ -227,7 +227,13 @@ export function StudioScreen() {
           marginBottom: 20,
         }}
       >
-        <TabButton id="content" label="Content" active={tab === "content"} onPick={setTab} />
+        <TabButton
+          id="content"
+          label="Content"
+          active={tab === "content"}
+          onPick={setTab}
+          demoId="tab-content"
+        />
         <TabButton
           id="assessment"
           label="Assessment"

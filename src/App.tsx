@@ -8,6 +8,7 @@ import { navAllows } from "./app/roles.ts";
 import { currentPerson, getState, navigate, useStore } from "./app/store.ts";
 import { Shell } from "./ui/shell/Shell.tsx";
 import { SCREENS } from "./ui/screens/index.ts";
+import { DemoOverlay } from "./demo/DemoOverlay.tsx";
 
 const HASH_SCREENS: Screen[] = [
   "login",
@@ -70,19 +71,28 @@ export default function App() {
   const ScreenComponent = SCREENS[state.screen];
 
   // Signed out, only the two public surfaces render (bare, no shell). Signed
-  // in, everything (the index included) renders inside the shell.
+  // in, everything (the index included) renders inside the shell. The demo
+  // overlay is a stable last sibling in every branch, so a login/shell swap
+  // never unmounts a running demo.
+  let content;
   if (!state.currentPersonId) {
     const Public = SCREENS[state.screen === "index" ? "index" : "login"];
-    return <Public />;
-  }
-  if (state.screen === "login") {
+    content = <Public />;
+  } else if (state.screen === "login") {
     const Login = SCREENS.login;
-    return <Login />;
+    content = <Login />;
+  } else {
+    content = (
+      <Shell>
+        <ScreenComponent />
+      </Shell>
+    );
   }
 
   return (
-    <Shell>
-      <ScreenComponent />
-    </Shell>
+    <div style={{ height: "100%" }}>
+      {content}
+      <DemoOverlay />
+    </div>
   );
 }

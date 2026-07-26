@@ -61,6 +61,7 @@ import {
   runAcceptanceWithDistribution,
   type AcceptanceDistribution,
 } from "../agents/acceptance.ts";
+import { streamAgent } from "../agents/client.ts";
 import { runIntake, type ParsedSheet } from "../agents/intake.ts";
 import { runAuthoring } from "../agents/authoring.ts";
 import { runAnalogy } from "../agents/analogy.ts";
@@ -283,6 +284,11 @@ function set(patch: Partial<AppState> | ((s: AppState) => Partial<AppState>)) {
 export function getState(): AppState {
   return state;
 }
+// A read-only hook for the headless demo smoke (scripts/demo-smoke.mjs): the
+// browser test asserts the demo's end state through this, nothing more.
+if (typeof window !== "undefined") {
+  (window as unknown as { __lyceum?: { getState: typeof getState } }).__lyceum = { getState };
+}
 function subscribe(l: () => void): () => void {
   listeners.add(l);
   return () => listeners.delete(l);
@@ -377,6 +383,30 @@ export function finishAgentRun(
 }
 export function latestRunFor(agent: AgentId): AgentRun | undefined {
   return [...state.agentRuns].reverse().find((r) => r.agent === agent);
+}
+
+/** Fire a live agent stream in the background. The deterministic path never
+ *  depends on it: the fixture result is applied first and stands either way;
+ *  the live stream augments it (visible model output in the strip and panel,
+ *  and optionally a richer text result via onText). Skipped in Node and while
+ *  the clock is pinned, so proofs and the recorded demo stay identical. */
+function augmentLive(
+  agent: "authoring" | "evaluator",
+  label: string,
+  onPage: string,
+  payload: unknown,
+  onText?: (text: string) => void,
+) {
+  if (typeof window === "undefined" || clockPinned) return;
+  const runId = beginAgentRun(agent, label, onPage);
+  void streamAgent(agent, payload, (chunk) => appendAgentStream(runId, chunk)).then((text) => {
+    if (text) {
+      finishAgentRun(runId, "done", { label });
+      onText?.(text);
+    } else {
+      finishAgentRun(runId, "fallback", { label: `${label} (offline draft used)` });
+    }
+  });
 }
 export function toggleAgentPanel(open?: boolean) {
   set((s) => ({ agentPanelOpen: open ?? !s.agentPanelOpen }));
@@ -756,6 +786,13 @@ export function draftWithAgent(proposalId: ProposalId, mode: "agent" | "hybrid")
   if (mode === "hybrid") {
     set({ agentBubble: { agent: "authoring", text: "Drafted a revision. Your turn to refine a line." } });
   }
+  augmentLive("authoring", `Drafting an update for ${subject.id} against rising demand`, "studio", {
+    job: "draft",
+    subject: { id: subject.id, title: subject.title },
+    clos: clos.map((c) => ({ id: c.id, text: c.text, bloomLevel: c.bloomLevel })),
+    target: "Align the subject with rising market demand for machine learning",
+    mode,
+  });
 }
 
 /** Replace a proposal's draft wholesale (the live Authoring path streams, then
@@ -778,6 +815,26 @@ export function requestAgentReview(proposalId: ProposalId) {
   set({ critique: result.critique ?? [] });
   setAgent("authoring", "needs-input");
   set({ agentBubble: { agent: "authoring", text: "I flagged a few things in the draft." } });
+  // Live path: a real model critique replaces the fixture lines when it lands.
+  augmentLive(
+    "authoring",
+    `Reviewing the ${subject.id} draft`,
+    "studio",
+    {
+      job: "review",
+      subject: { id: subject.id, title: subject.title },
+      clos: clos.map((c) => ({ id: c.id, text: c.text, bloomLevel: c.bloomLevel })),
+      draft: p.draft,
+    },
+    (text) => {
+      const lines = text
+        .split("\n")
+        .map((l) => l.replace(/^[-*\d.\s]+/, "").trim())
+        .filter((l) => l.length > 8)
+        .slice(0, 6);
+      if (lines.length > 0) set({ critique: lines });
+    },
+  );
 }
 
 export function setCritique(critique: string[] | null) {
@@ -1221,6 +1278,19 @@ function finishRun(proposalId: ProposalId, report: VerdictReport) {
       agentFindings: report.summary,
     });
   }
+  // Live path: the Evaluator writes its own verdict prose for the gate; the
+  // measured numbers in the report are untouched either way.
+  const tested = proposalById(proposalId);
+  augmentLive("evaluator", "Compiling the verdict for management", "approval", {
+    subjectId: tested?.subjectId,
+    kind: tested?.kind,
+    currentMastery: report.currentMastery,
+    projectedMastery: report.projectedMastery,
+    weakest: report.cloMastery.reduce((a, b) => (b.meanP < a.meanP ? b : a), report.cloMastery[0]),
+    prerequisiteConflicts: report.prerequisiteConflicts,
+    groundedOnLearners: report.groundedOnLearners,
+    isProxyCohort: report.isProxyCohort,
+  });
 }
 
 /** The coordinator's explicit "send this to management" affordance after a test. */
