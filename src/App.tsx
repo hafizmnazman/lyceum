@@ -69,10 +69,15 @@ export default function App() {
 
   const ScreenComponent = SCREENS[state.screen];
 
-  // Public surfaces render without the shell.
-  if (state.screen === "login" || state.screen === "index" || !state.currentPersonId) {
-    const Public = SCREENS[state.currentPersonId ? state.screen : state.screen === "index" ? "index" : "login"];
+  // Signed out, only the two public surfaces render (bare, no shell). Signed
+  // in, everything (the index included) renders inside the shell.
+  if (!state.currentPersonId) {
+    const Public = SCREENS[state.screen === "index" ? "index" : "login"];
     return <Public />;
+  }
+  if (state.screen === "login") {
+    const Login = SCREENS.login;
+    return <Login />;
   }
 
   return (

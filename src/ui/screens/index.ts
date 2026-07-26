@@ -1,25 +1,22 @@
-// The screen registry: one component per Screen id. As real screens land they
-// replace their placeholder import here and nowhere else.
+// The screen registry: one component per Screen id.
 
 import type { ComponentType } from "react";
 import type { Screen } from "../../app/roles.ts";
 import { LoginScreen } from "./Login.tsx";
 import { InboxScreen } from "./Inbox.tsx";
-import {
-  AcceptanceScreen,
-  ApprovalScreen,
-  AssignmentsScreen,
-  BacktestScreen,
-  CoursesScreen,
-  DataRoomScreen,
-  IndexScreen,
-  NewSubjectScreen,
-  OfficeScreen,
-  ProgrammeScreen,
-  StudioScreen,
-  TrendsScreen,
-  UploadScreen,
-} from "./placeholders.tsx";
+import { TrendsScreen } from "./Trends.tsx";
+import { ApprovalScreen } from "./Approval.tsx";
+import { ProgrammeScreen } from "./Programme.tsx";
+import { NewSubjectScreen } from "./NewSubject.tsx";
+import { AssignmentsScreen } from "./Assignments.tsx";
+import { CoursesScreen } from "./Courses.tsx";
+import { StudioScreen } from "./Studio.tsx";
+import { AcceptanceScreen } from "./Acceptance.tsx";
+import { UploadScreen } from "./Upload.tsx";
+import { BacktestScreen } from "./Backtest.tsx";
+import { DataRoomScreen } from "./DataRoom.tsx";
+import { OfficeScreen } from "./Office.tsx";
+import { IndexScreen } from "./Index.tsx";
 
 export const SCREENS: Record<Screen, ComponentType> = {
   login: LoginScreen,

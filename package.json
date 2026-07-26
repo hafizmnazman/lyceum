@@ -17,7 +17,8 @@
     "prove:backtest": "node src/prove-backtest.ts",
     "prove:flow": "node src/prove-flow.ts",
     "prove:signal": "node src/prove-signal.ts",
-    "prove:all": "node src/prove-acceptance.ts && node src/prove-backtest.ts && node src/prove-flow.ts && node src/prove-signal.ts",
+    "prove:intake": "node src/prove-intake.ts",
+    "prove:all": "node src/prove-acceptance.ts && node src/prove-backtest.ts && node src/prove-flow.ts && node src/prove-signal.ts && node src/prove-intake.ts",
     "gen:demo": "node scripts/gen-demo-files.mjs",
     "smoke": "node scripts/demo-smoke.mjs",
     "shots": "node scripts/shots.mjs"

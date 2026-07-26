@@ -40,12 +40,15 @@ export const PEOPLE_IDS = {
 } as const;
 
 // ---------- people ----------
+// v3: verification is the supply-side trust signal (institutional email domain
+// + presence on the official course page). Ms Tan is deliberately unverified so
+// the "unverified edits are labelled" state has something real to show.
 export const PEOPLE: Person[] = [
-  { id: PEOPLE_IDS.sobri, name: "Dr Sobri", orgRole: "academic" },
-  { id: PEOPLE_IDS.lim, name: "Prof Lim", orgRole: "management" },
-  { id: PEOPLE_IDS.rahman, name: "Dr Rahman", orgRole: "department", departmentOf: PROGRAMME_ID },
-  { id: PEOPLE_IDS.tan, name: "Ms Tan", orgRole: "academic" },
-  { id: PEOPLE_IDS.devan, name: "Mr Devan", orgRole: "academic" },
+  { id: PEOPLE_IDS.sobri, name: "Dr Sobri", orgRole: "academic", email: "sobri@utp.edu.my", verified: true },
+  { id: PEOPLE_IDS.lim, name: "Prof Lim", orgRole: "management", email: "lim@utp.edu.my", verified: true },
+  { id: PEOPLE_IDS.rahman, name: "Dr Rahman", orgRole: "department", departmentOf: PROGRAMME_ID, email: "rahman@utp.edu.my", verified: true },
+  { id: PEOPLE_IDS.tan, name: "Ms Tan", orgRole: "academic", email: "tan.mailbox@gmail.com", verified: false },
+  { id: PEOPLE_IDS.devan, name: "Mr Devan", orgRole: "academic", email: "devan@utp.edu.my", verified: true },
 ];
 
 // ---------- subject hats (per person x subject) ----------
