@@ -85,3 +85,63 @@ Options: (a) rename it now to the plan's "Guide and progress", leaving the gener
 Chosen: (b), because one consistent name for three days is better than two names. A4 owns the regeneration.
 Reverse it if: A4 does not run before the freeze.
 To reverse: `src/ui/shell/nav.ts`, `src/ui/screens/Inbox.tsx`, `src/ui/screens/Guide.tsx`, `scripts/generate-guide.mjs`.
+
+## 2026-10-22 04:18, A3: the host's working name
+Options: (a) Sage: plain English and wise, but a common product name (an accounting company among them) and the plant is a herb, not a tree. (b) Tualang: the giant tree of the Malaysian rainforest, a local root with an international sound, and literally a tree. (c) Ring: the loop itself, but "Ring holds the ring" is confusing out loud and the word already names the receipts ring.
+Chosen: (b), because the host is a young tree and the name gives the team a one-line origin story at the booth. It is a working name the plan leaves to the team, so it lives in one constant.
+Reverse it if: the team prefers another name, or a judge or teammate finds it hard to say.
+To reverse: `HOST_NAME` in `src/ui/mascots/host.tsx`; file names stay `host.*` so nothing else moves.
+
+## 2026-10-22 04:19, A3: the host's file name once the name is chosen
+Options: (a) rename `host.tsx` to `tualang.tsx` as Section 7.4 suggests, which renames again if the team changes the working name. (b) Keep `host.tsx`, the `host-*` image names and the `host` role id, with the name in `HOST_NAME`.
+Chosen: (b), because the role is stable and the name is not yet settled; a rename then touches one line. Every generated file keeps its path.
+Reverse it if: the team settles the name for good.
+To reverse: rename the file, the role id in `src/ui/mascots/index.tsx` and the outputs of `scripts/gen-mascots.mjs`.
+
+## 2026-10-22 04:21, A3: how the same components render outside the browser
+Options: (a) write the characters with `createElement` in `.ts` files so Node can import them, which keeps no JSX as Section 7.4 asks. (b) Keep them as TSX and load them in Node through Vite's SSR loader (`ssrLoadModule`), with React from Node, then `renderToStaticMarkup`. (c) Bundle them with esbuild, a transitive dependency the plan does not name.
+Chosen: (b), because it uses the declared Vite dependency and renders exactly the modules the app ships. The deck (A6) and the film (A7) can use the same loader or import the TSX directly.
+Reverse it if: the SSR loader proves slow or fragile on another machine.
+To reverse: `scripts/gen-mascots.mjs`.
+
+## 2026-10-22 04:23, A3: where "a request in flight" comes from
+Options: (a) derive it inside the moods from existing records (the research run's status, the agent runs), which lets a mood read state that is not a request. (b) A session-only `requests` list in the store, filled by `beginRequest`, `endRequest` and `trackRequest` around the real work: the fetch, the file parse and the pack render; the moods take that list as an argument. (c) Track nothing and never show "working".
+Chosen: (b), because the plan asks for a pure function of the state and the in-flight request list, and the proof can then assert that nothing works without an entry. Model streaming (the old agent runs) is not one of the seven helpers' requests, so it moves no mood.
+Reverse it if: a new long request appears (for example a remote door call), in which case it registers the same way.
+To reverse: `requests` and the three actions in `src/app/store.ts`, `downloadPack`, the parse in `src/ui/screens/Upload.tsx`, `src/app/moods.ts`.
+
+## 2026-10-22 04:25, A3: the two-tone shading
+Options: (a) a hand-drawn dark region per body, which drifted across the face on the first drawing and looked heavy. (b) The dark side as a rim: the body minus itself shifted up and left, through an SVG mask, the same for every character. (c) Flat single colours, which loses the poster's two-tone look.
+Chosen: (b), because it keeps one rule for the whole family and never crosses a face. Masks use luminance, so no colour enters the drawing outside the tokens.
+Reverse it if: a renderer the film or deck uses does not support SVG masks.
+To reverse: `TwoTone` in `src/ui/mascots/parts.tsx`.
+
+## 2026-10-22 04:27, A3: the colours of each character
+Options: (a) give every helper an emerald body, which fails the eyes: forest ink on emerald is 2.96. (b) Light or mid bodies under every face (the host ray3 and ray2, Folio tint2 with an emerald spine, Scout ray2 and emerald with a forest cap, Atlas white, Lens a forest rim with white glass, Quill on-forest grey green, Prism tint1, Steward mint), lime once per helper as the prop accent, and the rays only on Prism.
+Chosen: (b), because the eyes are the character and must hold their contrast, and the plan reserves lime for one accent per character. The host's celebration glows a ring in ray3, not lime, because its one lime element is the leaf.
+Reverse it if: the team's concept sheets choose other colours; the components take colours from the tokens, so a change is a few lines per file.
+To reverse: the files in `src/ui/mascots/`.
+
+## 2026-10-22 04:29, A3: committing the generated images
+Options: (a) commit the 72 PNGs and 35 SVGs in `public/brand/` (3.9 MB), so the deck, the poster and the printer have them without running a script. (b) Ignore them in git and regenerate on demand, which saves space but makes A6 and the printer depend on Chrome on the machine at the time.
+Chosen: (a), because the acceptance test is that the files exist, and the poster goes to the printer on Sunday. `gen-mascots.mjs --check` and the contrast check catch drift and any non-token colour.
+Reverse it if: the repository size matters more, for example before publishing to the team repository.
+To reverse: add `public/brand/mascots/*.png` to `.gitignore` and run the generator in the build.
+
+## 2026-10-22 04:30, A3: what "stuck" can mean today
+Options: (a) record every failed check and failed parse as a record so each helper can be stuck. (b) Derive "stuck" only where a failure is already a record (a failed research run), and let the error card speak elsewhere, since a failed revision check or parse is already shown as an error and leaves no record.
+Chosen: (b), because "stuck" shows no mascot anyway, so the visible result is the same: the error card with the cause, the fix and a retry. Adding failure records would change the store for no visible gain.
+Reverse it if: a later screen needs to know a helper failed after the error card is dismissed.
+To reverse: `src/app/moods.ts` and the actions that fail.
+
+## 2026-10-22 04:31, A3: how long "done" lasts
+Options: (a) one second, which a viewer can miss. (b) Four seconds after the record was saved, then rest, with the hook re-rendering once when the window ends. (c) Until the next action, which leaves characters excited indefinitely.
+Chosen: (b), because Section 7.2 says "in the last few seconds" and the spring itself lasts 0.72 s. In demo mode the clock is pinned, so recordings stay identical.
+Reverse it if: the film's pacing needs a longer hold.
+To reverse: `DONE_WINDOW_MS` in `src/app/moods.ts`.
+
+## 2026-10-22 04:32, A3: the mark beside the wordmark
+Options: (a) the wordmark alone in the header, as in A1. (b) The one-colour mark in white with the lime leaf beside the wordmark in the header and on the landing bar, as the poster lockup in Section 7.1 describes. (c) The tile (favicon) in the header, which boxes the mark twice on a forest band.
+Chosen: (b), because the mark then appears where the product is named, and lime stays on forest. The mark is hidden from assistive technology there; the button's name says "Lyceum".
+Reverse it if: the header feels crowded at 320 px.
+To reverse: `src/ui/shell/Shell.tsx`, `src/ui/screens/Landing.tsx`, the `leaf` option in `src/ui/mascots/mark.tsx`.

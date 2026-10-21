@@ -26,6 +26,7 @@ import { NAV_META, screenLabel } from "./nav.ts";
 import { CommandPalette } from "./CommandPalette.tsx";
 import { AgentPanel } from "./AgentPanel.tsx";
 import { LoopRail } from "./LoopRail.tsx";
+import { Mark } from "../mascots/mark.tsx";
 import { Kbd } from "../primitives/index.tsx";
 import { PrototypeNotice } from "../primitives/PrototypeNotice.tsx";
 import { SectionHelp } from "../primitives/SectionHelp.tsx";
@@ -124,7 +125,7 @@ export function Shell(props: { children: ReactNode }) {
       {/* ---------- header: the one forest band ---------- */}
       <header className="app-header on-forest">
         <button ref={navTrigger} type="button" className="header-icon-btn nav-toggle" aria-label="Toggle navigation" aria-expanded={navOpen} aria-controls="primary-sidebar" onClick={() => setNavOpen((open) => !open)}><Menu size={20} /></button>
-        <button type="button" className="wordmark" onClick={() => navigate("inbox")} aria-label="Lyceum, go to Home">Lyceum</button>
+        <button type="button" className="wordmark" onClick={() => navigate("inbox")} aria-label="Lyceum, go to Home"><Mark size={30} tone="white" leaf />Lyceum</button>
         <span className="header-crumb" aria-hidden>{crumb}</span>
         <div className="header-spacer" />
 

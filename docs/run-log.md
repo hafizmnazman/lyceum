@@ -44,12 +44,27 @@ None queued yet.
 - 04:13 check: `node scripts/contrast-check.mjs` passed (61 ratios, 172 files).
 - 04:13 check: `npm run smoke:workspace` 7 of 7 passed.
 - 04:13 check: `npm run prove:all` 166 passed; `npm run smoke` 14 of 14; `smoke:integrity` 2 of 2; `smoke:curriculum` 5 of 5; guide check matches; dash scan clean.
-- 04:15 ended; committed as "A1: tokens as the source, bundled fonts, restyled primitives, the loop rail and the contrast check".
+- 04:15 ended; committed `1849d25` "A1: tokens as the source, bundled fonts, restyled primitives, the loop rail and the contrast check".
 
 ### A3, mascots v1
+
+- 2026-10-22 04:16 started; read the Kancil SVG in the Shenzhen intro (`submission/production/intro/intro.html`) for the layered approach.
+- 04:18 host's working name chosen: Tualang (docs/decisions.md).
+- 04:22 session-only request registry added to the store; the fetch, the parse and the pack render are tracked.
+- 04:23 `src/app/moods.ts` and `src/prove-moods.ts` written; 8 of 8 passed; a mutation test (Scout forced to working) failed 4, as it should.
+- 04:24 host drawn and previewed on white, mint and forest at 160, 64 and 28 px; first draft fixed (arms hidden behind the crown; the dark side swamped the crown, replaced by a rim).
+- 04:27 the seven helpers drawn and previewed; Folio's cover label read as a mouth and Scout's strap crossed the face, both removed.
+- 04:28 `mark.tsx`, the Mascot primitive and `useCourseMoods` written; `scripts/gen-mascots.mjs` wrote 35 SVGs, 72 PNGs and the manifest.
+- 04:33 check: `npm run typecheck` passed.
+- 04:33 check: `npm run prove:all` 174 passed, 0 failed, sixteen suites.
+- 04:34 check: `node scripts/gen-mascots.mjs --check`, `gen-theme-css.mjs --check` and the contrast check passed (35 generated SVGs, all token colours).
+- 04:34 check: `npm run build` passed; the four smokes 14, 2, 7 and 5 of 5 passed; guide check matches; dash scan clean.
+- 04:37 ended; committed as "A3: the host and seven helpers in code, moods from records, the mark as favicon and app icon".
+
+### A2a, Watch, Report, Decide
 
 - (next)
 
 ## What is left
 
-A3, A2a, A2b, A4, A5, A6, A7 (the parts that need no human voice), A8, in that order.
+A2a, A2b, A4, A5, A6, A7 (the parts that need no human voice), A8, in that order.

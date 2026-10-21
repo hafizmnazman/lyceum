@@ -7,6 +7,7 @@ import { PAIN_STATS } from "../../data/painStats.ts";
 import { navigate } from "../../app/store.ts";
 import { Button, Tag } from "../primitives/index.tsx";
 import { BrandImage } from "../primitives/BrandImage.tsx";
+import { Mark } from "../mascots/mark.tsx";
 
 const STEPS = [
   { icon: Search, title: "Search", text: "Fetch postings from a permitted employer board, only when you ask." },
@@ -46,7 +47,7 @@ function HeroArt() {
 export function LandingScreen() {
   const scopes: Array<"Malaysia" | "Asia" | "World"> = ["Malaysia", "Asia", "World"];
   return <div className="landing dot-grid">
-    <header className="landing-bar on-forest"><span className="wordmark">Lyceum</span>
+    <header className="landing-bar on-forest"><span className="wordmark"><Mark size={32} tone="white" leaf />Lyceum</span>
       <div className="button-row"><Button variant="ghost" onClick={() => window.dispatchEvent(new Event("lyceum:play-demo"))}><Play size={14} /> Watch the tour</Button><Button variant="lime" data-demo-id="index-signin" onClick={() => navigate("login")}>Try it as a lecturer <ArrowRight size={15} /></Button></div></header>
     <section className="landing-hero">
       <div className="landing-hero-card card-forest on-forest">

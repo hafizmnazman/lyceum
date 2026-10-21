@@ -2,11 +2,11 @@ import { useEffect, useId, useRef, useState } from "react";
 import { ArrowRight, Download, Plus } from "lucide-react";
 import { can, navAllows } from "../../app/roles.ts";
 import {
-  deleteTeachingSession, navigate, nowIso, saveTeachingPlanDetails, saveTeachingSession,
+  deleteTeachingSession, downloadPack, navigate, nowIso, saveTeachingPlanDetails, saveTeachingSession,
   selectSubject, type AppState,
 } from "../../app/store.ts";
 import { evidenceReport } from "../../lib/evidence.ts";
-import { downloadDeck, sessionDeck } from "../../lib/slides.ts";
+import { sessionDeck } from "../../lib/slides.ts";
 import { planSummary, teachingPlanMarkdown, type SessionInput } from "../../lib/teachingPlan.ts";
 import type { ChangeProposal, Person, Subject, TeachingPlan } from "../../types.ts";
 import { Button, Field, Input, Select, Tag, Textarea } from "../primitives/index.tsx";
@@ -182,7 +182,7 @@ export function TeachingPlanPanel({ state, person, subject }: CourseProps) {
           <p className="muted">Outcomes: {session.cloIds.map(id => clos.find(c => c.id === id)?.label ?? id).join(", ") || "Not linked yet"}</p>
           <div className="session-content"><div><h4>Learning activity</h4><p className="preserve-lines">{session.activity || "Add an activity students will take part in."}</p></div><div><h4>Check for understanding</h4><p className="preserve-lines">{session.learningCheck || "Add how you will check their learning."}</p></div></div>
           {session.resources ? <details><summary>Resources & slide brief</summary><p className="preserve-lines">{session.resources}</p></details> : null}
-          <div className="button-row"><Button data-demo-id={"session-slides-" + session.id} aria-label={"Download teaching pack for " + session.topic} onClick={() => void downloadDeck(sessionDeck(subject, session, clos, evidenceReport(subject.id, state.evidenceSources, state.skillMentions, state.skillMappings, clos), state.skillMentions, state.evidenceSources, state.people, nowIso()))}><Download size={15} /> Teaching pack (.pptx)</Button><span className="muted">Editable slides from this session and the evidence linked to its outcomes. No AI text.</span></div>
+          <div className="button-row"><Button data-demo-id={"session-slides-" + session.id} aria-label={"Download teaching pack for " + session.topic} onClick={() => void downloadPack(subject.id, sessionDeck(subject, session, clos, evidenceReport(subject.id, state.evidenceSources, state.skillMentions, state.skillMappings, clos), state.skillMentions, state.evidenceSources, state.people, nowIso()))}><Download size={15} /> Teaching pack (.pptx)</Button><span className="muted">Editable slides from this session and the evidence linked to its outcomes. No AI text.</span></div>
           {mayEdit ? <div className="button-row session-actions">
             <Button disabled={editorOpen} aria-label={"Edit " + session.topic} onClick={() => { setEditor({ ...session, cloIds: [...session.cloIds] }); setError(""); setMessage(""); }}>Edit session</Button>
             {deleting === session.id ? <><span>Remove this session?</span><Button variant="danger" onClick={() => { const result = deleteTeachingSession(subject.id, session.id); if (result.ok) setMessage("Session removed."); else setMessage(result.error); setDeleting(null); }}>Confirm removal</Button><Button variant="quiet" onClick={() => setDeleting(null)}>Keep session</Button></>

@@ -16,6 +16,7 @@ import {
   navigate,
   personById,
   stagePendingIntake,
+  trackRequest,
   useStore,
 } from "../../app/store.ts";
 import { interpretDoc, parseFile } from "../../agents/client.ts";
@@ -109,7 +110,7 @@ export function UploadScreen() {
     setParseError(null);
     setParsingName(file.name);
     const runId = beginAgentRun("intake", `Reading ${file.name}`, "upload");
-    const parsed = await parseFile(file);
+    const parsed = await trackRequest("parse", state.selectedSubjectId, () => parseFile(file));
     if (parsed.doc === null) {
       finishAgentRun(runId, "failed");
       setParseError(parsed.error ?? "Could not read this file.");

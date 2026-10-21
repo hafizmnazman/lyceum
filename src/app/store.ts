@@ -89,6 +89,7 @@ import {
 import { BOARD_TOKEN, SOURCE_POLICIES } from "../lib/collect.ts";
 import { CURRENT_ID, buildSnapshot, compareSnapshots, comparisonMarkdown, snapshotLabelError, type SnapshotComparison } from "../lib/snapshots.ts";
 import { fetchCollection, type CollectionOutcome, type CollectionRequest } from "../agents/client.ts";
+import { downloadDeck, type DeckSpec } from "../lib/slides.ts";
 import { stepDef, stepForTab, type CourseStep } from "./loop.ts";
 import { hashFor, type CourseRoute } from "./routes.ts";
 import { ITEMS, itemsForCLOs } from "../data/items.ts";
@@ -192,9 +193,13 @@ export interface AppState {
   collectRun: CollectRun | null; // the current research run, never persisted
   scanProposals: MentionProposal[]; // proposed quotations awaiting the lecturer
   selectedBriefId: string | null;
+  requests: InFlightRequest[]; // real requests in flight (a fetch, a file parse, a pack render); the moods read only these, never persisted
 
   idSeq: number;
 }
+
+/** A real request in flight. A mascot shows "working" only while one of these exists (plan Section 7.2). */
+export interface InFlightRequest { id: string; kind: "collect" | "parse" | "pack"; subjectId: SubjectId | null; startedAt: string }
 
 function idleAgents(): Record<AgentId, AgentState> {
   return {
@@ -259,6 +264,7 @@ function seedState(): AppState {
     collectRun: null,
     scanProposals: [],
     selectedBriefId: null,
+    requests: [],
 
     idSeq: 1,
   };
@@ -581,6 +587,26 @@ export function selectSubject(subjectId: SubjectId | null) {
   set({ selectedSubjectId: subjectId, studioTab: "overview", courseStep: state.screen === "studio" ? "course" : state.courseStep });
 }
 export function selectStudioTab(studioTab: AppState["studioTab"]) { set({ studioTab, courseStep: stepForTab(studioTab, state.courseStep) }); }
+
+// ---------- requests in flight (what the mascots may call "working") ----------
+let requestSeq = 0;
+export function beginRequest(kind: InFlightRequest["kind"], subjectId: SubjectId | null): string {
+  const id = "REQ-" + ++requestSeq;
+  set((s) => ({ requests: [...s.requests, { id, kind, subjectId, startedAt: nowIso() }] }));
+  return id;
+}
+export function endRequest(id: string) {
+  if (state.requests.some((r) => r.id === id)) set((s) => ({ requests: s.requests.filter((r) => r.id !== id) }));
+}
+/** Render and download an editable deck (a teaching pack or a brief) as a request Prism can be seen working on. */
+export function downloadPack(subjectId: SubjectId, spec: DeckSpec): Promise<void> {
+  return trackRequest("pack", subjectId, () => downloadDeck(spec));
+}
+/** Run real work with its request registered, so a mood can only say "working" while the work runs. */
+export async function trackRequest<T>(kind: InFlightRequest["kind"], subjectId: SubjectId | null, work: () => Promise<T>): Promise<T> {
+  const id = beginRequest(kind, subjectId);
+  try { return await work(); } finally { endRequest(id); }
+}
 export function selectProposal(proposalId: ProposalId | null) {
   set({ selectedProposalId: proposalId });
 }
@@ -1982,7 +2008,7 @@ export async function runCollection(subjectId: SubjectId, input: { provider: Col
     ? " Loading the saved sample shipped with the app. No network request."
     : " Requesting " + SOURCE_POLICIES[input.provider].name + " \"" + board + "\" through the local API (/api/collect/" + input.provider + "/" + board + "). Only this host is permitted.");
   set({ collectRun: { ...run, status: "running", postings: [], retrievedAt: null, cached: false, total: 0, error: null, label: "", log: [opening], endpoint: null, bytes: null, durationMs: null } });
-  const result = await loader(run);
+  const result = await trackRequest("collect", subjectId, () => loader(run));
   const current = state.collectRun;
   if (!current || current.status !== "running" || current.subjectId !== subjectId || current.board !== board || current.provider !== input.provider) return { ok: true };
   if (result.ok) {
