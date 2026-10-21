@@ -36,7 +36,10 @@
     "prove:journey": "node --test src/prove-journey.ts",
     "prove:snapshots": "node --test src/prove-snapshots.ts",
     "gen:sample": "node scripts/gen-collected-sample.mjs",
-    "smoke:curriculum": "node scripts/curriculum-smoke.mjs"
+    "smoke:curriculum": "node scripts/curriculum-smoke.mjs",
+    "gen:theme": "node scripts/gen-theme-css.mjs",
+    "check:contrast": "node scripts/contrast-check.mjs",
+    "check:dashes": "node scripts/dash-scan.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
@@ -51,6 +54,9 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

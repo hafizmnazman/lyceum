@@ -26,8 +26,30 @@ None queued yet.
 - 03:29 check: `npm run smoke` 14 of 14 passed.
 - 03:30 check: `node scripts/check-backup-migration.mjs` 16 of 16 passed (schema 4 and schema 3 restores).
 - 03:31 docs/as-built.md created with the stamp, the A0 table and the four follow-ups for A2a.
-- 03:32 ended; committed as "A0: take the evidence snapshots branch and prove the backup migration".
+- 03:32 ended; committed `1c1cdd3` "A0: take the evidence snapshots branch and prove the backup migration".
+- 03:36 check after the commit: the dash scan (new `scripts/dash-scan.mjs`) found no en or em dash in 164 text files, apart from five em dashes inside one verbatim Stripe posting in the saved sample, which stays as published (docs/decisions.md). The script is committed with A1.
+
+### A1, theme and shell
+
+- 2026-10-22 03:37 started.
+- 03:40 installed `@fontsource-variable/bricolage-grotesque`, `plus-jakarta-sans` and `jetbrains-mono` 5.3.0 (dev dependencies; the plan names Fontsource).
+- 03:49 `tokens.ts` rewritten as the source; `scripts/gen-theme-css.mjs` writes the `:root` block, the `@font-face` rules, the fonts in `public/fonts/` and the preloads.
+- 03:50 338 old variable uses migrated by context; primitives, the shell, the loop rail and the hash routes rebuilt; the landing and sign-in screens restyled.
+- 03:58 `scripts/contrast-check.mjs` written; negative test caught a planted hex, `rgba()`, bare pptx colour and lime rule.
+- 04:02 check: `npm run smoke:workspace` failed at the Guide page: the floating Play demo pill covered the "All roles" filter. Fixed by moving the signed-in tour button into the Guide page (docs/decisions.md).
+- 04:03 check: `npm run smoke:integrity` failed: it clicked `nav-studio`, now reached through the rail. The smoke now clicks `rail-course` and `rail-learn`.
+- 04:11 106 inline font sizes moved onto the type scale; counters to mono 12; the wordmark to 28 px.
+- 04:13 check: `npm run typecheck` passed.
+- 04:13 check: `npm run build` passed.
+- 04:13 check: `node scripts/contrast-check.mjs` passed (61 ratios, 172 files).
+- 04:13 check: `npm run smoke:workspace` 7 of 7 passed.
+- 04:13 check: `npm run prove:all` 166 passed; `npm run smoke` 14 of 14; `smoke:integrity` 2 of 2; `smoke:curriculum` 5 of 5; guide check matches; dash scan clean.
+- 04:15 ended; committed as "A1: tokens as the source, bundled fonts, restyled primitives, the loop rail and the contrast check".
+
+### A3, mascots v1
+
+- (next)
 
 ## What is left
 
-A1, A3, A2a, A2b, A4, A5, A6, A7 (the parts that need no human voice), A8, in that order.
+A3, A2a, A2b, A4, A5, A6, A7 (the parts that need no human voice), A8, in that order.

@@ -212,9 +212,9 @@ function ContentTab(props: {
         fontSize: 13,
         ...(mode === id
           ? {
-              borderColor: "var(--accent)",
-              color: "var(--accent)",
-              background: "var(--accent-soft)",
+              borderColor: "var(--emerald)",
+              color: "var(--emerald-text)",
+              background: "var(--tint-2)",
             }
           : {}),
       }}
@@ -232,10 +232,10 @@ function ContentTab(props: {
 
       {mayReview ? (
         <Card focal style={{ marginBottom: 20 }}>
-          <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4 }}>
+          <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 4 }}>
             A lecturer's draft awaits your review
           </div>
-          <p style={{ margin: "0 0 14px", fontSize: 13.5, color: "var(--ink-2)", maxWidth: 560 }}>
+          <p style={{ margin: "0 0 14px", fontSize: 14, color: "var(--ink-2)", maxWidth: 560 }}>
             Approve it for testing, or send it back with a note. Nothing reaches the acceptance
             test without your review.
           </p>
@@ -307,14 +307,14 @@ function ContentTab(props: {
             key={`${c.cloId ?? "new"}-${i}`}
             style={{
               border: "1px solid var(--border)",
-              borderRadius: "var(--radius-s)",
+              borderRadius: "var(--radius-chip)",
               padding: 12,
               marginBottom: 10,
-              background: "var(--surface)",
+              background: "var(--white)",
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-              <span className="num" style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink-2)" }}>
+              <span className="num" style={{ fontSize: 13, fontWeight: 600, color: "var(--ink-2)" }}>
                 {c.cloId ?? "new outcome"}
               </span>
               <Tag tone={c.op === "remove" ? "danger" : c.op === "add" ? "ok" : "accent"}>{c.op}</Tag>
@@ -355,7 +355,7 @@ function ContentTab(props: {
         <div
           style={{
             background: "var(--warn-soft)",
-            borderRadius: "var(--radius-s)",
+            borderRadius: "var(--radius-chip)",
             padding: "10px 12px",
             marginBottom: 18,
           }}
@@ -366,7 +366,7 @@ function ContentTab(props: {
             </span>
             <Button
               variant="quiet"
-              style={{ height: 24, padding: "0 8px", fontSize: 12 }}
+              style={{ height: 24, padding: "0 8px", fontSize: 13 }}
               onClick={() => setCritique(null)}
             >
               Dismiss
@@ -416,7 +416,7 @@ function ContentTab(props: {
         </div>
       ) : null}
       {proposal.status === "approved" ? (
-        <div style={{ fontSize: 13, color: "var(--ok)" }}>
+        <div style={{ fontSize: 13, color: "var(--emerald-text)" }}>
           Live. The prediction is recorded.{" "}
           <a
             href="#"
@@ -555,13 +555,13 @@ function AssessmentTab(props: {
                 })
               }
             />
-            <span style={{ fontSize: 12.5, color: "var(--ink-2)" }}>{level}</span>
+            <span style={{ fontSize: 13, color: "var(--ink-2)" }}>{level}</span>
           </span>
         ))}
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, margin: "14px 0 20px" }}>
-        <span style={{ fontSize: 12.5, color: "var(--ink-3)" }}>Blueprint check</span>
+        <span style={{ fontSize: 13, color: "var(--ink-2)" }}>Blueprint check</span>
         <Tag tone={weightsOk ? "ok" : "danger"}>
           <span className="num">weights {weightSum.toFixed(2)}</span>
         </Tag>
@@ -606,7 +606,7 @@ function AssessmentTab(props: {
               Q{idx + 1}
             </span>
             <Tag>{it.bloomLevel}</Tag>
-            <span className="num" style={{ fontSize: 12.5, color: "var(--ink-2)" }}>
+            <span className="num" style={{ fontSize: 13, color: "var(--ink-2)" }}>
               {it.targetCLO}
             </span>
             {it.source === "human" ? <Tag>edited</Tag> : null}
@@ -620,10 +620,10 @@ function AssessmentTab(props: {
               value={it.marks}
               onChange={(e) => updateTestItem(td.id, it.id, { marks: Number(e.target.value) })}
             />
-            <span style={{ fontSize: 12.5, color: "var(--ink-3)" }}>marks</span>
+            <span style={{ fontSize: 13, color: "var(--ink-2)" }}>marks</span>
             <Button
               variant="quiet"
-              style={{ height: 28, padding: "0 8px", fontSize: 12.5 }}
+              style={{ height: 28, padding: "0 8px", fontSize: 13 }}
               aria-label={"Remove question " + (idx + 1)}
               onClick={() => removeTestItem(td.id, it.id)}
             >
@@ -661,7 +661,7 @@ function CoverageMeter(props: { draft: TestDraft }) {
     <div
       style={{
         height: 4,
-        background: "var(--surface-2)",
+        background: "var(--tint-1)",
         borderRadius: 2,
         marginTop: 3,
         maxWidth: 360,
@@ -689,7 +689,7 @@ function CoverageMeter(props: { draft: TestDraft }) {
             : 0;
         return (
           <div key={cw.cloId} style={{ marginBottom: 10 }}>
-            <div style={{ display: "flex", gap: 8, fontSize: 12.5, color: "var(--ink-2)" }}>
+            <div style={{ display: "flex", gap: 8, fontSize: 13, color: "var(--ink-2)" }}>
               <span className="num" style={{ width: 48, fontWeight: 600 }}>
                 {cw.cloId}
               </span>
@@ -697,7 +697,7 @@ function CoverageMeter(props: { draft: TestDraft }) {
                 {(actual * 100).toFixed(0)}% of marks, planned {(cw.weight * 100).toFixed(0)}%
               </span>
             </div>
-            {bar(actual, "var(--accent)")}
+            {bar(actual, "var(--emerald)")}
             {bar(cw.weight, "var(--border)")}
           </div>
         );
@@ -710,13 +710,13 @@ function CoverageMeter(props: { draft: TestDraft }) {
         const target = td.blueprint.bloomMix[level] ?? 0;
         return (
           <div key={level} style={{ marginBottom: 10 }}>
-            <div style={{ display: "flex", gap: 8, fontSize: 12.5, color: "var(--ink-2)" }}>
+            <div style={{ display: "flex", gap: 8, fontSize: 13, color: "var(--ink-2)" }}>
               <span style={{ width: 90 }}>{level}</span>
               <span className="num">
                 {(share * 100).toFixed(0)}% of items, mix {(target * 100).toFixed(0)}%
               </span>
             </div>
-            {bar(share, "var(--accent)")}
+            {bar(share, "var(--emerald)")}
             {bar(target, "var(--border)")}
           </div>
         );
@@ -831,10 +831,10 @@ function HistoryTab(props: { state: AppState; subject: Subject; proposal: Change
             >
               {e.note ?? ""}
             </span>
-            <span style={{ fontSize: 12.5, color: "var(--ink-2)", flexShrink: 0 }}>
+            <span style={{ fontSize: 13, color: "var(--ink-2)", flexShrink: 0 }}>
               {personById(e.byPersonId)?.name ?? e.byPersonId}
             </span>
-            <span className="num" style={{ fontSize: 12, color: "var(--ink-3)", flexShrink: 0 }}>
+            <span className="num" style={{ fontSize: 13, color: "var(--ink-2)", flexShrink: 0 }}>
               {fmtWhen(e.at)}
             </span>
           </Row>
@@ -865,10 +865,10 @@ function HistoryTab(props: { state: AppState; subject: Subject; proposal: Change
             >
               {v.reason}
             </span>
-            <span style={{ fontSize: 12.5, color: "var(--ink-2)", flexShrink: 0 }}>
+            <span style={{ fontSize: 13, color: "var(--ink-2)", flexShrink: 0 }}>
               {personById(v.changedBy)?.name ?? v.changedBy}
             </span>
-            <span className="num" style={{ fontSize: 12, color: "var(--ink-3)", flexShrink: 0 }}>
+            <span className="num" style={{ fontSize: 13, color: "var(--ink-2)", flexShrink: 0 }}>
               {fmtWhen(v.changedAt)}
             </span>
           </Row>

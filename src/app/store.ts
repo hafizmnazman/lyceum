@@ -89,6 +89,8 @@ import {
 import { BOARD_TOKEN, SOURCE_POLICIES } from "../lib/collect.ts";
 import { CURRENT_ID, buildSnapshot, compareSnapshots, comparisonMarkdown, snapshotLabelError, type SnapshotComparison } from "../lib/snapshots.ts";
 import { fetchCollection, type CollectionOutcome, type CollectionRequest } from "../agents/client.ts";
+import { stepDef, stepForTab, type CourseStep } from "./loop.ts";
+import { hashFor, type CourseRoute } from "./routes.ts";
 import { ITEMS, itemsForCLOs } from "../data/items.ts";
 import {
   CANONICAL_PROPOSAL,
@@ -150,6 +152,7 @@ export interface AppState {
   selectedSubjectId: SubjectId | null;
   selectedProposalId: ProposalId | null;
   studioTab: "overview" | "curriculum" | "evidence" | "plan" | "content" | "assessment" | "history";
+  courseStep: CourseStep | null; // the loop rail step in view (app/loop.ts); read through routes.effectiveStep
 
   // mutable world
   proposals: ChangeProposal[];
@@ -219,6 +222,7 @@ function seedState(): AppState {
     selectedSubjectId: null,
     selectedProposalId: CANONICAL_PROPOSAL.id,
     studioTab: "overview",
+    courseStep: null,
 
     proposals: [structuredClone(CANONICAL_PROPOSAL)],
     notifications: [],
@@ -538,11 +542,11 @@ export function login(personId: PersonId) {
   const person = personById(personId);
   if (!person) return;
   resetAgents();
-  set({ currentPersonId: personId, screen: landingScreen(person, state.assignments) });
+  set({ currentPersonId: personId, screen: landingScreen(person, state.assignments), courseStep: null });
 }
 export function logout() {
   if (!confirmLeaveEditor()) return;
-  set({ currentPersonId: null, screen: "login" });
+  set({ currentPersonId: null, screen: "login", courseStep: null });
 }
 /** Person switch (the account menu): change who we are, clamp the screen. */
 export function switchUser(personId: PersonId) {
@@ -556,18 +560,27 @@ export function switchUser(personId: PersonId) {
       : landingScreen(person, s.assignments),
   }));
 }
-export function navigate(screen: Screen) {
-  if (screen !== state.screen && !confirmLeaveEditor()) {
-    if (typeof window !== "undefined") window.history.replaceState(null, "", "#/" + state.screen);
+/** Go to a screen, or, with a course route, to one step of that course's loop (#/course/:id/<step>). */
+export function navigate(screen: Screen, course?: CourseRoute) {
+  const target = course ? stepDef(course.step).screen : screen;
+  const leaving = target !== state.screen || (course !== undefined && course.subjectId !== state.selectedSubjectId);
+  if (leaving && !confirmLeaveEditor()) {
+    if (typeof window !== "undefined") window.history.replaceState(null, "", hashFor(state));
     return;
   }
-  set({ screen });
+  if (!course) { set({ screen, courseStep: screen === "studio" ? stepForTab(state.studioTab, state.courseStep) : null }); return; }
+  const tab = stepDef(course.step).tab;
+  set({ screen: target, selectedSubjectId: course.subjectId, courseStep: course.step, ...(tab ? { studioTab: tab } : {}) });
+}
+/** One step of a course's loop: the rail, the handoff cards and the deep links all come through here. */
+export function openStep(subjectId: SubjectId, step: CourseStep) {
+  navigate(stepDef(step).screen, { subjectId, step });
 }
 export function selectSubject(subjectId: SubjectId | null) {
   if (subjectId !== state.selectedSubjectId && !confirmLeaveEditor()) return;
-  set({ selectedSubjectId: subjectId, studioTab: "overview" });
+  set({ selectedSubjectId: subjectId, studioTab: "overview", courseStep: state.screen === "studio" ? "course" : state.courseStep });
 }
-export function selectStudioTab(studioTab: AppState["studioTab"]) { set({ studioTab }); }
+export function selectStudioTab(studioTab: AppState["studioTab"]) { set({ studioTab, courseStep: stepForTab(studioTab, state.courseStep) }); }
 export function selectProposal(proposalId: ProposalId | null) {
   set({ selectedProposalId: proposalId });
 }

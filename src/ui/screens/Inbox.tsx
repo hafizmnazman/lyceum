@@ -130,7 +130,7 @@ export function InboxScreen() {
               {top.kind === "evidence-brief" ? "Read brief" : "Open " + (top.subjectId ?? "it")} <ArrowRight size={15} />
             </Button>
             {sender(top) ? (
-              <span style={{ fontSize: 12.5, color: "var(--ink-3)" }}>{sender(top)}</span>
+              <span style={{ fontSize: 13, color: "var(--ink-2)" }}>{sender(top)}</span>
             ) : null}
           </div>
         </Card>
@@ -150,7 +150,7 @@ export function InboxScreen() {
                 style={{
                   flex: 1,
                   fontSize: 13,
-                  color: n.read ? "var(--ink-3)" : "var(--ink)",
+                  color: n.read ? "var(--ink-2)" : "var(--ink)",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -159,7 +159,7 @@ export function InboxScreen() {
                 {n.agentFindings ?? KIND_LABEL[n.kind]}
               </span>
               {!n.read ? (
-                <span aria-label="Unread" style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--accent)" }} />
+                <span aria-label="Unread" style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--emerald)" }} />
               ) : null}
             </Row>
           ))}

@@ -69,7 +69,7 @@ Browser checks run in isolated headless profiles with external requests blocked,
 
 ## 6. Architecture
 
-A diagram is at `docs/presentation/architecture.png`.
+A diagram is at `docs/history/presentation/architecture-2026-10-09.png` (moved there on 22 October 2026; the generated diagram in the new theme replaces it).
 
 - Browser workspace: React and TypeScript, hash routing, a single persistent store, browser-local persistence with exit flush and visible storage failure, validated JSON backups at schema version 3.
 - Deterministic core in `src/lib/`: curriculum constraints and diffs, teaching plans, evidence calculations (citation validator, fingerprints, Wilson intervals, coverage stages, report and brief), board payload normalisation and keyword filters, backup validation.

@@ -115,8 +115,9 @@ export function DemoOverlay() {
   const elapsed = Math.min(now - startedAt, total);
 
   if (phase === "idle") {
-    // Keep the everyday teaching workspace free of a floating demo control.
-    if (state.currentPersonId && state.screen !== "guide") return null;
+    // Keep the signed-in workspace free of a floating control that could cover content or a
+    // focused element (WCAG 2.4.11); signed in, the Guide page offers the tour inline.
+    if (state.currentPersonId) return null;
     return (
       <button
         data-demo-id="play-demo"
@@ -134,8 +135,8 @@ export function DemoOverlay() {
           padding: "0 16px",
           borderRadius: 999,
           border: "1px solid var(--border)",
-          background: "var(--surface)",
-          boxShadow: "var(--shadow-2)",
+          background: "var(--white)",
+          boxShadow: "var(--depth-menu)",
           cursor: "pointer",
           fontSize: 13,
           fontWeight: 500,
@@ -155,7 +156,7 @@ export function DemoOverlay() {
           style={{
             width: `${Math.max(0, Math.min(100, (elapsed / total) * 100))}%`,
             height: "100%",
-            background: "var(--accent)",
+            background: "var(--emerald)",
             transition: "width 250ms linear",
           }}
         />
@@ -178,8 +179,8 @@ export function DemoOverlay() {
             height: 34,
             borderRadius: 999,
             border: "1px solid var(--border)",
-            background: "var(--surface)",
-            boxShadow: "var(--shadow-1)",
+            background: "var(--white)",
+            boxShadow: "none",
             cursor: "pointer",
             color: "var(--ink-2)",
           }}
@@ -197,10 +198,10 @@ export function DemoOverlay() {
             padding: "0 12px",
             borderRadius: 999,
             border: "1px solid var(--border)",
-            background: "var(--surface)",
-            boxShadow: "var(--shadow-1)",
+            background: "var(--white)",
+            boxShadow: "none",
             cursor: "pointer",
-            fontSize: 12.5,
+            fontSize: 13,
             color: "var(--ink-2)",
           }}
         >
@@ -215,7 +216,7 @@ export function DemoOverlay() {
             position: "fixed",
             inset: 0,
             zIndex: 120,
-            background: "var(--bg)",
+            background: "var(--mint)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -223,13 +224,13 @@ export function DemoOverlay() {
           }}
         >
           <div key={card} className="fade-up" style={{ maxWidth: 660 }}>
-            <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.04em", color: "var(--accent)", marginBottom: 12 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: "0.04em", color: "var(--emerald-text)", marginBottom: 12 }}>
               {INTRO_CARDS[card].eyebrow.toUpperCase()}
             </div>
-            <div className="page-title" style={{ fontSize: 40, marginBottom: 16 }}>
+            <div className="page-title" style={{ fontSize: 36, marginBottom: 16 }}>
               {INTRO_CARDS[card].title}
             </div>
-            <p style={{ fontSize: 16.5, lineHeight: 1.65, color: "var(--ink-2)", margin: 0 }}>
+            <p style={{ fontSize: 16, lineHeight: 1.65, color: "var(--ink-2)", margin: 0 }}>
               {INTRO_CARDS[card].body}
             </p>
           </div>
@@ -244,17 +245,17 @@ export function DemoOverlay() {
             position: "fixed",
             inset: 0,
             zIndex: 120,
-            background: "var(--bg)",
+            background: "var(--mint)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
           <div style={{ textAlign: "center", maxWidth: 560 }}>
-            <div className="page-title" style={{ fontSize: 44 }}>
+            <div className="page-title" style={{ fontSize: 48 }}>
               Lyceum
             </div>
-            <p style={{ fontSize: 15.5, color: "var(--ink-2)", marginTop: 12 }}>
+            <p style={{ fontSize: 16, color: "var(--ink-2)", marginTop: 12 }}>
               Know which courses have drifted. Fix them on evidence. Let the
               results keep score.
             </p>
@@ -275,9 +276,9 @@ export function DemoOverlay() {
             width: 14,
             height: 14,
             borderRadius: "50%",
-            background: "rgba(255,255,255,0.95)",
+            background: "var(--glass)",
             border: "2px solid var(--ink)",
-            boxShadow: "0 1px 6px rgba(25,28,31,0.35)",
+            boxShadow: "var(--depth-menu)",
             pointerEvents: "none",
           }}
         />
@@ -294,14 +295,14 @@ export function DemoOverlay() {
             zIndex: 124,
             maxWidth: 780,
             width: "calc(100vw - 120px)",
-            background: "rgba(25,28,31,0.92)",
-            color: "#fff",
-            borderRadius: "var(--radius-m)",
+            background: "var(--scrim-strong)",
+            color: "var(--white)",
+            borderRadius: "var(--radius-card)",
             padding: "10px 18px",
-            fontSize: 14.5,
+            fontSize: 14,
             lineHeight: 1.5,
             textAlign: "center",
-            boxShadow: "var(--shadow-2)",
+            boxShadow: "var(--depth-menu)",
             pointerEvents: "none",
           }}
         >

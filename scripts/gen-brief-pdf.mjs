@@ -11,12 +11,14 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { ChartColumn, CircleCheck, FileText, Gavel, PenLine, Plug, Presentation, Quote, Search, UserCheck } from "lucide-react";
 import puppeteer from "puppeteer-core";
+import { color as K, fontFaceCss, fontsReady, T } from "./lib/theme-node.mjs";
 
 const OUT = "docs/presentation/lyceum-brief.pdf";
 const previewAt = process.argv.indexOf("--preview");
 const PREVIEW_DIR = previewAt > 0 ? process.argv[previewAt + 1] : null;
 
-const C = { ink: "#191c1f", ink2: "#55595e", ink3: "#62676d", accent: "#3b5bdb", accentSoft: "#edf0fc", ok: "#1f7a4d", okSoft: "#e7f3ec", warn: "#925108", warnSoft: "#fcf0e0", border: "#e4e4e0", bg: "#f7f7f5", surface2: "#f1f1ee" };
+// Colours and faces come from src/theme/tokens.ts (package A1); A6 redesigns the brief itself.
+const C = { ink: K.ink, ink2: K.ink2, ink3: K.ink3, accent: K.emeraldText, accentSoft: K.tint2, ok: K.emeraldText, okSoft: K.tint1, warn: K.warn, warnSoft: K.warnSoft, border: K.border, bg: K.mint, surface2: K.tint1, white: K.white };
 const icon = (Icon, color = C.accent, size = 15) => renderToStaticMarkup(createElement(Icon, { size, color, strokeWidth: 1.75, "aria-hidden": true }));
 
 // Real screens, cropped in CSS. Coordinates are in the PNG's own pixels.
@@ -86,7 +88,7 @@ const ARROWS = [
 const loopSvg = `<svg class="loop-arrows" viewBox="0 0 ${W} ${H}" width="${W}mm" height="${H}mm" aria-hidden="true">
   <defs><marker id="head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${C.accent}"/></marker></defs>
   ${ARROWS.map(([x1, y1, x2, y2]) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${C.accent}" stroke-width="0.55" marker-end="url(#head)"/>`).join("")}
-  <text x="${col(0) + 3}" y="${CH + GY / 2 + 1}" font-size="2.9" fill="${C.ink2}" font-family="Inter, Segoe UI, sans-serif">and round again, every semester</text>
+  <text x="${col(0) + 3}" y="${CH + GY / 2 + 1}" font-size="2.9" fill="${C.ink2}" font-family="${T.font.body.replace(/'/g, "")}">and round again, every semester</text>
 </svg>`;
 const stepCard = (s) => { const [x, y] = POS[s.n]; return `<div class="step${s.human ? " human" : ""}" style="left:${x}mm;top:${y}mm">
   <div class="step-head"><span class="badge">${s.n}</span><span class="step-icon">${icon(s.icon, s.human ? C.ok : C.accent, 14)}</span><span class="step-title">${s.title}</span></div>
@@ -98,38 +100,37 @@ const foot = (n, left) => `<div class="foot"><span>${left}</span><span>${n} / ${
 
 // ---------- the page ----------
 const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Lyceum, project brief</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
 <style>
+${fontFaceCss()}
 @page { size: A4; margin: 0; }
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: #fff; }
-body { font-family: Inter, "Segoe UI", system-ui, sans-serif; color: ${C.ink}; font-size: 9.2pt; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html, body { margin: 0; padding: 0; background: ${C.white}; }
+body { font-family: ${T.font.body}; color: ${C.ink}; font-size: 9.2pt; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 .page { width: 210mm; height: 297mm; padding: 13mm 15mm 10mm; position: relative; overflow: hidden; page-break-after: always; }
 .page:last-child { page-break-after: auto; }
 .mast { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1.4px solid ${C.ink}; padding-bottom: 2.5mm; }
-.wordmark { font-family: Newsreader, Georgia, serif; font-size: 21pt; font-weight: 600; letter-spacing: -0.01em; line-height: 1; }
+.wordmark { font-family: ${T.font.display}; font-size: 21pt; font-weight: 600; letter-spacing: -0.01em; line-height: 1; }
 .mast-meta { font-size: 7.4pt; color: ${C.ink2}; text-transform: uppercase; letter-spacing: 0.09em; font-weight: 600; }
-h1 { font-family: Newsreader, Georgia, serif; font-weight: 500; font-size: 22.5pt; line-height: 1.12; margin: 6.5mm 0 3mm; letter-spacing: -0.01em; max-width: 168mm; }
+h1 { font-family: ${T.font.display}; font-weight: 500; font-size: 22.5pt; line-height: 1.12; margin: 6.5mm 0 3mm; letter-spacing: -0.01em; max-width: 168mm; }
 .lede { font-size: 10.6pt; line-height: 1.52; margin: 0; max-width: 176mm; }
 .section { margin-top: 6.5mm; }
 .eyebrow { font-size: 7.2pt; font-weight: 700; letter-spacing: 0.11em; text-transform: uppercase; color: ${C.accent}; margin: 0 0 2mm; }
-h2 { font-family: Newsreader, Georgia, serif; font-weight: 500; font-size: 14.5pt; line-height: 1.2; margin: 0 0 3mm; }
+h2 { font-family: ${T.font.display}; font-weight: 500; font-size: 14.5pt; line-height: 1.2; margin: 0 0 3mm; }
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
 .stat { border: 1px solid ${C.border}; border-radius: 2.6mm; padding: 3.4mm 3.8mm; }
 .stat .scope { font-size: 6.8pt; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: ${C.ink2}; }
-.stat .num { font-family: Newsreader, Georgia, serif; font-size: 25pt; line-height: 1; margin: 1.6mm 0 1.4mm; color: ${C.accent}; font-weight: 500; }
+.stat .num { font-family: ${T.font.display}; font-size: 25pt; line-height: 1; margin: 1.6mm 0 1.4mm; color: ${C.accent}; font-weight: 500; }
 .stat .lbl { font-size: 8.4pt; line-height: 1.4; }
 .stat .src { font-size: 6.8pt; color: ${C.ink3}; margin-top: 1.6mm; }
 .caption { font-size: 8.6pt; color: ${C.ink2}; margin: 2.6mm 0 0; max-width: 176mm; }
 .loop { position: relative; width: ${W}mm; height: ${H}mm; margin-top: 1mm; }
 .loop-arrows { position: absolute; left: 0; top: 0; }
-.step { position: absolute; width: ${CW}mm; height: ${CH}mm; border: 1px solid ${C.border}; border-radius: 2.6mm; padding: 3mm 3.4mm; background: #fff; }
-.step.human { background: ${C.okSoft}; border-color: #bfdccb; }
+.step { position: absolute; width: ${CW}mm; height: ${CH}mm; border: 1px solid ${C.border}; border-radius: 2.6mm; padding: 3mm 3.4mm; background: ${C.white}; }
+.step.human { background: ${C.okSoft}; border-color: ${C.border}; }
 .step-head { display: flex; align-items: center; gap: 2mm; }
-.badge { width: 4.6mm; height: 4.6mm; border-radius: 50%; background: ${C.ink}; color: #fff; font-size: 7pt; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.badge { width: 4.6mm; height: 4.6mm; border-radius: 50%; background: ${C.ink}; color: ${C.white}; font-size: 7pt; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .step-icon { width: 6.6mm; height: 6.6mm; border-radius: 1.8mm; background: ${C.accentSoft}; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.step.human .step-icon { background: #fff; }
+.step.human .step-icon { background: ${C.white}; }
 .step-title { font-weight: 700; font-size: 10.4pt; }
 .agent { margin: 1.6mm 0 1mm; font-size: 6.9pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: ${C.ink2}; }
 .step p { margin: 0; font-size: 8.3pt; line-height: 1.4; }
@@ -167,7 +168,7 @@ h2 { font-family: Newsreader, Georgia, serif; font-weight: 500; font-size: 14.5p
 .imp p { margin: 0; font-size: 9pt; line-height: 1.48; }
 .imp .resp { margin-top: 2.4mm; padding-top: 2.2mm; border-top: 1px dashed ${C.border}; color: ${C.ink2}; }
 .imp .resp b { color: ${C.accent}; font-weight: 700; }
-.outcome { margin-top: 6mm; display: flex; align-items: center; gap: 3.4mm; background: ${C.ink}; color: #fff; border-radius: 2.6mm; padding: 4.4mm 5mm; font-size: 10.2pt; line-height: 1.5; }
+.outcome { margin-top: 6mm; display: flex; align-items: center; gap: 3.4mm; background: ${C.ink}; color: ${C.white}; border-radius: 2.6mm; padding: 4.4mm 5mm; font-size: 10.2pt; line-height: 1.5; }
 .outcome strong { font-weight: 700; }
 </style></head><body>
 
@@ -234,7 +235,7 @@ h2 { font-family: Newsreader, Georgia, serif; font-weight: 500; font-size: 14.5p
     </div>
     <p class="sub">What to improve, and our response</p>
     <div class="improve">${IMPROVE.map((m, i) => `<div class="imp"><div class="imp-head"><span class="badge">${i + 1}</span><strong>${m.title}</strong></div><p>${m.ask}</p><p class="resp"><b>Our response:</b> ${m.response}</p></div>`).join("")}</div>
-    <div class="outcome">${icon(CircleCheck, "#ffffff", 20)}<span><strong>Outcome.</strong> Overall, the idea is clear and fits the theme. The travel fellowship is on: Cai Yiyu applied for it on our behalf.</span></div>
+    <div class="outcome">${icon(CircleCheck, C.white, 20)}<span><strong>Outcome.</strong> Overall, the idea is clear and fits the theme. The travel fellowship is on: Cai Yiyu applied for it on our behalf.</span></div>
   </div>
   ${foot(3, "Prepared by Hafiz Azman, 14 October 2026.")}
 </section>
@@ -253,6 +254,7 @@ const browser = await puppeteer.launch({ executablePath, headless: true });
 try {
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: "networkidle0", timeout: 30000 }).catch(() => page.setContent(html, { waitUntil: "load" }));
+  await fontsReady(page);
   await page.evaluate(() => document.fonts.ready);
   const fonts = await page.evaluate(() => [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family).filter((v, i, a) => a.indexOf(v) === i));
   console.log("fonts loaded:", fonts.join(", ") || "none (system fallbacks used)");

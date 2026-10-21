@@ -24,38 +24,40 @@ const PROOF = [
 
 function HeroArt() {
   return <svg viewBox="0 0 520 300" role="img" aria-label="Three stages: postings with receipts, a course outline, a meeting brief" className="hero-art">
-    <rect x="12" y="40" width="150" height="200" rx="12" fill="var(--surface)" stroke="var(--border)" />
-    <rect x="28" y="60" width="118" height="10" rx="5" fill="var(--accent-soft)" /><rect x="28" y="82" width="96" height="8" rx="4" fill="var(--surface-2)" /><rect x="28" y="98" width="110" height="8" rx="4" fill="var(--surface-2)" />
-    <rect x="28" y="126" width="118" height="30" rx="6" fill="var(--accent-soft)" /><rect x="40" y="136" width="94" height="8" rx="4" fill="var(--accent)" />
-    <rect x="28" y="170" width="118" height="30" rx="6" fill="var(--accent-soft)" /><rect x="40" y="180" width="70" height="8" rx="4" fill="var(--accent)" />
-    <path d="M170 140 L200 140" stroke="var(--ink-3)" strokeWidth="3" /><path d="M196 134 L204 140 L196 146" fill="none" stroke="var(--ink-3)" strokeWidth="3" />
-    <rect x="210" y="40" width="150" height="200" rx="12" fill="var(--surface)" stroke="var(--border)" />
-    <rect x="226" y="60" width="80" height="10" rx="5" fill="var(--ink-3)" />
-    <rect x="226" y="90" width="118" height="8" rx="4" fill="var(--surface-2)" /><rect x="226" y="90" width="72" height="8" rx="4" fill="var(--accent)" />
-    <rect x="226" y="112" width="118" height="8" rx="4" fill="var(--surface-2)" /><rect x="226" y="112" width="54" height="8" rx="4" fill="var(--accent)" />
-    <rect x="226" y="134" width="118" height="8" rx="4" fill="var(--surface-2)" /><rect x="226" y="134" width="36" height="8" rx="4" fill="var(--accent)" />
-    <rect x="226" y="170" width="118" height="30" rx="6" fill="var(--ok-soft)" /><rect x="238" y="180" width="80" height="8" rx="4" fill="var(--ok)" />
-    <path d="M368 140 L398 140" stroke="var(--ink-3)" strokeWidth="3" /><path d="M394 134 L402 140 L394 146" fill="none" stroke="var(--ink-3)" strokeWidth="3" />
-    <rect x="408" y="40" width="100" height="200" rx="12" fill="var(--surface)" stroke="var(--border)" />
-    <rect x="422" y="60" width="72" height="10" rx="5" fill="var(--ink-3)" /><rect x="422" y="84" width="60" height="6" rx="3" fill="var(--surface-2)" /><rect x="422" y="96" width="72" height="6" rx="3" fill="var(--surface-2)" />
-    <rect x="422" y="108" width="52" height="6" rx="3" fill="var(--surface-2)" /><rect x="422" y="140" width="72" height="44" rx="6" fill="var(--accent-soft)" /><rect x="430" y="150" width="56" height="6" rx="3" fill="var(--accent)" /><rect x="430" y="164" width="40" height="6" rx="3" fill="var(--accent)" />
-    <rect x="422" y="200" width="72" height="20" rx="10" fill="var(--ok)" />
+    <rect x="12" y="40" width="150" height="200" rx="12" fill="var(--white)" stroke="var(--border)" />
+    <rect x="28" y="60" width="118" height="10" rx="5" fill="var(--tint-2)" /><rect x="28" y="82" width="96" height="8" rx="4" fill="var(--tint-1)" /><rect x="28" y="98" width="110" height="8" rx="4" fill="var(--tint-1)" />
+    <rect x="28" y="126" width="118" height="30" rx="6" fill="var(--tint-2)" /><rect x="40" y="136" width="94" height="8" rx="4" fill="var(--emerald)" />
+    <rect x="28" y="170" width="118" height="30" rx="6" fill="var(--tint-2)" /><rect x="40" y="180" width="70" height="8" rx="4" fill="var(--emerald)" />
+    <path d="M170 140 L200 140" stroke="var(--ink-2)" strokeWidth="3" /><path d="M196 134 L204 140 L196 146" fill="none" stroke="var(--ink-2)" strokeWidth="3" />
+    <rect x="210" y="40" width="150" height="200" rx="12" fill="var(--white)" stroke="var(--border)" />
+    <rect x="226" y="60" width="80" height="10" rx="5" fill="var(--ink-2)" />
+    <rect x="226" y="90" width="118" height="8" rx="4" fill="var(--tint-1)" /><rect x="226" y="90" width="72" height="8" rx="4" fill="var(--emerald)" />
+    <rect x="226" y="112" width="118" height="8" rx="4" fill="var(--tint-1)" /><rect x="226" y="112" width="54" height="8" rx="4" fill="var(--emerald)" />
+    <rect x="226" y="134" width="118" height="8" rx="4" fill="var(--tint-1)" /><rect x="226" y="134" width="36" height="8" rx="4" fill="var(--emerald)" />
+    <rect x="226" y="170" width="118" height="30" rx="6" fill="var(--tint-2)" /><rect x="238" y="180" width="80" height="8" rx="4" fill="var(--emerald)" />
+    <path d="M368 140 L398 140" stroke="var(--ink-2)" strokeWidth="3" /><path d="M394 134 L402 140 L394 146" fill="none" stroke="var(--ink-2)" strokeWidth="3" />
+    <rect x="408" y="40" width="100" height="200" rx="12" fill="var(--white)" stroke="var(--border)" />
+    <rect x="422" y="60" width="72" height="10" rx="5" fill="var(--ink-2)" /><rect x="422" y="84" width="60" height="6" rx="3" fill="var(--tint-1)" /><rect x="422" y="96" width="72" height="6" rx="3" fill="var(--tint-1)" />
+    <rect x="422" y="108" width="52" height="6" rx="3" fill="var(--tint-1)" /><rect x="422" y="140" width="72" height="44" rx="6" fill="var(--tint-2)" /><rect x="430" y="150" width="56" height="6" rx="3" fill="var(--emerald)" /><rect x="430" y="164" width="40" height="6" rx="3" fill="var(--emerald)" />
+    <rect x="422" y="200" width="72" height="20" rx="10" fill="var(--emerald)" />
   </svg>;
 }
 
 export function LandingScreen() {
   const scopes: Array<"Malaysia" | "Asia" | "World"> = ["Malaysia", "Asia", "World"];
-  return <div className="landing">
-    <header className="landing-bar"><span className="page-title">Lyceum</span>
-      <div className="button-row"><Button variant="quiet" onClick={() => window.dispatchEvent(new Event("lyceum:play-demo"))}><Play size={14} /> Watch the tour</Button><Button variant="primary" data-demo-id="index-signin" onClick={() => navigate("login")}>Try it as a lecturer <ArrowRight size={15} /></Button></div></header>
+  return <div className="landing dot-grid">
+    <header className="landing-bar on-forest"><span className="wordmark">Lyceum</span>
+      <div className="button-row"><Button variant="ghost" onClick={() => window.dispatchEvent(new Event("lyceum:play-demo"))}><Play size={14} /> Watch the tour</Button><Button variant="lime" data-demo-id="index-signin" onClick={() => navigate("login")}>Try it as a lecturer <ArrowRight size={15} /></Button></div></header>
     <section className="landing-hero">
+      <div className="landing-hero-card card-forest on-forest">
       <div>
         <p className="eyebrow">A lecturer's course workspace</p>
         <h1>Course decisions, with receipts.</h1>
         <p className="landing-lead">Gather what employers ask for, confirm every requirement as a quotation from its source, see honest counts, decide what the course should do about it, and take a brief to the meeting. Nothing runs by itself. Nothing changes a course without you.</p>
-        <div className="button-row"><Button variant="primary" onClick={() => navigate("login")}>Try it as a lecturer <ArrowRight size={15} /></Button><Button onClick={() => window.dispatchEvent(new Event("lyceum:play-demo"))}><Play size={14} /> Watch the five-minute tour</Button></div>
+        <div className="button-row"><Button variant="lime" onClick={() => navigate("login")}>Try it as a lecturer <ArrowRight size={15} /></Button><Button variant="ghost" onClick={() => window.dispatchEvent(new Event("lyceum:play-demo"))}><Play size={14} /> Watch the five-minute tour</Button></div>
       </div>
-      <BrandImage name="hero" alt="Illustration of postings becoming a course decision and a meeting brief" fallback={<HeroArt />} />
+      <div className="hero-art-tile"><BrandImage name="hero" alt="Illustration of postings becoming a course decision and a meeting brief" fallback={<HeroArt />} /></div>
+      </div>
     </section>
 
     <section className="landing-section" aria-labelledby="pain-title">

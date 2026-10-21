@@ -46,9 +46,9 @@ function PreviewTable(props: { name: string; rows: string[][] }) {
   const rows = props.rows.slice(0, 6);
   return (
     <div style={{ marginBottom: 14 }}>
-      <div style={{ fontSize: 12.5, fontWeight: 600, marginBottom: 4 }}>{props.name}</div>
+      <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>{props.name}</div>
       <div style={{ overflowX: "auto" }}>
-        <table style={{ borderCollapse: "collapse", fontSize: 12, width: "100%" }}>
+        <table style={{ borderCollapse: "collapse", fontSize: 13, width: "100%" }}>
           <tbody>
             {rows.map((r, i) => (
               <tr key={i}>
@@ -80,10 +80,10 @@ function QuietWell(props: { text: string }) {
   return (
     <div
       style={{
-        background: "var(--surface-2)",
-        borderRadius: "var(--radius-s)",
+        background: "var(--tint-1)",
+        borderRadius: "var(--radius-chip)",
         padding: "8px 10px",
-        fontSize: 12.5,
+        fontSize: 13,
         color: "var(--ink-2)",
         marginBottom: 12,
         whiteSpace: "pre-wrap",
@@ -169,9 +169,9 @@ export function UploadScreen() {
               if ((e.key === "Enter" || e.key === " ") && !parsingName) inputRef.current?.click();
             }}
             style={{
-              border: `1px dashed ${dragOver ? "var(--accent)" : "var(--border)"}`,
-              borderRadius: "var(--radius-l)",
-              background: dragOver ? "var(--accent-soft)" : "var(--surface)",
+              border: `1px dashed ${dragOver ? "var(--emerald)" : "var(--border)"}`,
+              borderRadius: "var(--radius-card)",
+              background: dragOver ? "var(--tint-2)" : "var(--white)",
               padding: "48px 32px",
               textAlign: "center",
               cursor: parsingName ? "default" : "pointer",
@@ -185,11 +185,11 @@ export function UploadScreen() {
               </div>
             ) : (
               <>
-                <UploadCloud size={28} color="var(--ink-3)" style={{ marginBottom: 8 }} />
-                <div style={{ fontSize: 14.5, fontWeight: 500 }}>
+                <UploadCloud size={28} color="var(--ink-2)" style={{ marginBottom: 8 }} />
+                <div style={{ fontSize: 14, fontWeight: 500 }}>
                   Drop the term's results, a survey export, a syllabus pdf, or lecture slides.
                 </div>
-                <div style={{ fontSize: 12.5, color: "var(--ink-3)", marginTop: 4 }}>
+                <div style={{ fontSize: 13, color: "var(--ink-2)", marginTop: 4 }}>
                   xlsx, csv, pdf, pptx, docx
                 </div>
               </>
@@ -210,7 +210,7 @@ export function UploadScreen() {
           {/* One-click samples: fetched from public/demo and pushed through the
               exact same parse-interpret-confirm pipeline as a dropped file. */}
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
-            <span style={{ fontSize: 12, color: "var(--ink-3)" }}>Or try a sample:</span>
+            <span style={{ fontSize: 13, color: "var(--ink-2)" }}>Or try a sample:</span>
             {[
               ["results.xlsx", "sample-results"],
               ["clo-survey.csv", "sample-survey"],
@@ -222,7 +222,7 @@ export function UploadScreen() {
                 variant="outline"
                 data-demo-id={demoId}
                 disabled={Boolean(parsingName)}
-                style={{ height: 28, fontSize: 12, padding: "0 10px" }}
+                style={{ height: 28, fontSize: 13, padding: "0 10px" }}
                 onClick={() => {
                   void (async () => {
                     try {
@@ -246,9 +246,9 @@ export function UploadScreen() {
           {receipt ? (
             <Card focal style={{ marginTop: 24 }} data-demo-id="upload-receipt">
               <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-                <CheckCircle size={20} color="var(--ok)" style={{ flexShrink: 0, marginTop: 2 }} />
+                <CheckCircle size={20} color="var(--emerald-text)" style={{ flexShrink: 0, marginTop: 2 }} />
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: 14.5 }}>
+                  <div style={{ fontWeight: 600, fontSize: 14 }}>
                     Filed to <span className="num">{receipt.subjectId}</span>, {receipt.term}
                   </div>
                   <div style={{ fontSize: 13, color: "var(--ink-2)", marginTop: 2 }}>
@@ -309,7 +309,7 @@ function ReviewPanels(props: {
           />
         ))}
         {doc.tables.length === 0 && doc.pages.length === 0 ? (
-          <div style={{ fontSize: 13, color: "var(--ink-3)" }}>
+          <div style={{ fontSize: 13, color: "var(--ink-2)" }}>
             Nothing readable was found in {doc.fileName}.
           </div>
         ) : null}
@@ -353,8 +353,8 @@ function ReviewPanels(props: {
 
         {interp.mappedRows && interp.mappedRows.length > 0 ? (
           <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 12.5, fontWeight: 600, marginBottom: 4 }}>Mapped rows</div>
-            <table style={{ borderCollapse: "collapse", fontSize: 12 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Mapped rows</div>
+            <table style={{ borderCollapse: "collapse", fontSize: 13 }}>
               <thead>
                 <tr>
                   {["CLO", "mean", "sd", "n"].map((h) => (
@@ -403,7 +403,7 @@ function ReviewPanels(props: {
         {interp.contentSummary ? <QuietWell text={interp.contentSummary} /> : null}
 
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-          <span style={{ fontSize: 12.5, color: "var(--ink-3)" }}>Confidence</span>
+          <span style={{ fontSize: 13, color: "var(--ink-2)" }}>Confidence</span>
           <span
             aria-hidden
             style={{
@@ -411,7 +411,7 @@ function ReviewPanels(props: {
               width: 120,
               height: 4,
               borderRadius: 2,
-              background: "var(--surface-2)",
+              background: "var(--tint-1)",
               overflow: "hidden",
             }}
           >
@@ -420,11 +420,11 @@ function ReviewPanels(props: {
                 display: "block",
                 width: `${Math.round(interp.confidence * 100)}%`,
                 height: "100%",
-                background: "var(--accent)",
+                background: "var(--emerald)",
               }}
             />
           </span>
-          <span className="num" style={{ fontSize: 12.5 }}>
+          <span className="num" style={{ fontSize: 13 }}>
             {Math.round(interp.confidence * 100)}%
           </span>
         </div>
@@ -434,7 +434,7 @@ function ReviewPanels(props: {
             style={{
               margin: "0 0 14px",
               paddingLeft: 18,
-              fontSize: 12.5,
+              fontSize: 13,
               color: "var(--ink-2)",
             }}
           >
@@ -505,8 +505,8 @@ function RecentUploads() {
           <span
             style={{
               flex: 1,
-              fontSize: 12.5,
-              color: "var(--ink-3)",
+              fontSize: 13,
+              color: "var(--ink-2)",
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -514,7 +514,7 @@ function RecentUploads() {
           >
             {u.sourceFileName ?? ""}
           </span>
-          <span style={{ fontSize: 12.5, color: "var(--ink-2)" }}>
+          <span style={{ fontSize: 13, color: "var(--ink-2)" }}>
             {personById(u.uploadedBy)?.name ?? u.uploadedBy}
           </span>
         </Row>
