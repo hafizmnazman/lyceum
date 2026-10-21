@@ -66,70 +66,7 @@ None queued yet.
 - 2026-10-22 04:37 started, right after the A3 commit; read Sections 4, 4.1, 4.2, 5 and 8, `EvidenceResearch.tsx`, `EvidenceWorkspace.tsx`, `journey.ts`, `runs.ts`, `types.ts` and the store.
 - 04:45 decision logged: the term window by time (docs/decisions.md).
 - 04:46 decision logged: decide and adopt mapped onto today's hats.
-- Before 05:35, found by the checks and fixed: the teaching proof wanted a guide for each new section (four added); the curriculum smoke's click on a disclosure landed on a passing toast (the smokes now toggle a disclosure through the DOM); the workspace smoke still drove the old tabs, and a scripted replace had turned a `$` into `# Track A run log
-
-The autonomous run of Track A (docs/lyceum-upgrade-plan.md Section 17.5). Times are Kuala Lumpur time (GMT+8). To resume after an interruption, start at the first package below that has no "ended" line, and re-read Section 17.5 and this file first.
-
-## Needs the owner
-
-None yet.
-
-## Codex queue
-
-The owner's Codex limit was reached on 22 October and resets within hours. A Codex run also sends the embedded files to OpenAI, which this run's rules forbid without the owner's go-ahead, so no package here waits on Codex. Reviews worth running once the limit resets and the owner approves are listed here with their files and question; each is `codex exec --sandbox read-only` with the files on stdin and the report saved under `docs/review/`.
-
-None queued yet.
-
-## Packages
-
-### A0, checkpoint and the branch
-
-- 2026-10-22 03:25 started.
-- 03:25 checkpoint: committed `f5b26a4` "Checkpoint before the overhaul" and tagged `pre-overhaul`.
-- 03:26 took `feature/evidence-snapshots` (one commit, 18 files); one conflict in DECISIONS.md, resolved by keeping both entries (docs/decisions.md).
-- 03:27 environment: `node_modules` had no `.bin` folder and lacked two declared packages; `npm install` from the unchanged lockfile restored them.
-- 03:27 check: `npm run typecheck` passed.
-- 03:28 check: `npm run prove:all` 166 passed, 0 failed, fifteen suites.
-- 03:28 check: `npm run build` passed.
-- 03:29 check: `npm run smoke` 14 of 14 passed.
-- 03:30 check: `node scripts/check-backup-migration.mjs` 16 of 16 passed (schema 4 and schema 3 restores).
-- 03:31 docs/as-built.md created with the stamp, the A0 table and the four follow-ups for A2a.
-- 03:32 ended; committed `1c1cdd3` "A0: take the evidence snapshots branch and prove the backup migration".
-- 03:36 check after the commit: the dash scan (new `scripts/dash-scan.mjs`) found no en or em dash in 164 text files, apart from five em dashes inside one verbatim Stripe posting in the saved sample, which stays as published (docs/decisions.md). The script is committed with A1.
-
-### A1, theme and shell
-
-- 2026-10-22 03:37 started.
-- 03:40 installed `@fontsource-variable/bricolage-grotesque`, `plus-jakarta-sans` and `jetbrains-mono` 5.3.0 (dev dependencies; the plan names Fontsource).
-- 03:49 `tokens.ts` rewritten as the source; `scripts/gen-theme-css.mjs` writes the `:root` block, the `@font-face` rules, the fonts in `public/fonts/` and the preloads.
-- 03:50 338 old variable uses migrated by context; primitives, the shell, the loop rail and the hash routes rebuilt; the landing and sign-in screens restyled.
-- 03:58 `scripts/contrast-check.mjs` written; negative test caught a planted hex, `rgba()`, bare pptx colour and lime rule.
-- 04:02 check: `npm run smoke:workspace` failed at the Guide page: the floating Play demo pill covered the "All roles" filter. Fixed by moving the signed-in tour button into the Guide page (docs/decisions.md).
-- 04:03 check: `npm run smoke:integrity` failed: it clicked `nav-studio`, now reached through the rail. The smoke now clicks `rail-course` and `rail-learn`.
-- 04:11 106 inline font sizes moved onto the type scale; counters to mono 12; the wordmark to 28 px.
-- 04:13 check: `npm run typecheck` passed.
-- 04:13 check: `npm run build` passed.
-- 04:13 check: `node scripts/contrast-check.mjs` passed (61 ratios, 172 files).
-- 04:13 check: `npm run smoke:workspace` 7 of 7 passed.
-- 04:13 check: `npm run prove:all` 166 passed; `npm run smoke` 14 of 14; `smoke:integrity` 2 of 2; `smoke:curriculum` 5 of 5; guide check matches; dash scan clean.
-- 04:15 ended; committed `1849d25` "A1: tokens as the source, bundled fonts, restyled primitives, the loop rail and the contrast check".
-
-### A3, mascots v1
-
-- 2026-10-22 04:16 started; read the Kancil SVG in the Shenzhen intro (`submission/production/intro/intro.html`) for the layered approach.
-- 04:18 host's working name chosen: Tualang (docs/decisions.md).
-- 04:22 session-only request registry added to the store; the fetch, the parse and the pack render are tracked.
-- 04:23 `src/app/moods.ts` and `src/prove-moods.ts` written; 8 of 8 passed; a mutation test (Scout forced to working) failed 4, as it should.
-- 04:24 host drawn and previewed on white, mint and forest at 160, 64 and 28 px; first draft fixed (arms hidden behind the crown; the dark side swamped the crown, replaced by a rim).
-- 04:27 the seven helpers drawn and previewed; Folio's cover label read as a mouth and Scout's strap crossed the face, both removed.
-- 04:28 `mark.tsx`, the Mascot primitive and `useCourseMoods` written; `scripts/gen-mascots.mjs` wrote 35 SVGs, 72 PNGs and the manifest.
-- 04:33 check: `npm run typecheck` passed.
-- 04:33 check: `npm run prove:all` 174 passed, 0 failed, sixteen suites.
-- 04:34 check: `node scripts/gen-mascots.mjs --check`, `gen-theme-css.mjs --check` and the contrast check passed (35 generated SVGs, all token colours).
-- 04:34 check: `npm run build` passed; the four smokes 14, 2, 7 and 5 of 5 passed; guide check matches; dash scan clean.
-- 04:37 ended; committed `13c9851` "A3: the host and seven helpers in code, moods from records, the mark as favicon and app icon".
-
- (fixed by hand); the Course step's address carried a `/course` suffix the plan does not have; the Studio unmounted an open editor on a step change (the four steps stay mounted again).
+- Before 05:35, found by the checks and fixed: the teaching proof wanted a guide for each new section (four added); the curriculum smoke's click on a disclosure landed on a passing toast (the smokes now toggle a disclosure through the DOM); the workspace smoke still drove the old tabs, and a scripted replace had turned a `$$` into `$` (fixed by hand); the Course step's address carried a `/course` suffix the plan does not have; the Studio unmounted an open editor on a step change (the four steps stay mounted again).
 - 05:35 check: `npm run typecheck` passed.
 - 05:35 check: `npm run prove:all` 178 passed, 0 failed, sixteen suites.
 - 05:35 check: dash scan (225 files), contrast check, guide check, theme check, mascot check and `check-backup-migration.mjs` passed.
@@ -154,7 +91,9 @@ None queued yet.
 - 06:12 check: `npm run smoke:integrity` 2 of 2 passed.
 - 06:13 check: `npm run smoke` 15 of 15 and `smoke:workspace` 7 of 7 passed.
 - 06:14 check: `npm run smoke:curriculum` 6 of 6 passed; guide check, contrast check, dash scan (231 files), theme check, mascot check and the backup migration passed.
-- 06:15 ended; committed as "A2b: Learn matched to the taught version, the restyled loop screens, Home, How it works and a landing page whose every figure is in the claims register".
+- 06:15 ended; committed `b86f01d` "A2b: Learn matched to the taught version, the restyled loop screens, Home, How it works and a landing page whose every figure is in the claims register".
+
+- 06:16 repaired this log: in A2a a replacement string holding a dollar and a backtick had pasted the log's opening into the A2a entry; the pasted copy was removed by slicing, and the scratch scripts were checked for the same pattern.
 
 ### A4, demo and checks
 
