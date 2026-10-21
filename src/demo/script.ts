@@ -21,6 +21,7 @@ export interface DemoStep {
   value?: string; // text for type, option value for select, personId for switchUser, predicate for wait
   settleMs: number; // pause after the action
   scroll?: string; // "top" | "bottom" | a data-demo-id to centre
+  clear?: boolean; // for type: empty the field first, so a value read from a file is replaced rather than extended
 }
 
 export const SCRIPT: DemoStep[] = [
@@ -28,6 +29,8 @@ export const SCRIPT: DemoStep[] = [
   { caption: "Dr Sobri coordinates CS310. One afternoon, the whole loop.", action: "switchUser", value: "P-SOBRI", settleMs: 2400 },
   { caption: "His courses, each with its loop for the term.", target: "nav-courses", action: "click", settleMs: 1600 },
   { caption: "Course: what CS310 promises today. One outcome, visualisation; no employer evidence yet.", target: "course-open-CS310", action: "click", settleMs: 3200 },
+  { caption: "First, the term this loop runs for. Every record in it will carry the term.", target: "course-term", action: "type", value: "2026/2027 semester 1", settleMs: 900 },
+  { caption: "", target: "course-term-save", action: "click", settleMs: 1200 },
 
   // ---- 1. Watch: what employers are asking for ----
   { caption: "Watch: research the lecturer runs, not a feed that runs itself.", target: "course-watch", action: "click", settleMs: 2000 },
@@ -121,6 +124,7 @@ export const SCRIPT: DemoStep[] = [
   { caption: "Learn: a class is not proof. He files the term's results.", target: "rail-learn", action: "click", settleMs: 1800 },
   { caption: "The sample results file, read in the browser. Nothing files until he has seen what was read.", target: "sample-results", action: "click", settleMs: 600 },
   { caption: "", action: "wait", value: "intake-staged", settleMs: 2600 },
+  { caption: "The file names an older term; he files it under this loop's term.", target: "upload-term", action: "type", value: "2026/2027 semester 1", clear: true, settleMs: 900 },
   { caption: "Matched to the course version taught this term, then filed.", target: "upload-confirm", action: "click", settleMs: 800 },
   { caption: "", action: "wait", value: "intake-filed", settleMs: 1200 },
   { caption: "Attainment per outcome as filed, with n of N. No learning gain is claimed; the benchmark has not been run.", action: "hold", settleMs: 4600, scroll: "learn-attainment" },
@@ -181,7 +185,7 @@ export function estimateTotalMs(): number {
   );
 }
 
-/** The tour's length in whole minutes, rounded, for the words that offer it ("about 6 minutes"). */
+/** The tour's length in whole minutes, rounded, for the words that offer it ("about 7 minutes"). */
 export function tourMinutes(): number {
   return Math.round(estimateTotalMs() / 60000);
 }

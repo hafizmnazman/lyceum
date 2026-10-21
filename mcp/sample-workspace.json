@@ -152,7 +152,7 @@
         "prerequisiteSubjectIds": [],
         "sharedWithProgrammeIds": [],
         "status": "active",
-        "currentVersionId": "CS310-workspace-44"
+        "currentVersionId": "CS310-workspace-45"
       },
       {
         "id": "CS340",
@@ -11457,22 +11457,22 @@
     ],
     "notifications": [
       {
-        "id": "N-38",
+        "id": "N-39",
         "toPersonId": "P-RAHMAN",
         "kind": "evidence-brief",
         "subjectId": "CS310",
         "agentFindings": "Evidence brief for CS310 from Dr Sobri: Small refresh within existing hours.",
-        "briefId": "BR-CS310-35",
+        "briefId": "BR-CS310-36",
         "read": true,
         "createdAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "N-42",
+        "id": "N-43",
         "toPersonId": "P-SOBRI",
         "kind": "brief-decision",
         "subjectId": "CS310",
         "agentFindings": "Dr Rahman recorded a decision on your CS310 brief: Adopt the change.",
-        "briefId": "BR-CS310-35",
+        "briefId": "BR-CS310-36",
         "read": false,
         "createdAt": "2026-07-01T10:00:00Z"
       }
@@ -11495,10 +11495,10 @@
         "filedAt": "2026-01-22T14:40:00Z"
       },
       {
-        "id": "RU-CS310-47",
+        "id": "RU-CS310-48",
         "subjectId": "CS310",
         "uploadedBy": "P-SOBRI",
-        "term": "2025-S1",
+        "term": "2026/2027 semester 1",
         "rows": [
           {
             "cloId": "CLO5",
@@ -11509,14 +11509,14 @@
         ],
         "filedAt": "2026-07-01T10:00:00Z",
         "sourceFileName": "results.xlsx",
-        "courseVersionId": "CS310-workspace-44"
+        "courseVersionId": "CS310-workspace-45"
       }
     ],
     "dataSources": [
       {
         "kind": "results",
         "subjectId": "CS310",
-        "term": "2025-S1",
+        "term": "2026/2027 semester 1",
         "recordCount": 24,
         "ingestedAt": "2026-07-01T10:00:00Z",
         "verified": false,
@@ -11641,7 +11641,7 @@
         "reason": "Baseline preserved before revision."
       },
       {
-        "id": "CS310-workspace-44",
+        "id": "CS310-workspace-45",
         "subjectId": "CS310",
         "snapshot": {
           "title": "Data Visualisation",
@@ -11713,7 +11713,7 @@
     "teachingPlans": [
       {
         "subjectId": "CS310",
-        "term": "",
+        "term": "2026/2027 semester 1",
         "notes": "",
         "sessions": [
           {
@@ -11727,10 +11727,10 @@
             "learningCheck": "Exit question: which chart here would mislead a stakeholder, and why?",
             "resources": "",
             "status": "ready",
-            "id": "TS-46",
+            "id": "TS-47",
             "updatedAt": "2026-07-01T10:00:00Z",
             "updatedBy": "P-SOBRI",
-            "courseVersionId": "CS310-workspace-44",
+            "courseVersionId": "CS310-workspace-45",
             "needsReview": false
           }
         ],
@@ -11784,7 +11784,7 @@
     },
     "curriculumDrafts": [
       {
-        "id": "REV-CS310-43",
+        "id": "REV-CS310-44",
         "subjectId": "CS310",
         "baselineVersionId": "CS310-v1",
         "revision": 2,
@@ -11860,7 +11860,7 @@
             "at": "2026-07-01T10:00:00Z",
             "byPersonId": "P-SOBRI",
             "action": "adopted",
-            "note": "Used as local course version CS310-workspace-44. Adopted by the programme owner on the brief: add a dashboard exercise within the existing hours.",
+            "note": "Used as local course version CS310-workspace-45. Adopted by the programme owner on the brief: add a dashboard exercise within the existing hours.",
             "revision": 2
           }
         ]
@@ -11868,7 +11868,7 @@
     ],
     "evidenceSources": [
       {
-        "id": "EV-CS310-1",
+        "id": "EV-CS310-2",
         "subjectId": "CS310",
         "kind": "job-posting",
         "title": "Data Analyst",
@@ -11891,7 +11891,7 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "EV-CS310-2",
+        "id": "EV-CS310-3",
         "subjectId": "CS310",
         "kind": "job-posting",
         "title": "Data Analyst, Global Growth",
@@ -11914,7 +11914,7 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "EV-CS310-3",
+        "id": "EV-CS310-4",
         "subjectId": "CS310",
         "kind": "job-posting",
         "title": "Data Analyst, Intern",
@@ -11937,7 +11937,7 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "EV-CS310-4",
+        "id": "EV-CS310-5",
         "subjectId": "CS310",
         "kind": "job-posting",
         "title": "Data Analyst, Intern",
@@ -11946,7 +11946,7 @@
         "sourceDate": "2026-10-01",
         "text": "About the team\n\nData Science at Stripe is a vibrant community where data analysts and data scientists learn and grow together. You'll work with some of the most fundamental data at Stripe, and use that data to help drive company-wide initiatives. We have a variety of Data Analytics roles and teams across Stripe and will seek to align you to the most relevant team based on your background.\n\nWhat you’ll do\n\nAs an intern at Stripe you’ll work on projects across our stack that directly impact the way millions of businesses operate. You’ll own problems end to end with the support of your manager and teammates. It’s an opportunity to work alongside some of the most creative and technically rigorous data analysts and scientists in the industry. You'll partner deeply with teams across Stripe to ensure that our users, our products, and our business have the models, data products, and insights needed to make decisions and grow responsibly. You'll work closely with partners to extract insights from the rich and complex data at Stripe. You'll build metrics, scalable data pipelines, dashboards, and reports to inform and run the business. You'll deliver actionable business recommendations through analyses and data storytelling.\n\nOur internship program is competitive and the expectations are high.\n\nResponsibilities\n\n- Analyze data and running experiments to drive impact\n\n- Ensure that our users, our products, and our business have the models, data products, and insights needed to make decisions and grow responsibly\n\n- Create metrics, reports, and dashboards to inform and run the business\n\n- Extend Stripe’s metrics semantic layer\n\n- Build new data assets and improve existing data assets to support decision-making, products, and business processes\n\n- Assess the impact of decisions, product launches, and product improvements using business analytics and A/B testing\n\n- Learn quickly by asking great questions, finding how to work with your mentor and teammates effectively, and communicating the status of your work clearly\n\n- Present your work to the Data Science team, partner teams, and fellow interns\n\nWho you are\n\n- Ambitious builder: You’re energized by building solutions without clear precedent and solving problems with far-reaching consequences. Successful Stripes are deeply curious, and prefer the joy of discovery to the comfort of certainty.\n\n[Sample truncated for the demo. The full posting is at the link.]",
         "textHash": "fnv1a-68604535-974",
-        "duplicateOf": "EV-CS310-3",
+        "duplicateOf": "EV-CS310-4",
         "provenance": "collected",
         "collection": {
           "provider": "sample",
@@ -11960,7 +11960,7 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "EV-CS310-5",
+        "id": "EV-CS310-6",
         "subjectId": "CS310",
         "kind": "job-posting",
         "title": "Data Analyst, NYC",
@@ -11983,7 +11983,7 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "EV-CS310-6",
+        "id": "EV-CS310-7",
         "subjectId": "CS310",
         "kind": "job-posting",
         "title": "Data Analyst, Payments",
@@ -12006,7 +12006,7 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "EV-CS310-7",
+        "id": "EV-CS310-8",
         "subjectId": "CS310",
         "kind": "job-posting",
         "title": "Data Science Manager, Finance and Strategy",
@@ -12029,7 +12029,7 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "EV-CS310-8",
+        "id": "EV-CS310-9",
         "subjectId": "CS310",
         "kind": "job-posting",
         "title": "Data Science Manager, Risk",
@@ -12052,7 +12052,7 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "EV-CS310-9",
+        "id": "EV-CS310-10",
         "subjectId": "CS310",
         "kind": "job-posting",
         "title": "Data Scientist",
@@ -12075,7 +12075,7 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "EV-CS310-10",
+        "id": "EV-CS310-11",
         "subjectId": "CS310",
         "kind": "job-posting",
         "title": "Data Scientist",
@@ -12100,8 +12100,8 @@
     ],
     "skillMentions": [
       {
-        "id": "SM-CS310-11",
-        "sourceId": "EV-CS310-1",
+        "id": "SM-CS310-12",
+        "sourceId": "EV-CS310-2",
         "subjectId": "CS310",
         "skill": "SQL",
         "excerpt": "- Proficiency in SQL",
@@ -12110,21 +12110,11 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "SM-CS310-12",
-        "sourceId": "EV-CS310-1",
+        "id": "SM-CS310-13",
+        "sourceId": "EV-CS310-2",
         "subjectId": "CS310",
         "skill": "dashboards",
         "excerpt": "You'll build metrics, scalable data pipelines, dashboards, and reports to inform and run the business.",
-        "requirement": "unclear",
-        "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
-      },
-      {
-        "id": "SM-CS310-13",
-        "sourceId": "EV-CS310-1",
-        "subjectId": "CS310",
-        "skill": "stakeholders",
-        "excerpt": "- Ability to design, implement, and maintain data pipelines and dashboards to generate actionable insights based on stakeholder requirements",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
         "addedAt": "2026-07-01T10:00:00Z"
@@ -12133,6 +12123,16 @@
         "id": "SM-CS310-14",
         "sourceId": "EV-CS310-2",
         "subjectId": "CS310",
+        "skill": "stakeholders",
+        "excerpt": "- Ability to design, implement, and maintain data pipelines and dashboards to generate actionable insights based on stakeholder requirements",
+        "requirement": "unclear",
+        "addedBy": "P-SOBRI",
+        "addedAt": "2026-07-01T10:00:00Z"
+      },
+      {
+        "id": "SM-CS310-15",
+        "sourceId": "EV-CS310-3",
+        "subjectId": "CS310",
         "skill": "dashboards",
         "excerpt": "From building scalable dashboards to crafting compelling data narratives, your insights will directly shape how we run and grow the business.",
         "requirement": "unclear",
@@ -12140,21 +12140,11 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "SM-CS310-15",
-        "sourceId": "EV-CS310-2",
+        "id": "SM-CS310-16",
+        "sourceId": "EV-CS310-3",
         "subjectId": "CS310",
         "skill": "stakeholders",
         "excerpt": "- Build and maintain the metric definitions, metadata, and business context that enable AI agents to help stakeholders explore trusted data and answer business questions independently",
-        "requirement": "unclear",
-        "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
-      },
-      {
-        "id": "SM-CS310-16",
-        "sourceId": "EV-CS310-2",
-        "subjectId": "CS310",
-        "skill": "statistics",
-        "excerpt": "We're looking for a data analyst with a passion for analyzing data, statistical models, and running experiments to drive impact.",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
         "addedAt": "2026-07-01T10:00:00Z"
@@ -12163,6 +12153,16 @@
         "id": "SM-CS310-17",
         "sourceId": "EV-CS310-3",
         "subjectId": "CS310",
+        "skill": "statistics",
+        "excerpt": "We're looking for a data analyst with a passion for analyzing data, statistical models, and running experiments to drive impact.",
+        "requirement": "unclear",
+        "addedBy": "P-SOBRI",
+        "addedAt": "2026-07-01T10:00:00Z"
+      },
+      {
+        "id": "SM-CS310-18",
+        "sourceId": "EV-CS310-4",
+        "subjectId": "CS310",
         "skill": "dashboards",
         "excerpt": "You'll build metrics, scalable data pipelines, dashboards, and reports to inform and run the business.",
         "requirement": "unclear",
@@ -12170,8 +12170,8 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "SM-CS310-18",
-        "sourceId": "EV-CS310-5",
+        "id": "SM-CS310-19",
+        "sourceId": "EV-CS310-6",
         "subjectId": "CS310",
         "skill": "SQL",
         "excerpt": "- Proficiency in SQL, including complex query optimization and data modeling",
@@ -12180,8 +12180,8 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "SM-CS310-19",
-        "sourceId": "EV-CS310-5",
+        "id": "SM-CS310-20",
+        "sourceId": "EV-CS310-6",
         "subjectId": "CS310",
         "skill": "Python",
         "excerpt": "- Proficiency in Scala or Python for data pipeline development, not just scripting and SQL",
@@ -12190,21 +12190,11 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "SM-CS310-20",
-        "sourceId": "EV-CS310-5",
+        "id": "SM-CS310-21",
+        "sourceId": "EV-CS310-6",
         "subjectId": "CS310",
         "skill": "dashboards",
         "excerpt": "- Develop dashboards, automated reporting, and thoughtful analyses to surface actionable insights and proactively identify business opportunities",
-        "requirement": "unclear",
-        "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
-      },
-      {
-        "id": "SM-CS310-21",
-        "sourceId": "EV-CS310-5",
-        "subjectId": "CS310",
-        "skill": "stakeholders",
-        "excerpt": "- Build and maintain the metric definitions, metadata, and business context that enable AI agents to help stakeholders explore trusted data and answer business questions independently",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
         "addedAt": "2026-07-01T10:00:00Z"
@@ -12214,7 +12204,7 @@
         "sourceId": "EV-CS310-6",
         "subjectId": "CS310",
         "skill": "stakeholders",
-        "excerpt": "• Create fee explainability to internal and external stakeholders and host education sessions for internal teams to scale knowledge",
+        "excerpt": "- Build and maintain the metric definitions, metadata, and business context that enable AI agents to help stakeholders explore trusted data and answer business questions independently",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
         "addedAt": "2026-07-01T10:00:00Z"
@@ -12223,6 +12213,16 @@
         "id": "SM-CS310-23",
         "sourceId": "EV-CS310-7",
         "subjectId": "CS310",
+        "skill": "stakeholders",
+        "excerpt": "• Create fee explainability to internal and external stakeholders and host education sessions for internal teams to scale knowledge",
+        "requirement": "unclear",
+        "addedBy": "P-SOBRI",
+        "addedAt": "2026-07-01T10:00:00Z"
+      },
+      {
+        "id": "SM-CS310-24",
+        "sourceId": "EV-CS310-8",
+        "subjectId": "CS310",
         "skill": "dashboards",
         "excerpt": "The team owns everything from hierarchical time series and agentic forecasting tools that predict payment volumes and revenue margins, to the governed metrics platform that feeds company-wide dashboards and executive reporting.",
         "requirement": "unclear",
@@ -12230,8 +12230,8 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "SM-CS310-24",
-        "sourceId": "EV-CS310-7",
+        "id": "SM-CS310-25",
+        "sourceId": "EV-CS310-8",
         "subjectId": "CS310",
         "skill": "stakeholders",
         "excerpt": "We partner closely with Finance and Strategy, GTM, and Product stakeholders to directly inform financial decisions across Stripe's entire business.",
@@ -12240,8 +12240,8 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "SM-CS310-25",
-        "sourceId": "EV-CS310-7",
+        "id": "SM-CS310-26",
+        "sourceId": "EV-CS310-8",
         "subjectId": "CS310",
         "skill": "statistics",
         "excerpt": "- A PhD, MS, or BS in a quantitative field (e.g., Statistics, Operations Research, Economics, Computer Science, Engineering)",
@@ -12250,8 +12250,8 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "SM-CS310-26",
-        "sourceId": "EV-CS310-8",
+        "id": "SM-CS310-27",
+        "sourceId": "EV-CS310-9",
         "subjectId": "CS310",
         "skill": "stakeholders",
         "excerpt": "• Own roadmap prioritization, execution quality, and stakeholder alignment for both workstreams.",
@@ -12260,8 +12260,8 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "SM-CS310-27",
-        "sourceId": "EV-CS310-9",
+        "id": "SM-CS310-28",
+        "sourceId": "EV-CS310-10",
         "subjectId": "CS310",
         "skill": "SQL",
         "excerpt": "- SQL;",
@@ -12270,8 +12270,8 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "SM-CS310-28",
-        "sourceId": "EV-CS310-9",
+        "id": "SM-CS310-29",
+        "sourceId": "EV-CS310-10",
         "subjectId": "CS310",
         "skill": "Python",
         "excerpt": "- Programming languages including Python or R;",
@@ -12280,8 +12280,8 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "SM-CS310-29",
-        "sourceId": "EV-CS310-9",
+        "id": "SM-CS310-30",
+        "sourceId": "EV-CS310-10",
         "subjectId": "CS310",
         "skill": "statistics",
         "excerpt": "Master’s degree or foreign equivalent in Statistics, Data Analytics, Engineering or a related field, plus 5 years of related work experience in data science or quantitative modeling.",
@@ -12290,8 +12290,8 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "SM-CS310-30",
-        "sourceId": "EV-CS310-10",
+        "id": "SM-CS310-31",
+        "sourceId": "EV-CS310-11",
         "subjectId": "CS310",
         "skill": "SQL",
         "excerpt": "- Proficiency in SQL and a computing language such as Python or R",
@@ -12300,8 +12300,8 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "SM-CS310-31",
-        "sourceId": "EV-CS310-10",
+        "id": "SM-CS310-32",
+        "sourceId": "EV-CS310-11",
         "subjectId": "CS310",
         "skill": "Python",
         "excerpt": "- Proficiency in SQL and a computing language such as Python or R",
@@ -12310,8 +12310,8 @@
         "addedAt": "2026-07-01T10:00:00Z"
       },
       {
-        "id": "SM-CS310-32",
-        "sourceId": "EV-CS310-10",
+        "id": "SM-CS310-33",
+        "sourceId": "EV-CS310-11",
         "subjectId": "CS310",
         "skill": "statistics",
         "excerpt": "We're looking for data scientists with a passion for analyzing data, building machine learning and statistical models, and running experiments to drive impact.",
@@ -12336,7 +12336,7 @@
     ],
     "evidenceBriefs": [
       {
-        "id": "BR-CS310-35",
+        "id": "BR-CS310-36",
         "subjectId": "CS310",
         "createdBy": "P-SOBRI",
         "createdAt": "2026-07-01T10:00:00Z",
@@ -12351,7 +12351,7 @@
     ],
     "evidenceSnapshots": [
       {
-        "id": "SN-CS310-33",
+        "id": "SN-CS310-34",
         "subjectId": "CS310",
         "label": "2026 Semester 1 review",
         "takenBy": "P-SOBRI",
@@ -12378,12 +12378,12 @@
             "stage": "unknown",
             "target": "unknown",
             "sourceIds": [
-              "EV-CS310-1",
               "EV-CS310-2",
-              "EV-CS310-5",
+              "EV-CS310-3",
               "EV-CS310-6",
               "EV-CS310-7",
-              "EV-CS310-8"
+              "EV-CS310-8",
+              "EV-CS310-9"
             ]
           },
           {
@@ -12395,11 +12395,11 @@
             "stage": "unknown",
             "target": "unknown",
             "sourceIds": [
-              "EV-CS310-1",
               "EV-CS310-2",
               "EV-CS310-3",
-              "EV-CS310-5",
-              "EV-CS310-7"
+              "EV-CS310-4",
+              "EV-CS310-6",
+              "EV-CS310-8"
             ]
           },
           {
@@ -12411,10 +12411,10 @@
             "stage": "unknown",
             "target": "unknown",
             "sourceIds": [
-              "EV-CS310-1",
               "EV-CS310-10",
-              "EV-CS310-5",
-              "EV-CS310-9"
+              "EV-CS310-11",
+              "EV-CS310-2",
+              "EV-CS310-6"
             ]
           },
           {
@@ -12427,9 +12427,9 @@
             "target": "unknown",
             "sourceIds": [
               "EV-CS310-10",
-              "EV-CS310-2",
-              "EV-CS310-7",
-              "EV-CS310-9"
+              "EV-CS310-11",
+              "EV-CS310-3",
+              "EV-CS310-8"
             ]
           },
           {
@@ -12442,14 +12442,14 @@
             "target": "unknown",
             "sourceIds": [
               "EV-CS310-10",
-              "EV-CS310-5",
-              "EV-CS310-9"
+              "EV-CS310-11",
+              "EV-CS310-6"
             ]
           }
         ],
         "postings": [
           {
-            "id": "EV-CS310-1",
+            "id": "EV-CS310-2",
             "identity": "posting:sample:stripe:5416444",
             "title": "Data Analyst",
             "organisation": "Stripe",
@@ -12458,7 +12458,7 @@
             "textHash": "fnv1a-3eb3f878-975"
           },
           {
-            "id": "EV-CS310-2",
+            "id": "EV-CS310-3",
             "identity": "posting:sample:stripe:8230296",
             "title": "Data Analyst, Global Growth",
             "organisation": "Stripe",
@@ -12467,7 +12467,7 @@
             "textHash": "fnv1a-20adbaa1-98d"
           },
           {
-            "id": "EV-CS310-3",
+            "id": "EV-CS310-4",
             "identity": "posting:sample:stripe:8194291",
             "title": "Data Analyst, Intern",
             "organisation": "Stripe",
@@ -12476,7 +12476,7 @@
             "textHash": "fnv1a-68604535-974"
           },
           {
-            "id": "EV-CS310-5",
+            "id": "EV-CS310-6",
             "identity": "posting:sample:stripe:8189909",
             "title": "Data Analyst, NYC",
             "organisation": "Stripe",
@@ -12485,7 +12485,7 @@
             "textHash": "fnv1a-3cc606ef-97e"
           },
           {
-            "id": "EV-CS310-6",
+            "id": "EV-CS310-7",
             "identity": "posting:sample:stripe:8044924",
             "title": "Data Analyst, Payments",
             "organisation": "Stripe",
@@ -12494,7 +12494,7 @@
             "textHash": "fnv1a-0ff7901c-93a"
           },
           {
-            "id": "EV-CS310-7",
+            "id": "EV-CS310-8",
             "identity": "posting:sample:stripe:7440963",
             "title": "Data Science Manager, Finance and Strategy",
             "organisation": "Stripe",
@@ -12503,7 +12503,7 @@
             "textHash": "fnv1a-c7d40dd0-92f"
           },
           {
-            "id": "EV-CS310-8",
+            "id": "EV-CS310-9",
             "identity": "posting:sample:stripe:7923653",
             "title": "Data Science Manager, Risk",
             "organisation": "Stripe",
@@ -12512,7 +12512,7 @@
             "textHash": "fnv1a-d9ba2002-93b"
           },
           {
-            "id": "EV-CS310-9",
+            "id": "EV-CS310-10",
             "identity": "posting:sample:stripe:8222149",
             "title": "Data Scientist",
             "organisation": "Stripe",
@@ -12521,7 +12521,7 @@
             "textHash": "fnv1a-75233e42-946"
           },
           {
-            "id": "EV-CS310-10",
+            "id": "EV-CS310-11",
             "identity": "posting:sample:stripe:5895430",
             "title": "Data Scientist",
             "organisation": "Stripe",
@@ -12534,11 +12534,11 @@
     ],
     "briefDecisions": [
       {
-        "id": "DEC-CS310-40",
-        "briefId": "BR-CS310-35",
+        "id": "DEC-CS310-41",
+        "briefId": "BR-CS310-36",
         "subjectId": "CS310",
         "courseVersionId": "CS310-v1",
-        "term": "",
+        "term": "2026/2027 semester 1",
         "byPersonId": "P-RAHMAN",
         "at": "2026-07-01T10:00:00Z",
         "outcome": "adopt",
@@ -12547,65 +12547,75 @@
     ],
     "events": [
       {
-        "id": "EVT-CS310-34",
+        "id": "EVT-CS310-1",
+        "at": "2026-07-01T10:00:00Z",
+        "byPersonId": "P-SOBRI",
+        "kind": "term-set",
+        "refs": {
+          "subjectId": "CS310",
+          "term": "2026/2027 semester 1"
+        }
+      },
+      {
+        "id": "EVT-CS310-35",
         "at": "2026-07-01T10:00:00Z",
         "byPersonId": "P-SOBRI",
         "kind": "snapshot-frozen",
         "refs": {
           "subjectId": "CS310",
-          "snapshotId": "SN-CS310-33"
-        }
-      },
-      {
-        "id": "EVT-CS310-36",
-        "at": "2026-07-01T10:00:00Z",
-        "byPersonId": "P-SOBRI",
-        "kind": "brief-prepared",
-        "refs": {
-          "subjectId": "CS310",
-          "briefId": "BR-CS310-35"
+          "snapshotId": "SN-CS310-34"
         }
       },
       {
         "id": "EVT-CS310-37",
         "at": "2026-07-01T10:00:00Z",
         "byPersonId": "P-SOBRI",
-        "kind": "brief-sent",
+        "kind": "brief-prepared",
         "refs": {
           "subjectId": "CS310",
-          "briefId": "BR-CS310-35"
+          "briefId": "BR-CS310-36"
         }
       },
       {
-        "id": "EVT-CS310-39",
+        "id": "EVT-CS310-38",
+        "at": "2026-07-01T10:00:00Z",
+        "byPersonId": "P-SOBRI",
+        "kind": "brief-sent",
+        "refs": {
+          "subjectId": "CS310",
+          "briefId": "BR-CS310-36"
+        }
+      },
+      {
+        "id": "EVT-CS310-40",
         "at": "2026-07-01T10:00:00Z",
         "byPersonId": "P-RAHMAN",
         "kind": "brief-read",
         "refs": {
           "subjectId": "CS310",
-          "briefId": "BR-CS310-35"
+          "briefId": "BR-CS310-36"
         }
       },
       {
-        "id": "EVT-CS310-41",
+        "id": "EVT-CS310-42",
         "at": "2026-07-01T10:00:00Z",
         "byPersonId": "P-RAHMAN",
         "kind": "decision-recorded",
         "refs": {
           "subjectId": "CS310",
-          "briefId": "BR-CS310-35",
-          "decisionId": "DEC-CS310-40"
+          "briefId": "BR-CS310-36",
+          "decisionId": "DEC-CS310-41"
         }
       },
       {
-        "id": "EVT-CS310-45",
+        "id": "EVT-CS310-46",
         "at": "2026-07-01T10:00:00Z",
         "byPersonId": "P-SOBRI",
         "kind": "version-adopted",
         "refs": {
           "subjectId": "CS310",
-          "versionId": "CS310-workspace-44",
-          "draftId": "REV-CS310-43"
+          "versionId": "CS310-workspace-45",
+          "draftId": "REV-CS310-44"
         }
       }
     ],
@@ -12923,6 +12933,6 @@
         "ratedAt": "2026-07-01T10:00:00Z"
       }
     ],
-    "idSeq": 48
+    "idSeq": 49
   }
 }

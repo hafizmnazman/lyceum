@@ -206,3 +206,35 @@ What was built:
 Not done in A5, by design: the recorded Claude Desktop run (on the owner's list in docs/run-log.md, steps in docs/doors.md); remote access, OAuth and the other doors (Track B).
 
 Accepted by: the Code lane (owner to sign).
+
+## A6, deck, diagram, brief, poster: 22 October 2026
+
+What was built:
+
+- **`deck/`, the pitch as an HTML deck** at 1920 by 1080: the eleven slides of plan Section 14 in the order of the story spine, each with its speaker notes (the spoken gist, the timing, the transition and, on the last slide, the two answers rehearsed word for word). Real screenshots with a hairline border, the mascots where a helper is acting, the amber token for everything not built, the bundled faces through `theme.generated.css`, which `scripts/gen-deck.mjs` writes from the tokens. Keys: arrows, space, Page Up and Page Down, Home, End, F for full screen, N for the notes, V for the film. Five numbers in the whole talk: 1 of 9, 12 to 18 months, 39%, TRL 6 and 185 checks.
+- **`scripts/gen-deck.mjs`** checks the deck as Chrome renders it (every figure in its claims row, every other number marked as a reference, the receipt against its source in the sample workspace, the waffle and calendar cells against their figures, the clauses word for word, no text into a footer, every image loaded, no dash), then exports the slides at 2x, a vector PDF and a PPTX with one image per slide and the notes as speaker notes (the film joins slide 5 as a media object once `deck/media/loop90.mp4` exists). It reads both back: the PDF's pages and digits with unpdf, the PPTX through PowerPoint itself. The exports are rebuilt, not committed.
+- **`scripts/gen-architecture.mjs`**: the diagram of Section 12 in C4 notation (a title with its scope, a legend, every line labelled with its purpose and technology, built solid and planned dashed, readable in black and white), with three monochrome Simple Icons marks and the ownership line, to `docs/presentation/architecture.svg` and a 3840 by 2160 `.png`; `--check` compares the SVG. The deck uses the PNG, the brief and the poster the SVG.
+- **`scripts/gen-brief-pdf.mjs`**, rewritten to the tokens and the six steps: three A4 pages carrying the eight beats, from the person and the receipt to the organiser's review and what was done about each point, and the ask. **`scripts/gen-poster.mjs`**: the A1 poster, landscape, with the loop and the mascots, the receipt, the latency, the architecture, what is real and the ask; its QR slot is marked planned until the landing page is deployed. Both check their numbers like the deck, through `scripts/lib/claims-node.mjs`.
+- **`scripts/presentation-shots.mjs`** captures the loop from the sample workspace at a 1180 pixel window, with a refused paraphrase and a single count card; **`scripts/gen-sample-decks.mjs`** builds both sample decks from the same workspace and, with PowerPoint installed, exports the teaching pack's slides through **`scripts/render-pptx.ps1`**, which also reads a PPTX's slides, notes and media back.
+- **`docs/brand-use.md`**: each mark shown, its source and its terms, and each product named in text with the reason.
+- **Corrected on the way:** the ring's term no longer overflows the ring; History orders events saved in the same second by save order; the tour sets the term at the Course step and files the results under it, so the decision record, the version and the results carry the term the brief does; the tour's length moved to about 7 minutes in the claims register.
+
+| Command | Result |
+|:--|:--|
+| `npm run deck` | Passed: 11 slides, five figures in the claims register, the receipt in its source, the clauses word for word, no dash; PDF 2,461 KB, 11 pages read back with every digit registered or a reference; PPTX 5,039 KB opened in PowerPoint, 11 slides at 960 by 540 points, every slide's notes as written, no media object yet (the film is A7) |
+| `node scripts/gen-brief-pdf.mjs` | Passed: three pages, every number registered or a reference, 8.1, 20.8 and 5.6 mm spare above the footers |
+| `node scripts/gen-poster.mjs` | Passed: A1 landscape, every number registered or a reference, every card inside its row |
+| `node scripts/gen-sample-decks.mjs` | Both decks written from the sample workspace; PowerPoint opened the pack, 6 slides with their notes |
+| `node scripts/gen-architecture.mjs --check` | The architecture diagram matches its generator |
+| `npm run typecheck` | Passed |
+| `npm run prove:all` | 185 passed, 0 failed, seventeen suites |
+| `npm run build` | Passed |
+| `npm run smoke`, `smoke:integrity`, `smoke:workspace`, `smoke:curriculum` | 19 of 19, 2 of 2, 7 of 7 and 6 of 6 passed |
+| `node scripts/walk.mjs` | WALK OK, 21 checks |
+| Guide check, contrast check, dash scan, backup migration, theme, mascot and sample checks | Matches; CONTRAST CHECK OK (61 ratios, 176 files, 37 generated outputs); no en or em dash in 250 text files; BACKUP MIGRATION OK; all generated outputs current |
+
+The C4 checklist for the diagram: title and scope, yes; legend, yes; every line labelled with direction, purpose and technology, yes; built and planned told apart by stroke as well as by a worded tag, so it reads in black and white, yes; one colour per meaning, yes.
+
+Not done in A6: the film inside the deck and the PPTX (A7 renders it); the playback test and the visual review on two screens, which need the presenting laptop and the Deck and poster lane; the poster's QR code (Needs the owner, item 3); marks beyond Claude, MCP and Greenhouse (Needs the owner, item 1).
+
+Accepted by: the Deck and poster lane (owner to sign).

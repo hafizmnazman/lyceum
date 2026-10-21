@@ -205,10 +205,15 @@ export function CurriculumHistoryPanel({ state, subject }: { state: AppState; su
   const revisions = [...state.curriculumDrafts].filter(d => d.subjectId === subject.id).reverse();
   const decisions = state.briefDecisions.filter(d => d.subjectId === subject.id);
   const name = (id: string) => state.people.find(p => p.id === id)?.name ?? id;
+  // Newest first. At one moment (the pinned demo clock) the event log's order decides; without an event, a version
+  // sits above a decision, because the change follows the decision in the loop.
+  const seq = new Map<string, number>();
+  state.events.forEach((e, i) => { if (e.refs.subjectId !== subject.id) return; if (e.kind === "decision-recorded" && e.refs.decisionId) seq.set(e.refs.decisionId, i); if (e.kind === "version-adopted" && e.refs.versionId) seq.set(e.refs.versionId, i); });
   const entries = [
-    ...versions.map((v, i) => ({ at: v.changedAt, order: i, kind: "version" as const, v })),
-    ...decisions.map((d, i) => ({ at: d.at, order: versions.length + i, kind: "decision" as const, d })),
-  ].sort((a, b) => b.at.localeCompare(a.at) || b.order - a.order);
+    ...versions.map((v, i) => ({ at: v.changedAt, order: i, kind: "version" as const, seq: seq.get(v.id), v })),
+    ...decisions.map((d, i) => ({ at: d.at, order: i, kind: "decision" as const, seq: seq.get(d.id), d })),
+  ].sort((a, b) => b.at.localeCompare(a.at)
+    || (a.seq !== undefined && b.seq !== undefined ? b.seq - a.seq : a.kind !== b.kind ? (a.kind === "version" ? -1 : 1) : b.order - a.order));
   return <div>
     <section className="workspace-panel" aria-labelledby="history-title"><h2 id="history-title">Versions and decisions</h2>
       <p className="muted">One timeline, newest first: every local course version and every decision recorded on a brief. Local versions preserve the outline, the reason and the teaching term; they do not attest university approval.</p>

@@ -50,6 +50,7 @@ export function CourseOverview({ state, person, subject, proposal, onPlan, onPro
             <p className="muted">{o?.assessmentEvidence ? "Achievement: " + o.assessmentEvidence : "Achievement evidence not recorded"} · {summary.sessions.filter((s) => s.cloIds.includes(clo.id)).length} linked sessions</p>
           </li>;
         })}</ul> : <p>No outcomes are recorded for this course yet. {fresh ? "Start a revision in Update to write the first outcome; the loop opens once one exists." : ""}</p>}
+        {!plan?.term && can(person, "draft-change", { subjectId: subject.id, assignments: state.assignments }) ? <TermSetter subjectId={subject.id} notes={plan?.notes ?? ""} /> : null}
         {fresh && clos.length ? <p className="muted">The course is open. Next, watch what employers ask for; the revision comes after a decision. <Button variant="quiet" onClick={onCurriculum}>Revise the outline now</Button></p> : null}
       </section>
 
@@ -207,6 +208,20 @@ export function TeachingPlanPanel({ state, person, subject }: CourseProps) {
       {!filtered.length ? <div className="workspace-panel"><h3>{summary.sessions.length ? "No sessions match this filter" : "Build your first teaching session"}</h3><p>{summary.sessions.length ? "Choose All sessions to see the rest of your plan." : "Start with the next class you need to teach. You can save a topic as a draft, then return to add its activity, CLO links and materials."}</p>{!editor && mayEdit && !summary.sessions.length ? <Button onClick={add}>Add the first session</Button> : null}</div> : null}
     </div>
   );
+}
+
+/** The term this loop runs for, set at the start so the brief, the decision, the version and the results all carry it
+ *  (plan Section 4: the loop is per course and per term). Shown on the Course step until a term is set; Teach edits it after. */
+function TermSetter({ subjectId, notes }: { subjectId: string; notes: string }) {
+  const [term, setTerm] = useState("");
+  const [error, setError] = useState("");
+  return <form className="term-setter" onSubmit={(e) => { e.preventDefault(); const result = saveTeachingPlanDetails(subjectId, { term, notes }); setError(result.ok ? "" : result.error); }}>
+    <Field label="The term this loop runs for" hint="Every record in the loop carries it: the brief, the decision, the version and the results.">
+      <Input data-demo-id="course-term" value={term} onChange={(e) => setTerm(e.target.value)} placeholder="e.g. 2026/2027 semester 1" />
+    </Field>
+    <Button type="submit" disabled={!term.trim()} data-demo-id="course-term-save">Set the term</Button>
+    {error ? <p role="alert" className="save-status">{error}</p> : null}
+  </form>;
 }
 
 function PlanDetails({ subjectId, plan, mayEdit }: { subjectId: string; plan?: TeachingPlan; mayEdit: boolean }) {

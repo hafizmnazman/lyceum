@@ -4,9 +4,11 @@ The autonomous run of Track A (docs/lyceum-upgrade-plan.md Section 17.5). Times 
 
 ## Needs the owner
 
-1. **The doors strip: official marks or neutral icons?** (raised 2026-10-22 06:16, A2b) Plan Section 17.1 asks for the landing page's doors strip "with the official marks" and a `docs/brand-use.md` listing each mark and its source. A2b shipped neutral Lucide icons with each door's name and a Planned tag, because the third-party marks (Claude, ChatGPT, Copilot, Gemini, Teams, the LMS) carry usage terms nobody has checked, and showing them beside doors that are not built could read as an endorsement or an integration. To switch: approve the marks and their sources (from each brand's press or brand page), and the strip and `docs/brand-use.md` follow in one change (`DOORS` in `src/ui/screens/Landing.tsx`). Nothing else waits on this.
+1. **The doors strip: official marks or neutral icons?** (raised 2026-10-22 06:16, A2b) Plan Section 17.1 asks for the landing page's doors strip "with the official marks" and a `docs/brand-use.md` listing each mark and its source. A2b shipped neutral Lucide icons with each door's name and a Planned tag, because the third-party marks (Claude, ChatGPT, Copilot, Gemini, Teams, the LMS) carry usage terms nobody has checked, and showing them beside doors that are not built could read as an endorsement or an integration. To switch: approve the marks and their sources (from each brand's press or brand page), and the strip and `docs/brand-use.md` follow in one change (`DOORS` in `src/ui/screens/Landing.tsx`). Nothing else waits on this. *Update, A6 (07:45):* the architecture diagram, and so the deck, the brief and the poster, now carry three Simple Icons marks where Lyceum really connects (Claude and MCP on the built local door, Greenhouse on the board it reads), with the ownership line; every other product is named in text, because Microsoft needs a licence, Google a request that takes up to two weeks, Moodle permission, and the OpenAI and Instructure terms were not read in a run that sends nothing off the machine. `docs/brand-use.md` lists each mark, its source and its terms. The landing strip is unchanged until you answer.
 
 2. **Run the local door once in Claude Desktop** (raised 2026-10-22 06:37, A5) Plan Section 17.1 asks for a recorded Claude Desktop run of the door. It needs the desktop app and your account, and configuring it changes a file outside the repository, so this session recorded a real stdio session with the official SDK client instead (`node mcp/try.ts`, in docs/doors.md). The steps and what to check are in docs/doors.md, under "The manual Claude Desktop run"; record the date and the first lines of the answer there. Nothing else waits on this.
+
+3. **The poster's QR code needs a public address for the landing page** (raised 2026-10-22 07:45, A6) Plan Section 15 puts a QR code to the public landing page on the poster. No deployed address exists in the repository, and deploying sends the build off this machine, so the poster's slot is marked planned. Once the page is live, make a QR image of its address and run `node scripts/gen-poster.mjs --qr <file>`; the poster PDF is regenerated with it. Nothing else waits on this.
 
 ## Codex queue
 
@@ -123,8 +125,30 @@ None queued yet.
 
 ### A6, deck, diagram, brief, poster
 
-- (next)
+- 2026-10-22 06:44 started, right after the line-end commit; re-read Section 17.5 and this log, then Sections 12, 13 and 14 and the design note's Sections 5 and 6.
+- 06:44 installed `simple-icons` 16.35.0 (dev dependency) for the monochrome marks in the diagram; its licence terms are recorded in `docs/brand-use.md`.
+- 06:48 `scripts/presentation-shots.mjs` rewritten for the loop: one capture of a proposed quotation beside its source, then the sample workspace restored through the app's own restore and every loop screen captured from it; eleven shots written.
+- 06:50 the shots showed the ring's term line overflowing ("2026/2027 semester 1"); `ringTermLines` in `src/app/loop.ts` now sets the term on at most two lines inside the ring, with a proof in `prove-journey`.
+- 06:51 the History shot showed events saved in the same second out of order; the timeline now breaks a tie by save order.
+- 06:55 `scripts/gen-architecture.mjs` written; the first render had tags over door names and clipped chips, fixed and rendered again to `docs/presentation/architecture.svg` and `.png` (3840 by 2160).
+- 07:05 the Decide shot showed the decision record saying "term not set" while the brief said 2026/2027 semester 1, because the tour named the term only at Update. The tour now sets the term at the Course step (a field that shows until a term is set) and the sample workspace was regenerated (docs/decisions.md).
+- 07:09 the sample decks now build from the sample workspace, one dataset with the shots and the door; `scripts/render-pptx.ps1` opens the teaching pack in PowerPoint (read-only, no window) and exports its slides: 6 slides read back with their notes.
+- 07:15 the Learn shot showed the results file's own term label (2025-S1); the tour now files the results under the loop's term (`upload-term`, typed with a new `clear` option).
+- 07:16 check: `npm run typecheck` passed; `node --test src/prove-mcp.ts` 5 of 5 against the regenerated sample.
+- 07:29 shots captured at a 1180 pixel window, with a single dashboards card and a refused paraphrase added; the proposal shot is taken from the posting the receipt cites (Stripe's Data Analyst, Intern, published 2026-10-01).
+- 07:30 `deck/` written: eleven slides with speaker notes in `index.html`, `deck.css` on the tokens, `deck.js` for the keys, the scaling and the film; `scripts/gen-deck.mjs` writes the theme, checks and exports. Its first run found two slides crowding their footers and the receipt's count read without its space; all fixed.
+- 07:30 check: `npm run deck` passed: 11 slides, five figures in the claims register, the receipt in its source, the clauses word for word, no dash; the PDF (2,461 KB) read back with unpdf, 11 pages with every digit registered or a reference; the PPTX (5,039 KB) opened in PowerPoint, 11 slides at 960 by 540 points with every slide's notes as written and no media object, because the film is not rendered yet (A7). Four PDF pages rendered with the Windows PDF renderer and looked at.
+- 07:31 `deck/export/` and `deck/media/*.mp4` ignored (docs/decisions.md); npm scripts `deck`, `deck:check`, `gen:architecture`, `gen:brief`, `gen:poster` and `gen:sample-decks` added.
+- 07:32 the claims checks moved into `scripts/lib/claims-node.mjs`, shared by the deck, the brief and the poster.
+- 07:35 `scripts/gen-brief-pdf.mjs` rewritten to the tokens and the six steps: three A4 pages carrying the eight beats, every number registered. The first run overran page 3's footer by 3.9 mm; fixed.
+- 07:39 `scripts/gen-poster.mjs` written: A1 landscape (docs/decisions.md). The first renders found a card growing past its row, which the check did not catch; the check now does, and the layout was fixed.
+- 07:40 the tour now runs 393 seconds at full speed, so `tour-length` in `docs/claims.md` moved to about 7 minutes, as the landing page computes it; `prove-journey` 9 of 9.
+- 07:41 `docs/brand-use.md` written; Needs the owner item 1 updated and item 3 (the QR code) added; thirteen decisions logged (docs/decisions.md).
+- 07:41 a delete of the stale, untracked `docs/presentation/shot-update-hours.png` was held by the Blast Radius hook and not retried; the file stays out of the commit. The seven old shots the previous brief used (`shot-agents`, `shot-evidence-table`, `shot-home-with-brief`, `shot-how-it-works`, `shot-inbox-brief`, `shot-meeting-brief`, `shot-studio-journey`) are no longer referenced and are left in place for the owner to remove.
+- 07:41 check: `npm run typecheck` passed; `npm run prove:all` 185 passed, 0 failed, seventeen suites; `npm run build` passed.
+- 07:41 check: guide check matches; contrast check OK (61 ratios, 176 files, 37 generated outputs); dash scan clean (250 files); backup migration OK; the theme, mascot, architecture and sample checks match.
+- 07:44 check: `npm run smoke` 19 of 19, `smoke:integrity` 2 of 2, `smoke:workspace` 7 of 7, `smoke:curriculum` 6 of 6; `node scripts/walk.mjs` WALK OK (21 checks).
 
 ## What is left
 
-A6, A7 (the parts that need no human voice), A8, in that order.
+A7 (the parts that need no human voice), A8, in that order.

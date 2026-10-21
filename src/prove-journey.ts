@@ -16,7 +16,7 @@ import {
 } from "./app/store.ts";
 import { attainment, LEARN_CLAIM } from "./lib/learn.ts";
 import { parseWorkspaceBackup } from "./lib/workspaceBackup.ts";
-import { LOOP_STEPS, REPORT_TABS, loopState, stepDef, taughtVersionId, termWindow, type CourseStep } from "./app/loop.ts";
+import { LOOP_STEPS, REPORT_TABS, loopState, ringTermLines, stepDef, taughtVersionId, termWindow, type CourseStep } from "./app/loop.ts";
 import { hashFor, parseRoute } from "./app/routes.ts";
 import { runTimeline } from "./app/runs.ts";
 import { briefDecisionState, decisionStatusText, evidenceChangedAt } from "./lib/decisions.ts";
@@ -347,6 +347,16 @@ test("Learn counts a term's results only when they are matched to the version ta
   assert.equal(N, 45, "N is the most students the file records for any one outcome");
   assert.deepEqual(rows.map((r) => [r.cloId, r.n, Boolean(r.clo)]), [["CLO5", 42, true], ["CLO4", 45, false]], "a row for an outcome the course does not have is kept and shown as such");
   assert.equal(LEARN_CLAIM, "No learning gain is claimed; the benchmark has not been run.", "the sentence of plan Section 9.8");
+});
+
+test("the ring prints the term on at most two lines that fit inside it", () => {
+  assert.deepEqual(ringTermLines("2026-S2", 12), ["2026-S2"]);
+  assert.deepEqual(ringTermLines("Term not set", 12), ["Term not set"]);
+  assert.deepEqual(ringTermLines("2026/2027 semester 1", 12), ["2026/2027", "semester 1"]);
+  for (const term of ["2026/2027 semester 1 intake A", "Semester1of2026and2027", "a b c d e f g h i j k l m n"]) {
+    const lines = ringTermLines(term, 12);
+    assert.ok(lines.length <= 2 && lines.every((l) => l.length <= 12), term + ": " + JSON.stringify(lines));
+  }
 });
 
 test("each step has one address, the Report sub-step lives in the URL, and a bad path opens nothing", () => {

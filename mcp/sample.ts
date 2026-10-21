@@ -26,6 +26,9 @@ export async function buildSampleBackup(): Promise<string> {
   const S = store.getState;
   store.resetDemoState(); store.login(PEOPLE_IDS.sobri);
 
+  // Course: the term this loop runs for, set first so every record carries it.
+  must(store.saveTeachingPlanDetails("CS310", { term: "2026/2027 semester 1", notes: "" }), "term");
+
   // Watch: the dated saved sample of the Stripe board, every posting kept.
   must(await store.runCollection("CS310", { provider: "sample", board: "", query: "", inText: false },
     async () => ({ ok: true as const, postings: sample.postings, retrievedAt: sample.retrievedAt, cached: false, total: sample.postings.length, label: sample.label })), "collect");
@@ -65,7 +68,7 @@ export async function buildSampleBackup(): Promise<string> {
 
   // Learn: the sample results file, read and interpreted as the app does offline, matched to the version taught.
   const doc = parseSheet(readFileSync(new URL("public/demo/results.xlsx", ROOT)), "results.xlsx", "xlsx");
-  store.stagePendingIntake(doc, interpretLocally(doc, S().subjects, S().clos));
+  store.stagePendingIntake(doc, { ...interpretLocally(doc, S().subjects, S().clos), termGuess: "2026/2027 semester 1" }); // filed under this loop's term, as in the tour
   if (!store.confirmPendingIntake()) throw new Error("results: nothing was filed");
   return store.exportWorkspaceBackup();
 }

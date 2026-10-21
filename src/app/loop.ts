@@ -185,6 +185,18 @@ export function loopState(state: AppState, subjectId: string): LoopState {
   return { window, steps, next, closed, adoptedSinceDecision: adoptedSince.length, latestBrief, decision, singleOwner, summary };
 }
 
+/** The term on at most two lines that fit inside the ring (the mono face is about 0.6 em a character),
+ *  split at spaces; a word too long for a line is shortened with three dots. */
+export function ringTermLines(term: string, maxChars: number): string[] {
+  const fit = (s: string) => (s.length <= maxChars ? s : s.slice(0, Math.max(1, maxChars - 3)) + "...");
+  if (term.length <= maxChars) return [term];
+  const words = term.split(/\s+/).filter(Boolean);
+  let first = "";
+  while (words.length && (first ? first + " " + words[0] : words[0]).length <= maxChars) first = first ? first + " " + words.shift() : words.shift()!;
+  if (!first) first = fit(words.shift()!);
+  return words.length ? [first, fit(words.join(" "))] : [first];
+}
+
 /** Done marks and counts for each step of one course, from saved records only. */
 export function loopStatus(state: AppState, subjectId: string): LoopStepStatus[] {
   return loopState(state, subjectId).steps;

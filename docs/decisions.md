@@ -541,3 +541,133 @@ Chosen: (b), because a dependency upgrade belongs in Track B with its own checks
 Reverse it if: an advisory concerns a path the demo uses.
 
 To reverse: `package.json` and `package-lock.json`.
+
+## 2026-10-22 06:55, A6: which marks the diagram carries
+
+Options: (a) the official mark of every product in Section 12, as the plan asks. (b) Simple Icons marks, unmodified and in one colour, only for Claude, the Model Context Protocol and Greenhouse, whose doors or sources are built, and every other product named in text, because Microsoft needs a licence, Google a request that takes up to two weeks, Moodle permission for a logo, and the OpenAI and Instructure terms were not read in a run that sends nothing off the machine. (c) No marks at all.
+
+Chosen: (b), because it shows real marks where Lyceum really connects and claims nothing about the rest; `docs/brand-use.md` records each mark, its source and its terms.
+
+Reverse it if: the owner reads and accepts a brand's terms, or obtains a licence, for a mark in the second table of `docs/brand-use.md`.
+
+To reverse: the `doors` list and the imports in `scripts/gen-architecture.mjs`, then `docs/brand-use.md`.
+
+## 2026-10-22 07:05, A6: one term for every record in the demo
+
+Options: (a) keep the tour as A4 left it, where the term is named only at Update, so the decision record says "term not set" and the results file keeps its own label, 2025-S1, while the brief and the ring say 2026/2027 semester 1. (b) Have the lecturer set the term at the Course step (a small field that shows until a term is set) and file the results under the loop's term, so the brief, the decision, the version and the results all carry 2026/2027 semester 1. (c) Show the window's current term on records that stored none.
+
+Chosen: (b), because the decision record is the deck's central artefact and must be bound to the term it decides, as Section 4 specifies; (c) would print a term the record never held.
+
+Reverse it if: the owner wants the term entered only at Update, as before.
+
+To reverse: `TermSetter` in `src/ui/screens/CourseWorkspace.tsx`, the two steps in `src/demo/script.ts` (with `clear` in `src/demo/runner.ts`), `upload-term` in `src/ui/screens/Upload.tsx`, and the term lines in `mcp/sample.ts`; regenerate the sample.
+
+## 2026-10-22 07:12, A6: the receipt on the first slide
+
+Options: (a) the first confirmed quotation in the sample, from Stripe's Data Analyst posting published 2023-11-01. (b) The same sentence from Stripe's Data Analyst, Intern posting, published 2026-10-01, three weeks before the Grand Final, with the screenshot of the proposal taken from that posting so both slides cite one source. (c) A different skill's sentence.
+
+Chosen: (b), because the receipt has to read as what employers ask for now, and the slide and the screen must agree on the posting, its date and its link.
+
+Reverse it if: a fresh live fetch before the freeze changes the sample, when the receipt should be the newest confirmed sentence again.
+
+To reverse: slide 1 in `deck/index.html`, the receipt in `scripts/gen-brief-pdf.mjs` and `scripts/gen-poster.mjs`, the proposal pick in `scripts/presentation-shots.mjs`, and the `deck-receipt` row in `docs/claims.md`.
+
+## 2026-10-22 07:20, A6: the deck's five numbers
+
+Options: (a) show the price hypothesis (RM 6,000 to 15,000 a year) and TRL 7 on slides 8 and 10 as well. (b) Keep the talk to five numbers as Section 14 asks: 1 of 9, 12 to 18 months, 39%, TRL 6 and 185 checks; the price stays the hypothesis the pilot tests, spoken only if asked, and TRL 7 is named in the notes as the next level. (c) Drop the check count.
+
+Chosen: (b), because the plan sets the limit at five and the price is a hypothesis, not a finding.
+
+Reverse it if: the judges ask for the price on screen, or the organiser's template wants a business slide with figures.
+
+To reverse: slides 8 and 10 in `deck/index.html` and their rows in `docs/claims.md`.
+
+## 2026-10-22 07:20, A6: the relevant environment on slide 8
+
+Options: (a) "real postings from a real board, a real syllabus, a lecturer persona", as plan Section 14 words it. (b) "a sample course outline" in place of "a real syllabus", because the outline in `public/demo` is written by `scripts/gen-demo-files.mjs`, not taken from a university. (c) Leave the environment out.
+
+Chosen: (b), because the honesty rule in Section 0 says synthetic data says synthetic, which settles the plan's wording; the NASA reviewer checklist still gets a named environment.
+
+Reverse it if: a real syllabus, with its owner's permission, replaces the sample before the freeze.
+
+To reverse: slide 8 in `deck/index.html`, page 2 of `scripts/gen-brief-pdf.mjs` and the `deck-trl` row in `docs/claims.md`.
+
+## 2026-10-22 07:20, A6: slide 10's line
+
+Options: (a) "The review happens anyway; the pack writes itself", the plan's spoken line. (b) "The review happens anyway; the evidence is kept", with the term's review pack shown as planned, because the accreditation pack from the term's records is not built. (c) No headline.
+
+Chosen: (b), because the brief, the reports and the decision records exist today and the review pack does not.
+
+Reverse it if: the term recap ships as the review pack (Track B).
+
+To reverse: slide 10 and its notes in `deck/index.html`.
+
+## 2026-10-22 07:25, A6: the deck as a file in the repository
+
+Options: (a) slides written as data and generated into HTML. (b) One hand-edited `deck/index.html`, with every figure marked `data-claim` and every other number `data-ref`, which `scripts/gen-deck.mjs` checks against `docs/claims.md`, the sample workspace and the accreditor clauses before it exports. (c) A PowerPoint file as the source.
+
+Chosen: (b), because the Deck and poster lane can edit slides as plain HTML in the theme while the checks keep every number honest, and the PDF and PPTX are derived.
+
+Reverse it if: the lane prefers to work in PowerPoint, when the PPTX becomes the source and the HTML a fallback.
+
+To reverse: `deck/` and `scripts/gen-deck.mjs`.
+
+## 2026-10-22 07:25, A6: the deck's exports kept out of git
+
+Options: (a) commit `lyceum-deck.pdf` (2.4 MB) and `lyceum-deck.pptx` (5 MB) on every change. (b) Ignore `deck/export/` and `deck/media/*.mp4`, as the plan already does for video renders, and rebuild them with `npm run deck` on the presenting laptop, which is also where Section 14.3 says the PPTX and its film must be tested. (c) Commit only the PDF.
+
+Chosen: (b), because the exports are derived from committed sources by a checked script, and binary copies would go stale with every edit.
+
+Reverse it if: the team repository needs the files for someone without Chrome or Node.
+
+To reverse: the last three lines of `.gitignore`.
+
+## 2026-10-22 07:25, A6: how the teaching pack appears on slide 7
+
+Options: (a) a screenshot of the PowerPoint window. (b) The pack's slides exported by PowerPoint itself through its automation interface (read-only, no window), which is how PowerPoint draws the downloaded file, labelled so. (c) A render of the PPTX by another program.
+
+Chosen: (b), because it shows the real file as PowerPoint renders it without driving the desktop, and the same script reads the deck's PPTX back to verify it.
+
+Reverse it if: the lane wants the PowerPoint window itself in the shot, which needs a person at the machine.
+
+To reverse: `scripts/render-pptx.ps1` and the PowerPoint step in `scripts/gen-sample-decks.mjs`.
+
+## 2026-10-22 07:25, A6: one dataset for the sample decks
+
+Options: (a) keep `scripts/gen-sample-decks.mjs` replaying its own version of the flow from `public/demo`. (b) Build both sample decks from `mcp/sample-workspace.json`, the tour's end state that the screenshots and the door already read, stamped with its export time so a rerun writes the same slides. (c) Delete the sample decks.
+
+Chosen: (b), because Section 15 asks for one dataset for everything, and the deck shows this pack.
+
+Reverse it if: the samples need a state the tour does not reach.
+
+To reverse: `scripts/gen-sample-decks.mjs`.
+
+## 2026-10-22 07:30, A6: screenshots from a narrower window
+
+Options: (a) capture at a 1440 pixel window, as before. (b) Capture at 1180, still wide enough for the sidebar layout, so each panel is narrower and its text larger once placed on a slide, a page or the poster; add single-card shots (the dashboards count) and crop the rest by region. (c) Capture at a phone width.
+
+Chosen: (b), because a screenshot placed at 1000 pixels on a 1920 slide then shows the app's text at nearly its real size.
+
+Reverse it if: a shot needs the full laptop layout.
+
+To reverse: the viewport line in `scripts/presentation-shots.mjs`.
+
+## 2026-10-22 07:40, A6: the poster's format
+
+Options: (a) A1 portrait, the usual booth format, which shrinks the 16:9 diagram to fit the story beats. (b) A1 landscape (841 by 594 mm), with beats 1 to 4 across the top and the diagram 452 mm wide below, so its smallest labels print near 3 mm and read from a metre. (c) Two posters.
+
+Chosen: (b), because the poster's job at the booth is the loop, the mascots and the architecture (Section 15), and the diagram is the part that must stay legible.
+
+Reverse it if: the booth board is portrait only; the finalist pack or a photograph of the booth will say.
+
+To reverse: the layout in `scripts/gen-poster.mjs`.
+
+## 2026-10-22 07:40, A6: the poster's QR code
+
+Options: (a) a QR code to the GitHub repository, which may be private and is not the landing page. (b) A slot marked planned until the landing page is deployed, with `--qr <png>` to place the code then. (c) No slot.
+
+Chosen: (b), because the plan asks for the landing page, and deploying it sends the build off the machine, which is the owner's call (Needs the owner, item 3).
+
+Reverse it if: the owner deploys the landing page and gives its address.
+
+To reverse: run `node scripts/gen-poster.mjs --qr <file>`.

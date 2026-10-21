@@ -370,6 +370,7 @@ function ReviewPanels(props: {
         </Field>
         <Field label="Term">
           <Input
+            data-demo-id="upload-term"
             value={interp.termGuess ?? ""}
             placeholder="e.g. 2025-S1"
             onChange={(e) => stagePendingIntake(doc, { ...interp, termGuess: e.target.value })}

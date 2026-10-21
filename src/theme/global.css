@@ -1591,6 +1591,9 @@ summary { cursor: pointer; padding: 10px 2px; min-height: 44px; }
 .outline-card p { margin: 0; }
 .outline-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .topic-cards .outline-card { background: var(--tint-1); }
+.term-setter { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; margin: 16px 0 0; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--tint-1); }
+.term-setter .form-field { flex: 1 1 280px; margin: 0; }
+.term-setter > p { flex-basis: 100%; margin: 0; }
 .course-more .disclosure:first-child, .home-queues > .disclosure:first-child, .record-disclosure { border-top: 0; }
 
 /* Update: hours against their budgets, before the long form */

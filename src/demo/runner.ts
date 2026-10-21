@@ -147,13 +147,14 @@ function selectOption(el: HTMLElement, value: string) {
   host.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
-async function typeInto(el: HTMLElement, text: string, ctx: DemoCtx) {
+async function typeInto(el: HTMLElement, text: string, ctx: DemoCtx, clear = false) {
   const host = el.matches("input, textarea")
     ? el
     : ((el.querySelector("input, textarea") as HTMLElement | null) ?? el);
   const field = host as HTMLInputElement | HTMLTextAreaElement;
   field.focus();
-  let value = field.value;
+  if (clear) setNativeValue(field, "");
+  let value = clear ? "" : field.value;
   const charMs = scaleMs(TYPE_CHAR_MS);
   for (const ch of text) {
     if (ctx.shouldAbort()) return;
@@ -253,7 +254,7 @@ async function execStep(step: DemoStep, ctx: DemoCtx) {
     clickReal(el);
   } else if (step.action === "type") {
     await nudgeOnto(el, ctx);
-    await typeInto(el, step.value ?? "", ctx);
+    await typeInto(el, step.value ?? "", ctx, step.clear);
   } else if (step.action === "select") {
     await nudgeOnto(el, ctx);
     selectOption(el, step.value ?? "");

@@ -44,7 +44,13 @@
     "prove:mcp": "node --test src/prove-mcp.ts",
     "mcp": "node mcp/server.ts",
     "mcp:sample": "node mcp/sample.ts",
-    "mcp:try": "node mcp/try.ts"
+    "mcp:try": "node mcp/try.ts",
+    "deck": "node scripts/gen-deck.mjs",
+    "deck:check": "node scripts/gen-deck.mjs --check",
+    "gen:architecture": "node scripts/gen-architecture.mjs",
+    "gen:brief": "node scripts/gen-brief-pdf.mjs",
+    "gen:poster": "node scripts/gen-poster.mjs",
+    "gen:sample-decks": "node scripts/gen-sample-decks.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
@@ -70,6 +76,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "concurrently": "^9.1.0",
     "puppeteer-core": "^23.11.1",
+    "simple-icons": "^16.35.0",
     "typescript": "^5.7.2",
     "vite": "^6.0.5"
   }

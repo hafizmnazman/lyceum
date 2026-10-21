@@ -3,3 +3,6 @@ dist/
 .env
 *.local
 .DS_Store
+# Deck exports and the film are regenerated, not committed: npm run deck, and the video/ render (package A7).
+deck/export/
+deck/media/*.mp4

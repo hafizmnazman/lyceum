@@ -5,7 +5,7 @@
 
 import type { ReactNode } from "react";
 import { ArrowRight, Check } from "lucide-react";
-import { LOOP_STEPS, REPORT_TABS, REPORT_TAB_LABEL, RING_STEPS, stepDef, type CourseStep, type LoopState, type ReportTab } from "../../app/loop.ts";
+import { LOOP_STEPS, REPORT_TABS, REPORT_TAB_LABEL, RING_STEPS, ringTermLines, stepDef, type CourseStep, type LoopState, type ReportTab } from "../../app/loop.ts";
 import { OUTCOME_LABEL } from "../../lib/decisions.ts";
 import { locateExcerpt, normaliseWhitespace, STAGE_LABEL, type SkillRow } from "../../lib/evidence.ts";
 import type { BriefDecision, EvidenceSource } from "../../types.ts";
@@ -41,10 +41,13 @@ export function Ring({ loop, size = 132, compact = false, leaf }: { loop: LoopSt
           {isNext ? <path d={arc(i)} fill="none" stroke="var(--emerald-text)" strokeWidth={2} strokeDasharray="3 3" /> : null}
         </g>;
       })}
-      {compact ? null : <>
-        <text x={c} y={c - 4} textAnchor="middle" className="ring-count">{done} of {n}</text>
-        <text x={c} y={c + 14} textAnchor="middle" className="ring-term">{(loop.window.term || "Term not set").slice(0, 18)}</text>
-      </>}
+      {compact ? null : (() => {
+        const lines = ringTermLines(loop.window.term || "Term not set", Math.floor((size - 2 * (w + 6)) / 7.4));
+        return <>
+          <text x={c} y={lines.length > 1 ? c - 9 : c - 4} textAnchor="middle" className="ring-count">{done} of {n}</text>
+          {lines.map((line, i) => <text key={i} x={c} y={(lines.length > 1 ? c + 8 : c + 14) + i * 14} textAnchor="middle" className="ring-term">{line}</text>)}
+        </>;
+      })()}
       {leaf}
     </svg>
   );
