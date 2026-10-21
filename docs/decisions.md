@@ -431,3 +431,33 @@ Chosen: (b), because the step strip already gives the horizontal course navigati
 Reverse it if: the Sunday QA on phones finds the sidebar toggle hard to reach one-handed.
 
 To reverse: `src/ui/shell/Shell.tsx`, `LoopStrip` in `src/ui/screens/StepFrame.tsx`, the 760 px block in `src/theme/global.css`.
+
+## 2026-10-22 06:23, A4: what the tour shows, in what order
+
+Options: (a) keep the old storyline (revision first, then evidence, assessment, brief, reader), which tells a different story from the loop the screens now follow. (b) The loop in order, as Section 15's booth path: Course; Watch (the live board, the sample only if the network fails); Report (confirm, reject a paraphrase, review, count, freeze the window, map, brief with slides, send); Decide (Dr Rahman reads the brief on Home and records adopt with a reason); Update (Dr Sobri opens the decision, then makes the revision within the hours, its reason quoting the decision); Teach (a session and its pack); Learn (the sample results filed against the version taught); How it works with the record; and Home with the ring closed. The template assessment leaves the tour; it stays in Teach behind its disclosure. (c) Two tours, short and long.
+
+Chosen: (b), because the A4 prompt and Section 15 set this order, and a tour that closes the ring shows every done rule working on real records. The assessment was the one detour off the loop; dropping it keeps the tour about six minutes.
+
+Reverse it if: judges ask to see the assessment, in which case it goes back after Teach as two steps.
+
+To reverse: `src/demo/script.ts`, the `decision-recorded` wait in `src/demo/runner.ts`, the intro card in `src/demo/DemoOverlay.tsx`, `scripts/demo-smoke.mjs`.
+
+## 2026-10-22 06:23, A4: the tour's stated length
+
+Options: (a) keep "the five-minute tour" on the landing page, which was already wrong (the old script estimated 376 seconds) and would drift with every edit. (b) Compute the minutes from the script's own pacing (`tourMinutes()`, rounded) and say "about 6 minutes"; register the figure in `docs/claims.md`, where a proof checks it equals what the script computes. (c) Say no length.
+
+Chosen: (b), because a figure on the landing page is a claim like any other, and computing it keeps it true when A5 adds the door to the tour. "About" covers a live fetch running a little long.
+
+Reverse it if: the tour is cut to fit an exact slot, which the estimate will then show.
+
+To reverse: `tourMinutes` in `src/demo/script.ts`, the two tour buttons in `src/ui/screens/Landing.tsx`, the `tour-length` row in `docs/claims.md` and its assertion in `src/prove-journey.ts`.
+
+## 2026-10-22 06:23, A4: the walk and its captures
+
+Options: (a) add the walk to `package.json` as a fifth smoke. (b) Keep it a manual run, as it was, updated to visit every screen and every loop step through the rail at its own address and to exercise the intake from Learn; keep the six captures the repository already tracks (three are in the README) refreshed, and delete the rest it writes. (c) Retire the walk.
+
+Chosen: (b), because the four smokes already cover the routes in CI terms and the walk's value is its captures for the README in A8. Tracking only the files the README uses keeps the repository small.
+
+Reverse it if: A8's README wants more captures; the walk writes them on demand.
+
+To reverse: `scripts/walk.mjs`.

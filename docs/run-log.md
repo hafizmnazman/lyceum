@@ -4,7 +4,7 @@ The autonomous run of Track A (docs/lyceum-upgrade-plan.md Section 17.5). Times 
 
 ## Needs the owner
 
-None yet.
+1. **The doors strip: official marks or neutral icons?** (raised 2026-10-22 06:16, A2b) Plan Section 17.1 asks for the landing page's doors strip "with the official marks" and a `docs/brand-use.md` listing each mark and its source. A2b shipped neutral Lucide icons with each door's name and a Planned tag, because the third-party marks (Claude, ChatGPT, Copilot, Gemini, Teams, the LMS) carry usage terms nobody has checked, and showing them beside doors that are not built could read as an endorsement or an integration. To switch: approve the marks and their sources (from each brand's press or brand page), and the strip and `docs/brand-use.md` follow in one change (`DOORS` in `src/ui/screens/Landing.tsx`). Nothing else waits on this.
 
 ## Codex queue
 
@@ -97,8 +97,19 @@ None queued yet.
 
 ### A4, demo and checks
 
+- 2026-10-22 06:16 started; re-read Section 17.5 and this log, then Sections 4, 15 and 17.
+- Before 06:23: the tour rewritten in loop order (91 steps) with a `decision-recorded` wait; the demo smoke now ends on Home with the closed ring and asserts the decision, the event order and the results matched to the version taught; the walk updated for the rail and Learn; the tour length computed and registered in `docs/claims.md`.
+- 06:23 check: `npm run typecheck` passed; `npm run prove:all` 179 passed.
+- 06:24 check: `npm run build` passed.
+- 06:25 check: `npm run smoke` 19 of 19, `smoke:integrity` 2 of 2, `smoke:workspace` 7 of 7, `smoke:curriculum` 6 of 6 passed.
+- 06:25 check: guide check matches; contrast check, dash scan (231 files) and the backup migration passed; `node scripts/walk.mjs` WALK OK (21 checks).
+- 06:23 three decisions logged (docs/decisions.md).
+- 06:26 ended; committed as "A4: the tour follows the loop and closes the ring, the demo smoke asserts the decision record, and the walk visits every step".
+
+### A5, the local door
+
 - (next)
 
 ## What is left
 
-A4, A5, A6, A7 (the parts that need no human voice), A8, in that order.
+A5, A6, A7 (the parts that need no human voice), A8, in that order.

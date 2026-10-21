@@ -180,6 +180,7 @@ function predicate(key: string): boolean {
   if (key === "snapshot-frozen") return s.evidenceSnapshots.some((x) => x.subjectId === "CS310");
   if (key === "brief-ready") return s.evidenceBriefs.length > 0;
   if (key === "brief-read") return s.notifications.some((n) => n.kind === "evidence-brief" && n.read);
+  if (key === "decision-recorded") return s.briefDecisions.some((d) => d.subjectId === "CS310" && d.byPersonId === "P-RAHMAN");
   return true;
 }
 

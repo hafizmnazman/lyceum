@@ -27,8 +27,8 @@ const INTRO_CARDS: Array<{ eyebrow: string; title: string; body: string }> = [
   },
   {
     eyebrow: "Watch it work",
-    title: "One course, one afternoon.",
-    body: "A full tour of CS310: a course revision under constraint checks, a research run that fetches an employer's public job board live through the local API (a dated saved sample of the same board stands in only if the network fails), exact quotations with a rejected paraphrase, a teaching session with its editable slide pack, a template assessment, and a meeting brief with slides sent to the programme owner, then the step-by-step record of the afternoon by role. Counts, quotations, decks and the brief are computed live. Live board collection needs the local API and a network connection.",
+    title: "One course, one afternoon, the whole loop.",
+    body: "The loop on CS310, in order. Watch fetches an employer's public job board live through the local API (a dated saved sample of the same board stands in only if the network fails). Report confirms exact quotations, rejects a paraphrase, reviews the denominator, counts, maps a skill and prepares a brief with slides. Dr Rahman decides, with a reason. Update makes the change within the hours, Teach downloads an editable slide pack, and Learn files the sample results with n of N. Then the record of the afternoon by role. Counts, quotations, decks and the brief are computed live; live collection needs the local API and a network connection.",
   },
 ];
 

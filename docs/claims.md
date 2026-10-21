@@ -23,6 +23,7 @@ One figure per level (plan Section 2.4). The landing page calls them desk resear
 | `proof-checks` | 179 | 179 automated checks passed on 22 October 2026, plus four headless browser runs | `npm run prove:all` and the four smokes, the A2b verification table in [as-built.md](as-built.md) | M | 22 October 2026 |
 | `proof-live-board` | 727 | 727 real postings fetched live from one employer's public board on request, 9 October 2026 | The Stripe board on Greenhouse through the local API: [lyceum-v3-as-built-2026-10-09.md](lyceum-v3-as-built-2026-10-09.md) and the execution record in [lyceum-improvement-plan.md](lyceum-improvement-plan.md), Section 30 | M | 9 October 2026 |
 | `proof-no-keys` | 0 | 0 AI keys needed; the core is deterministic, and file parsing and live collection use the local API | Every proof and smoke runs with no key set; the agents default to fixture mode (`src/agents/mode.ts`) | M | 22 October 2026 |
+| `tour-length` | about 6 minutes | Watch the tour, about 6 minutes | `tourMinutes()` in `src/demo/script.ts`, computed from the tour's own pacing: 382 seconds at full speed after the A4 rewrite; a live fetch can add a little | M | 22 October 2026 |
 | `proof-no-paraphrase` | 0 | 0 paraphrases accepted as evidence; a quotation must match its source text or it is rejected | `src/prove-evidence.ts`, `src/prove-research.ts` and the curriculum smoke's rejected misquote | M | 22 October 2026 |
 
 ## The landing page: clauses quoted beside the loop

@@ -422,7 +422,7 @@ function ReviewPanels(props: {
                       {r.meanScore.toFixed(2)}
                     </td>
                     <td className="num" style={{ border: "1px solid var(--border)", padding: "3px 10px" }}>
-                      {r.sd}
+                      {r.sd.toFixed(2)}
                     </td>
                     <td className="num" style={{ border: "1px solid var(--border)", padding: "3px 10px" }}>
                       {r.n}

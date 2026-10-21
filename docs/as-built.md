@@ -152,3 +152,29 @@ A visual pass on the built app (the landing sections, Home, Course, Update, Teac
 Not done in A2b, by design: the term recap and the milestones of Section 8; Track B's Learn (adequacy, intervals, pooling, perception beside attainment, scored predictions); focus moving to the main heading on every route change (Section 5.2, an A4 or Track B accessibility item); the tour in the loop's order (A4).
 
 Accepted by: the Code lane (owner to sign).
+
+## A4, demo and checks: 22 October 2026
+
+What was built:
+
+- **The self-driving tour follows the loop** (`src/demo/script.ts`, 91 steps, about 6 minutes at full speed): Course (CS310 as it stands); Watch (Stripe's public board on Greenhouse fetched live through the local API, the dated saved sample only if the network fails, postings kept); Report (scan and confirm, a rejected paraphrase, the reviewed denominator, the count, a frozen snapshot, one mapping, the brief with its slides, sent to Dr Rahman); Decide (Dr Rahman reads the brief on Home and records adopt with a reason); Update (Dr Sobri opens the decision from his Home, then makes the revision within the hours, the reason quoting the decision); Teach (a session and its teaching pack); Learn (the sample results filed against the version taught, with n of N); How it works with the record; and Home with the ring closed for the term. The template assessment left the tour (docs/decisions.md). The door joins when A5 ships it.
+- **The demo smoke asserts the loop**: postings kept, quotations confirmed, the reviewed denominator, the snapshot, the mapping, the brief sent and read, Dr Rahman's decision with a reason bound to the brief and the course version, the event log in order (brief prepared, sent, read, decision, then the adoption), the revision adopted after the decision, the session saved on the adopted version, the results matched to the version taught, both decks downloaded, the closed ring on Home, and no page errors.
+- **The walk** (`scripts/walk.mjs`, run by hand) visits every screen and every loop step through the rail at its own address and files the sample results from Learn; it refreshed the six captures the repository tracks.
+- The intro card describes the loop; the landing page's tour buttons state the length the script computes ("about 6 minutes"), registered in `docs/claims.md` and checked by `prove-journey`; the upload review rounds the spread to two places.
+- The four smokes were already on the new routes from A2a and A2b; the section guides and the lecturer guide were already regenerated for the new screens, and the Evaluation table already shows the 179 checks, which A4 does not change.
+
+| Command | Result |
+|:--|:--|
+| `npm run build` | Passed |
+| `npm run smoke` | 19 of 19 passed (listed above) |
+| `npm run smoke:integrity` | 2 of 2 passed |
+| `npm run smoke:workspace` | 7 of 7 passed |
+| `npm run smoke:curriculum` | 6 of 6 passed, including Dr Rahman's retain decision with its reason and the brief deck, teaching pack, outline and evidence report downloads |
+| `node scripts/generate-guide.mjs --check` | Matches |
+| `node scripts/walk.mjs` | WALK OK, 21 checks |
+| `npm run typecheck`, `npm run prove:all` | Passed; 179 passed, 0 failed, sixteen suites |
+| Contrast check, dash scan, backup migration | CONTRAST CHECK OK; no en or em dash in 231 text files; BACKUP MIGRATION OK |
+
+Not done in A4, by design: the door step of the tour (A5); `docs/demo-script.md`, the booth checklist of Section 15 (A8); the README's screenshot captions (A8).
+
+Accepted by: the Code lane (owner to sign).
