@@ -341,3 +341,93 @@ Chosen: (b), because every check stays green between packages and A4 still owns 
 Reverse it if: never; A4 builds on it.
 
 To reverse: `src/app/sectionGuides.ts`, `scripts/generate-guide.mjs`, `scripts/workspace-smoke.mjs`, `scripts/curriculum-smoke.mjs`, `scripts/presentation-shots.mjs`, `src/demo/script.ts`, `src/demo/runner.ts`.
+
+## 2026-10-22 06:12, A2b: where Learn lives
+
+Options: (a) restyle the Upload screen into Learn, which mixes syllabus and slide intake into the loop's last step. (b) Give Learn its own screen (`#/course/:id/learn`) with what came back, the filing of results and surveys, the list of what is filed, the planned items and the protocol status, reusing Upload's intake panel; Upload stays the generic document intake reached from Course. (c) Show Learn inside the Data room.
+
+Chosen: (b), because Section 4 gives Learn its own address and one question, and the intake's preview-and-confirm boundary is kept unchanged by reusing the same panel. The integrity smoke now reaches Learn from the rail.
+
+Reverse it if: lecturers look for results under Upload and miss Learn in testing.
+
+To reverse: `src/ui/screens/Learn.tsx`, the `learn` screen in `src/app/roles.ts`, `src/app/routes.ts`, `src/app/loop.ts` and `src/ui/screens/index.ts`, and `IntakePanel` in `src/ui/screens/Upload.tsx`.
+
+## 2026-10-22 06:12, A2b: matching a term's results to the taught version
+
+Options: (a) count any results file filed this term, which leaves the "matched to the taught version" half of the Section 4 rule unmet. (b) Record a `courseVersionId` on each results file, confirmed by the person filing in the review panel and defaulting to the version this term's sessions were saved on (the latest session decides), or the current version when no session exists; Learn counts only files matched to a version of the course, and a backup rejects a file naming another course's version. (c) Match automatically by term text, which free-text terms cannot support.
+
+Chosen: (b), because the person filing knows which version was taught and the default is right in the common case. The field is optional, so backup schema 5 stays as it is and older files restore; an unmatched file is listed and the step says to file it again with the version.
+
+Reverse it if: Track B's term archive records the taught version per cohort, which would make the choice automatic.
+
+To reverse: `taughtVersionId` and the learn rule in `src/app/loop.ts`, `confirmPendingIntake` and `uploadResults` in `src/app/store.ts`, the version field in `src/ui/screens/Upload.tsx`, the check in `src/lib/workspaceBackup.ts`.
+
+## 2026-10-22 06:12, A2b: what N means in "n of N" on Learn
+
+Options: (a) the enrolled class size, which no record in the workspace holds. (b) The most students the results file records for any one outcome, said in words on the screen, with n per outcome beside it. (c) Leave N out.
+
+Chosen: (b), because Section 9.8 asks for n of N from the existing pipeline and the file is the only count there is; the words stop it being read as the class. Track B's adequacy meter brings the enrolment figure and the corrected margin.
+
+Reverse it if: an enrolment number is filed with the results.
+
+To reverse: `attainment` in `src/lib/learn.ts` and the Learn screen's explanation.
+
+## 2026-10-22 06:12, A2b: what goes behind the disclosure on Update
+
+Options: (a) put the rationale, the term and the affected sessions behind a disclosure, as the Section 5.3 table lists, which hides two fields the adoption requires. (b) Keep the rationale and the term visible beside Save and Check, and put the affected sessions and assessments behind the disclosure; open the revision with the hours meters, the number of changes and the check state.
+
+Chosen: (b), because a required field behind a closed disclosure is a form error waiting to happen, and the meters at the top give the before and after the table asks for at a glance. The affected list still sits one click away.
+
+Reverse it if: testers find the revision form too long and want the decision context collapsed after it is filled.
+
+To reverse: `RevisionEditor` and `HoursMeters` in `src/ui/screens/CurriculumWorkspace.tsx`.
+
+## 2026-10-22 06:12, A2b: Home's work queue and notifications
+
+Options: (a) keep them visible below Start here, which dilutes the one visual and the one action. (b) Put the briefs waiting, the notifications and the courses behind disclosures, each opening by itself when something is waiting (a brief to decide, an unread notification), so a waiting item is never hidden. (c) Move them to a separate screen.
+
+Chosen: (b), because Section 5.3 puts them behind a disclosure and the self-opening rule keeps a programme owner's waiting brief in view. The resume button joins Start here as its secondary action.
+
+Reverse it if: a recipient misses a brief in testing.
+
+To reverse: `InboxScreen` and `StartHere` in `src/ui/screens/Inbox.tsx`.
+
+## 2026-10-22 06:12, A2b: the loop graphic's stations
+
+Options: (a) seven stations, one per helper, which leaves Decide with no station. (b) Eight stations in loop order, the seven helpers plus a people station at Decide with the scale icon and no character, Lens labelled "Report and Learn" because it serves both; each station sits on an opaque backing in the surface colour so the ring never crosses text. (c) Draw the ring inside the stations, which needed sizes that collide with the host's caption at some widths.
+
+Chosen: (b), because the plan says people decide at Decide and the helpers never speak for the product, and the backing keeps every label legible on mint and on forest. Below 640 px the ring folds into a two-column list.
+
+Reverse it if: the team wants Lens drawn twice, once at Report and once at Learn.
+
+To reverse: `STATIONS` and `LoopGraphic` in `src/ui/screens/LoopGraphic.tsx`, the loop-graphic rules in `src/theme/global.css`.
+
+## 2026-10-22 06:12, A2b: the landing page's figures and clauses
+
+Options: (a) keep the nine pain figures (three per level) and the ILOSTAT comparators. (b) Show Section 2.4's one figure per level, each registered in the new `docs/claims.md` with its source, its note and its key, and the accreditor mapping with only the clauses a dated note quotes (ESG 1.2 and AACSB Standard 5, named in Section 4, are left out until a note checks their wording; NAAC is marked a paraphrase); a proof checks every figure against the register and every quoted clause word for word against its note. (c) Show the figures without sources until R1.
+
+Chosen: (b), because Section 2.4 and the A2b prompt set one figure per level and the register rule, and a quotation nobody checked would be a fabricated receipt on the product's own front page. The Malaysian figure says "of employed graduates", which the release's numbers imply. The nine figures stay in the research notes for the deck.
+
+Reverse it if: a note checks ESG 1.2 and AACSB Standard 5, or R1's interviews add a quotation per level.
+
+To reverse: `src/data/painStats.ts`, `src/data/accreditors.ts`, `src/data/proof.ts`, `docs/claims.md`, the landing proof in `src/prove-journey.ts`.
+
+## 2026-10-22 06:12, A2b: the doors strip
+
+Options: (a) third-party logos in monochrome (Claude, ChatGPT, Copilot, Gemini, Teams, Moodle), which uses trademarks without permission and reads as endorsement. (b) Neutral Lucide icons with the door's name and what a lecturer does through it, the web workspace tagged Built and every other door tagged Planned, including the MCP server until A5 ships it locally. (c) Leave the doors off until any of them works.
+
+Chosen: (b), because Section 11 makes the doors part of the story while the honesty labels forbid implying they work, and generic marks carry no brand claim. The hero line drops "inside the tools lecturers already use" for the same reason.
+
+Reverse it if: a partner grants logo use, or A5 ships a door, which flips its tag to what it is ("local, read-only").
+
+To reverse: `DOORS` and the hero lead in `src/ui/screens/Landing.tsx`.
+
+## 2026-10-22 06:12, A2b: the narrow-screen bottom bar (deferred from A1)
+
+Options: (a) build Section 5.2's bottom bar with Home, Courses, Course, Explore and More. (b) Keep the toggled sidebar, with the step strip under each step's title (added in A2a) as the in-course navigation on phones. (c) Both.
+
+Chosen: (b), because the step strip already gives the horizontal course navigation Section 5.2 asks for and every smoke drives the toggle at 390 and 320 px without overflow; a bottom bar would add a third navigation for the same five places.
+
+Reverse it if: the Sunday QA on phones finds the sidebar toggle hard to reach one-handed.
+
+To reverse: `src/ui/shell/Shell.tsx`, `LoopStrip` in `src/ui/screens/StepFrame.tsx`, the 760 px block in `src/theme/global.css`.

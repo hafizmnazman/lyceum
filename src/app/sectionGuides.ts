@@ -15,7 +15,7 @@ export const SECTION_GUIDES: SectionGuide[] = [
   {
     screen: "inbox", title: "Home", audience: "Everyone",
     purpose: "Resume course preparation and respond to work routed to you.", status: "Working locally",
-    steps: ["Read the receipts ring for your course: each step says Done only when its record exists this term, and Continue opens the next one.", "Open a brief waiting for a decision. A brief sent to you opens here with its receipts; if you hold the decide position, record adopt, retain, defer or return with the reason.", "Open a notification to see the request in context. A decision on your own brief opens that course's Decide step."],
+    steps: ["Read the receipts ring for your course in Start here: each step says Done only when its record exists this term, and Continue opens the next one.", "Open a brief waiting for a decision. The list opens by itself when one is waiting; a brief sent to you opens here with its receipts, and if you hold the decide position you record adopt, retain, defer or return with the reason.", "Open a notification to see the request in context. A decision on your own brief opens that course's Decide step. Your courses, with their loop summaries, are in the last disclosure."],
     output: "A next action tied to an actual course, brief or session in this workspace.",
     limitation: "No real timetable, deadlines, email reminders or institutional notifications are connected.",
   },
@@ -29,7 +29,7 @@ export const SECTION_GUIDES: SectionGuide[] = [
   {
     screen: "studio", title: "Course, Update, Teach and History", audience: "Assigned lecturers and coordinators",
     purpose: "Set up the course, make the decided change, prepare classes and keep a traceable local history.", status: "Partial",
-    steps: ["Course: inspect the outcomes, prerequisites, source records and unfinished preparation. The loop rail lists the six steps that follow.", "Update: start a revision. Add, edit or remove CLOs and topics; record achievement evidence, PLO mappings, hours, prerequisites and protected foundations. Save and check it, inspect the warnings and the before and after comparison, then record the rationale and teaching term. The coordinator, or the owner of a personal course, makes it the course version; university approval stays in its existing process. When the decision was retain, Update shows no change this term.", "Teach: save CLO-linked sessions, activities, learning checks and references; export the plan; download an editable teaching pack (.pptx) for any session with its outcomes, the employer evidence behind them, the activity and the check. The assessment blueprint and template items sit behind a disclosure. Review affected sessions after a course change.", "History: inspect preserved course versions and the decisions recorded on briefs, and export a previous outline."],
+    steps: ["Course: the outline as cards, outcomes with their Bloom level and topics with their hours against the contact-hour budget. One action: Watch employers while the course has no evidence, Start a revision once it has. Teaching context, documents, the preparation checklist and the illustrative sandbox sit behind disclosures.", "Update: start a revision. The hours meters, the number of changes and the check state open it. Add, edit or remove CLOs and topics; record achievement evidence, PLO mappings, hours, prerequisites and protected foundations. Save and check it, inspect the warnings and the before and after comparison, then record the rationale and teaching term. The coordinator, or the owner of a personal course, makes it the course version; university approval stays in its existing process. The sessions and assessments a change affects are listed behind a disclosure. When the decision was retain, Update shows no change this term, and says so if a version was adopted anyway.", "Teach: session cards by week, each with its linked outcomes and its editable teaching pack (.pptx) built from the session and the employer evidence behind its outcomes. Save CLO-linked sessions, activities, learning checks and references, and export the plan. The assessment blueprint and template items sit behind a disclosure. Review affected sessions after a course change.", "History: versions and decisions on one timeline, newest first. Each entry opens to its outline, with an export, or to its decision and reason; the revision log sits behind a disclosure."],
     output: "An editable course definition, candidate and active local versions, the decision history, a teaching plan, Markdown outlines and an assessment draft.",
     limitation: "One teaching plan per course in this browser. Local version activation does not attest institutional approval. Slide packs are generated from saved data with no model-written text; model-drafted slide content and template import remain to be built. Configurable institution-wide reviews, term archives and accurate assessment allocation remain to be built. Agent drafting still uses fixtures.",
   },
@@ -62,9 +62,16 @@ export const SECTION_GUIDES: SectionGuide[] = [
     limitation: "This is the earlier approval chain, kept for exploration. Course decisions are recorded in each course's Decide step. Forecasts are uncalibrated and agent drafting uses fixtures.",
   },
   {
+    screen: "learn", title: "Learn", audience: "Assigned lecturers and coordinators",
+    purpose: "See what came back for each outcome, as far as we can honestly tell.", status: "Partial",
+    steps: ["Read attainment per outcome from the latest results file: the mean mark as filed, its spread, and n of N, where N is the most students the file records for any one outcome.", "File the term's results or a CLO survey. You see what was read beside what it was taken to mean, and you confirm the course version the results are for; by default it is the version this term's sessions were saved on.", "Check the results and surveys filed for the course. A seeded example is labelled and never counts.", "Open the benchmark protocol and its status, and read what is planned for the pilot."],
+    output: "A results file matched to the version taught, and attainment per outcome with n of N.",
+    limitation: "No learning gain is claimed; the benchmark has not been run. Intervals, response adequacy, pooling, perception beside attainment and scored predictions are planned. N is read from the file, not from an enrolment record.",
+  },
+  {
     screen: "upload", title: "Upload", audience: "Assigned lecturers and coordinators",
     purpose: "Read a document and review its interpretation before filing it.", status: "Partial",
-    steps: ["Choose a supported PDF, PPTX or spreadsheet with the local API running.", "Check extracted text/tables, document type, course and term in the preview.", "Correct the interpretation and confirm; inspect the filed record in Data room."],
+    steps: ["Choose a supported PDF, PPTX or spreadsheet with the local API running. Results and surveys can also be filed from Learn.", "Check extracted text/tables, document type, course and term in the preview; for results, confirm the course version taught.", "Correct the interpretation and confirm; inspect the filed record in Learn or the Data room."],
     output: "Extracted records and source metadata in this browser's workspace.",
     limitation: "Confirmation records a reviewed upload and never marks it institutionally verified. Original files are not a durable library or part of JSON backups. Structured survey/result matching needs further validation.",
   },
@@ -126,8 +133,8 @@ export const SECTION_GUIDES: SectionGuide[] = [
   },
   {
     screen: "office", title: "How it works", audience: "Everyone",
-    purpose: "See the seven roles in order, what each reads, produces and cannot do, and the real record of what happened on your course.", status: "Working locally",
-    steps: ["Open a role card to read what it reads, produces and cannot do.", "Choose a course to see its timeline. Lines from the event log (briefs prepared, sent and read, decisions, snapshots, adoptions, term changes) carry the time they happened; lines worked out from the records are labelled derived.", "Use Open on a timeline entry to jump to the step that holds it."],
+    purpose: "See the loop with the host at its centre and the seven helpers at their stations, what each reads, produces and cannot do, and the real record of what happened on your course.", status: "Working locally",
+    steps: ["Choose a helper on the loop, or its card, to read what it reads, produces and cannot do. Decide is the station where people decide.", "Choose See the record on this course to open its timeline. Lines from the event log (briefs prepared, sent and read, decisions, snapshots, adoptions, term changes) carry the time they happened; lines worked out from the records are labelled derived.", "Use Open on a timeline entry to jump to the step that holds it."],
     output: "A step-by-step record of the work done on a course, told by role, with a link to each result.",
     limitation: "Roles are deterministic workflow steps with optional model help, not autonomous agents. The timeline shows only recorded work; it never invents reasoning or activity, and a derived line never claims a time it does not have.",
   },

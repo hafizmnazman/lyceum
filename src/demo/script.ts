@@ -115,7 +115,8 @@ export const SCRIPT: DemoStep[] = [
   { caption: "The same brief as editable slides for the meeting, generated from the receipts.", target: "brief-slides", action: "click", settleMs: 4200 },
   { caption: "He sends it to Dr Rahman, who owns the programme.", target: "brief-recipient-P-RAHMAN", action: "click", settleMs: 1200 },
   { caption: "Sent. The decision stays with people.", target: "brief-send", action: "click", settleMs: 2400 },
-  { caption: "What actually happened this afternoon, step by step, by role. Every line is a saved record he can open.", target: "nav-office", action: "click", settleMs: 5600, scroll: "run-timeline" },
+  { caption: "How it works: the host at the centre, the seven helpers at their stations, and people at Decide.", target: "nav-office", action: "click", settleMs: 2600 },
+  { caption: "What actually happened this afternoon, step by step, by role. Every line is a saved record he can open.", target: "see-record", action: "click", settleMs: 4800, scroll: "run-timeline" },
 
   // ---- Act 9: the guide and the reader ----
   { caption: "Every section has a guide, and the workspace backs up to a validated file that restores with a preview.", target: "nav-guide", action: "click", settleMs: 4600, scroll: "backup-export" },

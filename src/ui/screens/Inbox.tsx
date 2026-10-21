@@ -1,9 +1,10 @@
-// Home for every role (plan Section 5.3): the ring for the course in view with
-// the next step lit, briefs waiting for a decision, and the notifications. A
-// brief opened here carries its receipts and, for a recipient who decides, the
-// four decisions with a required note. The calm empty state is the honest
-// resting state of a working system.
+// Home for every role (plan Section 5.3): one visual, the ring for the course in
+// view with the next step lit, and one action, "Continue". The work queue, the
+// notifications and the courses sit behind disclosures that open by themselves
+// when something is waiting. A brief opened here carries its receipts and, for
+// a recipient who decides, the four decisions with a required note.
 
+import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 import { subjectsForPerson } from "../../app/roles.ts";
 import { loopState, stepDef } from "../../app/loop.ts";
@@ -23,7 +24,7 @@ import {
   selectProposal,
   useStore,
 } from "../../app/store.ts";
-import { Button, Card, Page, PageHead, Row, Tag } from "../primitives/index.tsx";
+import { Button, Card, Disclosure, Page, PageHead, Row, Tag } from "../primitives/index.tsx";
 import { RingPanel } from "../primitives/loop.tsx";
 import { Mascot, useCourseMoods } from "../mascots/index.tsx";
 import { BriefDecisionPanel } from "./Decide.tsx";
@@ -102,64 +103,66 @@ export function InboxScreen() {
         <BriefDecisionPanel brief={brief} subjectId={brief.subjectId} compact />
       </section> : null}
 
-      {person.orgRole === "academic" && recentCourse ? <StartHere subjectId={recentCourse.id} /> : null}
+      {person.orgRole === "academic" && recentCourse ? <StartHere subjectId={recentCourse.id}
+        resume={<Button onClick={() => openStep(recentCourse.id, recentPlan ? "teach" : "course")} data-demo-id="home-resume">{recentPlan ? "Continue teaching plan" : "Open course workspace"}</Button>}
+        resumeNote={nextSession ? "Next class: week " + nextSession.week + ", " + nextSession.topic + "." : recentPlan ? recentPlan.sessions.length + " saved sessions · " + (recentPlan.term || "teaching term not set") : undefined} />
+        : <section className="workspace-panel home-focus" aria-labelledby="resume-heading">
+          <span className="eyebrow">{person.orgRole === "academic" ? "Your teaching workspace" : "Your review workspace"}</span>
+          <h2 id="resume-heading">{person.orgRole === "management" ? "The illustrative approval sandbox" : person.orgRole === "department" ? "Decide on the briefs your colleagues send" : "Start with an assigned course"}</h2>
+          <p>{person.orgRole === "management" ? "The approval chain is kept in the research sandbox and labelled illustrative. Course decisions are recorded in each course's Decide step." : person.orgRole === "department" ? "As programme owner you record decisions on the briefs lecturers send, and assign positions." : "The department can assign a course so you can start planning teaching sessions."}</p>
+          <div className="button-row"><Button variant="primary" onClick={() => navigate(person.orgRole === "management" ? "approval" : person.orgRole === "department" ? "programme" : "guide")}>{person.orgRole === "management" ? "Open the approvals sandbox" : person.orgRole === "department" ? "Open programme" : "Read the guide"}</Button></div>
+        </section>}
 
-      <div className="home-columns">
-        <section className="workspace-panel home-focus" aria-labelledby="resume-heading">
-          <span className="eyebrow">{recentPlan ? "Continue preparation" : person.orgRole === "academic" ? "Your teaching workspace" : "Your review workspace"}</span>
-          <h2 id="resume-heading">{recentCourse ? recentCourse.id + " · " + recentCourse.title : person.orgRole === "management" ? "The illustrative approval sandbox" : person.orgRole === "department" ? "Decide on the briefs your colleagues send" : "Start with an assigned course"}</h2>
-          <p>{nextSession ? "Week " + nextSession.week + ": " + nextSession.topic + ". Continue preparing the activity, learning check and materials." : recentCourse ? "Check the current outcomes, prepare your next class, and follow the loop from Watch to Learn." : person.orgRole === "management" ? "The approval chain is kept in the research sandbox and labelled illustrative. Course decisions are recorded in each course's Decide step." : person.orgRole === "department" ? "As programme owner you record decisions on the briefs lecturers send, and assign positions." : "The department can assign a course so you can start planning teaching sessions."}</p>
-          <div className="button-row">{recentCourse ? <><Button variant="primary" onClick={() => openStep(recentCourse.id, recentPlan ? "teach" : "course")} data-demo-id="home-resume">{recentPlan ? "Continue teaching plan" : "Open course workspace"} <ArrowRight size={15} /></Button><Button onClick={() => navigate("courses")}>All my courses</Button></> : <Button variant="primary" onClick={() => navigate(person.orgRole === "management" ? "approval" : person.orgRole === "department" ? "programme" : "guide")}>{person.orgRole === "management" ? "Open the approvals sandbox" : person.orgRole === "department" ? "Open programme" : "Read the guide"}</Button>}</div>
-          <p className="muted">{recentPlan ? recentPlan.sessions.length + " saved sessions · " + (recentPlan.term || "Teaching term not set") : "Preparation is stored in this browser. Export a teaching plan to keep a portable copy."}</p>
-        </section>
-        <section className="workspace-panel" aria-labelledby="work-queue">
-          <div className="section-heading"><h2 id="work-queue">Briefs waiting for a decision</h2><Tag>{waiting.length} {waiting.length === 1 ? "brief" : "briefs"}</Tag></div>
+      <section className="home-queues" aria-label="Your work">
+        <Disclosure summary="Briefs waiting for a decision" count={waiting.length + (waiting.length === 1 ? " brief" : " briefs")} defaultOpen={waiting.length > 0} data-demo-id="home-briefs">
           {waiting.length ? <ul className="work-list">{waiting.map((b) => <li key={b.id}><div><strong>{b.subjectId}</strong><span>{b.recipients.includes(person.id) ? "From " + (state.people.find((p) => p.id === b.createdBy)?.name ?? b.createdBy) + ": " + RECOMMENDATION_LABEL[b.recommendation] : "Your brief: waiting for a second person's decision"}</span></div><Button aria-label={"Open the brief for " + b.subjectId} data-demo-id={"waiting-" + b.id} onClick={() => { if (b.recipients.includes(person.id)) selectBrief(b.id); else openStep(b.subjectId, "decide"); }}>Open</Button></li>)}</ul>
             : <p>No brief is waiting for you. Briefs a colleague sends you, and your own briefs waiting for a second person, appear here.</p>}
           {legacy.length ? <><h3>Illustrative sandbox</h3><ul className="work-list">{legacy.map((p) => <li key={p.id}><div><strong>{p.subjectId}</strong><span>Proposal awaits the sandbox approval</span></div><Button aria-label={"Open proposal for " + p.subjectId} onClick={() => { selectProposal(p.id); navigate("approval"); }}>Open</Button></li>)}</ul></> : null}
-        </section>
-      </div>
+        </Disclosure>
 
-      {ownCourses.length ? <section aria-labelledby="home-courses"><div className="section-heading"><h2 id="home-courses">Your courses at a glance</h2><Button variant="quiet" onClick={() => navigate("courses")}>Browse courses <ArrowRight size={15} /></Button></div><div className="course-grid">{ownCourses.map((course) => {
-        const summary = planSummary(state.teachingPlans.find((p) => p.subjectId === course.id), state.clos.filter((c) => c.subjectId === course.id));
-        const loop = loopState(state, course.id);
-        return <article className="workspace-panel" key={course.id}><span className="eyebrow">{course.id} · Year {course.year}, semester {course.semester}</span><h3>{course.title}</h3><p className="muted">{loop.summary}</p><p className="muted">{summary.sessions.length} teaching sessions · {summary.ready} ready · {summary.delivered} delivered</p><Button onClick={() => openStep(course.id, loop.next ?? "course")}>Open {course.id}</Button></article>;
-      })}</div></section> : null}
+        <Disclosure summary="Notifications" count={unread.length + " unread"} defaultOpen={unread.length > 0} data-demo-id="home-notifications">
+          {top ? (
+            <Card focal data-demo-id="inbox-top">
+              <div className="button-row" style={{ marginBottom: 8 }}>
+                <Tag tone={KIND_TONE[top.kind]}>{KIND_LABEL[top.kind]}</Tag>
+                {top.subjectId ? <span className="num muted">{top.subjectId}</span> : null}
+              </div>
+              {top.agentFindings ? <p style={{ margin: "0 0 14px", maxWidth: 620 }}>{top.agentFindings}</p> : null}
+              <div className="button-row">
+                <Button variant="primary" data-demo-id="inbox-open-top" onClick={() => openNotification(top.id)}>
+                  {top.kind === "evidence-brief" ? "Read brief" : top.kind === "brief-decision" ? "Open Decide" : "Open " + (top.subjectId ?? "it")} <ArrowRight size={15} />
+                </Button>
+                {sender(top) ? <span className="muted">{sender(top)}</span> : null}
+              </div>
+            </Card>
+          ) : (
+            <p className="muted">No unread notifications. Briefs, decisions on your briefs and sandbox results appear here when someone completes a step.</p>
+          )}
+          {rest.length > 0 ? (
+            <div style={{ marginTop: 16 }}>
+              {rest.map((n) => (
+                <Row key={n.id} onClick={() => openNotification(n.id)} data-demo-id={`inbox-${n.id}`}>
+                  <Tag tone={KIND_TONE[n.kind]}>{KIND_LABEL[n.kind]}</Tag>
+                  <span className="num muted" style={{ width: 56 }}>{n.subjectId ?? ""}</span>
+                  <span style={{ flex: 1, fontSize: 13, color: n.read ? "var(--ink-2)" : "var(--ink)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {n.agentFindings ?? KIND_LABEL[n.kind]}
+                  </span>
+                  {!n.read ? <span className="tag tag-accent">Unread</span> : null}
+                </Row>
+              ))}
+            </div>
+          ) : null}
+        </Disclosure>
 
-      <div className="section-heading"><h2>Notifications</h2><span className="muted">{unread.length} unread</span></div>
-
-      {top ? (
-        <Card focal data-demo-id="inbox-top">
-          <div className="button-row" style={{ marginBottom: 8 }}>
-            <Tag tone={KIND_TONE[top.kind]}>{KIND_LABEL[top.kind]}</Tag>
-            {top.subjectId ? <span className="num muted">{top.subjectId}</span> : null}
-          </div>
-          {top.agentFindings ? <p style={{ margin: "0 0 14px", maxWidth: 620 }}>{top.agentFindings}</p> : null}
-          <div className="button-row">
-            <Button variant="primary" data-demo-id="inbox-open-top" onClick={() => openNotification(top.id)}>
-              {top.kind === "evidence-brief" ? "Read brief" : top.kind === "brief-decision" ? "Open Decide" : "Open " + (top.subjectId ?? "it")} <ArrowRight size={15} />
-            </Button>
-            {sender(top) ? <span className="muted">{sender(top)}</span> : null}
-          </div>
-        </Card>
-      ) : (
-        <p className="muted">No unread notifications. Briefs, decisions on your briefs and sandbox results appear here when someone completes a step.</p>
-      )}
-
-      {rest.length > 0 ? (
-        <div style={{ marginTop: 28 }}>
-          {rest.map((n) => (
-            <Row key={n.id} onClick={() => openNotification(n.id)} data-demo-id={`inbox-${n.id}`}>
-              <Tag tone={KIND_TONE[n.kind]}>{KIND_LABEL[n.kind]}</Tag>
-              <span className="num muted" style={{ width: 56 }}>{n.subjectId ?? ""}</span>
-              <span style={{ flex: 1, fontSize: 13, color: n.read ? "var(--ink-2)" : "var(--ink)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                {n.agentFindings ?? KIND_LABEL[n.kind]}
-              </span>
-              {!n.read ? <span className="tag tag-accent">Unread</span> : null}
-            </Row>
-          ))}
-        </div>
-      ) : null}
+        {ownCourses.length ? <Disclosure summary="Your courses at a glance" count={ownCourses.length} data-demo-id="home-courses">
+          <div className="course-grid">{ownCourses.map((course) => {
+            const summary = planSummary(state.teachingPlans.find((p) => p.subjectId === course.id), state.clos.filter((c) => c.subjectId === course.id));
+            const loop = loopState(state, course.id);
+            return <article className="workspace-panel" key={course.id}><span className="eyebrow">{course.id} · Year {course.year}, semester {course.semester}</span><h3>{course.title}</h3><p className="muted">{loop.summary}</p><p className="muted">{summary.sessions.length} teaching sessions · {summary.ready} ready · {summary.delivered} delivered</p><Button onClick={() => openStep(course.id, loop.next ?? "course")}>Open {course.id}</Button></article>;
+          })}</div>
+          <Button variant="quiet" onClick={() => navigate("courses")}>Browse courses <ArrowRight size={15} /></Button>
+        </Disclosure> : null}
+      </section>
     </Page>
   );
 
@@ -179,7 +182,7 @@ export function InboxScreen() {
 }
 
 /** Start here (plan Section 5.3): the host, the ring with the next step lit, and one action. */
-function StartHere({ subjectId }: { subjectId: string }) {
+function StartHere({ subjectId, resume, resumeNote }: { subjectId: string; resume?: ReactNode; resumeNote?: string }) {
   const state = useStore();
   const loop = loopState(state, subjectId);
   const moods = useCourseMoods(subjectId);
@@ -189,6 +192,7 @@ function StartHere({ subjectId }: { subjectId: string }) {
       <div className="section-heading"><div><span className="eyebrow">Start here · {subjectId}</span><h2 id="start-here-title">{loop.closed ? "The loop is closed for this term" : "Continue the loop on " + subjectId}</h2></div>
         {loop.next ? <Button variant="primary" data-demo-id="journey-next" onClick={() => openStep(subjectId, loop.next!)}>Continue: {stepDef(loop.next).label} <ArrowRight size={15} /></Button> : null}</div>
       <RingPanel loop={loop} onStep={(step) => openStep(subjectId, step)} />
+      {resume ? <div className="start-here-resume button-row">{resume}{resumeNote ? <span className="muted">{resumeNote}</span> : null}</div> : null}
     </div>
   </section>;
 }

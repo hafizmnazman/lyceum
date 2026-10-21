@@ -95,7 +95,7 @@ import { CURRENT_ID, buildSnapshot, compareSnapshots, comparisonMarkdown, snapsh
 import { fetchCollection, type CollectionOutcome, type CollectionRequest } from "../agents/client.ts";
 import { downloadDeck, type DeckSpec } from "../lib/slides.ts";
 import { DECISION_OUTCOMES, NOTE_MAX, OUTCOME_LABEL, briefDecisionState } from "../lib/decisions.ts";
-import { stepDef, stepForTab, termWindow, type CourseStep, type ReportTab } from "./loop.ts";
+import { courseVersionIds, stepDef, stepForTab, taughtVersionId, termWindow, type CourseStep, type ReportTab } from "./loop.ts";
 export { REPORT_TABS, type ReportTab } from "./loop.ts";
 import { hashFor, type CourseRoute } from "./routes.ts";
 import { ITEMS, itemsForCLOs } from "../data/items.ts";
@@ -592,7 +592,7 @@ export function navigate(screen: Screen, course?: CourseRoute) {
     return;
   }
   if (!course) {
-    const step = screen === "studio" ? stepForTab(state.studioTab, state.courseStep) : screen === "watch" || screen === "report" || screen === "decide" ? screen : null;
+    const step = screen === "studio" ? stepForTab(state.studioTab, state.courseStep) : screen === "watch" || screen === "report" || screen === "decide" || screen === "learn" ? screen : null;
     set({ screen, courseStep: step });
     return;
   }
@@ -799,6 +799,11 @@ export function confirmPendingIntake(): string | null {
   }
 
   if (interp.docType === "results" && subjectId && interp.mappedRows?.length) {
+    // The results are for the version taught; the person filing confirms it in the review panel.
+    const courseVersionId = interp.courseVersionId ?? taughtVersionId(state, subjectId) ?? undefined;
+    if (courseVersionId && !courseVersionIds(state, subjectId).has(courseVersionId)) {
+      set({ toast: "Choose a version of " + subjectId + " for these results." }); return null;
+    }
     const upload: ResultUpload = {
       id: nextId(`RU-${subjectId}`),
       subjectId,
@@ -807,6 +812,7 @@ export function confirmPendingIntake(): string | null {
       rows: interp.mappedRows,
       filedAt: at,
       sourceFileName: doc.fileName,
+      ...(courseVersionId ? { courseVersionId } : {}),
     };
     const ds: DataSource = {
       kind: "results",
@@ -822,7 +828,7 @@ export function confirmPendingIntake(): string | null {
       dataSources: [ds, ...s.dataSources],
       flashUpload: upload,
       pendingIntake: null,
-      toast: `Filed ${doc.fileName} to ${subjectId}, ${term}. This ground now feeds the cohort.`,
+      toast: `Filed ${doc.fileName} to ${subjectId}, ${term}` + (courseVersionId ? `, matched to version ${courseVersionId}.` : "."),
     }));
     fillPredictionsForSubject(subjectId);
     return upload.id;
@@ -894,12 +900,14 @@ export function uploadResults(subjectId: SubjectId) {
   const person = currentPerson();
   if (!person) return;
   setAgent("intake", "working");
-  const upload = runIntake(DEMO_SHEET, subjectId, {
+  const intake = runIntake(DEMO_SHEET, subjectId, {
     uploadedBy: person.id,
     term: TERM,
     filedAt: nowIso(),
     uploadId: `RU-${subjectId}-${TERM}`,
   });
+  const taught = taughtVersionId(state, subjectId);
+  const upload: ResultUpload = taught ? { ...intake, courseVersionId: taught } : intake;
   set((s) => {
     const others = s.resultUploads.filter((u) => u.id !== upload.id);
     const ds: DataSource = {

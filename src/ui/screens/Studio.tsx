@@ -50,7 +50,7 @@ import { AgentStrip } from "../shell/AgentStrip.tsx";
 import { CurriculumPanel, CurriculumHistoryPanel } from "./CurriculumWorkspace.tsx";
 import { CourseOverview, TeachingPlanPanel } from "./CourseWorkspace.tsx";
 import { StepFrame, courseContext, type StepHelper } from "./StepFrame.tsx";
-import { DecisionCard, Handoff } from "../primitives/loop.tsx";
+import { Handoff } from "../primitives/loop.tsx";
 import {
   Button,
   Card,
@@ -125,8 +125,6 @@ function StudioCourse({ state, person, subject, subjects }: { state: AppState; p
   const view = step === "update" || step === "teach" || step === "history" ? step : "course";
   const proposal = state.proposals.find((p) => p.subjectId === subject.id && p.status !== "approved" && p.status !== "rejected");
   const loop = loopState(state, subject.id);
-  const decisions = state.briefDecisions.filter((d) => d.subjectId === subject.id);
-  const name = (id: string) => state.people.find((p) => p.id === id)?.name ?? id;
   const retained = loop.decision?.governing?.outcome === "retain";
   return <StepFrame state={state} step={view} subject={subject} subjects={subjects} helper={STUDIO_HELPER[view]}>
     <div className="course-workspace-meta"><Tag>{subject.workspaceOnly ? "Personal course workspace" : subject.status === "proposed" ? "Proposed course" : "Course workspace"}</Tag><span role="status">{state.persistenceStatus === "unavailable" ? "Browser storage unavailable. Export your plan before closing." : state.persistenceStatus === "pending" ? "Saving in this browser..." : "Changes stored in this browser"}</span></div>
@@ -153,11 +151,6 @@ function StudioCourse({ state, person, subject, subjects }: { state: AppState; p
     </div>
     <div className="step-view" hidden={view !== "history"}>
       <CurriculumHistoryPanel state={state} subject={subject} />
-      <section className="workspace-panel" aria-labelledby="decision-history">
-        <h2 id="decision-history">Decisions on record</h2>
-        {decisions.length ? decisions.map((d) => <DecisionCard key={d.id} decision={d} name={name(d.byPersonId)} self={state.evidenceBriefs.find((b) => b.id === d.briefId)?.createdBy === d.byPersonId && !subject.workspaceOnly} />)
-          : <p className="muted">No decision recorded on a brief for this course yet. Decisions are recorded in Decide.</p>}
-      </section>
     </div>
   </StepFrame>;
 }

@@ -46,7 +46,7 @@ export const LOOP_STEPS: LoopStepDef[] = [
   { id: "teach", label: "Teach", number: 5, question: "What will the class do, and with what?", helper: "Prism, the teaching-material creator",
     handoff: "A class is not proof. Next: Learn.", screen: "studio", tab: "plan" },
   { id: "learn", label: "Learn", number: 6, question: "Did it work, as far as we can honestly tell?", helper: "Lens, the evidence analyst",
-    handoff: "Next semester the loop runs again.", screen: "upload" },
+    handoff: "Next semester the loop runs again.", screen: "learn" },
   { id: "history", label: "History", number: null, question: "Versions and decisions on one timeline.", helper: "Folio, the course reader",
     handoff: "", screen: "studio", tab: "history" },
 ];
@@ -83,6 +83,23 @@ export function termWindow(state: AppState, subjectId: string): TermWindow {
   const restart = state.events.filter((e) => e.kind === "term-set" && e.refs.subjectId === subjectId && e.refs.previousTerm && e.refs.term && e.refs.previousTerm !== e.refs.term)
     .map((e) => e.at).sort().at(-1) ?? "";
   return { term, since: restart };
+}
+
+/** The course version taught this term: the version this term's sessions were saved on (the latest
+ *  session decides), or the current version when no session is saved yet. */
+export function taughtVersionId(state: AppState, subjectId: string): string | null {
+  const subject = state.subjects.find((s) => s.id === subjectId);
+  if (!subject) return null;
+  const since = termWindow(state, subjectId).since;
+  const sessions = (state.teachingPlans.find((p) => p.subjectId === subjectId)?.sessions ?? [])
+    .filter((s) => s.courseVersionId && s.updatedAt >= since).sort((a, b) => a.updatedAt.localeCompare(b.updatedAt));
+  return sessions.at(-1)?.courseVersionId ?? subject.currentVersionId;
+}
+
+/** Every version this course has had, the current one included. */
+export function courseVersionIds(state: AppState, subjectId: string): Set<string> {
+  const subject = state.subjects.find((s) => s.id === subjectId);
+  return new Set([...state.subjectVersions.filter((v) => v.subjectId === subjectId).map((v) => v.id), ...(subject ? [subject.currentVersionId] : [])]);
 }
 
 // ---------- the done rules ----------
@@ -131,7 +148,10 @@ export function loopState(state: AppState, subjectId: string): LoopState {
   const versions = state.subjectVersions.filter((v) => v.subjectId === subjectId);
   const sessions = (state.teachingPlans.find((p) => p.subjectId === subjectId)?.sessions ?? []).filter((s) => inWindow(s.updatedAt));
   const seeded = new Set(SEED_RESULT_UPLOADS.map((u) => u.id));
-  const filed = state.resultUploads.filter((u) => u.subjectId === subjectId && !seeded.has(u.id) && inWindow(u.filedAt));
+  const versionsOfCourse = courseVersionIds(state, subjectId);
+  const filedThisTerm = state.resultUploads.filter((u) => u.subjectId === subjectId && !seeded.has(u.id) && inWindow(u.filedAt));
+  // Learn: a term's results are filed and matched to the taught version (Section 4).
+  const filed = filedThisTerm.filter((u) => u.courseVersionId && versionsOfCourse.has(u.courseVersionId));
 
   const quoted = reviewed.some((s) => mentions.some((m) => m.sourceId === s.id));
   const mapped = mappings.some((m) => m.cloIds.some((id) => current.has(id)));
@@ -150,7 +170,8 @@ export function loopState(state: AppState, subjectId: string): LoopState {
     // Retain completes Update; if a version was adopted after it anyway, the count says so rather than "no change".
     { id: "update", done: adoptions.length > 0 || retained, count: retained ? (adoptedSince.length ? plural(adoptedSince.length, "version", "versions") + " adopted after a retain decision" : "no change this term") : plural(adoptions.length, "adopted version", "adopted versions") },
     { id: "teach", done: sessions.some((s) => s.cloIds.some((id) => current.has(id))), count: plural(sessions.length, "session", "sessions") },
-    { id: "learn", done: filed.length > 0, count: plural(filed.length, "result file", "result files") },
+    { id: "learn", done: filed.length > 0, count: plural(filed.length, "result file", "result files"),
+      note: !filed.length && filedThisTerm.length ? "Results filed without a course version; file them again with the version taught" : undefined },
     { id: "history", done: false, count: plural(versions.length, "version", "versions") },
   ];
   const ring = steps.filter((s) => RING_STEPS.includes(s.id));

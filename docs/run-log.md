@@ -141,12 +141,25 @@ None queued yet.
 - 05:41 check: after the last proof and document edits, `npm run typecheck`, `npm run prove:all` (178 passed), `npm run build`, `smoke:curriculum` (6 of 6), the dash scan, the contrast check and the guide check passed again.
 - 05:43 the refreshed screenshot showed Update saying "no change this term" after a version was adopted following a retain decision; the count and the notice now say a version was adopted after the retain, and an adoption at the same moment as the decision is ordered by the event log (docs/decisions.md, the Update entry).
 - 05:45 check: `npm run prove:all` passed; `npm run build` passed; `npm run smoke` 15 of 15, `smoke:integrity` 2 of 2, `smoke:workspace` 7 of 7, `smoke:curriculum` 6 of 6.
-- 05:46 ended; committed as "A2a: Watch and Report with its sub-rail, the decision record and Decide, the event log, and the receipts ring scoped to the term".
+- 05:46 ended; committed `c4dd51d` "A2a: Watch and Report with its sub-rail, the decision record and Decide, the event log, and the receipts ring scoped to the term".
 
 ### A2b, the remaining loop screens, Home, How it works, Landing
+
+- 2026-10-22 05:46 started; re-read Section 17.5 and this log, then Sections 2, 4, 5, 6 and 9.8. `docs/claims.md` does not exist yet; A2b creates it from the dated research notes.
+- Before 06:12, built and checked as it went: Learn as its own screen with results bound to the taught version, Course, Update, Teach, History, Home, How it works with the loop graphic, the landing page and `docs/claims.md`. Found and fixed: the teaching proof wanted a guide for Learn (added); a visual pass showed the ring crossing the station labels, a seeded outcome shown as removed on a session card, and the filing toast speaking of the sandbox cohort (all fixed).
+- 06:12 nine decisions logged (docs/decisions.md).
+- 06:12 check: `npm run typecheck` passed.
+- 06:12 check: `npm run prove:all` 179 passed, 0 failed, sixteen suites.
+- 06:12 check: `npm run build` passed.
+- 06:12 check: `npm run smoke:integrity` 2 of 2 passed.
+- 06:13 check: `npm run smoke` 15 of 15 and `smoke:workspace` 7 of 7 passed.
+- 06:14 check: `npm run smoke:curriculum` 6 of 6 passed; guide check, contrast check, dash scan (231 files), theme check, mascot check and the backup migration passed.
+- 06:15 ended; committed as "A2b: Learn matched to the taught version, the restyled loop screens, Home, How it works and a landing page whose every figure is in the claims register".
+
+### A4, demo and checks
 
 - (next)
 
 ## What is left
 
-A2b, A4, A5, A6, A7 (the parts that need no human voice), A8, in that order.
+A4, A5, A6, A7 (the parts that need no human voice), A8, in that order.

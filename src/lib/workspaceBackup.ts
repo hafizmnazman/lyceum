@@ -53,7 +53,7 @@ const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
   notifications: array(shape({ id, toPersonId: id, kind: one("ping-update","ping-new-subject","review-request","test-done","approved","rejected","evidence-brief","brief-decision"),
     subjectId: opt(id), proposalId: opt(id), agentFindings: opt(str), briefId: opt(id), read: boolean, createdAt: str })),
   predictions: array(shape({ proposalId: id, subjectId: id, predictedMastery: num, madeAt: str, actualMastery: opt(num), residual: opt(num) })),
-  resultUploads: array(shape({ id, subjectId: id, uploadedBy: id, term: str, filedAt: str, sourceFileName: opt(str),
+  resultUploads: array(shape({ id, subjectId: id, uploadedBy: id, term: str, filedAt: str, sourceFileName: opt(str), courseVersionId: opt(id),
     rows: array(shape({ cloId: id, meanScore: num, sd: nonnegative, n: integer })) })),
   dataSources: array(shape({ kind: one("clo-survey","ssrt","results","syllabus","material"), subjectId: id, term: str,
     recordCount: integer, ingestedAt: str, verified: opt(boolean), sourceFileName: opt(str) })),
@@ -171,6 +171,8 @@ export function parseWorkspaceBackup(raw: string, knownPersonIds: string[]): { o
   if ([...d.proposals,...d.testDrafts].some(x => !subjects.has(x.subjectId) || !people.has(x.authorId))) return fail("Invalid proposal or assessment owner.");
   if ([...d.survey,...d.predictions,...d.resultUploads,...d.dataSources,...d.relevanceRatings].some(x => !subjects.has(x.subjectId))) return fail("A record refers to an unknown course.");
   if (d.resultUploads.some(x => !people.has(x.uploadedBy))) return fail("Invalid result uploader.");
+  if (d.resultUploads.some(x => x.courseVersionId !== undefined && !d.subjectVersions.some(v => v.id === x.courseVersionId && v.subjectId === x.subjectId)
+    && d.subjects.find(s => s.id === x.subjectId)?.currentVersionId !== x.courseVersionId)) return fail("A results file names a version of another course.");
   if (d.notifications.some(x => !people.has(x.toPersonId))) return fail("Invalid notification recipient.");
   const sourceById = new Map(d.evidenceSources.map(s => [s.id, s]));
   for (const source of d.evidenceSources) {

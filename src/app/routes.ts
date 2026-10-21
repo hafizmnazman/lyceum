@@ -9,7 +9,7 @@ import type { AppState } from "./store.ts";
 
 export const HASH_SCREENS: Screen[] = [
   "login", "index", "inbox", "trends", "approval", "programme", "new-subject", "assignments", "courses",
-  "studio", "watch", "report", "decide", "proposal", "acceptance", "upload", "backtest", "dataroom", "office", "evaluation", "guide",
+  "studio", "watch", "report", "decide", "proposal", "acceptance", "upload", "learn", "backtest", "dataroom", "office", "evaluation", "guide",
 ];
 
 export interface CourseRoute { subjectId: string; step: CourseStep; reportTab?: ReportTab }
@@ -38,7 +38,7 @@ export function effectiveStep(s: RouteState): CourseStep | null {
     const def = stepDef(s.courseStep);
     if (def.screen === s.screen && (!def.tab || def.tab === s.studioTab)) return s.courseStep;
   }
-  if (s.screen === "watch" || s.screen === "report" || s.screen === "decide") return s.screen;
+  if (s.screen === "watch" || s.screen === "report" || s.screen === "decide" || s.screen === "learn") return s.screen;
   return s.screen === "studio" ? stepForTab(s.studioTab, null) : null;
 }
 

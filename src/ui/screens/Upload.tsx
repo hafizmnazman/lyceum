@@ -1,7 +1,9 @@
 // Upload (spec 6.3): real file intake, the product's trust moment. The flow is
-// drop -> parse -> interpret -> preview and confirm -> filed receipt. Nothing
+// drop, parse, interpret, preview and confirm, then a filed receipt. Nothing
 // files until the human has seen what was read (left) beside what the agent
-// made of it (right); the confirm step is the trust boundary.
+// made of it (right); the confirm step is the trust boundary. The same intake
+// panel files results and surveys on the Learn step, where the person filing
+// also confirms the course version the results are for.
 
 import { useRef, useState } from "react";
 import type { ChangeEvent, DragEvent } from "react";
@@ -14,11 +16,13 @@ import {
   finishAgentRun,
   getState,
   navigate,
+  openStep,
   personById,
   stagePendingIntake,
   trackRequest,
   useStore,
 } from "../../app/store.ts";
+import { courseVersionIds, taughtVersionId } from "../../app/loop.ts";
 import { interpretDoc, parseFile } from "../../agents/client.ts";
 import { AgentStrip } from "../shell/AgentStrip.tsx";
 import {
@@ -95,7 +99,30 @@ function QuietWell(props: { text: string }) {
   );
 }
 
+const ALL_SAMPLES: Array<[string, string]> = [
+  ["results.xlsx", "sample-results"],
+  ["clo-survey.csv", "sample-survey"],
+  ["syllabus.pdf", "sample-syllabus"],
+  ["lecture-slides.pptx", "sample-slides"],
+];
+
 export function UploadScreen() {
+  const state = useStore();
+  return (
+    <Page>
+      <PageHead
+        title="Upload"
+        context="Results, surveys, syllabi and slides become ground here. The agent reads the file; you confirm what it read before anything files."
+      />
+      <AgentStrip agent="intake" />
+      <IntakePanel samples={ALL_SAMPLES} />
+      {!state.pendingIntake ? <><SectionLabel style={{ marginTop: 32 }}>Recent uploads</SectionLabel><RecentUploads /></> : null}
+    </Page>
+  );
+}
+
+/** Drop or pick a file, see what was read beside what it was taken to mean, then confirm and file. */
+export function IntakePanel({ samples, prompt }: { samples: Array<[string, string]>; prompt?: string }) {
   const state = useStore();
   const inputRef = useRef<HTMLInputElement>(null);
   const [parsingName, setParsingName] = useState<string | null>(null);
@@ -141,13 +168,7 @@ export function UploadScreen() {
   }
 
   return (
-    <Page>
-      <PageHead
-        title="Upload"
-        context="Results, surveys, syllabi and slides become ground here. The agent reads the file; you confirm what it read before anything files."
-      />
-      <AgentStrip agent="intake" />
-
+    <div className="intake-panel">
       {pending ? (
         <ReviewPanels pending={pending} lastVia={lastVia} onDone={() => setLastVia(null)} />
       ) : (
@@ -188,7 +209,7 @@ export function UploadScreen() {
               <>
                 <UploadCloud size={28} color="var(--ink-2)" style={{ marginBottom: 8 }} />
                 <div style={{ fontSize: 14, fontWeight: 500 }}>
-                  Drop the term's results, a survey export, a syllabus pdf, or lecture slides.
+                  {prompt ?? "Drop the term's results, a survey export, a syllabus pdf, or lecture slides."}
                 </div>
                 <div style={{ fontSize: 13, color: "var(--ink-2)", marginTop: 4 }}>
                   xlsx, csv, pdf, pptx, docx
@@ -212,12 +233,7 @@ export function UploadScreen() {
               exact same parse-interpret-confirm pipeline as a dropped file. */}
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
             <span style={{ fontSize: 13, color: "var(--ink-2)" }}>Or try a sample:</span>
-            {[
-              ["results.xlsx", "sample-results"],
-              ["clo-survey.csv", "sample-survey"],
-              ["syllabus.pdf", "sample-syllabus"],
-              ["lecture-slides.pptx", "sample-slides"],
-            ].map(([name, demoId]) => (
+            {samples.map(([name, demoId]) => (
               <Button
                 key={name}
                 variant="outline"
@@ -258,7 +274,17 @@ export function UploadScreen() {
                     {receipt.sourceFileName ? ` from ${receipt.sourceFileName}` : ""}.
                   </div>
                   <div style={{ fontSize: 13, marginTop: 8 }}>
-                    This ground now feeds the cohort.{" "}
+                    {receipt.courseVersionId ? <>For course version <span className="num">{receipt.courseVersionId}</span>. </> : null}
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        openStep(receipt.subjectId, "learn");
+                      }}
+                    >
+                      Read it in Learn
+                    </a>
+                    {" or "}
                     <a
                       href="#"
                       onClick={(e) => {
@@ -266,7 +292,7 @@ export function UploadScreen() {
                         navigate("dataroom");
                       }}
                     >
-                      See it in the data room
+                      see it in the data room
                     </a>
                   </div>
                 </div>
@@ -274,11 +300,9 @@ export function UploadScreen() {
             </Card>
           ) : null}
 
-          <SectionLabel style={{ marginTop: 32 }}>Recent uploads</SectionLabel>
-          <RecentUploads />
         </>
       )}
-    </Page>
+    </div>
   );
 }
 
@@ -351,6 +375,21 @@ function ReviewPanels(props: {
             onChange={(e) => stagePendingIntake(doc, { ...interp, termGuess: e.target.value })}
           />
         </Field>
+        {interp.docType === "results" && interp.subjectGuess ? (
+          <Field label="Course version taught" hint="The results are matched to this version. It defaults to the version this term's sessions were saved on.">
+            <Select
+              data-demo-id="upload-version"
+              value={interp.courseVersionId ?? taughtVersionId(state, interp.subjectGuess) ?? ""}
+              onChange={(e) => stagePendingIntake(doc, { ...interp, courseVersionId: e.target.value })}
+            >
+              {[...courseVersionIds(state, interp.subjectGuess)].map((id) => (
+                <option key={id} value={id}>
+                  {id}{id === state.subjects.find((s) => s.id === interp.subjectGuess)?.currentVersionId ? " (current)" : ""}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        ) : null}
 
         {interp.mappedRows && interp.mappedRows.length > 0 ? (
           <div style={{ marginBottom: 12 }}>

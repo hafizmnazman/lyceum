@@ -166,7 +166,7 @@ try {
   assert.equal(await page.$(selector("assessment-submit")),null);
   await click("assessment-course-change-ack");await click("assessment-course-change-review");
   await page.waitForFunction(()=>window.__lyceum.getState().testDrafts.find(t=>t.subjectId==="BUS205").needsReview===false);
-  await click("rail-history");await text("Course versions");await text("Previous");await text("Revision decisions");await text("Decisions on record");
+  await click("rail-history");await text("Versions and decisions");await text("Previous");await text("Revision decisions");await text("Retain the course as it is");
   console.log("PASS reload, linked teaching session, changed-outcome impact, explicit assessment review, version history and the decision on record");
   await click("nav-guide");await click("backup-export");const backup=await waitDownload("lyceum-workspace-backup.json");
   const saved=JSON.parse(readFileSync(backup,"utf8"));assert.equal(saved.application,"Lyceum");assert.ok(saved.data.courseDefinitions.BUS205);

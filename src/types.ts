@@ -113,6 +113,8 @@ export interface ResultUpload {
   filedAt: string; // ISO
   // v3: which file this came from, for provenance in the Data room.
   sourceFileName?: string;
+  // A2b: the course version these results are for, the version taught that term, confirmed when filed (plan Section 4, Learn).
+  courseVersionId?: string;
 }
 
 export interface DataSource {
@@ -302,6 +304,7 @@ export interface IntakeInterpretation {
   mappedRows?: ResultUpload["rows"]; // when docType === "results"
   surveyRecords?: SurveyRecord[]; // when docType === "clo-survey"
   contentSummary?: string; // syllabus/slides: filed as subject material
+  courseVersionId?: string; // results: the course version taught, confirmed by the person filing
   confidence: number; // 0..1, shown to the user
   notes: string[]; // "column 'Avg' read as meanScore", etc.
 }

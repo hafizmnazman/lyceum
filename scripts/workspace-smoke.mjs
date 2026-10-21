@@ -121,7 +121,7 @@ try {
   await click("nav-guide");
   await textIncludes("What has not been built yet");
   await clickText("All roles");
-  assert.equal(await page.$$(".guide-entry").then((entries) => entries.length), 19);
+  assert.equal(await page.$$(".guide-entry").then((entries) => entries.length), 20);
   await page.type('input[type="search"]', "slide");
   assert.ok(await page.$$(".guide-entry").then((entries) => entries.length) > 0);
   console.log("PASS resume path, session updates and all-role section guide");

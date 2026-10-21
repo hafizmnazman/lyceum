@@ -12,13 +12,18 @@ import {
   adoptCurriculumRevision, checkCurriculumRevision, confirmProposals, createCourseWorkspace, getState, importCollectedPostings, login, openNotification,
   prepareEvidenceBrief, recordDecision, removeEvidenceSnapshot, resetDemoState, runCollection, saveCurriculumRevision, saveTeachingPlanDetails,
   saveTeachingSession, scanForRequirements, sendEvidenceBrief, setSkillLexicon, setSkillMapping, setSourcesReviewed, startCurriculumRevision,
-  takeEvidenceSnapshot, uploadResults, type AppState, type CollectRun,
+  takeEvidenceSnapshot, uploadResults, exportWorkspaceBackup, stagePendingIntake, confirmPendingIntake, type AppState, type CollectRun,
 } from "./app/store.ts";
-import { LOOP_STEPS, REPORT_TABS, loopState, stepDef, termWindow, type CourseStep } from "./app/loop.ts";
+import { attainment, LEARN_CLAIM } from "./lib/learn.ts";
+import { parseWorkspaceBackup } from "./lib/workspaceBackup.ts";
+import { LOOP_STEPS, REPORT_TABS, loopState, stepDef, taughtVersionId, termWindow, type CourseStep } from "./app/loop.ts";
 import { hashFor, parseRoute } from "./app/routes.ts";
 import { runTimeline } from "./app/runs.ts";
 import { briefDecisionState, decisionStatusText, evidenceChangedAt } from "./lib/decisions.ts";
+import { readFileSync } from "node:fs";
+import { ACCREDITOR_MAPPING } from "./data/accreditors.ts";
 import { PAIN_STATS } from "./data/painStats.ts";
+import { PROOF } from "./data/proof.ts";
 import type { CollectedPosting, CourseDefinition, DecisionOutcome } from "./types.ts";
 
 const RETRIEVED = "2026-10-09T03:00:00.000Z";
@@ -311,6 +316,37 @@ test("the timeline reads the event log first, labels derived lines, and the log 
   assert.equal(kept.detail, "The snapshot was later removed; its event stays");
 });
 
+test("Learn counts a term's results only when they are matched to the version taught, and says what it cannot claim", async () => {
+  await closedLoop();
+  const s = getState();
+  const taught = taughtVersionId(s, "CS310")!;
+  assert.equal(taught, s.teachingPlans.find((p) => p.subjectId === "CS310")!.sessions.at(-1)!.courseVersionId, "the version the term's sessions were saved on");
+  const upload = s.resultUploads.find((u) => u.subjectId === "CS310")!;
+  assert.equal(upload.courseVersionId, taught, "filed results are bound to the version taught");
+  assert.equal(step("CS310", "learn").done, true);
+  const unmatched = { ...s, resultUploads: s.resultUploads.map((u) => (u.id === upload.id ? { ...u, courseVersionId: undefined } : u)) };
+  assert.equal(step("CS310", "learn", unmatched).done, false, "results with no course version do not count");
+  assert.match(step("CS310", "learn", unmatched).note ?? "", /without a course version/);
+  const foreign = { ...s, resultUploads: s.resultUploads.map((u) => (u.id === upload.id ? { ...u, courseVersionId: "CS220-v1" } : u)) };
+  assert.equal(step("CS310", "learn", foreign).done, false, "a version of another course does not count");
+  const raw = JSON.parse(exportWorkspaceBackup());
+  raw.data.resultUploads.find((u: { id: string }) => u.id === upload.id).courseVersionId = "CS220-v1";
+  assert.equal(parseWorkspaceBackup(JSON.stringify(raw), s.people.map((p) => p.id)).ok, false, "a backup cannot bind results to another course's version");
+
+  // The real intake: the person filing confirms the version; another course's version is refused.
+  const doc = { fileName: "CS310-results.xlsx", kind: "xlsx" as const, pages: [], tables: [] };
+  stagePendingIntake(doc, { docType: "results", subjectGuess: "CS310", termGuess: "2026-S2", mappedRows: [{ cloId: "CLO5", meanScore: 0.62, sd: 0.12, n: 42 }, { cloId: "CLO4", meanScore: 0.5, sd: 0.1, n: 45 }], confidence: 0.9, notes: [], courseVersionId: "CS220-v1" });
+  assert.equal(confirmPendingIntake(), null, "another course's version is refused");
+  stagePendingIntake(doc, { docType: "results", subjectGuess: "CS310", termGuess: "2026-S2", mappedRows: [{ cloId: "CLO5", meanScore: 0.62, sd: 0.12, n: 42 }, { cloId: "CLO4", meanScore: 0.5, sd: 0.1, n: 45 }], confidence: 0.9, notes: [] });
+  const filedId = confirmPendingIntake()!;
+  const filed = getState().resultUploads.find((u) => u.id === filedId)!;
+  assert.equal(filed.courseVersionId, taught, "with no choice made, the version taught");
+  const { N, rows } = attainment(filed, getState().clos.filter((c) => c.subjectId === "CS310"));
+  assert.equal(N, 45, "N is the most students the file records for any one outcome");
+  assert.deepEqual(rows.map((r) => [r.cloId, r.n, Boolean(r.clo)]), [["CLO5", 42, true], ["CLO4", 45, false]], "a row for an outcome the course does not have is kept and shown as such");
+  assert.equal(LEARN_CLAIM, "No learning gain is claimed; the benchmark has not been run.", "the sentence of plan Section 9.8");
+});
+
 test("each step has one address, the Report sub-step lives in the URL, and a bad path opens nothing", () => {
   const courseOf = (hash: string) => { const route = parseRoute(hash); assert.ok(route && "course" in route, hash); return route.course; };
   assert.deepEqual(parseRoute("#/course/CS310"), { course: { subjectId: "CS310", step: "course" } });
@@ -327,13 +363,29 @@ test("each step has one address, the Report sub-step lives in the URL, and a bad
   assert.equal(courseOf("#/course/BUS%20205/watch").subjectId, "BUS 205");
 });
 
-test("every figure on the landing page carries a source and a link, three per scope", () => {
-  assert.equal(PAIN_STATS.length, 9);
-  for (const scope of ["Malaysia", "Asia", "World"] as const) assert.equal(PAIN_STATS.filter((s) => s.scope === scope).length, 3, scope);
+test("every landing figure is in the claims register with its source, and every quoted clause is word for word in its note", () => {
+  const claims = readFileSync(new URL("../docs/claims.md", import.meta.url), "utf8");
+  const note = (file: string) => readFileSync(new URL("../docs/research/" + file, import.meta.url), "utf8");
+  const row = (id: string) => claims.split("\n").find((line) => line.startsWith("| `" + id + "` |"));
+  const dash = new RegExp("[" + String.fromCharCode(0x2013, 0x2014) + "]");
+  assert.deepEqual(PAIN_STATS.map((s) => s.scope), ["World", "Asia", "Malaysia"], "the problem at three levels, one figure each");
   for (const s of PAIN_STATS) {
-    assert.ok(s.value.trim() && s.label.trim() && s.source.trim(), s.label);
-    assert.ok(s.url.startsWith("https://"), s.url);
-    assert.ok(!new RegExp("[" + String.fromCharCode(0x2013, 0x2014) + "]").test(s.label + s.source), "no dashes");
+    const r = row(s.claim);
+    assert.ok(r, s.claim + " is registered in docs/claims.md");
+    assert.ok(r.includes(s.value), s.claim + " carries its figure");
+    for (const src of s.sources) { assert.ok(src.url.startsWith("https://"), src.url); assert.ok(r.includes(src.url), src.url + " is the registered link"); }
+    assert.ok(!dash.test(s.label + s.sources.map((x) => x.name).join(" ")), "no dashes");
   }
-  assert.equal(new Set(PAIN_STATS.map((s) => s.scope + s.value)).size, PAIN_STATS.length, "no repeated figure within a scope");
+  assert.ok(note("curriculum-latency-global-2026-10-22.md").includes("two-fifths (39%)"), "the WEF figure is in its note");
+  assert.ok(note("curriculum-latency-global-2026-10-22.md").includes("twelve to eighteen months"), "the approval time is in its note");
+  assert.ok(note("pain-and-market-2026-10-11.md").includes("77% of 10,095 Asia Pacific employers"), "the ManpowerGroup figure is in its note");
+  assert.ok(note("pain-and-market-2026-10-11.md").includes("32.2%; 1.60 million"), "the DOSM figure is in its note");
+  assert.ok(PAIN_STATS.find((s) => s.scope === "Asia")!.vendor, "the vendor survey says so");
+  for (const p of PROOF) { const r = row(p.claim); assert.ok(r && r.includes("| " + p.value + " |"), p.claim + " is registered with its figure"); }
+  for (const step of ACCREDITOR_MAPPING) for (const c of step.clauses) {
+    assert.ok(c.url.startsWith("https://") && claims.includes(c.url), c.body + " has its link registered");
+    const file = c.note.split(",")[0].split(" (")[0];
+    if (!c.paraphrase) assert.ok(note(file).includes(c.quote), c.body + " is quoted word for word from " + file);
+  }
+  assert.deepEqual(ACCREDITOR_MAPPING.map((m) => m.step), ["Watch", "Report", "Decide", "Update", "Teach", "Learn"], "the six steps, in order");
 });

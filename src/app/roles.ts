@@ -37,6 +37,7 @@ export type Screen =
   | "proposal" // the old change proposal, in the illustrative sandbox
   | "acceptance"
   | "upload"
+  | "learn"
   | "backtest"
   | "dataroom"
   | "office" // how Lyceum works: the roles in order and the real run record
@@ -149,7 +150,7 @@ export function navFor(person: Person, assignments: RoleAssignment[]): Screen[] 
   const nav: Screen[] = ["inbox"];
   const isCoord = isCoordinatorAnywhere(person.id, assignments);
   const isLect = isLecturerAnywhere(person.id, assignments);
-  if (isCoord || isLect) nav.push("upload");
+  if (isCoord || isLect) nav.push("upload", "learn");
   nav.push("courses", "studio", "watch", "report", "decide");
   if (isCoord || isLect) nav.push("proposal", "acceptance");
   if (isCoord) nav.push("trends");

@@ -3,6 +3,7 @@
 
 import type { LucideIcon } from "lucide-react";
 import {
+  GraduationCap,
   BookOpen,
   BookMarked,
   CheckSquare,
@@ -41,6 +42,7 @@ export const NAV_META: Record<Exclude<Screen, "login">, { label: string; icon: L
   studio: { label: "Course Studio", icon: PenLine },
   acceptance: { label: "Acceptance test", icon: FlaskConical },
   upload: { label: "Upload", icon: UploadCloud },
+  learn: { label: "Learn", icon: GraduationCap },
   backtest: { label: "Closed loop", icon: Target },
   dataroom: { label: "Data room", icon: Database },
   office: { label: "How it works", icon: Workflow },

@@ -12,7 +12,7 @@ Reviewed 11 October 2026. Generated from the same section catalogue used by the 
 6. **Decide**. A coordinator or the programme owner who received the brief records adopt, retain, defer or return with a required reason. A decision on your own brief is self-recorded and stays open until a second person decides, except on a personal single-owner course. A record is never edited; deciding again adds a new one. Retain is a complete outcome: Update then shows no change this term.
 7. **Update**. An existing course needs **Start course revision**; a new personal course starts with an empty revision. Record the course brief and only the constraints you know; add CLO wording, Bloom level, achievement evidence and optional programme-outcome mappings; add topics, hours, weeks, CLO links and prerequisites; protect foundational content that must remain. **Save revision**, then **Check saved revision**: errors such as broken links, prerequisite cycles and exceeded time budgets block the candidate, while unknown budgets and missing evidence remain visible warnings. Inspect **Before and after** and the affected teaching work, record why and the teaching term, then the coordinator (or the owner of a personal course) chooses **Use as my course version**. The baseline is preserved; university approval stays in its existing process. **Discard revision** requires a reason and leaves the current version unchanged.
 8. **Teach**. Save course notes and add a session with a week, topic, duration, CLO links, activity and check for understanding. Ready and delivered sessions require preparation details; those checks do not establish teaching effectiveness. Course changes flag affected sessions and assessments for review while keeping the content. **Teaching pack (.pptx)** on any session downloads an editable deck built from the saved session and the evidence linked to its outcomes; the meeting brief also downloads as slides. No model writes a word of either. The assessment blueprint and template items sit behind a disclosure on this step; an affected assessment needs a recorded course-change review and repaired links before another submission.
-9. **Learn**. File results through Upload; the step is done when this term's results are filed. **History** keeps the course versions and the recorded decisions and exports a previous outline. **Export current outline** and **Export plan (.md)** write readable Markdown documents, which are not slide decks or restorable backups.
+9. **Learn**. File the term's results or a CLO survey on this step; you confirm the course version the results are for, by default the version this term's sessions were saved on, and the step is done when this term's results are filed and matched to it. Attainment per outcome is shown as filed, with n of N. No learning gain is claimed; the benchmark has not been run. **History** keeps the course versions and the recorded decisions on one timeline and exports a previous outline. **Export current outline** and **Export plan (.md)** write readable Markdown documents, which are not slide decks or restorable backups.
 10. In **Guide & progress** or the Backups panel on **Courses**, download a JSON workspace backup. To restore, choose the JSON file, review counts and export date, acknowledge replacement, then restore. Download the pre-restore recovery copy to recover the previous workspace. Backups exclude original uploaded files, credentials and unsaved edits.
 11. The earlier proposal and approval chain, with its illustrative acceptance forecast, is kept in the research sandbox and labelled illustrative. Decisions on the loop are recorded in Decide.
 
@@ -41,9 +41,9 @@ The seeded catalogue, market figures and learner examples are illustrative. Uplo
 
 Resume course preparation and respond to work routed to you.
 
-1. Read the receipts ring for your course: each step says Done only when its record exists this term, and Continue opens the next one.
-2. Open a brief waiting for a decision. A brief sent to you opens here with its receipts; if you hold the decide position, record adopt, retain, defer or return with the reason.
-3. Open a notification to see the request in context. A decision on your own brief opens that course's Decide step.
+1. Read the receipts ring for your course in Start here: each step says Done only when its record exists this term, and Continue opens the next one.
+2. Open a brief waiting for a decision. The list opens by itself when one is waiting; a brief sent to you opens here with its receipts, and if you hold the decide position you record adopt, retain, defer or return with the reason.
+3. Open a notification to see the request in context. A decision on your own brief opens that course's Decide step. Your courses, with their loop summaries, are in the last disclosure.
 
 **Output:** A next action tied to an actual course, brief or session in this workspace.
 
@@ -70,10 +70,10 @@ Find your courses and see what preparation each one needs.
 
 Set up the course, make the decided change, prepare classes and keep a traceable local history.
 
-1. Course: inspect the outcomes, prerequisites, source records and unfinished preparation. The loop rail lists the six steps that follow.
-2. Update: start a revision. Add, edit or remove CLOs and topics; record achievement evidence, PLO mappings, hours, prerequisites and protected foundations. Save and check it, inspect the warnings and the before and after comparison, then record the rationale and teaching term. The coordinator, or the owner of a personal course, makes it the course version; university approval stays in its existing process. When the decision was retain, Update shows no change this term.
-3. Teach: save CLO-linked sessions, activities, learning checks and references; export the plan; download an editable teaching pack (.pptx) for any session with its outcomes, the employer evidence behind them, the activity and the check. The assessment blueprint and template items sit behind a disclosure. Review affected sessions after a course change.
-4. History: inspect preserved course versions and the decisions recorded on briefs, and export a previous outline.
+1. Course: the outline as cards, outcomes with their Bloom level and topics with their hours against the contact-hour budget. One action: Watch employers while the course has no evidence, Start a revision once it has. Teaching context, documents, the preparation checklist and the illustrative sandbox sit behind disclosures.
+2. Update: start a revision. The hours meters, the number of changes and the check state open it. Add, edit or remove CLOs and topics; record achievement evidence, PLO mappings, hours, prerequisites and protected foundations. Save and check it, inspect the warnings and the before and after comparison, then record the rationale and teaching term. The coordinator, or the owner of a personal course, makes it the course version; university approval stays in its existing process. The sessions and assessments a change affects are listed behind a disclosure. When the decision was retain, Update shows no change this term, and says so if a version was adopted anyway.
+3. Teach: session cards by week, each with its linked outcomes and its editable teaching pack (.pptx) built from the session and the employer evidence behind its outcomes. Save CLO-linked sessions, activities, learning checks and references, and export the plan. The assessment blueprint and template items sit behind a disclosure. Review affected sessions after a course change.
+4. History: versions and decisions on one timeline, newest first. Each entry opens to its outline, with an export, or to its decision and reason; the revision log sits behind a disclosure.
 
 **Output:** An editable course definition, candidate and active local versions, the decision history, a teaching plan, Markdown outlines and an assessment draft.
 
@@ -139,15 +139,30 @@ Explore the prototype's earlier proposal and approval chain in the illustrative 
 
 **Current limit:** This is the earlier approval chain, kept for exploration. Course decisions are recorded in each course's Decide step. Forecasts are uncalibrated and agent drafting uses fixtures.
 
+## Learn
+
+**For:** Assigned lecturers and coordinators · **Status:** Partial
+
+See what came back for each outcome, as far as we can honestly tell.
+
+1. Read attainment per outcome from the latest results file: the mean mark as filed, its spread, and n of N, where N is the most students the file records for any one outcome.
+2. File the term's results or a CLO survey. You see what was read beside what it was taken to mean, and you confirm the course version the results are for; by default it is the version this term's sessions were saved on.
+3. Check the results and surveys filed for the course. A seeded example is labelled and never counts.
+4. Open the benchmark protocol and its status, and read what is planned for the pilot.
+
+**Output:** A results file matched to the version taught, and attainment per outcome with n of N.
+
+**Current limit:** No learning gain is claimed; the benchmark has not been run. Intervals, response adequacy, pooling, perception beside attainment and scored predictions are planned. N is read from the file, not from an enrolment record.
+
 ## Upload
 
 **For:** Assigned lecturers and coordinators · **Status:** Partial
 
 Read a document and review its interpretation before filing it.
 
-1. Choose a supported PDF, PPTX or spreadsheet with the local API running.
-2. Check extracted text/tables, document type, course and term in the preview.
-3. Correct the interpretation and confirm; inspect the filed record in Data room.
+1. Choose a supported PDF, PPTX or spreadsheet with the local API running. Results and surveys can also be filed from Learn.
+2. Check extracted text/tables, document type, course and term in the preview; for results, confirm the course version taught.
+3. Correct the interpretation and confirm; inspect the filed record in Learn or the Data room.
 
 **Output:** Extracted records and source metadata in this browser's workspace.
 
@@ -269,10 +284,10 @@ Inspect the data behind the workspace and distinguish fixtures from uploaded rec
 
 **For:** Everyone · **Status:** Working locally
 
-See the seven roles in order, what each reads, produces and cannot do, and the real record of what happened on your course.
+See the loop with the host at its centre and the seven helpers at their stations, what each reads, produces and cannot do, and the real record of what happened on your course.
 
-1. Open a role card to read what it reads, produces and cannot do.
-2. Choose a course to see its timeline. Lines from the event log (briefs prepared, sent and read, decisions, snapshots, adoptions, term changes) carry the time they happened; lines worked out from the records are labelled derived.
+1. Choose a helper on the loop, or its card, to read what it reads, produces and cannot do. Decide is the station where people decide.
+2. Choose See the record on this course to open its timeline. Lines from the event log (briefs prepared, sent and read, decisions, snapshots, adoptions, term changes) carry the time they happened; lines worked out from the records are labelled derived.
 3. Use Open on a timeline entry to jump to the step that holds it.
 
 **Output:** A step-by-step record of the work done on a course, told by role, with a link to each result.

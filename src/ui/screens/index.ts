@@ -16,6 +16,7 @@ import { ReportScreen } from "./Report.tsx";
 import { DecideScreen } from "./Decide.tsx";
 import { AcceptanceScreen } from "./Acceptance.tsx";
 import { UploadScreen } from "./Upload.tsx";
+import { LearnScreen } from "./Learn.tsx";
 import { BacktestScreen } from "./Backtest.tsx";
 import { DataRoomScreen } from "./DataRoom.tsx";
 import { OfficeScreen } from "./Office.tsx";
@@ -41,6 +42,7 @@ export const SCREENS: Record<Screen, ComponentType> = {
   proposal: ProposalScreen,
   acceptance: AcceptanceScreen,
   upload: UploadScreen,
+  learn: LearnScreen,
   backtest: BacktestScreen,
   dataroom: DataRoomScreen,
   office: OfficeScreen,

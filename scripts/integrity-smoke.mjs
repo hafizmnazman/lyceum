@@ -59,8 +59,8 @@ try {
   // The notice shows only where synthetic data is on screen: the research sandbox.
   const noticeScreens = new Set(["acceptance", "trends", "backtest", "dataroom", "index"]);
   // The course workspace and the upload screen are reached through the loop rail (Course and Learn).
-  const control = { studio: "rail-course", upload: "rail-learn" };
-  for (const screen of ["courses", "studio", "acceptance", "trends", "backtest", "dataroom", "office", "evaluation", "index", "upload", "inbox"]) {
+  const control = { studio: "rail-course", learn: "rail-learn" };
+  for (const screen of ["courses", "studio", "acceptance", "trends", "backtest", "dataroom", "office", "evaluation", "index", "learn", "inbox"]) {
     await click(control[screen] ?? `nav-${screen}`);
     await page.waitForFunction((target) => window.__lyceum?.getState().screen === target, {}, screen);
     assert.equal(await page.$$eval('[aria-label="Prototype data limitations"]', (elements) => elements.length), noticeScreens.has(screen) ? 1 : 0, screen);
@@ -74,6 +74,10 @@ try {
     if (screen === "dataroom") {
       assert.ok(await page.evaluate(() => document.body.innerText.includes("illustrative records")));
       await page.screenshot({ path: join(output, "data-room.png"), fullPage: true });
+    }
+    if (screen === "learn") {
+      assert.ok(await page.evaluate(() => document.body.innerText.includes("No learning gain is claimed; the benchmark has not been run.")), "Learn says what it cannot claim");
+      await page.screenshot({ path: join(output, "learn.png"), fullPage: true });
     }
     if (screen === "office") {
       assert.ok(await page.evaluate(() => document.body.innerText.includes("step by step")));

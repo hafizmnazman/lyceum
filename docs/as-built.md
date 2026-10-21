@@ -120,3 +120,35 @@ A visual pass on the built app with the dated saved sample (Home, Course, Watch,
 Not done in A2a, by design: the Learn step's match between a results file and the taught version, and the restyled Course, Update, Teach, Learn, History, Home and How it works screens (A2b); the tour in the loop's order with Dr Rahman's decision (A4). Times on records are shown as stored (UTC), as elsewhere in the app.
 
 Accepted by: the Code lane (owner to sign).
+
+## A2b, the remaining loop screens, Home, How it works, Landing: 22 October 2026
+
+What was built:
+
+- **Course** shows the outline as cards: outcomes with their Bloom level and achievement evidence, topics with their hours against the contact-hour budget as a meter. One action: "Watch employers" while the course has no evidence, "Start a revision" once it has. Teaching context, documents and sources, the preparation checklist and the illustrative sandbox sit behind disclosures.
+- **Update** opens a revision with the hours meters (contact and self-study against their budgets, an over-budget state in words), the number of changes, what is left to fix or review and the check state; the current outline shows the same meters. The sessions and assessments a change affects are listed behind a disclosure. The rationale and the term stay visible because adoption requires them (docs/decisions.md).
+- **Teach** shows session cards by week, each with its linked outcomes as tags, its status and its teaching pack (.pptx); the assessment stays behind its disclosure.
+- **Learn** is its own screen (`#/course/:id/learn`): the sentence "No learning gain is claimed; the benchmark has not been run."; attainment per outcome from the latest results file as filed, with the mean mark, its spread and n of N (N being the most students the file records for any outcome, said in words); filing results or a CLO survey through Upload's intake panel, where the person filing confirms the course version taught; the results and surveys filed, a seeded example labelled and never counted; the planned Track B items, each tagged Planned; the benchmark protocol and its status (written, not run, 0 real terms). A results file now carries the version it is for, and Learn's done rule counts only files matched to a version of the course (Section 4).
+- **History** puts the course versions and the decisions on briefs on one timeline, newest first; each entry opens to its outline with an export, or to its decision card; the revision log sits behind a disclosure.
+- **Home** leads with Start here: the host, the ring with the next step lit, "Continue" and the resume action. The briefs waiting, the notifications and the courses sit behind disclosures that open by themselves when something is waiting.
+- **How it works** opens with the loop graphic: the host at the centre and the seven helpers at their stations in loop order, with a people station at Decide; choosing a helper opens its card (reads, produces, cannot). "See the record on this course" opens the timeline, behind its disclosure, with recorded and derived lines labelled. The same graphic is the landing hero, on forest.
+- **The landing page**: the loop as the hero with two ways in; the problem at three levels, one figure each, with every source linked and the vendor survey said so, labelled desk research until the interviews; each loop step beside the accreditor clause it operationalises, quoted word for word from the dated notes (NAAC marked a paraphrase; ESG 1.2 and AACSB Standard 5 left out until a note checks them); the doors as a monochrome strip, the web workspace Built and the rest Planned; what is proven, with dates (179 checks on 22 October, 727 live postings on 9 October). No synthetic figure.
+- **`docs/claims.md`**, the claims register: every landing figure with the words it is shown in, its source and link, the note that checked it, its key and the date. `prove-journey` fails if a landing figure is missing from it, if a registered link differs, or if a quoted clause is not word for word in its note.
+- Kept green: a section guide for Learn (20 sections) and updated guides for Home, the Studio steps, Upload and How it works; the lecturer guide regenerated; the Evaluation table at 179 checks in sixteen suites; the integrity smoke reaches Learn from the rail and checks its sentence; the tour opens the record from How it works.
+
+| Command | Result |
+|:--|:--|
+| `npm run typecheck` | Passed |
+| `npm run prove:all` | 179 passed, 0 failed, sixteen suites. `prove-journey` adds Learn matched to the taught version (the default, an explicit choice, another course's version refused, unmatched files not counted, the backup guard, n of N) and replaces the landing test with the claims register check |
+| `npm run build` | Passed |
+| `npm run smoke:integrity` | 2 of 2 passed: the public landing page (no synthetic figures, limits stated, no notice) and eleven signed-in screens including Learn, notice only on sandbox screens, zero page errors |
+| `npm run smoke`, `smoke:workspace`, `smoke:curriculum` | 15 of 15, 7 of 7 and 6 of 6 passed |
+| `node scripts/check-backup-migration.mjs` | BACKUP MIGRATION OK |
+| `node scripts/generate-guide.mjs --check`, `contrast-check.mjs`, `gen-theme-css.mjs --check`, `gen-mascots.mjs --check` | Match; CONTRAST CHECK OK; outputs current |
+| `node scripts/dash-scan.mjs` | No en or em dash in 231 text files |
+
+A visual pass on the built app (the landing sections, Home, Course, Update, Teach, Learn before and after filing the sample results, History, How it works at 1440 and 900 px, and Learn, Teach and How it works at 390 px) found three faults, fixed before the checks: the ring ran through the station labels (each station now has an opaque backing, so the ring reads as links between stations), a seeded outcome without a label showed as "removed" on a session card, and the filing toast still spoke of the sandbox cohort. The captures were review aids and are not committed.
+
+Not done in A2b, by design: the term recap and the milestones of Section 8; Track B's Learn (adequacy, intervals, pooling, perception beside attainment, scored predictions); focus moving to the main heading on every route change (Section 5.2, an A4 or Track B accessibility item); the tour in the loop's order (A4).
+
+Accepted by: the Code lane (owner to sign).
