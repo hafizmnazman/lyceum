@@ -73,7 +73,8 @@ export async function buildSampleBackup(): Promise<string> {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const raw = await buildSampleBackup();
   if (process.argv.includes("--check")) {
-    if (readFileSync(SAMPLE_PATH, "utf8") !== raw) throw new Error("mcp/sample-workspace.json is stale. Run node mcp/sample.ts.");
+    // A Windows checkout may hold the file with CRLF line ends (core.autocrlf); the content is what is compared.
+    if (readFileSync(SAMPLE_PATH, "utf8").replace(/\r\n/g, "\n") !== raw) throw new Error("mcp/sample-workspace.json is stale. Run node mcp/sample.ts.");
     console.log("The sample workspace matches the tour's end state.");
   } else {
     writeFileSync(SAMPLE_PATH, raw, "utf8");

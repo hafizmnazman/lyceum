@@ -42,7 +42,8 @@ lines.push("", "The [implementation plan](lyceum-improvement-plan.md) contains t
 const result = lines.join("\n");
 const file = new URL("../docs/lecturer-guide.md", import.meta.url);
 if (process.argv.includes("--check")) {
-  if (readFileSync(file, "utf8") !== result) throw new Error("Lecturer guide is stale. Run node scripts/generate-guide.mjs.");
+  // A Windows checkout may hold the file with CRLF line ends (core.autocrlf); the content is what is compared.
+  if (readFileSync(file, "utf8").replace(/\r\n/g, "\n") !== result) throw new Error("Lecturer guide is stale. Run node scripts/generate-guide.mjs.");
   console.log("Lecturer guide matches the in-app section catalogue.");
 } else {
   writeFileSync(file, result, "utf8");

@@ -118,7 +118,8 @@ None queued yet.
 - 06:39 check: `npm run smoke` 19 of 19 and `smoke:workspace` 7 of 7.
 - 06:40 check: `smoke:curriculum` 6 of 6; guide check, contrast check and the backup migration passed; `node mcp/try.ts` connected over stdio and returned the report.
 - 06:41 check: the dash scan flagged the verbatim Stripe posting inside the sample workspace (five dashes, all inside source texts); exempted like the saved sample; then clean across 239 files.
-- 06:42 ended; committed as "A5: the local door, a read-only MCP server over an exported workspace, with the skill, the sample and its proofs".
+- 06:42 ended; committed `78d351d` "A5: the local door, a read-only MCP server over an exported workspace, with the skill, the sample and its proofs".
+- 06:43 after the commit: git here converts line ends (core.autocrlf, no .gitattributes), so a fresh Windows clone holds generated files with CRLF and the byte comparisons in `generate-guide.mjs --check`, `mcp/sample.ts --check` and the first door proof would fail. They now compare content with line ends normalised, as the theme and mascot checks already did; all three passed against CRLF copies of the files.
 
 ### A6, deck, diagram, brief, poster
 

@@ -47,7 +47,7 @@ function sampleCopy(): { dir: string; path: string; backup: WorkspaceBackup } {
 }
 
 test("the sample workspace is the tour's end state, built from public/demo, current, and it validates", async () => {
-  assert.equal(readFileSync(SAMPLE_PATH, "utf8"), await buildSampleBackup(), "mcp/sample-workspace.json matches a fresh build; run node mcp/sample.ts if not");
+  assert.equal(readFileSync(SAMPLE_PATH, "utf8").replace(/\r\n/g, "\n"), await buildSampleBackup(), "mcp/sample-workspace.json matches a fresh build; run node mcp/sample.ts if not");
   const { backup } = sampleCopy();
   const d = backup.data;
   assert.equal(backup.schemaVersion, 5);
