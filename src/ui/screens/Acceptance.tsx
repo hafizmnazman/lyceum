@@ -90,11 +90,11 @@ export function AcceptanceScreen() {
       <Page>
         <PageHead
           title="Acceptance test"
-          context="Every proposed change is stress-tested against the grounded cohort before management sees it."
+          context="Explore an illustrative prerequisite scenario before review. This model has not been calibrated against observed learning outcomes."
         />
         <EmptyState
           title="No test run yet"
-          body="Pick a proposal in the Course Studio, then run it here. The Cohort agent replays the change against real learners' CLO mastery and settles a verdict you can trace to a single learner."
+          body="Pick a proposal in the Course Studio to explore the scenario calculation. Seeded learners and the pinned drill-down are synthetic examples."
           action={
             proposal && canRunTest(proposal.id) ? (
               <Button
@@ -119,7 +119,7 @@ export function AcceptanceScreen() {
         <PageHead title="Acceptance test" context={`${proposal.subjectId}, proposal ${proposal.id}`} />
         <AgentStrip agent="cohort" />
         <Provenance onOpen={() => navigate("dataroom")}>
-          Grounded in {sim.totalLearners} learners' real CLO mastery survey
+          Scenario using {sim.totalLearners} learner records; seed records are synthetic
         </Provenance>
 
         <div style={{ marginTop: 24, fontSize: 17, fontWeight: 600 }}>{sim.caption}</div>
@@ -180,7 +180,7 @@ export function AcceptanceScreen() {
       <PageHead title="Acceptance test" context={`${proposal.subjectId}, proposal ${proposal.id}`} />
       <AgentStrip agent="cohort" />
       <Provenance onOpen={() => navigate("dataroom")}>
-        Grounded in {report.groundedOnLearners} learners' real CLO mastery survey
+        Scenario using {report.groundedOnLearners} learner records; seed records are synthetic
       </Provenance>
 
       <Card focal style={{ marginTop: 20 }} data-demo-id="acceptance-verdict">
@@ -332,7 +332,7 @@ function renderHop(i: number, report: VerdictReport) {
           <div style={{ fontWeight: 600, marginBottom: 2 }}>One learner</div>
           <span className="num" style={{ fontSize: 18, fontWeight: 600 }}>{d.studentId}</span>
           <span style={{ fontSize: 13, color: "var(--ink-2)", marginLeft: 8 }}>
-            a real survey respondent in the cohort.
+            a pinned illustrative learner, separate from the cohort calculation.
           </span>
         </div>
       );

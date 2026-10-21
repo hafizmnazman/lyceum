@@ -10,7 +10,7 @@ import type {
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from "react";
-import { forwardRef } from "react";
+import { cloneElement, forwardRef, isValidElement, useId } from "react";
 
 // ---------- layout ----------
 
@@ -18,6 +18,7 @@ import { forwardRef } from "react";
 export function Page(props: { children: ReactNode; wide?: boolean }) {
   return (
     <div
+      className="page-content"
       style={{
         maxWidth: props.wide ? 1320 : 1120,
         padding: "28px 32px 64px",
@@ -38,6 +39,7 @@ export function PageHead(props: {
 }) {
   return (
     <div
+      className="page-heading"
       style={{
         display: "flex",
         alignItems: "flex-end",
@@ -55,7 +57,7 @@ export function PageHead(props: {
         ) : null}
       </div>
       {props.actions ? (
-        <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>{props.actions}</div>
+        <div className="page-heading-actions" style={{ display: "flex", gap: 8, flexShrink: 0 }}>{props.actions}</div>
       ) : null}
     </div>
   );
@@ -123,7 +125,7 @@ export function Row(props: {
       onKeyDown={
         props.onClick
           ? (e) => {
-              if (e.key === "Enter" || e.key === " ") props.onClick?.();
+              if (e.key === "Enter" || e.key === " ") { e.preventDefault(); props.onClick?.(); }
             }
           : undefined
       }
@@ -162,15 +164,16 @@ const buttonBase: CSSProperties = {
   alignItems: "center",
   justifyContent: "center",
   gap: 8,
-  height: 36,
-  padding: "0 14px",
+  minHeight: 40,
+  height: "auto",
+  padding: "7px 14px",
   borderRadius: "var(--radius-s)",
   fontSize: 14,
   fontWeight: 500,
   cursor: "pointer",
   border: "1px solid transparent",
   transition: "background 150ms ease-out, border-color 150ms ease-out, opacity 150ms",
-  whiteSpace: "nowrap",
+  whiteSpace: "normal",
 };
 
 const buttonStyles: Record<ButtonVariant, CSSProperties> = {
@@ -258,27 +261,31 @@ export function Field(props: {
   error?: string;
   children: ReactNode;
 }) {
+  const generatedId = useId();
+  const child = isValidElement<{ id?: string; "aria-describedby"?: string; "aria-invalid"?: boolean }>(props.children) ? props.children : null;
+  const id = child?.props.id ?? generatedId;
+  const descriptionId = id + "-description";
+  const describedBy = [child?.props["aria-describedby"], props.error || props.hint ? descriptionId : null].filter(Boolean).join(" ") || undefined;
   return (
-    <label style={{ display: "block", marginBottom: 14 }}>
-      <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 5 }}>{props.label}</div>
-      {props.children}
+    <div className="form-field" style={{ display: "block", marginBottom: 14 }}>
+      <label htmlFor={id} style={{ display: "block", fontSize: 13, fontWeight: 500, marginBottom: 5 }}>{props.label}</label>
+      {child ? cloneElement(child, { id, "aria-describedby": describedBy, "aria-invalid": props.error ? true : child.props["aria-invalid"] }) : props.children}
       {props.error ? (
-        <div style={{ fontSize: 12, color: "var(--danger)", marginTop: 4 }}>{props.error}</div>
+        <div id={descriptionId} style={{ fontSize: 12, color: "var(--danger)", marginTop: 4 }}>{props.error}</div>
       ) : props.hint ? (
-        <div style={{ fontSize: 12, color: "var(--ink-3)", marginTop: 4 }}>{props.hint}</div>
+        <div id={descriptionId} style={{ fontSize: 12, color: "var(--ink-3)", marginTop: 4 }}>{props.hint}</div>
       ) : null}
-    </label>
+    </div>
   );
 }
 
 const inputBase: CSSProperties = {
   width: "100%",
-  height: 36,
+  height: 40,
   padding: "0 10px",
   borderRadius: "var(--radius-s)",
-  border: "1px solid var(--border)",
+  border: "1px solid var(--control-border)",
   background: "var(--surface)",
-  outline: "none",
 };
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(

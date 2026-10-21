@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { Check, ChevronDown, ChevronRight } from "lucide-react";
 import { marketGapByCLO } from "../../agents/signal.ts";
-import { MARKET_SOURCES } from "../../data/market.ts";
+import { hasSourceDisagreement, MARKET_SOURCES } from "../../data/market.ts";
 import { can } from "../../app/roles.ts";
 import type { SignalSimState } from "../../app/signalSim.ts";
 import {
@@ -198,11 +198,11 @@ export function TrendsScreen() {
     <Page>
       <PageHead
         title="Trends"
-        context="Employer demand, triangulated across market sources and mapped onto the programme's outcomes."
+        context="Illustrative demand and coverage from synthetic fixtures. The displayed scores do not measure current employer demand."
       />
       <AgentStrip
         agent="signal"
-        idleText="Signal triangulates the market snapshots and rates every subject."
+        idleText="Signal demonstrates the mapping workflow using synthetic market figures."
       />
 
       {revealing && sim ? (
@@ -249,7 +249,7 @@ export function TrendsScreen() {
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 13.5, fontWeight: 500 }}>{src.name}</div>
                         <div style={{ fontSize: 12, color: "var(--ink-3)" }}>
-                          prepared snapshot, {src.snapshotDate}
+                          synthetic fixture, example date {src.snapshotDate}
                         </div>
                       </div>
                       {ev ? (
@@ -290,10 +290,10 @@ export function TrendsScreen() {
                   }}
                 >
                   <span>
-                    Cross-source agreement{" "}
-                    <span className="num">{rating.agreement.toFixed(2)}</span>
+                    Direction agreement (illustrative){" "}
+                    <span className="num">{rating.agreement?.toFixed(2) ?? "insufficient evidence"}</span>
                   </span>
-                  {rating.agreement < 0.5 ? <Tag tone="warn">sources disagree</Tag> : null}
+                  {hasSourceDisagreement(rating.evidence) ? <Tag tone="warn">sources disagree</Tag> : null}
                 </div>
               </div>
             ) : null}

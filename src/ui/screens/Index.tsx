@@ -7,8 +7,9 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type { RelevanceBand, RelevanceRating, Subject } from "../../types.ts";
 import { navigate, ratingFor, selectSubject, useStore } from "../../app/store.ts";
-import { sourceById } from "../../data/market.ts";
+import { hasSourceDisagreement, sourceById } from "../../data/market.ts";
 import { Button, EmptyState, Page, PageHead, Row, SectionLabel, Tag } from "../primitives/index.tsx";
+import { PrototypeNotice } from "../primitives/PrototypeNotice.tsx";
 
 const BAND_ORDER: Record<RelevanceBand, number> = {
   misaligned: 0,
@@ -102,7 +103,7 @@ function Receipts(props: { rating: RelevanceRating; loggedIn: boolean; subject: 
             </div>
           ))}
 
-          <SectionLabel>Evidence by source</SectionLabel>
+          <SectionLabel>Illustrative source figures</SectionLabel>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
             {sourceIds.map((sid) => {
               const source = sourceById(sid);
@@ -120,7 +121,7 @@ function Receipts(props: { rating: RelevanceRating; loggedIn: boolean; subject: 
                 >
                   <div style={{ fontSize: 13, fontWeight: 600 }}>{source?.name ?? sid}</div>
                   <div style={{ fontSize: 11.5, color: "var(--ink-3)", marginBottom: 6 }}>
-                    prepared snapshot, {source?.snapshotDate ?? "undated"}
+                    synthetic fixture, example date {source?.snapshotDate ?? "undated"}
                   </div>
                   {rows.map((e) => (
                     <div
@@ -139,11 +140,11 @@ function Receipts(props: { rating: RelevanceRating; loggedIn: boolean; subject: 
             })}
           </div>
 
-          {rating.agreement < 0.5 ? (
+          {hasSourceDisagreement(rating.evidence) ? (
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
               <Tag tone="warn">sources disagree</Tag>
               <span style={{ fontSize: 12.5, color: "var(--ink-2)" }}>
-                Fewer sources agree on this movement; treat it as a lead, not a finding.
+                The source directions differ for at least one skill. Agreement is not evidence quality.
               </span>
             </div>
           ) : null}
@@ -195,7 +196,7 @@ export function IndexScreen() {
     <>
       <PageHead
         title="The Relevance Index"
-        context={`Every subject in ${state.programme.title}, rated against demand triangulated across four market sources. Built from public data: prepared job-market snapshots and published syllabi. The rating exists whether a university joins or not; joining gives you the pen.`}
+        context={`An illustrative course-rating view for ${state.programme.title}. Scores use fixed demonstration inputs; no underlying job postings have been retrieved or verified.`}
       />
 
       {sorted.length === 0 ? (
@@ -271,6 +272,7 @@ export function IndexScreen() {
           Sign in
         </Button>
       </div>
+      <PrototypeNotice />
       <div style={{ maxWidth: 1120, margin: "0 auto", padding: "28px 32px 64px" }}>{content}</div>
     </div>
   );

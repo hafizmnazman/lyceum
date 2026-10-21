@@ -1,12 +1,13 @@
 // Headless demo smoke: play the entire self-driving demo under ?demoTurbo
-// (paced holds and reveal intervals shrink; tick counts and the end state are
-// identical) and assert what the recording would show: the canonical CS220
-// proposal ends approved, a prediction is recorded, the drill reached the
-// final hop with P = 0.43, and there are no page errors.
+// (paced holds shrink; the end state is identical) and assert what the
+// recording would show: real sample postings imported for CS310, exact
+// quotations confirmed, a reviewed denominator, a coverage mapping, a meeting
+// brief sent to the programme owner and read by him, and no page errors.
 //
 // Run `npm run build` first, then `npm run smoke`.
 
-import { existsSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join } from "node:path";
@@ -57,6 +58,9 @@ await page.setViewport({ width: 1440, height: 900 });
 
 const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));
+const downloads = mkdtempSync(join(tmpdir(), "lyceum-demo-"));
+const cdp = await page.createCDPSession();
+await cdp.send("Browser.setDownloadBehavior", { behavior: "allow", downloadPath: downloads });
 
 let failed = 0;
 const check = (name, ok, detail = "") => {
@@ -74,42 +78,50 @@ try {
   await page.waitForSelector('[data-demo-id="play-demo"]', { timeout: 8000 });
   await page.click('[data-demo-id="play-demo"]');
 
-  // Poll the store until the canonical proposal is approved or we time out.
+  // Poll the store until the programme owner has read the brief or we time out.
   const t0 = Date.now();
   let end = null;
-  let sawDrillFinal = false;
   while (Date.now() - t0 < 300000) {
     const snap = await page.evaluate(() => {
       const s = window.__lyceum?.getState();
       if (!s) return null;
-      const p = s.proposals.find((x) => x.id === "CP-CS220-001");
+      const sources = s.evidenceSources.filter((x) => x.subjectId === "CS310");
+      const brief = s.evidenceBriefs.find((b) => b.subjectId === "CS310");
+      const notification = s.notifications.find((n) => n.kind === "evidence-brief" && n.toPersonId === "P-RAHMAN");
       return {
-        status: p?.status ?? "none",
-        drillStep: s.drillStep,
-        p: p?.acceptanceResult?.drillRoot?.p ?? null,
-        predictions: s.predictions.filter((x) => x.proposalId === "CP-CS220-001").length,
-        uploads: s.resultUploads.length,
+        sources: sources.length,
+        collected: sources.filter((x) => x.provenance === "collected").length,
+        reviewed: sources.filter((x) => x.reviewed && !x.duplicateOf).length,
+        mentions: s.skillMentions.filter((m) => m.subjectId === "CS310").length,
+        mappings: s.skillMappings.filter((m) => m.subjectId === "CS310" && m.cloIds.includes("CLO5")).length,
+        briefSent: Boolean(brief?.sentAt), briefRecipients: brief?.recipients ?? [], briefMarkdown: brief?.markdown ?? "",
+        read: Boolean(notification?.read), currentPerson: s.currentPersonId,
+        adopted: s.curriculumDrafts.filter((d) => d.subjectId === "CS310" && d.status === "adopted").length,
+        versions: s.subjectVersions.filter((v) => v.subjectId === "CS310").length,
+        sessions: s.teachingPlans.find((p) => p.subjectId === "CS310")?.sessions.length ?? 0,
+        items: s.testDrafts.find((t) => t.subjectId === "CS310")?.items.length ?? 0,
       };
     });
-    if (snap) {
-      if (snap.drillStep >= 5) sawDrillFinal = true;
-      if (snap.status === "approved" && snap.predictions > 0) {
-        end = snap;
-        break;
-      }
-    }
+    if (snap && snap.read) { end = snap; break; }
     await sleep(500);
   }
 
-  check("demo reaches approval with a prediction recorded", Boolean(end));
+  check("the programme owner read the brief", Boolean(end));
   if (end) {
-    check("drill reached the final hop", sawDrillFinal);
-    check(
-      "drill P is the canonical 0.43",
-      end.p !== null && Math.abs(end.p - 0.4256) < 0.005,
-      String(end.p),
-    );
-    check("the sample results upload filed during the demo", end.uploads >= 2, String(end.uploads));
+    check("real postings were imported as collected sources (live board or saved sample)", end.collected >= 3 && end.collected === end.sources, end.sources + "/" + end.collected);
+    check("the reviewed denominator is non-empty", end.reviewed >= 3, String(end.reviewed));
+    check("exact quotations were confirmed", end.mentions >= 5, String(end.mentions));
+    check("a coverage mapping links a skill to CLO5", end.mappings === 1, String(end.mappings));
+    check("the brief was sent to Dr Rahman", end.briefSent && end.briefRecipients.includes("P-RAHMAN"), JSON.stringify(end.briefRecipients));
+    check("the brief carries the table and the receipts", /Small refresh within existing hours \(recommended\)/.test(end.briefMarkdown) && /## Appendix: evidence report with receipts/.test(end.briefMarkdown) && /convenience sample/.test(end.briefMarkdown));
+    check("the reader is Dr Rahman", end.currentPerson === "P-RAHMAN", String(end.currentPerson));
+    check("a course revision was checked and adopted with the baseline kept", end.adopted === 1 && end.versions >= 2, end.adopted + "/" + end.versions);
+    check("a teaching session was saved", end.sessions === 1, String(end.sessions));
+    check("template assessment items were generated", end.items > 0, String(end.items));
+    await sleep(1500);
+    const files = readdirSync(downloads);
+    check("the teaching pack deck was downloaded", files.some((f) => /^CS310-week-\d+-teaching-pack\.pptx$/.test(f)), files.join(", "));
+    check("the meeting brief deck was downloaded", files.includes("CS310-meeting-brief.pptx"), files.join(", "));
   }
 
   // Let the closing beats play out, then confirm no errors surfaced.

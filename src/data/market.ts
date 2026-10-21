@@ -1,18 +1,7 @@
-// Demand truth (spec Sections 0 and 5.2): the multi-source market snapshots and
-// the deterministic relevance computation that feeds the Relevance Index, the
-// Trends screen, and the Courses annotations.
-//
-// Four prepared snapshots, one per source, cited in the UI as "prepared
-// snapshot of <source>, <date>". The demand/coverage numbers per CLO are the
-// audited v2 Signal fixture (so the canonical story holds: CLO4 machine
-// learning carries the widest gap, 0.62, flagging CS220); the per-source
-// evidence is the receipts layer on top. Machine learning tops three of four
-// sources; Glassdoor deliberately disagrees on data visualisation so the
-// "sources disagree" state has something real to render.
-//
-// A claim supported by one source is a lead; a claim supported by three is a
-// finding. `agreement` carries that: the share of sources whose direction
-// matches the majority for the skills that move a subject.
+// Synthetic market fixtures for the original demonstration. No underlying job
+// postings, retrieval receipts or observed source counts are supplied here.
+// Ratings still use the separate fixed demand/coverage fixture; the replacement
+// evidence pipeline is specified in docs/lyceum-improvement-plan.md.
 
 import type {
   CLO,
@@ -24,6 +13,7 @@ import type {
   Subject,
 } from "../types.ts";
 import { marketGapByCLO } from "../agents/signal.ts";
+import { summarizeSourceAgreement } from "../lib/sourceAgreement.ts";
 
 export const MARKET_SOURCES: MarketSource[] = [
   {
@@ -32,6 +22,7 @@ export const MARKET_SOURCES: MarketSource[] = [
     kind: "job-platform",
     snapshotDate: "2026-06-14",
     recordCount: 18420,
+    isSynthetic: true,
   },
   {
     id: "linkedin",
@@ -39,6 +30,7 @@ export const MARKET_SOURCES: MarketSource[] = [
     kind: "job-platform",
     snapshotDate: "2026-06-10",
     recordCount: 25760,
+    isSynthetic: true,
   },
   {
     id: "glassdoor",
@@ -46,6 +38,7 @@ export const MARKET_SOURCES: MarketSource[] = [
     kind: "job-platform",
     snapshotDate: "2026-06-01",
     recordCount: 9310,
+    isSynthetic: true,
   },
   {
     id: "mohe-col",
@@ -53,6 +46,7 @@ export const MARKET_SOURCES: MarketSource[] = [
     kind: "gov-labour",
     snapshotDate: "2026-05-20",
     recordCount: 312,
+    isSynthetic: true,
   },
 ];
 
@@ -114,23 +108,26 @@ export function evidenceForSkill(skill: string): DemandEvidence[] {
   return MARKET_EVIDENCE.filter((e) => e.skill === skill);
 }
 
-/** Cross-source agreement for a set of skills: the share of source claims whose
- *  12-month direction matches the majority direction, averaged over the skills.
- *  1.0 = every source moves the same way; 0.5 = an even split. */
-export function agreementFor(skills: string[]): number {
-  if (skills.length === 0) return 1;
+/** Mean direction agreement across unique skills. Missing or single-source
+ *  evidence is unknown, not perfect agreement. Neutral is its own direction. */
+export function agreementFor(skills: string[]): number | null {
+  const uniqueSkills = [...new Set(skills)];
+  if (uniqueSkills.length === 0) return null;
   let total = 0;
-  for (const skill of skills) {
-    const ev = evidenceForSkill(skill);
-    if (ev.length === 0) {
-      total += 1;
-      continue;
-    }
-    const up = ev.filter((e) => e.delta12m >= 0).length;
-    const majority = Math.max(up, ev.length - up);
-    total += majority / ev.length;
+  for (const skill of uniqueSkills) {
+    const summary = summarizeSourceAgreement(evidenceForSkill(skill));
+    if (summary.fraction === null) return null;
+    total += summary.fraction;
   }
-  return total / skills.length;
+  return total / uniqueSkills.length;
+}
+
+/** A disagreement on one skill must not disappear in a subject-wide average. */
+export function hasSourceDisagreement(evidence: DemandEvidence[]): boolean {
+  return [...new Set(evidence.map((e) => e.skill))].some((skill) => {
+    const summary = summarizeSourceAgreement(evidence.filter((e) => e.skill === skill));
+    return summary.status === "mixed" || summary.status === "split" || summary.conflictingSourceCount > 0;
+  });
 }
 
 function bandFor(score: number): RelevanceBand {
@@ -154,7 +151,7 @@ export function computeRelevanceRatings(
 
   return subjects.map((subject) => {
     const subjectClos = clos.filter((c) => c.subjectId === subject.id);
-    const rated = subjectClos.filter((c) => gaps[c.id]);
+    const rated = subject.workspaceOnly ? [] : subjectClos.filter((c) => gaps[c.id]);
     if (rated.length === 0) {
       return {
         subjectId: subject.id,
@@ -162,7 +159,7 @@ export function computeRelevanceRatings(
         band: "unrated",
         perCLO: [],
         evidence: [],
-        agreement: 1,
+        agreement: null,
         ratedAt,
       };
     }

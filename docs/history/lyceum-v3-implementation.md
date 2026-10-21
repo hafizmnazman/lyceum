@@ -1,5 +1,9 @@
 # Lyceum v3: Implementation Spec (the real app)
 
+> Historical specification. The [5 October 2026 audit and improvement plan](docs/lyceum-improvement-plan.md)
+> supersedes its fixed-number, evidence, agent and validation requirements.
+> Statements below describe the original intent, not verified implementation.
+
 > The build contract for v3, in a fresh folder. v2 proved the idea (the spine, the
 > flow, the numbers). v3 makes it an actual product: live agents, real file intake
 > (xlsx, pdf, pptx), test creation, a professional design system, and an app that

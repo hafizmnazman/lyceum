@@ -11,7 +11,8 @@
 //  - streamAgent: SSE from /api/agent/:name for the free-text agents
 //    (authoring, evaluator, analogy explainer), yielding chunks.
 
-import type { CLO, IntakeInterpretation, ParsedDoc, Subject, UploadedFileKind } from "../types.ts";
+import type { CLO, CollectedPosting, CollectionProvider, IntakeInterpretation, ParsedDoc, Subject, UploadedFileKind } from "../types.ts";
+import { SOURCE_POLICIES, filterPostings } from "../lib/collect.ts";
 import { interpretLocally } from "./intakeLocal.ts";
 
 const PARSE_TIMEOUT_MS = 20000;
@@ -174,5 +175,37 @@ export async function streamAgent(
     return full.length > 0 ? full : null;
   } catch {
     return null;
+  }
+}
+
+// ---------- the research run: a permitted board through the local API, or the saved sample ----------
+const COLLECT_TIMEOUT_MS = 45000;
+export interface CollectionRequest { provider: CollectionProvider; board: string; query: string; inText: boolean }
+export type CollectionOutcome =
+  | { ok: true; postings: CollectedPosting[]; retrievedAt: string; cached: boolean; total: number; label: string; endpoint?: string; bytes?: number | null; durationMs?: number | null }
+  | { ok: false; error: string };
+export async function fetchCollection(request: CollectionRequest): Promise<CollectionOutcome> {
+  try {
+    if (request.provider === "sample") {
+      const started = Date.now();
+      const res = await withTimeout(fetch("/demo/collected-sample.json"), COLLECT_TIMEOUT_MS);
+      if (!res.ok) return { ok: false, error: "The saved sample could not be loaded." };
+      const text = await res.text();
+      const sample = JSON.parse(text) as { label: string; retrievedAt: string; postings: CollectedPosting[] };
+      return { ok: true, postings: filterPostings(sample.postings, request.query, request.inText), retrievedAt: sample.retrievedAt, cached: false, total: sample.postings.length, label: sample.label,
+        endpoint: "/demo/collected-sample.json (shipped with the app, no network request)", bytes: text.length, durationMs: Date.now() - started };
+    }
+    const params = new URLSearchParams({ q: request.query, scope: request.inText ? "text" : "title" });
+    const started = Date.now();
+    const res = await withTimeout(fetch("/api/collect/" + request.provider + "/" + encodeURIComponent(request.board) + "?" + params.toString()), COLLECT_TIMEOUT_MS);
+    const body = (await res.json().catch(() => null)) as { error?: string; postings?: CollectedPosting[]; retrievedAt?: string; cached?: boolean; total?: number; endpoint?: string; bytes?: number; durationMs?: number } | null;
+    if (!res.ok || !body || !Array.isArray(body.postings)) {
+      return { ok: false, error: body?.error ?? (res.status === 404 ? "The local API is not running. Start it with npm run dev to collect from a live board." : "The board could not be collected (HTTP " + res.status + ").") };
+    }
+    return { ok: true, postings: body.postings, retrievedAt: body.retrievedAt ?? new Date().toISOString(), cached: Boolean(body.cached), total: body.total ?? body.postings.length,
+      label: SOURCE_POLICIES[request.provider].name + " \"" + request.board + "\"", endpoint: body.endpoint ?? "/api/collect/" + request.provider + "/" + request.board,
+      bytes: typeof body.bytes === "number" ? body.bytes : null, durationMs: typeof body.durationMs === "number" ? body.durationMs : Date.now() - started };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error && err.message === "timeout" ? "The collection timed out. Try again, or narrow the keywords." : "The local API is not reachable. Start it with npm run dev to collect from a live board." };
   }
 }

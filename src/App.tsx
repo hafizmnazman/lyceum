@@ -2,13 +2,14 @@
 // renders inside the Shell. Navigation syncs to the URL hash (#/screen) so
 // refresh, back, and deep links work like a real app.
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { Screen } from "./app/roles.ts";
 import { navAllows } from "./app/roles.ts";
 import { currentPerson, getState, navigate, useStore } from "./app/store.ts";
 import { Shell } from "./ui/shell/Shell.tsx";
 import { SCREENS } from "./ui/screens/index.ts";
 import { DemoOverlay } from "./demo/DemoOverlay.tsx";
+import { LandingScreen } from "./ui/screens/Landing.tsx";
 
 const HASH_SCREENS: Screen[] = [
   "login",
@@ -26,6 +27,8 @@ const HASH_SCREENS: Screen[] = [
   "backtest",
   "dataroom",
   "office",
+  "evaluation",
+  "guide",
 ];
 
 function parseHash(): Screen | null {
@@ -37,7 +40,11 @@ export default function App() {
   const state = useStore();
 
   // Keep the hash in step with the screen (deep links, refresh, back button).
+  // On first load a valid deep link wins: the hash effect below navigates to it
+  // and this effect then records the result, instead of overwriting the link.
+  const initialSync = useRef(true);
   useEffect(() => {
+    if (initialSync.current) { initialSync.current = false; if (parseHash()) return; }
     const want = `#/${state.screen}`;
     if (window.location.hash !== want) {
       // replaceState for programmatic moves keeps back-button history sane for
@@ -54,6 +61,7 @@ export default function App() {
       const person = currentPerson();
       if (!person) {
         if (target === "index" || target === "login") navigate(target);
+        else window.history.replaceState(null, "", `#/${s.screen}`); // a private link, signed out: keep the URL honest
         return;
       }
       if (navAllows(person, s.assignments, target) && target !== s.screen) navigate(target);
@@ -76,7 +84,9 @@ export default function App() {
   // never unmounts a running demo.
   let content;
   if (!state.currentPersonId) {
-    const Public = SCREENS[state.screen === "index" ? "index" : "login"];
+    // Signed out, the index route is the public landing page. The Relevance
+    // Index sandbox itself stays behind sign-in, labelled as illustrative.
+    const Public = state.screen === "index" ? LandingScreen : SCREENS.login;
     content = <Public />;
   } else if (state.screen === "login") {
     const Login = SCREENS.login;

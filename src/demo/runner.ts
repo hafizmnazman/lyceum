@@ -46,7 +46,7 @@ async function moveTo(x: number, y: number, ctx: DemoCtx, dur = scaleMs(TWEEN_MS
 }
 
 function sel(demoId: string): string {
-  return `[data-demo-id="${demoId}"]`;
+  return demoId.endsWith("*") ? `[data-demo-id^="${demoId.slice(0, -1)}"]` : `[data-demo-id="${demoId}"]`;
 }
 
 async function waitForSelector(selector: string, timeout = 12000): Promise<HTMLElement | null> {
@@ -138,6 +138,15 @@ function setNativeValue(el: HTMLInputElement | HTMLTextAreaElement, value: strin
   el.dispatchEvent(new Event("input", { bubbles: true }));
 }
 
+/** Choose a select option the way React notices. */
+function selectOption(el: HTMLElement, value: string) {
+  const host = (el.matches("select") ? el : el.querySelector("select")) as HTMLSelectElement | null;
+  if (!host) return;
+  const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value")?.set;
+  setter?.call(host, value);
+  host.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
 async function typeInto(el: HTMLElement, text: string, ctx: DemoCtx) {
   const host = el.matches("input, textarea")
     ? el
@@ -162,6 +171,14 @@ function predicate(key: string): boolean {
   if (key === "run-done") return s.sim?.phase === "done";
   if (key === "signal-done") return s.signalSim?.phase === "done";
   if (key === "drill-done") return s.drillStep >= 5;
+  if (key === "revision-adopted") return s.curriculumDrafts.some((d) => d.subjectId === "CS310" && d.status === "adopted");
+  if (key === "session-saved") return (s.teachingPlans.find((p) => p.subjectId === "CS310")?.sessions.length ?? 0) > 0;
+  if (key === "items-generated") return s.testDrafts.some((t) => t.subjectId === "CS310" && t.items.length > 0);
+  if (key === "collect-done") return s.collectRun?.status === "done" || s.collectRun?.status === "failed";
+  if (key === "sources-imported") return s.evidenceSources.some((x) => x.subjectId === "CS310");
+  if (key === "scan-proposals") return s.scanProposals.length > 0;
+  if (key === "brief-ready") return s.evidenceBriefs.length > 0;
+  if (key === "brief-read") return s.notifications.some((n) => n.kind === "evidence-brief" && n.read);
   return true;
 }
 
@@ -209,6 +226,22 @@ async function execStep(step: DemoStep, ctx: DemoCtx) {
     await switchPerson(step.value ?? "", ctx);
     return;
   }
+  if (step.action === "sampleIfFailed") {
+    // Only when the live board could not be reached: choose the dated saved sample and fetch again.
+    if (getState().collectRun?.status !== "failed") return;
+    const provider = await waitForSelector(sel("collect-provider"));
+    if (!provider) return;
+    await moveToEl(provider, ctx);
+    await sleep(scaleMs(PRE_ACT_MS));
+    selectOption(provider, "sample");
+    const fetchButton = await waitForSelector(sel("collect-run"));
+    if (!fetchButton) return;
+    await moveToEl(fetchButton, ctx);
+    await sleep(scaleMs(PRE_ACT_MS));
+    clickReal(fetchButton);
+    await waitFor("collect-done", ctx);
+    return;
+  }
   const el = step.target ? await waitForSelector(sel(step.target)) : null;
   if (!el) return; // best-effort: skip a missing target rather than hang
   await moveToEl(el, ctx);
@@ -219,6 +252,9 @@ async function execStep(step: DemoStep, ctx: DemoCtx) {
   } else if (step.action === "type") {
     await nudgeOnto(el, ctx);
     await typeInto(el, step.value ?? "", ctx);
+  } else if (step.action === "select") {
+    await nudgeOnto(el, ctx);
+    selectOption(el, step.value ?? "");
   }
 }
 

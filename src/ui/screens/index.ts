@@ -17,10 +17,13 @@ import { BacktestScreen } from "./Backtest.tsx";
 import { DataRoomScreen } from "./DataRoom.tsx";
 import { OfficeScreen } from "./Office.tsx";
 import { IndexScreen } from "./Index.tsx";
+import { GuideScreen } from "./Guide.tsx";
+import { EvaluationScreen } from "./Evaluation.tsx";
 
 export const SCREENS: Record<Screen, ComponentType> = {
   login: LoginScreen,
   index: IndexScreen,
+  guide: GuideScreen,
   inbox: InboxScreen,
   trends: TrendsScreen,
   approval: ApprovalScreen,
@@ -34,4 +37,5 @@ export const SCREENS: Record<Screen, ComponentType> = {
   backtest: BacktestScreen,
   dataroom: DataRoomScreen,
   office: OfficeScreen,
+  evaluation: EvaluationScreen,
 };

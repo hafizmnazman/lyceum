@@ -35,7 +35,9 @@ export type Screen =
   | "upload"
   | "backtest"
   | "dataroom"
-  | "office";
+  | "office" // how Lyceum works: the roles in order and the real run record
+  | "evaluation" // how it is tested: live checks, benchmarks, protocol
+  | "guide";
 
 export type Capability =
   | "see-trends"
@@ -123,7 +125,7 @@ export function can(
  *  "what needs me"). Shared screens (closed loop, agents, data room) are
  *  appended for all; the public index sits last. */
 export function navFor(person: Person, assignments: RoleAssignment[]): Screen[] {
-  const shared: Screen[] = ["backtest", "office", "dataroom", "index"];
+  const shared: Screen[] = ["backtest", "office", "evaluation", "dataroom", "index", "guide"];
   if (person.orgRole === "management") {
     return ["inbox", "trends", "approval", ...shared];
   }
@@ -134,7 +136,7 @@ export function navFor(person: Person, assignments: RoleAssignment[]): Screen[] 
   const nav: Screen[] = ["inbox"];
   const isCoord = isCoordinatorAnywhere(person.id, assignments);
   const isLect = isLecturerAnywhere(person.id, assignments);
-  if (isLect) nav.push("upload");
+  if (isCoord || isLect) nav.push("upload");
   nav.push("courses", "studio");
   if (isCoord || isLect) nav.push("acceptance");
   if (isCoord) nav.push("trends");

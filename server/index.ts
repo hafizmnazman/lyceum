@@ -13,6 +13,8 @@ import { parseSheet } from "./parse/sheet.ts";
 import { parsePdf } from "./parse/pdf.ts";
 import { parseDocx, parsePptx } from "./parse/office.ts";
 import { hasKey, MODEL, runIntakeLLM, streamAgentLLM } from "./llm.ts";
+import { CollectError, collectBoard } from "./collect.ts";
+import { filterPostings } from "../src/lib/collect.ts";
 
 // Load .env when present (Node 21.7+). Absent file is fine.
 try {
@@ -44,6 +46,24 @@ app.post("/api/parse", async (c) => {
   } catch (err) {
     console.error("parse failed:", name, err);
     return c.json({ error: "could not read this file" }, 422);
+  }
+});
+
+// The research run: one permitted employer board, fetched on request, cached an hour, rate limited.
+app.get("/api/collect/:provider/:board", async (c) => {
+  const query = c.req.query("q") ?? "", inText = c.req.query("scope") === "text";
+  try {
+    const result = await collectBoard(c.req.param("provider"), c.req.param("board"));
+    const postings = filterPostings(result.postings, query, inText).slice(0, 300);
+    return c.json({ provider: result.provider, board: result.board, retrievedAt: result.retrievedAt, cached: result.cached, total: result.postings.length, postings,
+      endpoint: result.endpoint, bytes: result.bytes, durationMs: result.durationMs });
+  } catch (err) {
+    if (err instanceof CollectError) {
+      const status = err.status === 400 ? 400 : err.status === 404 ? 404 : err.status === 429 ? 429 : err.status === 504 ? 504 : 502;
+      return c.json({ error: err.message }, status);
+    }
+    console.error("collect failed:", err);
+    return c.json({ error: "The board could not be collected." }, 502);
   }
 });
 

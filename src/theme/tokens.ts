@@ -15,7 +15,7 @@ export const tokens = {
   // ink
   ink: "#191C1F", // headings, primary text
   ink2: "#55595E", // secondary text
-  ink3: "#8A8E94", // placeholders, timestamps
+  ink3: "#62676D", // placeholders, timestamps
 
   // the one accent
   accent: "#3B5BDB", // actions, links, focus, selection
@@ -25,13 +25,14 @@ export const tokens = {
   // semantic
   ok: "#1F7A4D",
   okSoft: "#E7F3EC",
-  warn: "#B3630B",
+  warn: "#925108",
   warnSoft: "#FCF0E0",
   danger: "#C0392B",
   dangerSoft: "#FAE9E7",
 
   // lines and depth
   border: "#E4E4E0",
+  controlBorder: "#858990",
   shadow1: "0 1px 2px rgba(25,28,31,.06)",
   shadow2: "0 4px 16px rgba(25,28,31,.10)",
   radiusS: "6px",

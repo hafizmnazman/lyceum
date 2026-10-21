@@ -4,10 +4,12 @@
 // the person's hats decide which single primary action is on offer.
 
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
 import { can, hatsOn, subjectsForPerson } from "../../app/roles.ts";
+import { JourneyBar } from "../primitives/Journey.tsx";
 import {
   approveTestDraft,
+  acknowledgeAssessmentCourseChange,
+  resetAssessmentOutcomeWeights,
   canRunTest,
   createTestDraft,
   currentPerson,
@@ -18,17 +20,17 @@ import {
   navigate,
   personById,
   personWithHat,
-  ratingFor,
   removeTestItem,
   requestAgentReview,
   reviewApprove,
   reviewRequestChanges,
   setCritique,
+  selectSubject,
+  selectStudioTab,
   startAcceptanceRun,
   startDraft,
   submitForReview,
   submitTestDraft,
-  subjectById,
   testDraftById,
   updateBlueprint,
   updateTestItem,
@@ -41,11 +43,13 @@ import type {
   Person,
   ProposalEvent,
   ProposalStatus,
-  RelevanceBand,
   Subject,
   TestDraft,
 } from "../../types.ts";
 import { AgentStrip } from "../shell/AgentStrip.tsx";
+import { CurriculumPanel, CurriculumHistoryPanel } from "./CurriculumWorkspace.tsx";
+import { EvidencePanel } from "./EvidenceWorkspace.tsx";
+import { CourseOverview, TeachingPlanPanel } from "./CourseWorkspace.tsx";
 import {
   Button,
   Card,
@@ -56,16 +60,10 @@ import {
   PageHead,
   Row,
   SectionLabel,
+  Select,
   Tag,
   Textarea,
 } from "../primitives/index.tsx";
-
-const BAND_TONE: Record<RelevanceBand, "ok" | "warn" | "danger" | "neutral"> = {
-  aligned: "ok",
-  drifting: "warn",
-  misaligned: "danger",
-  unrated: "neutral",
-};
 
 const STATUS_LABEL: Record<ProposalStatus, string> = {
   drafting: "Drafting",
@@ -103,188 +101,69 @@ function fmtWhen(iso: string): string {
   return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 }
 
-type TabId = "content" | "assessment" | "history";
+type TabId = AppState["studioTab"];
+const STUDIO_TABS: { id: TabId; label: string }[] = [
+  { id: "overview", label: "Overview" }, { id: "curriculum", label: "Outcomes & topics" }, { id: "evidence", label: "Evidence" }, { id: "plan", label: "Teaching plan" },
+  { id: "content", label: "Proposal" }, { id: "assessment", label: "Assessment" },
+  { id: "history", label: "History" },
+];
 
 export function StudioScreen() {
   const state = useStore();
-  const [tab, setTab] = useState<TabId>("content");
   const person = currentPerson();
   if (!person) return null;
-
-  // Subject resolution: the selected subject, else the person's first subject.
-  const selected = state.selectedSubjectId ? subjectById(state.selectedSubjectId) : undefined;
-  const firstOwnId: string | undefined = subjectsForPerson(person.id, state.assignments)[0];
-  const subject = selected ?? (firstOwnId ? subjectById(firstOwnId) : undefined);
-
-  if (!subject) {
-    return (
-      <Page>
-        <PageHead title="Course Studio" />
-        <EmptyState
-          title="Pick a subject in Courses"
-          body="The Studio works on one subject at a time. Choose one of your subjects and it opens here with its draft, its test, and its history."
-          action={
-            <Button variant="outline" onClick={() => navigate("courses")}>
-              Go to Courses <ArrowRight size={15} />
-            </Button>
-          }
-        />
-      </Page>
-    );
-  }
-
-  const band = ratingFor(subject.id)?.band ?? "unrated";
-  const coordinator = personWithHat(subject.id, "coordinator");
-  const proposal = state.proposals.find(
-    (p) => p.subjectId === subject.id && p.status !== "approved" && p.status !== "rejected",
-  );
-  const lastApproved = [...state.proposals]
-    .reverse()
-    .find((p) => p.subjectId === subject.id && p.status === "approved");
-
-  const head = (
-    <PageHead
-      title={`${subject.id} ${subject.title}`}
-      context={
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-          <Tag tone={BAND_TONE[band]}>{band}</Tag>
-          <span>Coordinator: {coordinator?.name ?? "unassigned"}</span>
-          {subject.syllabusVerifiedAt ? (
-            <Tag tone="ok">verified syllabus</Tag>
-          ) : (
-            <Tag tone="warn">syllabus unverified, upload the official pdf in Upload</Tag>
-          )}
-        </span>
-      }
-    />
-  );
-
-  if (!proposal) {
-    const mayDraft = can(person, "draft-change", {
-      subjectId: subject.id,
-      assignments: state.assignments,
-    });
-    return (
-      <Page>
-        {head}
-        {lastApproved ? (
-          <div
-            style={{
-              fontSize: 13,
-              color: "var(--ok)",
-              background: "var(--ok-soft)",
-              borderRadius: "var(--radius-s)",
-              padding: "8px 12px",
-              marginBottom: 16,
-            }}
-          >
-            Live. The prediction is recorded.{" "}
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate("backtest");
-              }}
-            >
-              See the closed loop
-            </a>
-          </div>
-        ) : null}
-        <EmptyState
-          title="No open proposal on this subject"
-          body="A draft holds the topics, outcome edits, and test you want to change, then walks the review chain to the acceptance test."
-          action={
-            mayDraft ? (
-              <Button
-                variant="primary"
-                data-demo-id="studio-start-draft"
-                onClick={() => startDraft(subject.id)}
-              >
-                Start a draft
-              </Button>
-            ) : (
-              <span style={{ fontSize: 12.5, color: "var(--ink-3)" }}>
-                Only this subject's coordinator or lecturer can start one.
-              </span>
-            )
-          }
-        />
-      </Page>
-    );
-  }
-
-  return (
-    <Page>
-      {head}
-
-      {/* Tabs: quiet underlines, no boxes. The proposal status sits beside them. */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 20,
-          borderBottom: "1px solid var(--border)",
-          marginBottom: 20,
-        }}
-      >
-        <TabButton
-          id="content"
-          label="Content"
-          active={tab === "content"}
-          onPick={setTab}
-          demoId="tab-content"
-        />
-        <TabButton
-          id="assessment"
-          label="Assessment"
-          active={tab === "assessment"}
-          onPick={setTab}
-          demoId="tab-assessment"
-        />
-        <TabButton id="history" label="History" active={tab === "history"} onPick={setTab} />
-        <span style={{ flex: 1 }} />
-        <Tag tone={STATUS_TONE[proposal.status]} style={{ marginBottom: 6 }}>
-          {STATUS_LABEL[proposal.status]}
-        </Tag>
-      </div>
-
-      {tab === "content" ? (
-        <ContentTab state={state} person={person} subject={subject} proposal={proposal} />
-      ) : tab === "assessment" ? (
-        <AssessmentTab state={state} person={person} subject={subject} proposal={proposal} />
-      ) : (
-        <HistoryTab state={state} subject={subject} proposal={proposal} />
-      )}
-    </Page>
-  );
+  const ownIds = subjectsForPerson(person.id, state.assignments);
+  const subjects = state.subjects.filter((s) => person.orgRole !== "academic" || ownIds.includes(s.id));
+  const subject = subjects.find((s) => s.id === state.selectedSubjectId) ?? subjects[0];
+  if (!subject) return <Page><PageHead title="Course Studio" context="Your teaching workspace starts with an assigned course." /><EmptyState title="No course assigned yet" body="The department can assign you as a lecturer or coordinator in Assignments. Then your course outcomes, teaching plan and review workspace will appear here." action={<Button onClick={() => navigate("guide")}>Read the section guide</Button>} /></Page>;
+  return <StudioCourse key={subject.id + person.id} state={state} person={person} subject={subject} subjects={subjects} />;
 }
 
-function TabButton(props: {
-  id: TabId;
-  label: string;
-  active: boolean;
-  onPick: (id: TabId) => void;
-  demoId?: string;
-}) {
-  return (
-    <button
-      data-demo-id={props.demoId}
-      onClick={() => props.onPick(props.id)}
-      style={{
-        background: "none",
-        border: "none",
-        borderBottom: props.active ? "2px solid var(--accent)" : "2px solid transparent",
-        marginBottom: -1,
-        padding: "8px 2px 10px",
-        fontSize: 14,
-        fontWeight: props.active ? 600 : 500,
-        color: props.active ? "var(--ink)" : "var(--ink-2)",
-        cursor: "pointer",
-      }}
-    >
-      {props.label}
-    </button>
-  );
+function StudioCourse({ state, person, subject, subjects }: { state: AppState; person: Person; subject: Subject; subjects: Subject[] }) {
+  const tab = state.studioTab;
+  const proposal = state.proposals.find((p) => p.subjectId === subject.id && p.status !== "approved" && p.status !== "rejected");
+  const lastProposal = [...state.proposals].reverse().find((p) => p.subjectId === subject.id);
+  const coordinator = personWithHat(subject.id, "coordinator");
+  const mayDraft = can(person, "draft-change", { subjectId: subject.id, assignments: state.assignments });
+  return <Page wide>
+    <PageHead title={subject.id + " " + subject.title} context={<span>Year {subject.year} · Semester {subject.semester} · Coordinator: {coordinator?.name ?? "unassigned"}</span>} actions={
+      <label className="course-switcher">Course<Select aria-label="Choose course" value={subject.id} onChange={(e) => selectSubject(e.target.value)}>{subjects.map((s) => <option key={s.id} value={s.id}>{s.id} · {s.title}</option>)}</Select></label>
+    } />
+    <div className="course-workspace-meta"><Tag>{subject.workspaceOnly ? "Personal course workspace" : subject.status === "proposed" ? "Proposed course" : "Course workspace"}</Tag><span role="status">{state.persistenceStatus === "unavailable" ? "Browser storage unavailable. Export your plan before closing." : state.persistenceStatus === "pending" ? "Saving in this browser…" : "Changes stored in this browser"}</span></div>
+    <JourneyBar state={state} subjectId={subject.id} />
+    <div className="studio-tabs" role="tablist" aria-label="Course workspace">
+      {STUDIO_TABS.map((item, index) => <button key={item.id} role="tab" id={"studio-tab-" + item.id} aria-controls={"studio-panel-" + item.id} aria-selected={tab === item.id} tabIndex={tab === item.id ? 0 : -1} data-demo-id={"tab-" + item.id} onClick={() => selectStudioTab(item.id)} onKeyDown={(event) => {
+        const keys = ["ArrowRight", "ArrowLeft", "Home", "End"];
+        if (!keys.includes(event.key)) return;
+        event.preventDefault();
+        const next = event.key === "Home" ? 0 : event.key === "End" ? STUDIO_TABS.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + STUDIO_TABS.length) % STUDIO_TABS.length;
+        selectStudioTab(STUDIO_TABS[next].id);
+        document.getElementById("studio-tab-" + STUDIO_TABS[next].id)?.focus();
+      }}>{item.label}</button>)}
+    </div>
+    <div role="tabpanel" id="studio-panel-overview" aria-labelledby="studio-tab-overview" hidden={tab !== "overview"} tabIndex={0}>
+      <CourseOverview state={state} person={person} subject={subject} proposal={proposal} onCurriculum={() => selectStudioTab("curriculum")} onEvidence={() => selectStudioTab("evidence")} onPlan={() => selectStudioTab("plan")} onProposal={() => selectStudioTab("content")} />
+    </div>
+    <div role="tabpanel" id="studio-panel-curriculum" aria-labelledby="studio-tab-curriculum" hidden={tab !== "curriculum"} tabIndex={0}>
+      <CurriculumPanel state={state} person={person} subject={subject} />
+    </div>
+    <div role="tabpanel" id="studio-panel-evidence" aria-labelledby="studio-tab-evidence" hidden={tab !== "evidence"} tabIndex={0}>
+      <EvidencePanel state={state} person={person} subject={subject} />
+    </div>
+    <div role="tabpanel" id="studio-panel-plan" aria-labelledby="studio-tab-plan" hidden={tab !== "plan"} tabIndex={0}>
+      <TeachingPlanPanel state={state} person={person} subject={subject} />
+    </div>
+    <div role="tabpanel" id="studio-panel-content" aria-labelledby="studio-tab-content" hidden={tab !== "content"} tabIndex={0}>
+      {proposal ? <><div className="section-heading"><h2>Curriculum change proposal</h2><Tag tone={STATUS_TONE[proposal.status]}>{STATUS_LABEL[proposal.status]}</Tag></div><ContentTab key={proposal.id} state={state} person={person} subject={subject} proposal={proposal} /></> : <section className="workspace-panel"><h2>Plan a formal curriculum change</h2><p>A proposal holds the topic and outcome changes you want the coordinator and management to review. Your teaching plan can be prepared independently.</p>{lastProposal ? <p className="limitation">The previous proposal is {lastProposal.status}. Legacy proposal approval is a separate prototype workflow. Use Outcomes & topics for a lecturer-controlled course revision.</p> : null}{subject.workspaceOnly ? <Button variant="primary" onClick={() => selectStudioTab("curriculum")}>Open Outcomes & topics</Button> : mayDraft ? <Button variant="primary" data-demo-id="studio-start-draft" onClick={() => startDraft(subject.id)}>Start a draft</Button> : <p className="muted">Only an assigned lecturer or coordinator can draft a change.</p>}</section>}
+    </div>
+    <div role="tabpanel" id="studio-panel-assessment" aria-labelledby="studio-tab-assessment" hidden={tab !== "assessment"} tabIndex={0}>
+      <AssessmentTab state={state} person={person} subject={subject} proposal={proposal} />
+    </div>
+    <div role="tabpanel" id="studio-panel-history" aria-labelledby="studio-tab-history" hidden={tab !== "history"} tabIndex={0}>
+      <CurriculumHistoryPanel state={state} subject={subject} />
+      {lastProposal ? <HistoryTab state={state} subject={subject} proposal={proposal ?? lastProposal} /> : <section className="workspace-panel"><h2>Course history</h2><p>No proposal events are recorded yet. Starting a proposal creates its first event; teaching-session edits are saved separately in your plan.</p><p className="muted">Current version: {subject.currentVersionId}</p></section>}
+    </div>
+  </Page>;
 }
 
 // ---------------------------------------------------------------------------
@@ -565,21 +444,23 @@ function AssessmentTab(props: {
   state: AppState;
   person: Person;
   subject: Subject;
-  proposal: ChangeProposal;
+  proposal?: ChangeProposal;
 }) {
   const { state, person, subject, proposal } = props;
-  const td = testDraftById(proposal.draft.testDraftId);
+  const [selectedId,setSelectedId] = useState<string | null>(null);
+  const tests = state.testDrafts.filter(t => t.subjectId === subject.id);
+  const td = tests.find(t => t.id === selectedId) ?? testDraftById(proposal?.draft.testDraftId) ?? tests.at(-1);
 
   if (!td) {
     return (
       <EmptyState
         title="No test draft yet"
-        body="Set the blueprint (marks per outcome, Bloom mix), let the agent draft items against it, then review coverage. The approved test rides with this proposal."
+        body="Prepare a blueprint for this course. Local templates can draft example questions; review every task and mark allocation before using them. An assessment can be prepared without a curriculum proposal."
         action={
           <Button
             variant="primary"
             data-demo-id="assessment-start"
-            onClick={() => createTestDraft(subject.id, proposal.id)}
+            onClick={() => createTestDraft(subject.id, proposal?.id)}
           >
             Start a test draft
           </Button>
@@ -596,15 +477,26 @@ function AssessmentTab(props: {
 
   return (
     <div>
+      <Field label="Assessment draft"><Select value={td.id} onChange={e => setSelectedId(e.target.value)}>{tests.map(t => <option key={t.id} value={t.id}>{t.id} · {t.needsReview ? "Review course change" : t.status}</option>)}</Select></Field>
+      <p className="limitation">Question generation uses local wording templates. It does not establish assessment quality; exact mark-allocation and task/rubric generation remain under development.</p>
+
+      {td.needsReview ? <section className="workspace-panel">
+        <h3>Review course change</h3>
+        <p className="limitation">The course changed. Your questions are preserved; review their wording, outcome links, weights and marks before submitting again.</p>
+        <Button onClick={() => resetAssessmentOutcomeWeights(td.id)}>Reset weights to current outcomes</Button>
+        <p className="muted">This replaces the outcome weights with equal weights and keeps your questions. Remove questions linked to retired outcomes or draft new items, then adjust the weights.</p>
+      </section> : null}
+
       {/* (a) the blueprint, editable */}
       <SectionLabel style={{ marginTop: 0 }}>Blueprint</SectionLabel>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 12 }}>
         <span style={{ fontSize: 13, width: 130, color: "var(--ink-2)" }}>Total marks</span>
         <Input
           type="number"
           min={1}
           className="num"
           style={{ width: 90 }}
+          aria-label="Total assessment marks"
           value={td.blueprint.totalMarks}
           onChange={(e) =>
             updateBlueprint(td.id, { ...td.blueprint, totalMarks: Number(e.target.value) })
@@ -616,7 +508,7 @@ function AssessmentTab(props: {
         return (
           <div
             key={cw.cloId}
-            style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}
+            style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 8 }}
           >
             <span className="num" style={{ fontSize: 13, width: 130, color: "var(--ink-2)" }}>
               {cw.cloId} weight
@@ -628,6 +520,7 @@ function AssessmentTab(props: {
               step={0.05}
               className="num"
               style={{ width: 90 }}
+              aria-label={(clo?.label ?? cw.cloId) + " weight"}
               value={cw.weight}
               onChange={(e) =>
                 updateBlueprint(td.id, {
@@ -642,7 +535,7 @@ function AssessmentTab(props: {
           </div>
         );
       })}
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 12 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginTop: 12 }}>
         <span style={{ fontSize: 13, width: 130, color: "var(--ink-2)" }}>Bloom mix</span>
         {MIX_LEVELS.map((level) => (
           <span key={level} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
@@ -653,6 +546,7 @@ function AssessmentTab(props: {
               step={0.05}
               className="num"
               style={{ width: 74 }}
+              aria-label={level + " share"}
               value={td.blueprint.bloomMix[level] ?? 0}
               onChange={(e) =>
                 updateBlueprint(td.id, {
@@ -666,7 +560,7 @@ function AssessmentTab(props: {
         ))}
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "14px 0 20px" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, margin: "14px 0 20px" }}>
         <span style={{ fontSize: 12.5, color: "var(--ink-3)" }}>Blueprint check</span>
         <Tag tone={weightsOk ? "ok" : "danger"}>
           <span className="num">weights {weightSum.toFixed(2)}</span>
@@ -678,7 +572,7 @@ function AssessmentTab(props: {
 
       {/* (b) generation + (c) the items */}
       {hasItems ? (
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 14 }}>
           <SectionLabel style={{ margin: 0 }}>Items</SectionLabel>
           <span style={{ flex: 1 }} />
           <Button
@@ -692,7 +586,7 @@ function AssessmentTab(props: {
       ) : (
         <EmptyState
           title="No items yet"
-          body="The Authoring agent drafts items to match your weights and Bloom mix; every item stays editable."
+          body="Local templates draft example wording from current outcomes. Review the questions, coverage and marks; every item stays editable."
           action={
             <Button
               variant="primary"
@@ -707,7 +601,7 @@ function AssessmentTab(props: {
 
       {td.items.map((it, idx) => (
         <Card key={it.id} style={{ marginBottom: 10, boxShadow: "none" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, marginBottom: 8 }}>
             <span className="num" style={{ fontWeight: 600, fontSize: 13 }}>
               Q{idx + 1}
             </span>
@@ -722,6 +616,7 @@ function AssessmentTab(props: {
               min={1}
               className="num"
               style={{ width: 70 }}
+              aria-label={"Question " + (idx + 1) + " marks"}
               value={it.marks}
               onChange={(e) => updateTestItem(td.id, it.id, { marks: Number(e.target.value) })}
             />
@@ -729,12 +624,14 @@ function AssessmentTab(props: {
             <Button
               variant="quiet"
               style={{ height: 28, padding: "0 8px", fontSize: 12.5 }}
+              aria-label={"Remove question " + (idx + 1)}
               onClick={() => removeTestItem(td.id, it.id)}
             >
               Remove
             </Button>
           </div>
           <Textarea
+            aria-label={"Question " + (idx + 1) + " wording"}
             value={it.text}
             onChange={(e) => updateTestItem(td.id, it.id, { text: e.target.value })}
             style={{ minHeight: 56 }}
@@ -836,12 +733,23 @@ function TestStatusAction(props: {
 }) {
   const { state, person, subject, draft } = props;
 
+  const [reviewed,setReviewed] = useState(false);
+  const [reviewError,setReviewError] = useState("");
+  if (draft.needsReview) return <div>
+    <label className="checkbox-line"><input type="checkbox" data-demo-id="assessment-course-change-ack" checked={reviewed} onChange={e => setReviewed(e.target.checked)} />I reviewed the blueprint and every question against the current course outcomes.</label>
+    <Button data-demo-id="assessment-course-change-review" disabled={!reviewed} onClick={() => {
+      const result = acknowledgeAssessmentCourseChange(draft.id,reviewed);
+      setReviewError(result.ok ? "" : result.error ?? "The review could not be recorded.");
+    }}>Record course-change review</Button>
+    {reviewError ? <p role="alert" className="form-error">{reviewError}</p> : null}
+  </div>;
+
   if (draft.status === "approved") {
     return (
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <Tag tone="ok">Approved</Tag>
         <span style={{ fontSize: 13, color: "var(--ink-2)" }}>
-          This test rides with the proposal to the acceptance test.
+          {draft.proposalId ? "This local test decision is attached to the proposal." : "Local assessment decision recorded. Institutional approval remains in your university process."}
         </span>
       </div>
     );
@@ -903,7 +811,7 @@ function HistoryTab(props: { state: AppState; subject: Subject; proposal: Change
       {events.length === 0 ? (
         <EmptyState
           title="Nothing has happened yet"
-          body="Every draft, review, test, and decision on this proposal is recorded here."
+          body="Proposal actions are recorded here. Course revision decisions appear above."
         />
       ) : (
         events.map((e, i) => (

@@ -108,24 +108,24 @@ export function BacktestScreen() {
         </Button>
       </div>
 
-      <SectionLabel style={{ marginTop: 40 }}>The historical backtest</SectionLabel>
+      <SectionLabel style={{ marginTop: 40 }}>Synthetic backtest example</SectionLabel>
       <p style={{ margin: "0 0 14px", fontSize: 13.5, color: "var(--ink-2)", maxWidth: 560 }}>
-        The same predictor, run on a held-out past cohort it never saw:{" "}
+        A reproducible calculation on a generated example cohort, not empirical validation:{" "}
         <span className="num">{backtest.n}</span> learners from intake{" "}
         <span className="num">{HISTORICAL_BACKTEST.intake}</span>, predicted from their before-ratings
-        alone, then compared to the recorded outcome.
+        alone, then compared to the fixture outcome.
       </p>
 
       {!revealed ? (
         <Button variant="primary" data-demo-id="reveal-backtest" onClick={() => setRevealed(true)}>
-          Reveal the recorded outcome
+          Reveal the fixture outcome
         </Button>
       ) : (
         <div className="fade-up" style={{ maxWidth: 680 }}>
         <Card focal data-demo-id="backtest-result">
           <div style={{ display: "flex", gap: 40, flexWrap: "wrap", marginBottom: 18 }}>
             <Stat label="predicted mastery" value={backtest.overallPredicted.toFixed(3)} />
-            <Stat label="recorded actual" value={backtest.overallActual.toFixed(3)} />
+            <Stat label="fixture outcome" value={backtest.overallActual.toFixed(3)} />
             <Stat label="mean absolute error" value={backtest.mae.toFixed(3)} tone="ok" />
           </div>
 

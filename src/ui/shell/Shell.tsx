@@ -6,7 +6,7 @@
 
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
-import { Bell, Check, ChevronDown, LogOut, RotateCcw, Search, ShieldCheck } from "lucide-react";
+import { Bell, Check, ChevronDown, LogOut, Menu, RotateCcw, Search, ShieldCheck } from "lucide-react";
 import type { Screen } from "../../app/roles.ts";
 import { hatsOn, navFor, subjectsForPerson } from "../../app/roles.ts";
 import {
@@ -24,15 +24,26 @@ import { NAV_META, screenLabel } from "./nav.ts";
 import { CommandPalette } from "./CommandPalette.tsx";
 import { AgentPanel } from "./AgentPanel.tsx";
 import { Kbd } from "../primitives/index.tsx";
+import { PrototypeNotice } from "../primitives/PrototypeNotice.tsx";
+import { SectionHelp } from "../primitives/SectionHelp.tsx";
 
 const SIDEBAR_W = 240;
 const TOPBAR_H = 56;
+
+/** Screens that explain the product rather than do the work. */
+const UNDERSTAND: Screen[] = ["office", "evaluation"];
+/** The earlier illustrative screens: synthetic data, kept behind sign-in and labelled. */
+const SANDBOX: Screen[] = ["trends", "acceptance", "backtest", "dataroom", "index"];
+/** Where the prototype-data notice shows: the sandbox and the illustrative approval workflow. */
+const NOTICE_SCREENS: Screen[] = [...SANDBOX, "approval"];
 
 export function Shell(props: { children: ReactNode }) {
   const state = useStore();
   const person = currentPerson();
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Cmd+K / Ctrl+K opens the palette from anywhere.
@@ -42,7 +53,7 @@ export function Shell(props: { children: ReactNode }) {
         e.preventDefault();
         setPaletteOpen((v) => !v);
       }
-      if (e.key === "Escape") setMenuOpen(false);
+      if (e.key === "Escape") { setMenuOpen(false); setNavOpen(false); }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -65,6 +76,16 @@ export function Shell(props: { children: ReactNode }) {
     return () => clearTimeout(t);
   }, [state.toast]);
 
+  useEffect(() => {
+    setNavOpen(false);
+    mainRef.current?.scrollTo(0, 0);
+    mainRef.current?.focus({ preventScroll: true });
+    document.title = screenLabel(state.screen) + " · Lyceum";
+  }, [state.screen]);
+  // Switching course scrolls to the top but leaves focus where it is, so a
+  // course selector keeps focus while its value changes.
+  useEffect(() => { mainRef.current?.scrollTo(0, 0); }, [state.selectedSubjectId]);
+
   if (!person) return <>{props.children}</>;
 
   const nav = navFor(person, state.assignments);
@@ -79,9 +100,14 @@ export function Shell(props: { children: ReactNode }) {
         : "Academic";
 
   return (
-    <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
+    <div className={"app-shell" + (navOpen ? " nav-open" : "")} style={{ display: "flex", height: "100%", overflow: "hidden" }}>
+      <a className="skip-link" href="#main-content">Skip to main content</a>
+      <div className="mobile-navigation"><span className="page-title">Lyceum</span><button aria-label="Toggle navigation" aria-expanded={navOpen} aria-controls="primary-sidebar" onClick={() => setNavOpen((open) => !open)}><Menu size={20} /> Navigation</button></div>
       {/* ---------- sidebar ---------- */}
       <aside
+        id="primary-sidebar"
+        className="app-sidebar"
+        onClick={(event) => { if ((event.target as HTMLElement).closest("button")) setNavOpen(false); }}
         style={{
           width: SIDEBAR_W,
           flexShrink: 0,
@@ -93,21 +119,21 @@ export function Shell(props: { children: ReactNode }) {
         }}
       >
         <div style={{ padding: "18px 16px 10px" }}>
-          <div
+          <button
             className="page-title"
-            style={{ fontSize: 21, cursor: "pointer" }}
+            style={{ fontSize: 21, cursor: "pointer", border: 0, padding: 0, background: "none", color: "var(--ink)" }}
             onClick={() => navigate("inbox")}
           >
             Lyceum
-          </div>
+          </button>
           <div style={{ fontSize: 11.5, color: "var(--ink-3)", marginTop: 2 }}>
-            Curriculum advisory
+            Course decisions, with receipts
           </div>
         </div>
 
-        <nav style={{ padding: "6px 8px", flex: 1 }}>
+        <nav aria-label="Main navigation" style={{ padding: "6px 8px", flex: 1 }}>
           {nav
-            .filter((s) => s !== "backtest" && s !== "office" && s !== "dataroom" && s !== "index")
+            .filter((s) => !UNDERSTAND.includes(s) && !SANDBOX.includes(s) && s !== "guide")
             .map((s) => (
               <NavItem key={s} screen={s} active={state.screen === s} badge={s === "inbox" ? unread : 0} />
             ))}
@@ -128,7 +154,7 @@ export function Shell(props: { children: ReactNode }) {
               {mySubjects.map((sid) => {
                 const hats = hatsOn(person.id, sid, state.assignments);
                 return (
-                  <div
+                  <button
                     key={sid}
                     data-demo-id={`subject-${sid}`}
                     onClick={() => {
@@ -136,6 +162,7 @@ export function Shell(props: { children: ReactNode }) {
                       navigate("studio");
                     }}
                     style={{
+                      width: "100%", border: "none", minHeight: 36,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
@@ -147,7 +174,7 @@ export function Shell(props: { children: ReactNode }) {
                       background:
                         state.selectedSubjectId === sid && state.screen === "studio"
                           ? "var(--accent-soft)"
-                          : undefined,
+                          : "transparent",
                     }}
                   >
                     <span className="num">{sid}</span>
@@ -155,40 +182,38 @@ export function Shell(props: { children: ReactNode }) {
                       {hats.includes("coordinator") ? <HatBadge label="C" title="Coordinator" /> : null}
                       {hats.includes("lecturer") ? <HatBadge label="L" title="Lecturer" /> : null}
                     </span>
-                  </div>
+                  </button>
                 );
               })}
             </>
           ) : null}
 
-          <div
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              color: "var(--ink-3)",
-              letterSpacing: "0.03em",
-              padding: "16px 10px 4px",
-            }}
-          >
-            EVIDENCE
-          </div>
-          {(["backtest", "dataroom", "office", "index"] as Screen[])
-            .filter((s) => nav.includes(s))
-            .map((s) => (
-              <NavItem key={s} screen={s} active={state.screen === s} badge={0} />
-            ))}
+          <div className="nav-group-label">UNDERSTAND</div>
+          {UNDERSTAND.filter((s) => nav.includes(s)).map((s) => (
+            <NavItem key={s} screen={s} active={state.screen === s} badge={0} />
+          ))}
+          <NavItem screen="guide" active={state.screen === "guide"} badge={0} />
+          {SANDBOX.some((s) => nav.includes(s)) ? (
+            <>
+              <div className="nav-group-label">RESEARCH SANDBOX <span className="nav-group-note">illustrative</span></div>
+              {SANDBOX.filter((s) => nav.includes(s)).map((s) => (
+                <NavItem key={s} screen={s} active={state.screen === s} badge={0} />
+              ))}
+            </>
+          ) : null}
         </nav>
 
         <div style={{ padding: "10px 16px", borderTop: "1px solid var(--border)", fontSize: 11.5, color: "var(--ink-3)" }}>
-          Grounded in the CLO mastery survey.
+          Local prototype. Your work stays in this browser.
           <br />
-          Model RASCH-1PL.
+          Sandbox screens use synthetic data and say so.
         </div>
       </aside>
 
       {/* ---------- main column ---------- */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, minHeight: 0 }}>
         <header
+          className="app-topbar"
           style={{
             height: TOPBAR_H,
             flexShrink: 0,
@@ -204,8 +229,9 @@ export function Shell(props: { children: ReactNode }) {
           <div style={{ flex: 1 }} />
 
           <button
+            className="search-trigger"
             onClick={() => setPaletteOpen(true)}
-            aria-label="Search (Ctrl+K)"
+            aria-label="Search or jump to, Ctrl+K"
             style={{
               display: "flex",
               alignItems: "center",
@@ -273,6 +299,10 @@ export function Shell(props: { children: ReactNode }) {
           {/* account menu */}
           <div ref={menuRef} style={{ position: "relative" }}>
             <button
+              className="account-trigger"
+              aria-label={"Account: " + person.name}
+              aria-expanded={menuOpen}
+              aria-controls="account-options"
               data-demo-id="account-menu"
               onClick={() => setMenuOpen((v) => !v)}
               style={{
@@ -288,7 +318,7 @@ export function Shell(props: { children: ReactNode }) {
               }}
             >
               <Avatar name={person.name} />
-              <span style={{ fontSize: 13, fontWeight: 500 }}>{person.name}</span>
+              <span className="account-name" style={{ fontSize: 13, fontWeight: 500 }}>{person.name}</span>
               {person.verified ? (
                 <ShieldCheck size={14} color="var(--ok)" aria-label="Verified" />
               ) : null}
@@ -296,6 +326,7 @@ export function Shell(props: { children: ReactNode }) {
             </button>
             {menuOpen ? (
               <div
+                id="account-options"
                 className="fade-up"
                 style={{
                   position: "absolute",
@@ -318,7 +349,7 @@ export function Shell(props: { children: ReactNode }) {
                   </div>
                   <div style={{ fontSize: 11.5, marginTop: 3, color: person.verified ? "var(--ok)" : "var(--warn)" }}>
                     {person.verified
-                      ? "Verified coordinator identity"
+                      ? "Marked verified in the demo data; no institutional verification yet"
                       : "Unverified: edits carry an unverified tag"}
                   </div>
                 </div>
@@ -343,7 +374,7 @@ export function Shell(props: { children: ReactNode }) {
                 <div style={{ borderTop: "1px solid var(--border)", marginTop: 4, paddingTop: 4 }}>
                   <button
                     onClick={() => {
-                      resetWorkspace();
+                      if (window.confirm("Reset this browser's workspace? This removes saved teaching plans, drafts and uploads. Export any plan you want to keep first.")) resetWorkspace();
                       setMenuOpen(false);
                     }}
                     style={menuItemStyle}
@@ -367,7 +398,10 @@ export function Shell(props: { children: ReactNode }) {
           </div>
         </header>
 
-        <main style={{ flex: 1, overflowY: "auto", minWidth: 0 }} data-demo-id="main-scroll">
+        <main ref={mainRef} id="main-content" tabIndex={-1} style={{ flex: 1, overflowY: "auto", minWidth: 0 }} data-demo-id="main-scroll">
+          {NOTICE_SCREENS.includes(state.screen) ? <PrototypeNotice /> : null}
+          {state.persistenceStatus === "unavailable" ? <div role="alert" className="storage-warning">Browser storage is unavailable. Changes only last while this page is open. Export your teaching plan before closing.</div> : null}
+          <SectionHelp screen={state.screen} />
           {props.children}
         </main>
       </div>

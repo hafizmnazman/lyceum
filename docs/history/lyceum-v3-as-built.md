@@ -1,5 +1,10 @@
 # Lyceum, as built
 
+> Historical report with known overclaims. The market inputs and seeded learners
+> are synthetic; the historical backtest does not establish empirical validity.
+> Read the [5 October 2026 audit and improvement plan](docs/lyceum-improvement-plan.md)
+> before reusing any claims below in a report or presentation.
+
 One document containing the full picture of the shipped system: the problem,
 the goal, the objectives, the positioning, what was built, how it is grounded,
 how it is validated, and what it does not claim. Written to be lifted into a

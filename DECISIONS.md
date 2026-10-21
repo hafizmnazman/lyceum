@@ -1,7 +1,203 @@
 # Lyceum v3: Decisions log
 
+## 22 October 2026: the upgrade plan, and the week to Amsterdam
+
+The Grand Final is on 29 October 2026 in Amsterdam (8 minutes of pitch plus 2 of questions, then a 10-minute booth demo before a second judge team; the briefing slide weights Innovation 30, Technology Readiness 20, Commercial Viability 15, Education Significance 15, Presentation 10, Demo 10, "to be firmed"). The owner asked for an overhaul of the look, the flow and the story with the main idea unchanged. Decisions, recorded in [docs/lyceum-upgrade-plan.md](docs/lyceum-upgrade-plan.md):
+
+- **The thesis goes global.** The problem is curriculum latency in an age of skill churn, not one country's mismatch: approval cycles of 12 to 18 months against 39% of skills changing by 2030, with every major accreditor already requiring the evidence. Malaysia stays as the worked example. Five dated research notes under `docs/research/` carry the sources.
+- **One loop everywhere.** Course, then Watch, Report, Decide, Update, Teach, Learn, with the same names in the app, the demo, the deck, the video and the brief. Decide becomes a record (adopt, defer, return, with a reason). The journey bar becomes the receipts ring.
+- **The palette and the type are fixed** from the owner's colour-scheme poster: forest, electric lime (emphasis only), emerald (data), mint mist, white, with the supporting tints; Bricolage Grotesque, Plus Jakarta Sans, JetBrains Mono, bundled. Contrast was measured: lime never carries text on a light surface.
+- **Mascots are drawn in code.** Seven characters in one shape family as inline SVG, four poses, moods computed only from records, reused by the app, the deck and the video. Generated images serve as concept art, never as the production asset.
+- **The maths is standard and cited.** Cochran with the finite population correction for sample adequacy, Wilson or Jeffreys intervals, partial pooling for small cohorts, perception kept apart from attainment, predictions frozen before the term and scored against carry-forward, comments coded against a human gold set; per-student predictions are not built.
+- **One core, many doors.** A local, read-only MCP server over an exported workspace plus a Lyceum skill folder ship for Amsterdam and say so; the remote server with OAuth, the ChatGPT plugin, the Microsoft 365 agent, Gemini Enterprise and LTI 1.3 are planned and labelled planned.
+- **Two tracks.** Track A ships and freezes on 27 October at noon; Track B is the rest of the overhaul after Amsterdam, in pilot order. The order of sacrifice is written down; the deck, the video, the demo and the docs are never cut.
+- **Tools.** Claude Code builds and verifies; Codex with gpt-6-astra at max effort reviews plans and pitches in a read-only sandbox with every claim verified before it is kept; ChatGPT image generation makes concept sheets only.
+- **Housekeeping.** Four pitch documents written for the old palette moved to `docs/history/presentation/`; nine July screenshots to `docs/history/screenshots-2026-07/`; `scripts/gen-xlsx.mjs` and the never-imported `src/agents/evaluator.ts` deleted; `npm run shots` repointed at `scripts/presentation-shots.mjs`.
+
+Deferred for the owner: confirm the final's date against the ticket and the weights against the finalist pack; review the teammate's `feature/evidence-snapshots` branch (A0); commit and tag; decide whether the brag skill is scanned and used for the cold open.
+
+
+## 14 October 2026: the organizer's review, and the platform answer becomes work
+
+Cai Yiyu, the organizer who approves the travel fellowships, reviewed Lyceum
+after already approving another team's fellowship. The idea was judged solid,
+clear and on theme, and Cai Yiyu applied for the travel fellowship on the
+team's behalf. Decisions taken from the review (plan Section 29):
+
+- **The "why another tool" answer is now a commitment.** In the room, the
+  owner answered that Lyceum is a platform that fits a university's existing
+  ecosystem through MCP and extensions for Microsoft 365, Google and their AI
+  tools. Cai Yiyu liked it. Because it was said and not built, it becomes work
+  package W14, with an MCP server first: one server reaches Copilot Studio
+  (MCP generally available), ChatGPT Edu and Claude, and Gemini where the
+  tenant allows it. The host package after that follows the pilot
+  institution's stack. Until a pilot tenant runs it, it stays "planned".
+- **Personas, but honest ones.** Mascots and living personas for the seven
+  agents (W15), with moods driven only by real records, and gamification that
+  rewards evidence quality, never the number of course changes.
+- **One storyline.** Six steps, Watch, Report, Decide, Update, Teach, Learn,
+  used in the same order by the app, the demo and the pitch (W16). The current
+  surfaces disagree on the order, which is what the review noticed.
+- **The surveys are the benchmark.** The mock-cohort simulation will be scored
+  against the SSRT and CLO surveys and CLO attainment, with predictions frozen
+  before the semester (W17), as the review suggested. Until it beats a naive
+  baseline it stays in the sandbox.
+- **Problem research goes primary.** Desk research at Malaysia, Asia and world
+  level exists; next are lecturer interviews in at least three Asian countries
+  (R1).
+- **A shareable brief.** `docs/presentation/lyceum-brief.pdf`, generated by
+  `scripts/gen-brief-pdf.mjs`, explains the idea and records the review for
+  people outside the project.
+
+## 11 October 2026: the organizer's feedback, answered in the product
+
+The organizer's verdict on the pitch: too wordy, no graphics, numbers before
+the story, no benchmark for the student agent, pain framed only for Malaysia,
+no market intelligence, no guidance after login, "not just AI slop". Decisions:
+
+- **Public landing page instead of the public Relevance Index.** Signed out,
+  `#/index` is now a landing page: the pain with sources (Malaysia, Asia,
+  world), five steps, what is proven, what is not built, two ways in. The
+  Relevance Index sandbox stays behind sign-in, labelled. No synthetic figure
+  appears on the landing page, and the integrity smoke asserts it.
+- **Navigation regrouped: work, understand, sandbox.** The sidebar shows the
+  work screens first, then UNDERSTAND (How it works, Evaluation, Guide), then
+  RESEARCH SANDBOX labelled illustrative (Trends, Acceptance test, Closed loop,
+  Data room, Relevance Index). The prototype-data notice shows only on the
+  sandbox screens and Approvals, instead of on every screen.
+- **Guidance reads real state.** A seven-step journey bar in Course Studio and
+  a Start here card on Home compute each step from saved records: an adopted
+  version, a reviewed posting with a confirmed quotation, a mapping to a current
+  outcome, a session linked to an outcome, a prepared brief. Seeded examples
+  never count as the lecturer's work; the next step is always one action.
+- **"Agents" becomes "How it works".** Seven role cards (reads, produces,
+  cannot) and a timeline derived from the records the workspace holds for the
+  selected course. It is labelled as a record, not a log of agent activity;
+  nothing is invented, and a saved-sample import is named as such.
+- **An Evaluation page, with the student-agent benchmark honestly unrun.** Live
+  self-checks recompute on every visit (quotations re-verified, duplicates,
+  denominator, backup validity). A hand-labelled scan benchmark was hardened
+  with indirect mentions, negations, inflections and job titles so that it
+  reports real misses instead of a perfect score; the proofs assert that it
+  does. The protocol for benchmarking the student simulation against course
+  outcomes and surveys is written down and labelled not yet run; the synthetic
+  backtest error is shown with a synthetic label.
+- **Charts, not prose, where a number lives.** Thin single-hue share bars with
+  Wilson whiskers in the Observed requirements table and a top-requirements bar
+  list above it; a chart slide in the generated brief deck with the count on
+  each bar and the axis ending at the denominator.
+- **Honesty fixes from the Codex review.** "See the trend" became "See the
+  counts"; "your data stays in your browser" now says file parsing and live
+  collection go through the local API; the demo's reset warning now detects
+  evidence, mappings, briefs and revisions; a fresh deep link to the landing
+  page is no longer overwritten; "Verified coordinator identity" became a
+  demo-data flag.
+- **Codex (ChatGPT Plus) used for planning, review and documents, not code.**
+  Four runs on 11 October, each saved under `docs/review/` or
+  `docs/presentation/`: the improvement plan, the UI code review, the Gemini
+  asset brief with a video storyboard, the pitch v2 talk track, and the
+  JUDGES.md refresh. Claude verified every claim before keeping it.
+- **Brand artwork is optional and owner-made.** The landing page tries
+  `public/brand/<name>.png` and falls back to inline art, so the owner can drop
+  Gemini images in without a code change. None exist yet.
+
+Still open: the pitch deck itself (brief and prompts are in `docs/presentation`),
+Gemini images and the Veo video, a lecturer pilot, and the UI items the Codex
+plan ranks next (a step rail inside Evidence, a source pane beside each
+proposed quotation, skill cards in place of the ten-column table).
+
+## 9 October 2026, third session: slide packs without model text, and a full-tour demo
+
+The owner named slide generation as the selling point. Decision: build the
+first step the plan already specifies in Section 11, deterministic template
+rendering, rather than a model-written deck. Any saved session downloads as an
+editable PPTX teaching pack (outcomes, the employer evidence linked to them
+with exact quotations, activity, check, resources, speaker notes), and the
+meeting brief downloads as slides with one receipt slide per source. No model
+writes a word, so nothing can be fabricated, and it works offline. Model-drafted
+content with lecturer review, selective regeneration and institutional
+templates stay on the roadmap. The self-driving demo now tours every section,
+including both downloads, and the headless smoke asserts the files exist.
+
+## 9 October 2026, second session: the research run replaces the agent storyline
+
+The owner asked for the product to be what a lecturer actually does, not a set
+of agents that appear to run by themselves, and for a demo that shows it.
+Decisions:
+
+- **Research the lecturer runs.** Collection happens only on request, from two
+  documented employer board APIs (Greenhouse, Lever) through the local API, or
+  from a dated saved sample. Each kept posting is a source with its link,
+  publication date as published, retrieval time and text fingerprint; it counts
+  only after the lecturer vouches for the extraction. The scan proposes exact
+  sentences for the terms the lecturer names and records nothing until
+  confirmed.
+- **The brief is the output.** A meeting brief carries the decision requested,
+  the evidence base, the table, the options, the notes, the limitations and
+  every receipt, as Markdown to download or to send inside Lyceum. Recipients
+  read it on their Home page; the decision stays with people.
+- **Extension, not another platform.** The commercial answer to "why add a
+  tool" is to reach Lyceum from Teams (a Copilot Studio agent over a custom
+  connector), Slack or the LMS, with the web workspace kept for editing. That
+  needs the shared API (W02), which now has a reason to exist; it stays
+  sequenced after the competition demo. Plan Section 25.
+- **Pitch and market.** The five V's are AWS's Value, Visualize, Validate,
+  Verify and Venture framework from its machine-learning blog; the deck maps
+  onto it in Section 26. Market sizing in Section 27 is labelled estimates from
+  MOHE, UNESCO, DOSM, MIDA and market reports; nothing in it is a forecast.
+- **Demo replaced.** The self-driving demo now plays the research run on the
+  saved sample, and the headless smoke asserts the new end state. The earlier
+  screens (Trends, Relevance Index, Acceptance test, Closed loop) stay for the
+  proofs and are labelled illustrative; quarantining them is the next tidy-up.
+- **Folders.** The superseded `16 Lyceum` and `17 Lyceum V2` folders moved to
+  `01 Coding Project/_archive/` (both clean git clones with remotes; V2 has one
+  uncommitted file). The two historical v3 documents moved to `docs/history/`.
+
+Deferred for the owner: commit and tag; keep or delete the archive folder;
+verify the MOHE 2024 staff table; choose the pilot institution and its
+collaboration tool before the W02 API is designed.
+
+## 9 October 2026: evidence receipts before server infrastructure
+
+Claude reviewed the 8 October milestone (verified on the owner's machine:
+typecheck, 125 proofs, build, three browser smokes and the guide check all pass)
+and continued with the next package. Calls worth recording:
+
+- **Manual evidence first, server later.** The plan's W02 puts identity, server
+  permissions and Postgres ahead of everything. Half the judging weight sits on
+  the visible workflow (innovation, demo, presentation), and the readiness
+  argument is a reproducible workflow, not a database. The browser-local store
+  with validated JSON backup carries the competition demo; the shared server is
+  scheduled when a pilot has a date. W04's manual path and W05's calculations
+  were implemented instead (Course Studio, Evidence tab).
+- **Receipts are the unit of evidence.** A requirement is a quotation that must
+  exist in the retained source text; a paraphrase is rejected before storage and
+  every quotation is re-verified on display and on backup import. A posting
+  counts once per text fingerprint and only after the lecturer marks its
+  extraction reviewed. Shares always show the numerator and denominator with a
+  Wilson interval; empty evidence is unknown, never zero; no trend is shown
+  without a comparable earlier window.
+- **House style.** Em and en dashes were removed from user-visible strings and
+  from the master plan, per the owner's global writing rule.
+
+Deferred for the owner: commit and tag the current tree (nothing has been
+committed since 26 July); decide whether the legacy Play demo stays visible on
+the sign-in screen for the Friday build; approve the W06 provider work (SDK
+upgrade, structured outputs instead of forced tool calls, a current model id).
+
+## 5 October 2026: evidence and workflow redesign
+
+The owner requested a course-centred product with real market provenance,
+reviewed CLO/topic authoring, teaching-material creation and distinct agent roles.
+The [new plan](docs/lyceum-improvement-plan.md) supersedes the fixed demo-number
+requirements below. Existing market and cohort fixtures are illustrative, not
+verified observations. Initial repairs label that limitation, make missing
+agreement unknown, surface source disagreement, and guard approval/rejection
+actions by actor. Server-side authorization and the broader redesign remain
+planned work. Earlier entries below are retained as project history.
+
 A running log of the calls made during the v3 build that are worth reviewing,
-and anything deferred for the owner. The spec is `lyceum-v3-implementation.md`;
+and anything deferred for the owner. The spec is `docs/history/lyceum-v3-implementation.md`;
 where it is concrete it was followed exactly.
 
 ---
@@ -110,6 +306,6 @@ where it is concrete it was followed exactly.
   hands-on walkthrough of the same loop), plus what is worth poking (the
   public index, dropping their own files, the data room, reset). The app runs
   fully static (`npm run preview`), so judges need no keys and no server.
-- `lyceum-v3-as-built.md`: the complete as-built document (problem statement,
+- `docs/history/lyceum-v3-as-built.md`: the complete as-built document (problem statement,
   objectives, positioning, system, validation, limitations) written to be
   lifted into the report.

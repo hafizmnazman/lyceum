@@ -68,6 +68,7 @@ export interface Subject {
   sharedWithProgrammeIds: ProgrammeId[]; // cross-programme ripple
   status: "active" | "proposed"; // proposed = a new subject not yet approved
   currentVersionId: string;
+  workspaceOnly?: boolean;
   // v3: supply-side truth. Content ingested from a published document (the
   // official syllabus pdf, the public course page) is verified with its source;
   // self-entered content is labelled unverified until it matches one.
@@ -76,6 +77,7 @@ export interface Subject {
 }
 
 export interface CLO {
+  label?: string;
   id: CLOId;
   subjectId: SubjectId;
   text: string;
@@ -170,6 +172,8 @@ export interface ChangeProposal {
     testDraftId?: string;
   };
   status: ProposalStatus;
+  baselineVersionId?: string;
+  testedDraftFingerprint?: string;
   acceptanceResult?: VerdictReport; // filled by the Cohort agent
   history: ProposalEvent[];
 }
@@ -221,7 +225,8 @@ export type NotificationKind =
   | "review-request"
   | "test-done"
   | "approved"
-  | "rejected";
+  | "rejected"
+  | "evidence-brief";
 
 export interface Notification {
   id: string;
@@ -230,11 +235,40 @@ export interface Notification {
   subjectId?: SubjectId;
   proposalId?: ProposalId;
   agentFindings?: string; // the context that prompted the ping
+  briefId?: string; // an evidence brief a lecturer sent
   read: boolean;
   createdAt: string;
 }
 
+/** Lecturer-authored preparation, separate from the formal curriculum proposal. */
+export interface TeachingSession {
+  courseVersionId?: string;
+  needsReview?: boolean;
+  id: string;
+  week: number;
+  topic: string;
+  minutes: number;
+  cloIds: string[];
+  activity: string;
+  learningCheck: string;
+  resources: string;
+  status: "draft" | "ready" | "delivered";
+  updatedAt: string;
+  updatedBy: PersonId;
+}
+
+export interface TeachingPlan {
+  subjectId: SubjectId;
+  term: string;
+  notes: string;
+  sessions: TeachingSession[];
+  updatedAt: string;
+  updatedBy: PersonId;
+}
+
 export interface SubjectVersion {
+  definition?: CourseDefinition;
+  effectiveTerm?: string;
   id: string;
   subjectId: SubjectId;
   snapshot: Pick<Subject, "title" | "cloIds" | "prerequisiteSubjectIds">;
@@ -290,6 +324,8 @@ export type TestItem = Item & {
 };
 
 export interface TestDraft {
+  needsReview?: boolean;
+  courseVersionId?: string;
   id: string;
   subjectId: SubjectId;
   proposalId?: ProposalId; // when part of a change proposal
@@ -333,6 +369,7 @@ export interface MarketSource {
   kind: "job-platform" | "gov-labour" | "industry-report";
   snapshotDate: string; // shown in the UI: "prepared snapshot, <date>"
   recordCount: number;
+  isSynthetic: boolean; // true: names, dates and counts illustrate a source; no retrieved records
 }
 
 /** One source's view of one skill. */
@@ -353,7 +390,7 @@ export interface RelevanceRating {
   band: RelevanceBand;
   perCLO: Array<{ cloId: CLOId; score: number; movedBy: string[] }>;
   evidence: DemandEvidence[]; // the receipts, grouped by source in the UI
-  agreement: number; // 0..1 cross-source agreement; < 0.5 renders "sources disagree"
+  agreement: number | null; // direction agreement only; null means insufficient evidence
   ratedAt: string;
 }
 
@@ -396,4 +433,123 @@ export interface CohortResult {
   cohortId: string;
   itemResults: ItemResult[]; // full provenance: every student x every item
   cloMastery: CLOMastery[];
+}
+
+
+// ---------- lecturer-controlled curriculum workspaces ----------
+export interface CourseBrief {
+  programmeTitle: string;
+  level: string;
+  language: string;
+  credits: number | null;
+  teachingWeeks: number | null;
+  contactHours: number | null;
+  selfStudyHours: number | null;
+  targetRoles: string;
+  framework: string;
+  programmeOutcomes: string[];
+  notes: string;
+}
+export interface CourseOutcome extends CLO {
+  label: string;
+  assessmentEvidence: string;
+  ploIds: string[];
+}
+export interface CourseTopic {
+  id: string;
+  title: string;
+  week: number | null;
+  contactHours: number;
+  selfStudyHours: number;
+  cloIds: string[];
+  prerequisiteTopicIds: string[];
+  protected: boolean;
+  resources: string;
+}
+export interface CourseDefinition {
+  title: string;
+  brief: CourseBrief;
+  outcomes: CourseOutcome[];
+  topics: CourseTopic[];
+}
+export interface CurriculumDecision {
+  at: string;
+  byPersonId: PersonId;
+  action: "created" | "saved" | "checked" | "adopted" | "discarded";
+  note: string;
+  revision: number;
+}
+export interface CurriculumDraft {
+  id: string;
+  subjectId: SubjectId;
+  baselineVersionId: string;
+  revision: number;
+  definition: CourseDefinition;
+  reason: string;
+  effectiveTerm: string;
+  status: "drafting" | "adopted" | "discarded";
+  checkedRevision: number | null;
+  history: CurriculumDecision[];
+}
+
+// ---------- lecturer-supplied evidence receipts (manual first; no live collection) ----------
+export type EvidenceKind = "job-posting" | "professional-standard" | "advisory-note" | "other";
+export type MentionRequirement = "required" | "preferred" | "unclear";
+export type CoverageStage = "unknown" | "absent" | "introduced" | "practised" | "assessed";
+/** One document the lecturer pasted in. The text is the receipt; nothing is fetched. */
+export interface EvidenceSource {
+  id: string;
+  subjectId: SubjectId;
+  kind: EvidenceKind;
+  title: string;
+  organisation: string; // employer or issuing body, as supplied
+  url: string; // optional link supplied by the lecturer; never fetched
+  sourceDate: string; // publication date as supplied; may be empty, never manufactured
+  text: string; // the retained text, quoted from verbatim
+  textHash: string; // fingerprint of the normalised text, for duplicate detection
+  duplicateOf: string | null; // the original copy when the same text was recorded twice
+  provenance: "lecturer-supplied" | "collected";
+  collection?: EvidenceCollection; // present when fetched from a permitted board or the saved sample
+  reviewed: boolean; // extraction complete: the posting counts in the denominator
+  addedBy: PersonId;
+  addedAt: string;
+}
+/** An exact quotation from a source, attributed to a skill or requirement. */
+export interface SkillMention {
+  id: string;
+  sourceId: string;
+  subjectId: SubjectId;
+  skill: string;
+  excerpt: string; // must exist in the source text; only spacing may differ
+  requirement: MentionRequirement;
+  addedBy: PersonId;
+  addedAt: string;
+}
+/** The lecturer's reviewed judgement of how the course covers a quoted skill. */
+export interface SkillMapping {
+  subjectId: SubjectId;
+  skill: string;
+  cloIds: string[]; // course-scoped outcome identities
+  stage: CoverageStage; // documented coverage; unknown until reviewed
+  target: CoverageStage; // the stage this course should reach; unknown when not set
+  evidence: string; // cited course evidence for the stage
+  updatedBy: PersonId;
+  updatedAt: string;
+}
+
+// ---------- the lecturer's research run ----------
+export type CollectionProvider = "sample" | "greenhouse" | "lever";
+/** Where a collected source came from. The retrieval time is never the publication date. */
+export interface EvidenceCollection { provider: CollectionProvider; board: string; postingId: string; retrievedAt: string; label: string }
+/** One posting fetched from a permitted board, before the lecturer decides to keep it. Transient. */
+export interface CollectedPosting {
+  id: string; provider: CollectionProvider; board: string; title: string; organisation: string; location: string; url: string;
+  publishedAt: string; // as published by the board, empty when unknown
+  updatedAt: string; text: string; retrievedAt: string;
+}
+export type BriefRecommendation = "keep" | "refresh" | "revise" | "undecided";
+/** A meeting brief prepared from the evidence at one moment; the markdown is a snapshot with receipts. */
+export interface EvidenceBrief {
+  id: string; subjectId: SubjectId; createdBy: PersonId; createdAt: string; recommendation: BriefRecommendation; notes: string; markdown: string;
+  recipients: PersonId[]; sentAt: string | null;
 }

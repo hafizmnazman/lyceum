@@ -1,6 +1,6 @@
 // Sign in (spec 6.2). The identity block leads; the demo people are clean rows
-// with their real scope. The public Relevance Index is reachable from here
-// without signing in (the wedge: the rating exists before you join).
+// with their real scope. The public landing page (how Lyceum works) is
+// reachable from here without signing in.
 
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { hatsOn, subjectsForPerson } from "../../app/roles.ts";
@@ -44,13 +44,12 @@ export function LoginScreen() {
             Lyceum
           </div>
           <p style={{ fontSize: 17, color: "var(--ink)", margin: "14px 0 8px", maxWidth: 420 }}>
-            Know which of your courses have drifted from industry demand, and fix
-            them before your graduates feel it.
+            Course decisions, with receipts.
           </p>
           <p style={{ fontSize: 13.5, color: "var(--ink-2)", maxWidth: 420 }}>
-            An independent advisory over your real ground: demand triangulated
-            across market sources, changes stress-tested against a measured
-            cohort, and every recommendation scored by the next term's results.
+            Gather what employers ask for, confirm every requirement as an exact
+            quotation, see honest counts, decide what the course should do about
+            it, and take a brief to the meeting. Nothing runs by itself.
           </p>
           <button
             data-demo-id="view-index"
@@ -69,10 +68,10 @@ export function LoginScreen() {
               cursor: "pointer",
             }}
           >
-            View the public Relevance Index <ArrowRight size={14} />
+            See how Lyceum works <ArrowRight size={14} />
           </button>
           <div style={{ marginTop: 56, fontSize: 11.5, color: "var(--ink-3)" }}>
-            Grounded in the CLO mastery survey and filed results · model RASCH-1PL
+            Local prototype. Your work stays in this browser. Synthetic examples are labelled where they appear.
           </div>
         </div>
 
@@ -155,7 +154,7 @@ export function LoginScreen() {
             ))}
           </div>
           <div style={{ fontSize: 11.5, color: "var(--ink-3)", marginTop: 10 }}>
-            Demo workspace: one faculty, five people, real survey ground.
+            One faculty, five local personas. Lecturers: choose Dr Sobri or Ms Tan for the full course workflow.
           </div>
         </div>
       </div>

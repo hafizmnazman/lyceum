@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, CornerDownLeft } from "lucide-react";
 import type { Screen } from "../../app/roles.ts";
-import { navFor } from "../../app/roles.ts";
+import { navFor, subjectsForPerson } from "../../app/roles.ts";
 import {
   currentPerson,
   navigate,
@@ -28,9 +28,12 @@ export function CommandPalette(props: { onClose: () => void }) {
   const [query, setQuery] = useState("");
   const [cursor, setCursor] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null;
     inputRef.current?.focus();
+    return () => { if (previous?.isConnected) previous.focus({ preventScroll: true }); };
   }, []);
 
   const commands = useMemo<Command[]>(() => {
@@ -44,7 +47,8 @@ export function CommandPalette(props: { onClose: () => void }) {
         hint: "Go to",
         run: () => navigate(s),
       }));
-    for (const subject of state.subjects) {
+    const own = subjectsForPerson(person.id, state.assignments);
+    for (const subject of state.subjects.filter((s) => nav.includes("studio") && own.includes(s.id))) {
       out.push({
         id: `subj-${subject.id}`,
         label: `${subject.id} ${subject.title}`,
@@ -67,7 +71,7 @@ export function CommandPalette(props: { onClose: () => void }) {
       id: "reset",
       label: "Reset workspace",
       hint: "Restore the seed data",
-      run: () => resetWorkspace(),
+      run: () => { if (window.confirm("Reset this browser's workspace and remove saved plans, drafts and uploads? Export any teaching plan you want to keep first.")) resetWorkspace(); },
     });
     return out;
   }, [person, state.assignments, state.subjects, state.people]);
@@ -105,9 +109,20 @@ export function CommandPalette(props: { onClose: () => void }) {
       }}
     >
       <div
+        ref={dialogRef}
         className="fade-up"
         role="dialog"
+        aria-modal="true"
         aria-label="Command palette"
+        onKeyDown={(event) => {
+          if (event.key === "Escape") props.onClose();
+          if (event.key !== "Tab") return;
+          const controls = dialogRef.current?.querySelectorAll<HTMLElement>("input, button");
+          if (!controls?.length) return;
+          const first = controls[0], last = controls[controls.length - 1];
+          if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+          else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        }}
         style={{
           width: 560,
           maxWidth: "90vw",
@@ -120,6 +135,7 @@ export function CommandPalette(props: { onClose: () => void }) {
         }}
       >
         <input
+          aria-label="Search screens, courses or people"
           ref={inputRef}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -142,7 +158,6 @@ export function CommandPalette(props: { onClose: () => void }) {
             padding: "0 16px",
             border: "none",
             borderBottom: "1px solid var(--border)",
-            outline: "none",
             fontSize: 15,
             background: "var(--surface)",
           }}

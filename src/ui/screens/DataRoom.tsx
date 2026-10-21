@@ -124,21 +124,22 @@ export function DataRoomScreen() {
         })
       )}
 
-      <SectionLabel style={{ marginTop: 36 }}>Demand snapshots</SectionLabel>
+      <SectionLabel style={{ marginTop: 36 }}>Synthetic market examples</SectionLabel>
       {MARKET_SOURCES.map((s) => (
         <Row key={s.id}>
           <span style={{ width: 240, fontSize: 13.5, fontWeight: 500 }}>{s.name}</span>
           <Tag>{MARKET_KIND_LABEL[s.kind] ?? s.kind}</Tag>
           <span style={{ fontSize: 12.5, color: "var(--ink-2)" }}>
-            prepared snapshot, {fmtDate(s.snapshotDate)}
+            {s.isSynthetic ? "synthetic fixture, example date" : "snapshot"}, {fmtDate(s.snapshotDate)}
           </span>
           <span className="num" style={{ marginLeft: "auto", fontSize: 13 }}>
-            {s.recordCount.toLocaleString("en-GB")} postings
+            {s.recordCount.toLocaleString("en-GB")} {s.isSynthetic ? "illustrative records" : "records"}
           </span>
         </Row>
       ))}
       <p style={{ marginTop: 10, fontSize: 12.5, color: "var(--ink-3)", maxWidth: 560 }}>
-        Job-ad frequency is a proxy for demand and is labelled as such wherever it appears.
+        These counts and dates are fixture values, with no underlying retrieved records.
+        Occupational reports must be analysed separately from job postings.
       </p>
 
       <SectionLabel style={{ marginTop: 36 }}>The survey</SectionLabel>
@@ -149,7 +150,8 @@ export function DataRoomScreen() {
         CLO mastery survey records on file across subjects.
       </p>
       <p style={{ marginTop: 6, fontSize: 12.5, color: "var(--ink-3)", maxWidth: 560 }}>
-        Ability is self-reported CLO mastery, never presented as measured ability.
+        Seed survey records are synthetic. Uploaded self-ratings describe perceived mastery;
+        they are not measured ability or validation of the scenario model.
       </p>
     </Page>
   );

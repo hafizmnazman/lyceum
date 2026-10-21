@@ -10,29 +10,30 @@ import { estimateTotalMs, INTRO_HOLDS } from "./script.ts";
 import { runDemo } from "./runner.ts";
 import { demoAudio } from "./audio.ts";
 import { scaleMs } from "./timing.ts";
+import { CANONICAL_PROPOSAL, ROLE_ASSIGNMENTS } from "../data/seed.ts";
 
 type Phase = "idle" | "intro" | "walkthrough" | "done";
 
 const INTRO_CARDS: Array<{ eyebrow: string; title: string; body: string }> = [
   {
     eyebrow: "The problem",
-    title: "Curricula drift. Nobody can see where.",
-    body: "A university has no independent, data-grounded way to know which of its courses have drifted from industry demand until its graduates fail to get hired. Reviews run on five-year cycles; the market reprices skills every eighteen months.",
+    title: "Course decisions drift from evidence.",
+    body: "A lecturer who wants to refresh a course has to gather what employers ask for, work out what the course already covers, and explain the change to colleagues. Today that evidence lives in browser tabs, inboxes and memory.",
   },
   {
     eyebrow: "Lyceum",
-    title: "An advisory that shows its work.",
-    body: "Demand triangulated across four market sources. Supply read from published syllabi, not self-reported forms. Every proposed change stress-tested against a measured cohort of 200 real learners on a Rasch model. Every approval records a prediction the next term scores.",
+    title: "Research the lecturer runs.",
+    body: "Lyceum fetches postings from permitted employer boards when you ask, keeps every requirement as an exact quotation from its source, counts with the denominator in view, and turns the result into a brief for the meeting. Nothing runs by itself and nothing changes the course without you.",
   },
   {
     eyebrow: "Watch it work",
-    title: "One term, end to end.",
-    body: "A lecturer files real documents, management routes the drift, the coordinator drafts the fix with an agent assisting, the cohort answers, and the loop closes. The cursor is scripted; the app is real.",
+    title: "One course, one afternoon.",
+    body: "A full tour of CS310: a course revision under constraint checks, a research run that fetches an employer's public job board live through the local API (a dated saved sample of the same board stands in only if the network fails), exact quotations with a rejected paraphrase, a teaching session with its editable slide pack, a template assessment, and a meeting brief with slides sent to the programme owner, then the step-by-step record of the afternoon by role. Counts, quotations, decks and the brief are computed live. Live board collection needs the local API and a network connection.",
   },
 ];
 
 export function DemoOverlay() {
-  useStore();
+  const state = useStore();
   const [phase, setPhase] = useState<Phase>("idle");
   const [card, setCard] = useState(0);
   const [caption, setCaption] = useState("");
@@ -41,6 +42,7 @@ export function DemoOverlay() {
   const [now, setNow] = useState(0);
   const [muted, setMuted] = useState(false);
   const abortRef = useRef(false);
+  const playRef = useRef<() => Promise<void>>(async () => {});
 
   // Escape aborts a running demo.
   useEffect(() => {
@@ -51,6 +53,13 @@ export function DemoOverlay() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // The landing page's "Watch the tour" button asks the overlay to play.
+  useEffect(() => {
+    function onPlay() { void playRef.current(); }
+    window.addEventListener("lyceum:play-demo", onPlay);
+    return () => window.removeEventListener("lyceum:play-demo", onPlay);
+  }, []);
+
   // Progress clock while playing.
   useEffect(() => {
     if (phase === "idle" || phase === "done") return;
@@ -59,6 +68,13 @@ export function DemoOverlay() {
   }, [phase]);
 
   async function play() {
+    if (phase !== "idle") return;
+    const hasSavedWork = state.teachingPlans.length > 0 || state.testDrafts.length > 0
+      || state.evidenceSources.length > 0 || state.skillMentions.length > 0 || state.skillMappings.length > 0 || state.evidenceBriefs.length > 0 || state.curriculumDrafts.length > 0
+      || JSON.stringify(state.proposals) !== JSON.stringify([CANONICAL_PROPOSAL])
+      || JSON.stringify(state.assignments) !== JSON.stringify(ROLE_ASSIGNMENTS)
+      || state.dataSources.some((source) => source.sourceFileName);
+    if (hasSavedWork && !window.confirm("Playing the demo resets this browser's workspace, including saved plans, drafts and uploads. Export any plan you want to keep first. Continue?")) return;
     abortRef.current = false;
     setClockPinned(true);
     resetDemoState();
@@ -84,6 +100,8 @@ export function DemoOverlay() {
     setTimeout(() => stop(), 6000);
   }
 
+  playRef.current = play;
+
   function stop() {
     abortRef.current = true;
     setClockPinned(false);
@@ -97,6 +115,8 @@ export function DemoOverlay() {
   const elapsed = Math.min(now - startedAt, total);
 
   if (phase === "idle") {
+    // Keep the everyday teaching workspace free of a floating demo control.
+    if (state.currentPersonId && state.screen !== "guide") return null;
     return (
       <button
         data-demo-id="play-demo"

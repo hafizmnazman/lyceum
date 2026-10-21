@@ -4,24 +4,26 @@
 import type { LucideIcon } from "lucide-react";
 import {
   BookOpen,
-  Bot,
+  BookMarked,
   CheckSquare,
   Database,
   FlaskConical,
   Globe,
   Inbox,
   Layers,
+  ListChecks,
   PenLine,
   PlusSquare,
   Target,
   TrendingUp,
   UploadCloud,
   Users,
+  Workflow,
 } from "lucide-react";
 import type { Screen } from "../../app/roles.ts";
 
 export const NAV_META: Record<Exclude<Screen, "login">, { label: string; icon: LucideIcon }> = {
-  inbox: { label: "Inbox", icon: Inbox },
+  inbox: { label: "Home", icon: Inbox },
   trends: { label: "Trends", icon: TrendingUp },
   approval: { label: "Approvals", icon: CheckSquare },
   programme: { label: "Programme", icon: Layers },
@@ -33,8 +35,10 @@ export const NAV_META: Record<Exclude<Screen, "login">, { label: string; icon: L
   upload: { label: "Upload", icon: UploadCloud },
   backtest: { label: "Closed loop", icon: Target },
   dataroom: { label: "Data room", icon: Database },
-  office: { label: "Agents", icon: Bot },
+  office: { label: "How it works", icon: Workflow },
+  evaluation: { label: "Evaluation", icon: ListChecks },
   index: { label: "Relevance Index", icon: Globe },
+  guide: { label: "Guide & progress", icon: BookMarked },
 };
 
 export function screenLabel(screen: Screen): string {

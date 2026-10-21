@@ -1,0 +1,3142 @@
+Reading additional input from stdin...
+OpenAI Codex v0.156.1
+--------
+workdir: C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a1272a-8a39-7312-a980-b61f9120b19d
+--------
+user
+You are updating JUDGES.md, the five-minute guide for competition judges of Lyceum, a lecturer's course workspace prototype. The app's navigation and public surface changed today. Read JUDGES.md fully, then README.md, docs/lyceum-v3-as-built-2026-10-09.md, src/ui/shell/Shell.tsx (sidebar groups: the main work screens, then UNDERSTAND with 'How it works' and 'Evaluation' and 'Guide & progress', then RESEARCH SANDBOX labelled illustrative with Trends, Acceptance test, Closed loop, Data room, Relevance Index; the prototype-data notice now appears only on sandbox screens and Approvals), src/ui/screens/Landing.tsx (the public landing page shown when signed out at #/index: pain figures with sources, five steps, what is proven, what is not built), src/ui/screens/Office.tsx (How it works: seven role cards with reads, produces, cannot, and a timeline derived from real saved records for the selected course), src/ui/screens/Evaluation.tsx (live checks on the workspace, the requirement scan benchmark, the automated suites table, the student-agent benchmark protocol labelled not yet run), src/ui/primitives/Journey.tsx and src/app/journey.ts (the seven-step journey bar in Course Studio and the Start here card on Home, where a step is done only when the workspace holds its result), src/ui/screens/Login.tsx (new copy, link 'See how Lyceum works'), scripts/integrity-smoke.mjs (what the smoke asserts now) and src/demo/script.ts (the self-driving demo). Rewrite JUDGES.md in place so that every path, label and claim matches the current code: update the hands-off path (Play demo is on the sign-in screen and the landing page's Watch the tour button), the hands-on path (sign in as Dr Sobri, follow the journey bar: course, outline, collect, confirm, map, plan, brief; then open How it works to see the timeline of what you just did, then Evaluation), the 'worth poking' list, and the honesty section (what is synthetic and where it is labelled, what is not built). Keep the file under 1,400 words, keep the existing tone, keep any command lines that still work. Do not modify or create any other file. Hard rules: never use em dashes or en dashes anywhere, use commas, periods or colons; do not invent features or numbers; when you cite a count (checks, postings, seconds) take it from README.md or the as-built report and say where it came from.
+codex
+I’ll read the guide and the current screens, then update only JUDGES.md and check its labels, claims, word count, and punctuation.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content JUDGES.md' in C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+ succeeded in 145ms:
+# Five minutes with Lyceum (for judges)
+
+Lyceum is a lecturer's course workspace. The part worth judging is the research
+run: a lecturer fetches postings from a permitted employer board on request,
+keeps the ones worth reading, confirms each requirement as an exact quotation
+from its source, sees honest counts with the denominator in view, maps skills to
+course outcomes, and takes a brief with every receipt to a meeting or sends it
+to a colleague. No model key or external account is needed. Live board
+collection needs the local API and a network connection; a dated saved sample
+of real postings stands in without one.
+
+```bash
+npm install
+npm run dev         # web UI + local API (document parsing, live board collection); open the printed URL
+```
+
+`npm run build` then `npm run preview` serves the UI alone. The saved sample
+still works there; live boards and PDF, PPTX and DOCX parsing do not.
+
+## Option A: hands off (about five and a half minutes, zero clicks)
+
+Click **Play demo** on the sign-in screen. A simulated cursor plays a full tour
+of one course over the real app with captions:
+
+1. Dr Sobri, who coordinates CS310, opens the course, starts a revision,
+   sharpens the outcome wording, adds a topic with its hours, checks the
+   constraints and adopts the new version. History shows both versions and the
+   decision.
+2. In Evidence he chooses the saved sample (real postings from one employer's
+   public board, retrieved 9 October 2026 and truncated), searches "analyst",
+   fetches, keeps the matching postings and imports them. Each one is a receipt
+   with its link, publication date and retrieval time.
+3. He names the skills he cares about, scans, and confirms the exact sentences
+   the scan proposes. He then types a paraphrase as a quotation and it is
+   rejected. He vouches for the extraction; only then do the postings count.
+4. The table shows numerator, denominator and a 95% interval. He maps
+   dashboards to CLO5 with a documented stage, a target and the course evidence.
+5. He plans a dashboard lab session linked to CLO5 and downloads its editable
+   teaching pack: outcomes, the evidence behind them, the activity, the check.
+6. He generates template assessment items against the outcome weights.
+7. He prepares a meeting brief with a small-refresh recommendation, downloads
+   it as slides, and sends it to Dr Rahman, the programme owner.
+8. The guide page shows the section guides and the JSON backup controls.
+9. Dr Rahman signs in and reads the brief on his Home page, receipts attached.
+
+Press Escape to take over at any point. Playing resets the local workspace; the
+app warns first if you have saved work.
+
+## Option B: hands on (the same path, your clicks)
+
+1. Sign in as **Dr Sobri**. Open **Courses**, then **CS310**, then the
+   **Evidence** tab.
+2. **Research run.** Keep the source as the saved sample, or choose Greenhouse
+   and type an employer's board token (for example `stripe`) with the local
+   API running. Enter `analyst`, fetch, **Select all shown**, then **Import
+   selected as sources**. Open the source policy disclosure under the form.
+3. **Scan for requirements.** Enter `SQL, Python, dashboards|dashboard,
+   stakeholders|stakeholder`, save the terms, scan. Confirm the proposed
+   quotations, or dismiss one. Then, under a source card, try to add a
+   quotation that paraphrases the posting: it is rejected.
+4. Tick the acknowledgement and **Mark postings reviewed**. The table now shows
+   each skill as a count out of the reviewed postings, with a 95% interval.
+   Nothing here is a score.
+5. **Map** dashboards to CLO5: documented stage, target stage, course evidence.
+   The status reads below or at target.
+6. **Meeting brief.** Choose a recommendation, write a note, prepare the brief,
+   read it in full, download it as a document and as slides, then send it to
+   **Dr Rahman**.
+   Also open **Teaching plan**, add a session linked to CLO5, save it, and
+   click **Teaching pack (.pptx)**: an editable deck built from the session and
+   the evidence linked to its outcomes, with speaker notes and no AI text.
+7. Switch to **Dr Rahman** from the account menu. His Home page shows the brief;
+   **Read brief** opens it with the receipts attached.
+
+## Things worth poking
+
+- Paste a job description of your own under **Sources and receipts** and quote
+  from it. Then try to quote something it does not say.
+- Record the same posting twice: the copy is kept as a duplicate and counts
+  once.
+- **Outcomes & topics**: start a revision, remove a protected topic or exceed
+  the hour budget, and watch the check refuse it. Adopt a valid revision and see
+  the affected teaching sessions flagged for review.
+- **Guide & progress**: download a JSON workspace backup, change something,
+  restore, then download the pre-restore recovery copy.
+- **Reset workspace** in the account menu restores the seed whenever you want a
+  clean slate.
+
+## What is real and what is not
+
+- Real: the postings in the saved sample, live board fetches, every quotation,
+  every count, the brief, the generated slide decks, the backups, and every
+  check in `npm run prove:all`.
+- Prototype: the five personas and the seeded courses.
+- Illustrative only: **Trends**, the **Relevance Index**, the **Acceptance
+  test** and the **Closed loop** are earlier screens on synthetic market figures
+  and learner records. They are labelled as such and are not evidence of
+  readiness.
+- Never claimed: that a count describes the labour market rather than the
+  recorded set, or that any change improves learning.
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg --files -g AGENTS.md -g README.md -g '*as-built-2026-10-09.md' -g JUDGES.md" in C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+ succeeded in 83ms:
+README.md
+JUDGES.md
+docs\lyceum-v3-as-built-2026-10-09.md
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content README.md; Get-Content docs/lyceum-v3-as-built-2026-10-09.md' in C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+ succeeded in 115ms:
+# Lyceum
+
+**A curriculum-review prototype being developed into a lecturer's course workspace.**
+
+The [improvement plan](docs/lyceum-improvement-plan.md) is the current product
+direction: traceable industry evidence, reviewed CLO/topic changes, assessments,
+editable teaching materials, and versioned academic review. It includes the
+repository audit, proposed agent identities, calculation design, source-access
+strategy, SDK/subscription options, accessibility requirements, and release gates.
+
+The current app supports personal course creation, a complete manual CLO/topic
+editor, course constraints, before/after comparisons, local version history,
+CLO-linked teaching sessions, Markdown exports and validated JSON backup/restore.
+It also retains the prototype's role personas, document parsing and review,
+assessment editor, prerequisite checks, lecturer-supplied evidence receipts with
+exact excerpts, and illustrative analytics.
+It is not yet a validated curriculum-rating or learning-prediction service:
+
+- Market scores, source counts and dates are **synthetic fixtures**. There are
+  no underlying retrieved postings or live collection connectors in this build.
+  The Relevance Index uses fixed demonstration inputs.
+- The seeded 200-learner cohort is synthetic. The historical backtest is a
+  generated example, and S-0488 / ML-14 is a separately pinned illustration.
+  The displayed error of 0.009 is not evidence of predictive accuracy in practice.
+- The Rasch-style simulation uses heuristic ability/difficulty/penalty values.
+  Topic edits are not a validated model of learning gains.
+- Role switching is prototype state. Approval now applies the tested candidate
+  to a local version with role and stale-review checks, but server-side identity,
+  authorization and institutional verification remain to be built.
+- Upload parsing is functional. A successful parse or an uploaded syllabus does
+  not establish an official source; confirmation keeps institutional verification unset.
+- Live text can augment the agent panel, but many structured drafts and scores
+  still use fixtures. Slide generation/export is planned, not implemented.
+
+## Lecturer workspace
+
+Start with **Courses â†’ Create course workspace â†’ Outcomes & topics** or open an
+assigned course. Record the course brief, CLOs, achievement evidence, PLO mappings
+and topic sequence. Declare known hours and prerequisites. Save and check the
+revision, inspect its changes and warnings, record a rationale and teaching term,
+then explicitly choose **Use as my course version**.
+
+That decision applies your entered outline and preserves the baseline and history.
+It is local course preparation; official syllabus approval stays in the
+university's existing process. Broken links, cycles, exceeded budgets and removed
+protected content block a checked revision. Missing information stays visible
+instead of becoming an arbitrary readiness score.
+
+In **Evidence**, run a research run: fetch postings from a permitted employer
+board (Greenhouse or Lever, through the local API) or the dated saved sample,
+keep the ones worth reading, scan them for the skills you name, and confirm each
+quotation in the source's exact words; a paraphrase is rejected. Mark the
+postings reviewed so they count, map quoted skills to outcomes with a reviewed
+coverage stage, then prepare a meeting brief with the table, the options and
+every receipt, to download or to send to a colleague inside Lyceum. You can also
+paste a document you are permitted to keep. Collection happens only when you
+ask, and nothing changes the course by itself.
+
+In **Teaching plan**, save sessions with CLO links, activities and learning checks,
+and download any session as an editable **teaching pack (.pptx)** built from the
+session and the evidence linked to its outcomes, with speaker notes and no AI
+text. The meeting brief downloads as slides too.
+A course change preserves affected teaching work and flags it for review.
+Affected assessments cannot be approved again until their course-change review
+is recorded and retired outcome links are repaired.
+
+Use **Guide & progress â†’ Workspace backup** or **Courses â†’ Backups** to download
+saved data and versions as JSON. Restore includes a file preview, validation,
+replacement acknowledgement and a downloadable pre-restore recovery copy.
+Markdown course/plan exports are readable documents; JSON is the restorable
+workspace format. Original uploaded files and unsaved edits are excluded.
+
+The core workflow needs **no paid AI subscription or API key**. Work is saved in
+this browser only. Shared accounts, server permissions, term archives and
+multi-device collaboration remain in development.
+
+The **Guide & progress** page explains every section and lists unfinished work.
+Every signed-in section also has a **How to use** disclosure. Read the full
+[lecturer and section guide](docs/lecturer-guide.md) for instructions, outputs and
+limitations. Regenerate it with `node scripts/generate-guide.mjs` when changing
+the shared in-app section catalogue.
+
+---
+
+## Screenshots
+
+The October lecturer workspace, using an example teaching plan entered during
+the browser checks:
+
+![Lecturer home](docs/screenshots/workspace-home.png)
+
+![Teaching plan](docs/screenshots/workspace-teaching-plan.png)
+
+![Reviewed personal course outline](docs/screenshots/workspace-curriculum.png)
+
+The remaining screenshots document the original v3 interface and predate the
+October integrity and workspace improvements. Current screens explicitly label
+the synthetic data.
+
+**Trends.** The Signal example maps synthetic market figures onto course outcomes.
+
+![Trends](docs/screenshots/10-trends.png)
+
+**Real intake.** What was read beside what the agent made of it; nothing files
+until a human confirms.
+
+![Upload review](docs/screenshots/20-upload-review.png)
+
+**The public Relevance Index.** An illustrative rating view, accessible without signing in.
+
+![Relevance Index](docs/screenshots/02-index-public.png)
+
+---
+
+## Getting started
+
+Requirements: Node.js 24 recommended (the scripts execute TypeScript directly)
+and a modern browser. On Windows PowerShell, use `npm.cmd` if execution policy
+blocks `npm.ps1`.
+
+```bash
+npm install
+npm run dev        # web app on http://localhost:5173 + api on :8787
+npm run build      # production build into dist/
+npm run preview    # static UI; document parsing and live board collection need the API
+npm run typecheck  # tsc --noEmit
+```
+
+Live model calls are optional. The API uses `ANTHROPIC_API_KEY`; consult
+`.env.example` and confirm an available model before enabling it. Intake can
+request structured interpretation; other calls primarily provide streamed text
+alongside deterministic drafts. Without a key, local interpretation and fixtures
+remain available. The Cohort and Curriculum components run deterministic code.
+The complete document walkthrough needs `npm run dev`, but no model key.
+
+## Proofs
+
+The maths, the flows, and the intake pipeline are covered by deterministic
+proof scripts (no UI, no network):
+
+```bash
+npm run prove          # the spine and the canonical numbers (12 checks)
+npm run prove:backtest # the closed-loop backtest (4 checks)
+npm run prove:flow     # store, roles, state machine, analogy, closed loop (28 checks)
+npm run prove:signal   # the staged Signal reveal (12 checks)
+npm run prove:intake   # every demo file parses, interprets, files (18 checks)
+npm run prove:integrity # evidence edge cases and direct approval/rejection permissions (13 tests)
+npm run prove:teaching # course scope, validation, preparation counts and export (10 tests)
+npm run prove:curriculum # curriculum decisions, constraint checks, recovery and stale assessments (28 tests)
+npm run prove:evidence # evidence receipts, citations, denominators, Wilson intervals, mappings and backups (13 tests)
+npm run prove:collect  # board collectors: text extraction, normalisation, cache, rate limits, size and timeout (6 tests)
+npm run prove:research # research run: import on request, exact proposals, bulk review, briefs and notifications (5 tests)
+npm run prove:slides   # editable teaching packs and brief decks, unzipped and read back (3 tests)
+npm run prove:all      # 152 checks total
+```
+
+Headless verification of the built app:
+
+```bash
+npm run build
+node scripts/walk.mjs  # sign in, visit every screen, file a real upload, assert no errors
+npm run smoke          # play the full-tour demo, assert the end state including both downloaded decks
+npm run smoke:integrity # check fixture notices and the split-source warning; local browser only
+npm run smoke:workspace # lecturer save/reload/export, guides, keyboard and mobile checks
+npm run smoke:curriculum # create/revise/version, evidence receipts and report, real downloads and restore, 320/390px checks
+node scripts/generate-guide.mjs --check # in-app catalogue and Markdown guide agree
+```
+
+## For judges
+
+**[JUDGES.md](JUDGES.md)** explains the prototype walkthrough and its limitations.
+The current [as-built report, 9 October 2026](docs/lyceum-v3-as-built-2026-10-09.md) describes
+the build as verified. The historical [as-built document](docs/history/lyceum-v3-as-built.md) contains claims that the
+current [audit and improvement plan](docs/lyceum-improvement-plan.md) corrects.
+
+## The self-driving demo
+
+The **Play demo** control on the sign-in screen, the public index and **Guide &
+progress** plays a full tour of one course over the real app with a simulated
+cursor, about five and a half minutes after three intro cards: a course revision under
+constraint checks with its version history, a research run on a dated saved
+sample of real postings, exact quotations with a rejected paraphrase, bulk
+review, a coverage mapping, a teaching session with its slide pack downloaded, a
+template assessment, a meeting brief with slides sent to the programme owner,
+the guide and backup page, and the recipient reading the brief. The counts,
+quotations, decks and brief are computed live; only the postings are a saved
+sample, labelled as such. Live board collection needs the local API and a
+network connection. Press record, click Play once. Sample decks can be
+generated with `node scripts/gen-sample-decks.mjs`. Regenerate the sample
+postings from a raw board download with
+`npm run gen:sample <board.json> <board> <retrievedAt>`.
+
+## Project structure
+
+```text
+server/               the thin api: /api/parse (5 formats), /api/collect (two permitted board APIs, cached and rate limited), /api/agent (streaming, fallback)
+public/demo/          real sample files: results.xlsx, clo-survey.csv, syllabus.pdf, lecture-slides.pptx, collected-sample.json (dated postings)
+src/
+  types.ts            the Layer 0 data contract
+  theme/              tokens + global styles (one system, no ad-hoc styling)
+  lib/                curriculum constraints/diffs/exports, teaching plans, evidence receipts and calculations, board collection, slide packs, validated workspace backups
+  lib/spine/          the illustrative Rasch spine (pure maths, reused from v2 byte-identical)
+  data/               seed, cohorts, items, the multi-source market snapshots
+  agents/             the seven agents: client wrappers, local interpreters, fixtures
+  app/                store (persistent), roles, staged simulations
+  ui/                 primitives, shell, course creation/revision, recovery and other screens
+  demo/               the self-driving demo: the research-run script, runner and overlay
+scripts/              generators and headless verification
+```
+
+## License
+
+Copyright (c) 2026 Hafiz Azman. All rights reserved. Proprietary software; see
+[LICENSE](LICENSE).
+# Lyceum v3: as-built report, 9 October 2026
+
+This report describes the prototype as it exists and was verified on 9 October 2026. It replaces the July 2026 as-built document, which is kept in `docs/history/` for the record and describes an earlier storyline that the current build no longer claims. Every statement here was checked against the running code on the owner's machine on 9 October; the verification table lists the commands and their results.
+
+## 1. Summary
+
+Lyceum is a lecturer's course workspace. It helps a lecturer gather what employers ask for from permitted sources, keep every requirement as an exact quotation from its source, count honestly with the denominator in view, map skills to course outcomes with cited course evidence, revise outcomes and topics under explicit constraints, prepare teaching sessions, and take a meeting brief with every receipt to colleagues. Nothing runs by itself, nothing changes a course without the lecturer, and no AI key is needed for any of it.
+
+The product runs locally: a React and TypeScript web workspace with a browser-local store and validated JSON backups, plus a thin Node and Hono API that parses documents and fetches postings from two documented public job-board APIs on request. It is a working local prototype with automated verification. It is not yet a shared, multi-user service.
+
+## 2. Problem and positioning
+
+A lecturer who wants to refresh a course has three jobs: find out what employers actually ask for, work out what the course already introduces, practises and assesses, and defend the change to colleagues and the quality committee. Today that evidence lives in browser tabs, inboxes and memory, and the decision is hard to explain later. In Malaysia, DOSM counted 5.98 million graduates in 2024 with unemployment at 3.2 percent but underemployment at 32.2 percent, and MOHE reviews courses for relevance.
+
+Lyceum is advisory. Lecturers accept, edit, reject or defer every suggestion. Formal syllabus approval stays in the university's existing process. Lyceum does not claim to monitor the labour market, score employability, predict learning gains or certify accreditation.
+
+## 3. What a lecturer can do today
+
+**Home.** Resume the latest teaching plan, see the work queue for the current role, read notifications. An evidence brief sent by a colleague opens here with its receipts and can be downloaded.
+
+**Courses.** Search and filter the catalogue, open an assigned course, or create a personal course workspace with a code, title and optional programme. A personal workspace is private preparation, not an official course.
+
+**Course Studio, Outcomes and topics.** Start a revision from the current version; add, edit or remove course learning outcomes with Bloom level, achievement evidence and programme outcome mappings; add topics with hours, weeks, outcome links, prerequisites and protected foundations. Save incomplete drafts. Check constraints: broken links, prerequisite cycles and reversed order, exceeded contact or self-study budgets and removed protected topics block a candidate; unknown budgets stay visible warnings. Compare before and after, record a rationale and teaching term, then explicitly adopt the candidate as the local course version. The baseline, the version history and the decision record are preserved; affected teaching sessions and assessments are flagged for review rather than rewritten.
+
+**Course Studio, Evidence.** The research run:
+1. Search. Choose a source with a stated policy: the Greenhouse job board API, the Lever postings API, or a dated saved sample of real postings. Enter role keywords, fetch, keep the postings worth reading and import them. Each imported posting is a source with its title, employer, link, publication date as published, retrieval time, text and text fingerprint. Identical texts become duplicate copies and count once.
+2. Read. Name the skills that matter, with aliases. The scan proposes, per posting and term, the first sentence that uses the term, as an exact substring, with a heuristic reading of required or preferred that the lecturer can change. The lecturer confirms or dismisses each quotation. A quotation that is not in the retained text is rejected, including hand-typed paraphrases. Every stored quotation is re-verified on display and on backup import.
+3. Review. The lecturer vouches that a posting's extraction is complete. Only reviewed postings enter the denominator.
+4. See the trend. Observed requirements show, per skill, the numerator and denominator, the share, a 95 percent Wilson interval, required against preferred wording, distinct employers, contextual documents, the reviewed coverage stage against its target, and the shortfall. Empty evidence is unknown, never zero. A demand-weighted coverage index is reported with the share of quoted weight whose stage or target is unknown. No trend over time is shown until a comparable earlier window exists.
+5. Decide and brief. Map a skill to one or more course outcomes with a documented stage and cited course evidence. Prepare a meeting brief with the decision requested, the evidence base, the table, the options, the lecturer's notes, the limitations and every receipt. Download it as Markdown or as editable slides (one receipt slide per source), or send it to colleagues inside Lyceum. The evidence report itself also exports as Markdown with receipts.
+
+A document the lecturer is permitted to keep can also be pasted in as a source.
+
+**Course Studio, Teaching plan.** Save sessions with week, topic, duration, outcome links, activity, learning check and resources; ready and delivered sessions require preparation details. Export the plan as Markdown. Any saved session downloads as an editable teaching pack (.pptx): a title slide, the session's outcomes, the employer evidence linked to those outcomes with exact quotations, the activity, the check and the resources, each with speaker notes. No model writes a word of it. A course change flags affected sessions for review while keeping their content.
+
+**Course Studio, Assessment and Proposal.** Prepare a blueprint without a proposal; item generation uses local templates. An affected assessment needs a recorded course-change review and repaired links before another submission. The Proposal tab retains the earlier review workflow, whose scenario results are illustrative.
+
+**Guide and progress.** Section guides for every screen, a role filter, search, the list of unbuilt work, and workspace backup and restore: a schema-versioned JSON file with a preview, validation of every record and link, a replacement acknowledgement and a pre-restore recovery copy. Older backup versions restore with later collections empty.
+
+**The self-driving demo.** Play demo on the sign-in screen plays a full tour of CS310 over the real app with a simulated cursor, in about five and a half minutes after three intro cards: a course revision under constraint checks with its version history, the research run on the saved sample, exact quotations with a rejected paraphrase, bulk review, a coverage mapping, a teaching session with its slide pack downloaded, a template assessment, a meeting brief with slides sent to the programme owner, the guide and backup page, and the recipient reading the brief.
+
+## 4. What is real and what is illustrative
+
+| Area | Status |
+|---|---|
+| Live collection from the Greenhouse and Lever board APIs | Real, on request, through the local API. Verified 9 October: Stripe board 727 postings, Palantir site 313 postings. |
+| Saved sample | Real postings from the Stripe board, retrieved 9 October 2026, truncated, labelled as a sample wherever shown. |
+| Quotations, counts, intervals, coverage index, briefs, backups | Real and deterministic; covered by automated checks. |
+| Curriculum revisions, constraint checks, version history, teaching plans | Real, browser-local. |
+| Teaching packs and brief decks (.pptx) | Real and deterministic, generated from saved data with speaker notes; the checks unzip the files and read the slides. |
+| The five personas and seeded courses | Prototype identities and example courses. |
+| Trends, Relevance Index, Acceptance test, Closed loop | Earlier screens on synthetic market figures and synthetic learner records; labelled illustrative; not evidence of readiness. |
+| Optional model streaming for drafting | Exists behind a key; never changes a number; not used in the demo. |
+
+## 5. Verification on 9 October 2026
+
+| Command | Result |
+|---|---|
+| `npm run typecheck` | Passed. |
+| `npm run prove:all` | 152 checks passed across twelve suites: acceptance, backtest, flow, signal, intake, integrity, teaching, curriculum, evidence, collector, research and slides. |
+| `npm run build` | Passed with the normal Vite CLI; the main chunk exceeds 500 kB, a warning only. |
+| `npm run smoke:curriculum` | Passed: course creation, constraint failure and correction, local adoption, outline export, teaching session and its downloaded teaching pack, assessment review, version history, evidence receipts, rejected misquote, scan, brief sent and its downloaded deck, JSON backup and restore, 390 and 320 pixel reflow, zero page errors. Both decks are unzipped and their slides read. |
+| `npm run smoke:workspace` and `npm run smoke:integrity` | Passed. |
+| `npm run smoke` | Passed: the full-tour demo adopts a revision, imports sample postings, confirms quotations, maps CLO5, saves a session, generates template items, downloads the teaching pack and the brief deck, sends the brief and has it read, with no page errors. |
+| `node scripts/generate-guide.mjs --check` | The generated lecturer guide matches the in-app catalogue. |
+| Live API | Greenhouse and Lever fetched; cache, token validation, unknown board, unknown provider and rapid-retry responses behaved as specified. |
+
+Browser checks run in isolated headless profiles with external requests blocked, except the explicit live API check.
+
+## 6. Architecture
+
+A diagram is at `docs/presentation/architecture.png`.
+
+- Browser workspace: React and TypeScript, hash routing, a single persistent store, browser-local persistence with exit flush and visible storage failure, validated JSON backups at schema version 3.
+- Deterministic core in `src/lib/`: curriculum constraints and diffs, teaching plans, evidence calculations (citation validator, fingerprints, Wilson intervals, coverage stages, report and brief), board payload normalisation and keyword filters, backup validation.
+- Local API: Hono on Node 24. `/api/parse` for xlsx, csv, pdf, pptx and docx. `/api/collect/:provider/:board` for the two permitted job-board hosts, with board-token validation, a one-hour cache, a 15-second gap between fetches of the same board, at most 20 fetches per ten minutes, a 15 MB size cap, a 20-second timeout and plain error messages. `/api/agent` for optional model streaming with a deterministic fallback.
+- Planned: a shared API and identity (plan W02) as the contract for Teams through Copilot Studio, Slack and LTI surfaces, so a university reaches Lyceum from the tools it already uses.
+
+## 7. Data, sources and policies
+
+- Source policies are shown in the app for each collection source: owner, method, retention, refresh, policy review date and a note on intended use. Greenhouse and Lever publish these APIs for employers' career pages; Lyceum fetches a named employer's board at low volume on request and does not collect from LinkedIn or anything behind a login. Scheduled or bulk collection would need confirmation of intended use first.
+- Provenance per source: lecturer-supplied or collected, with provider, board, posting id, retrieval time and policy label. Publication dates are shown as published and never manufactured from the retrieval time.
+- Everything is stored in the lecturer's browser. Backups may contain course material and uploaded learner records and belong to the lecturer. No data is sent to a provider unless a model key is configured, and then only the payload of the specific request.
+
+## 8. Known limitations and not built
+
+- No shared accounts, server permissions, server store or multi-device sync; the browser is the only persistence, with JSON backups as the recovery path.
+- Collection covers two documented board APIs and manual paste. No page collectors for employer sites without an API, no snapshots of arbitrary sites, no cross-site vacancy clustering, no scheduled refresh.
+- The Lever API does not state the employer name, so the site token is used.
+- No comparable time windows yet, so no trend over time is reported.
+- Assessment items are template-based; exact mark allocation, model answers and rubrics are pending.
+- Slide packs are generated from saved data with no model-written text. Model-drafted slide content with lecturer review, selective regeneration, institutional templates, handouts, and DOCX or PDF export of the brief are pending.
+- The Trends, Relevance Index, Acceptance test and Closed loop screens remain on synthetic fixtures and should be quarantined from the lecturer's navigation.
+- The optional model integration uses an older SDK and a previous-generation model id; the intake route forces a tool call that current models reject. This is scheduled work.
+- Accessibility: labels, focus, keyboard tabs, reflow and contrast are checked by the smokes; a full WCAG 2.2 AA audit with a screen reader is pending.
+- No lecturer pilot has run; no educational or commercial validation is claimed.
+
+## 9. Next steps
+
+In order: quarantine the synthetic screens; the provider upgrade; comparable time windows for trends; employer naming for Lever; model-drafted slide content with lecturer review on top of the deterministic packs; DOCX and PDF export of the brief; code splitting; an accessibility pass; an OpenAPI description of collect, report and brief as the contract for the shared API; the shared API and identity when a pilot has a date; then the Teams or Slack surface for the pilot institution's tool.
+
+## 10. Market and pitch references
+
+Labelled estimates with sources are in the improvement plan, Sections 26 to 28: over 22,000 accredited institutions and over 14 million tertiary teachers worldwide (UNESCO); roughly 45,000 lecturers in Malaysia (MOHE 2023) across 20 public universities and about 355 private institutions (MIDA); adjacent curriculum software spend estimated between USD 0.48 billion and USD 3.5 billion for 2025 by publishers who disagree; incumbents Lightcast Skillabi and Chmura JobsEQ selling to institutions from above. The pitch follows the AWS five-V structure: Value, Visualize, Validate, Verify, Venture.
+
+## 11. Repository map
+
+- `docs/lyceum-improvement-plan.md`: the master plan with dated execution records.
+- `DECISIONS.md`: the decisions log.
+- `README.md`, `JUDGES.md`, `docs/lecturer-guide.md`: how to run, judge and use the prototype.
+- `docs/presentation/`: pitch pack, deck brief, architecture diagram and app screenshots.
+- `src/lib/evidence.ts`, `src/lib/collect.ts`, `server/collect.ts`: the research run's logic and collector.
+- `src/lib/slides.ts`: the teaching pack and brief deck generator.
+- `src/lib/curriculum.ts`, `src/lib/teachingPlan.ts`, `src/lib/workspaceBackup.ts`: curriculum, teaching and backup logic.
+- `src/prove-*.ts` and `scripts/*-smoke.mjs`: the automated checks named in Section 5.
+- `docs/history/`: the July 2026 implementation specification and as-built report, superseded by this document.
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content src/ui/shell/Shell.tsx; Get-Content src/ui/screens/Landing.tsx; Get-Content src/ui/screens/Login.tsx' in C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+ succeeded in 135ms:
+// The app shell (spec 6.1): persistent sidebar with the person's nav and their
+// subjects (hat badges), topbar with breadcrumb, search (command palette),
+// notification bell and account menu, the toast, and the right-side agent
+// panel. This chrome is what makes Lyceum read as an app you live in rather
+// than a deck of screens.
+
+import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Bell, Check, ChevronDown, LogOut, Menu, RotateCcw, Search, ShieldCheck } from "lucide-react";
+import type { Screen } from "../../app/roles.ts";
+import { hatsOn, navFor, subjectsForPerson } from "../../app/roles.ts";
+import {
+  currentPerson,
+  dismissToast,
+  logout,
+  navigate,
+  resetWorkspace,
+  selectSubject,
+  switchUser,
+  unreadFor,
+  useStore,
+} from "../../app/store.ts";
+import { NAV_META, screenLabel } from "./nav.ts";
+import { CommandPalette } from "./CommandPalette.tsx";
+import { AgentPanel } from "./AgentPanel.tsx";
+import { Kbd } from "../primitives/index.tsx";
+import { PrototypeNotice } from "../primitives/PrototypeNotice.tsx";
+import { SectionHelp } from "../primitives/SectionHelp.tsx";
+
+const SIDEBAR_W = 240;
+const TOPBAR_H = 56;
+
+/** Screens that explain the product rather than do the work. */
+const UNDERSTAND: Screen[] = ["office", "evaluation"];
+/** The earlier illustrative screens: synthetic data, kept behind sign-in and labelled. */
+const SANDBOX: Screen[] = ["trends", "acceptance", "backtest", "dataroom", "index"];
+/** Where the prototype-data notice shows: the sandbox and the illustrative approval workflow. */
+const NOTICE_SCREENS: Screen[] = [...SANDBOX, "approval"];
+
+export function Shell(props: { children: ReactNode }) {
+  const state = useStore();
+  const person = currentPerson();
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Cmd+K / Ctrl+K opens the palette from anywhere.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((v) => !v);
+      }
+      if (e.key === "Escape") { setMenuOpen(false); setNavOpen(false); }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Click-away for the account menu.
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    }
+    window.addEventListener("mousedown", onClick);
+    return () => window.removeEventListener("mousedown", onClick);
+  }, [menuOpen]);
+
+  // Toast auto-dismiss.
+  useEffect(() => {
+    if (!state.toast) return;
+    const t = setTimeout(() => dismissToast(), 4000);
+    return () => clearTimeout(t);
+  }, [state.toast]);
+
+  useEffect(() => {
+    setNavOpen(false);
+    mainRef.current?.scrollTo(0, 0);
+    mainRef.current?.focus({ preventScroll: true });
+    document.title = screenLabel(state.screen) + " Â· Lyceum";
+  }, [state.screen, state.selectedSubjectId]);
+
+  if (!person) return <>{props.children}</>;
+
+  const nav = navFor(person, state.assignments);
+  const mySubjects = subjectsForPerson(person.id, state.assignments);
+  const unread = unreadFor(person.id).length;
+
+  const roleLine =
+    person.orgRole === "management"
+      ? "Management"
+      : person.orgRole === "department"
+        ? "Department"
+        : "Academic";
+
+  return (
+    <div className={"app-shell" + (navOpen ? " nav-open" : "")} style={{ display: "flex", height: "100%", overflow: "hidden" }}>
+      <a className="skip-link" href="#main-content">Skip to main content</a>
+      <div className="mobile-navigation"><span className="page-title">Lyceum</span><button aria-label="Toggle navigation" aria-expanded={navOpen} aria-controls="primary-sidebar" onClick={() => setNavOpen((open) => !open)}><Menu size={20} /> Navigation</button></div>
+      {/* ---------- sidebar ---------- */}
+      <aside
+        id="primary-sidebar"
+        className="app-sidebar"
+        onClick={(event) => { if ((event.target as HTMLElement).closest("button")) setNavOpen(false); }}
+        style={{
+          width: SIDEBAR_W,
+          flexShrink: 0,
+          borderRight: "1px solid var(--border)",
+          background: "var(--surface)",
+          display: "flex",
+          flexDirection: "column",
+          overflowY: "auto",
+        }}
+      >
+        <div style={{ padding: "18px 16px 10px" }}>
+          <button
+            className="page-title"
+            style={{ fontSize: 21, cursor: "pointer", border: 0, padding: 0, background: "none", color: "var(--ink)" }}
+            onClick={() => navigate("inbox")}
+          >
+            Lyceum
+          </button>
+          <div style={{ fontSize: 11.5, color: "var(--ink-3)", marginTop: 2 }}>
+            Course decisions, with receipts
+          </div>
+        </div>
+
+        <nav aria-label="Main navigation" style={{ padding: "6px 8px", flex: 1 }}>
+          {nav
+            .filter((s) => !UNDERSTAND.includes(s) && !SANDBOX.includes(s) && s !== "guide")
+            .map((s) => (
+              <NavItem key={s} screen={s} active={state.screen === s} badge={s === "inbox" ? unread : 0} />
+            ))}
+
+          {mySubjects.length > 0 ? (
+            <>
+              <div
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "var(--ink-3)",
+                  letterSpacing: "0.03em",
+                  padding: "16px 10px 4px",
+                }}
+              >
+                MY SUBJECTS
+              </div>
+              {mySubjects.map((sid) => {
+                const hats = hatsOn(person.id, sid, state.assignments);
+                return (
+                  <button
+                    key={sid}
+                    data-demo-id={`subject-${sid}`}
+                    onClick={() => {
+                      selectSubject(sid);
+                      navigate("studio");
+                    }}
+                    style={{
+                      width: "100%", border: "none", minHeight: 36,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "6px 10px",
+                      borderRadius: "var(--radius-s)",
+                      cursor: "pointer",
+                      color: "var(--ink-2)",
+                      fontSize: 13,
+                      background:
+                        state.selectedSubjectId === sid && state.screen === "studio"
+                          ? "var(--accent-soft)"
+                          : "transparent",
+                    }}
+                  >
+                    <span className="num">{sid}</span>
+                    <span style={{ display: "flex", gap: 3 }}>
+                      {hats.includes("coordinator") ? <HatBadge label="C" title="Coordinator" /> : null}
+                      {hats.includes("lecturer") ? <HatBadge label="L" title="Lecturer" /> : null}
+                    </span>
+                  </button>
+                );
+              })}
+            </>
+          ) : null}
+
+          <div className="nav-group-label">UNDERSTAND</div>
+          {UNDERSTAND.filter((s) => nav.includes(s)).map((s) => (
+            <NavItem key={s} screen={s} active={state.screen === s} badge={0} />
+          ))}
+          <NavItem screen="guide" active={state.screen === "guide"} badge={0} />
+          {SANDBOX.some((s) => nav.includes(s)) ? (
+            <>
+              <div className="nav-group-label">RESEARCH SANDBOX <span className="nav-group-note">illustrative</span></div>
+              {SANDBOX.filter((s) => nav.includes(s)).map((s) => (
+                <NavItem key={s} screen={s} active={state.screen === s} badge={0} />
+              ))}
+            </>
+          ) : null}
+        </nav>
+
+        <div style={{ padding: "10px 16px", borderTop: "1px solid var(--border)", fontSize: 11.5, color: "var(--ink-3)" }}>
+          Local prototype. Your work stays in this browser.
+          <br />
+          Sandbox screens use synthetic data and say so.
+        </div>
+      </aside>
+
+      {/* ---------- main column ---------- */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, minHeight: 0 }}>
+        <header
+          className="app-topbar"
+          style={{
+            height: TOPBAR_H,
+            flexShrink: 0,
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            padding: "0 20px",
+            borderBottom: "1px solid var(--border)",
+            background: "var(--surface)",
+          }}
+        >
+          <div style={{ fontWeight: 600, fontSize: 15 }}>{screenLabel(state.screen)}</div>
+          <div style={{ flex: 1 }} />
+
+          <button
+            className="search-trigger"
+            onClick={() => setPaletteOpen(true)}
+            aria-label="Search (Ctrl+K)"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              height: 34,
+              padding: "0 12px",
+              borderRadius: "var(--radius-s)",
+              border: "1px solid var(--border)",
+              background: "var(--bg)",
+              color: "var(--ink-3)",
+              cursor: "pointer",
+              fontSize: 13,
+              minWidth: 200,
+            }}
+          >
+            <Search size={15} />
+            <span style={{ flex: 1, textAlign: "left" }}>Search or jump to</span>
+            <Kbd>Ctrl K</Kbd>
+          </button>
+
+          <button
+            data-demo-id="topbar-bell"
+            onClick={() => navigate("inbox")}
+            aria-label={`Notifications, ${unread} unread`}
+            style={{
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 36,
+              height: 36,
+              borderRadius: "var(--radius-s)",
+              border: "1px solid var(--border)",
+              background: "var(--surface)",
+              cursor: "pointer",
+              color: "var(--ink-2)",
+            }}
+          >
+            <Bell size={17} />
+            {unread > 0 ? (
+              <span
+                className="num"
+                style={{
+                  position: "absolute",
+                  top: -5,
+                  right: -5,
+                  minWidth: 17,
+                  height: 17,
+                  padding: "0 4px",
+                  borderRadius: 999,
+                  background: "var(--accent)",
+                  color: "var(--accent-ink)",
+                  fontSize: 10.5,
+                  fontWeight: 600,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {unread}
+              </span>
+            ) : null}
+          </button>
+
+          {/* account menu */}
+          <div ref={menuRef} style={{ position: "relative" }}>
+            <button
+              className="account-trigger"
+              aria-label={"Account: " + person.name}
+              aria-expanded={menuOpen}
+              aria-controls="account-options"
+              data-demo-id="account-menu"
+              onClick={() => setMenuOpen((v) => !v)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                height: 36,
+                padding: "0 10px",
+                borderRadius: "var(--radius-s)",
+                border: "1px solid var(--border)",
+                background: "var(--surface)",
+                cursor: "pointer",
+              }}
+            >
+              <Avatar name={person.name} />
+              <span className="account-name" style={{ fontSize: 13, fontWeight: 500 }}>{person.name}</span>
+              {person.verified ? (
+                <ShieldCheck size={14} color="var(--ok)" aria-label="Verified" />
+              ) : null}
+              <ChevronDown size={14} color="var(--ink-3)" />
+            </button>
+            {menuOpen ? (
+              <div
+                id="account-options"
+                className="fade-up"
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: 42,
+                  width: 260,
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius-m)",
+                  boxShadow: "var(--shadow-2)",
+                  padding: 6,
+                  zIndex: 60,
+                }}
+              >
+                <div style={{ padding: "8px 10px", borderBottom: "1px solid var(--border)" }}>
+                  <div style={{ fontWeight: 600, fontSize: 13 }}>{person.name}</div>
+                  <div style={{ fontSize: 12, color: "var(--ink-2)" }}>
+                    {roleLine}
+                    {person.email ? ` Â· ${person.email}` : ""}
+                  </div>
+                  <div style={{ fontSize: 11.5, marginTop: 3, color: person.verified ? "var(--ok)" : "var(--warn)" }}>
+                    {person.verified
+                      ? "Verified coordinator identity"
+                      : "Unverified: edits carry an unverified tag"}
+                  </div>
+                </div>
+                <div style={{ padding: "6px 10px 2px", fontSize: 11, fontWeight: 600, color: "var(--ink-3)" }}>
+                  SWITCH PERSON
+                </div>
+                {state.people.map((p) => (
+                  <button
+                    key={p.id}
+                    data-demo-id={`switch-${p.id}`}
+                    onClick={() => {
+                      switchUser(p.id);
+                      setMenuOpen(false);
+                    }}
+                    style={menuItemStyle}
+                  >
+                    <Avatar name={p.name} />
+                    <span style={{ flex: 1, textAlign: "left" }}>{p.name}</span>
+                    {p.id === person.id ? <Check size={14} color="var(--accent)" /> : null}
+                  </button>
+                ))}
+                <div style={{ borderTop: "1px solid var(--border)", marginTop: 4, paddingTop: 4 }}>
+                  <button
+                    onClick={() => {
+                      if (window.confirm("Reset this browser's workspace? This removes saved teaching plans, drafts and uploads. Export any plan you want to keep first.")) resetWorkspace();
+                      setMenuOpen(false);
+                    }}
+                    style={menuItemStyle}
+                  >
+                    <RotateCcw size={14} />
+                    <span>Reset workspace</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setMenuOpen(false);
+                    }}
+                    style={menuItemStyle}
+                  >
+                    <LogOut size={14} />
+                    <span>Sign out</span>
+                  </button>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </header>
+
+        <main ref={mainRef} id="main-content" tabIndex={-1} style={{ flex: 1, overflowY: "auto", minWidth: 0 }} data-demo-id="main-scroll">
+          {NOTICE_SCREENS.includes(state.screen) ? <PrototypeNotice /> : null}
+          {state.persistenceStatus === "unavailable" ? <div role="alert" className="storage-warning">Browser storage is unavailable. Changes only last while this page is open. Export your teaching plan before closing.</div> : null}
+          <SectionHelp screen={state.screen} />
+          {props.children}
+        </main>
+      </div>
+
+      {/* ---------- overlays ---------- */}
+      {paletteOpen ? <CommandPalette onClose={() => setPaletteOpen(false)} /> : null}
+      <AgentPanel />
+      {state.toast ? (
+        <div
+          className="fade-up"
+          role="status"
+          aria-live="polite"
+          style={{
+            position: "fixed",
+            bottom: 22,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "var(--ink)",
+            color: "#fff",
+            padding: "9px 16px",
+            borderRadius: "var(--radius-m)",
+            boxShadow: "var(--shadow-2)",
+            fontSize: 13.5,
+            zIndex: 80,
+            maxWidth: 520,
+          }}
+        >
+          {state.toast}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+const menuItemStyle: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+  width: "100%",
+  padding: "7px 10px",
+  border: "none",
+  background: "transparent",
+  borderRadius: "var(--radius-s)",
+  cursor: "pointer",
+  fontSize: 13,
+  color: "var(--ink)",
+};
+
+function NavItem(props: { screen: Screen; active: boolean; badge: number }) {
+  if (props.screen === "login") return null;
+  const meta = NAV_META[props.screen];
+  const Icon = meta.icon;
+  return (
+    <button
+      data-demo-id={`nav-${props.screen}`}
+      onClick={() => navigate(props.screen)}
+      aria-current={props.active ? "page" : undefined}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        width: "100%",
+        padding: "7px 10px",
+        marginBottom: 1,
+        borderRadius: "var(--radius-s)",
+        border: "none",
+        cursor: "pointer",
+        fontSize: 13.5,
+        fontWeight: props.active ? 600 : 400,
+        color: props.active ? "var(--accent)" : "var(--ink-2)",
+        background: props.active ? "var(--accent-soft)" : "transparent",
+        transition: "background 150ms ease-out",
+      }}
+    >
+      <Icon size={16} strokeWidth={1.75} />
+      <span style={{ flex: 1, textAlign: "left" }}>{meta.label}</span>
+      {props.badge > 0 ? (
+        <span
+          className="num"
+          style={{
+            minWidth: 18,
+            height: 18,
+            padding: "0 5px",
+            borderRadius: 999,
+            background: "var(--accent)",
+            color: "var(--accent-ink)",
+            fontSize: 11,
+            fontWeight: 600,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {props.badge}
+        </span>
+      ) : null}
+    </button>
+  );
+}
+
+function HatBadge(props: { label: string; title: string }) {
+  return (
+    <span
+      title={props.title}
+      style={{
+        width: 16,
+        height: 16,
+        borderRadius: 4,
+        background: "var(--surface-2)",
+        color: "var(--ink-3)",
+        fontSize: 10,
+        fontWeight: 600,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {props.label}
+    </span>
+  );
+}
+
+function Avatar(props: { name: string }) {
+  const initials = props.name
+    .split(" ")
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("");
+  return (
+    <span
+      aria-hidden
+      style={{
+        width: 24,
+        height: 24,
+        borderRadius: "50%",
+        background: "var(--accent-soft)",
+        color: "var(--accent)",
+        fontSize: 10.5,
+        fontWeight: 600,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+      }}
+    >
+      {initials}
+    </span>
+  );
+}
+// The public landing page (signed out): the pain, how it works, what is proven,
+// and two ways in. No synthetic figures appear here; the illustrative research
+// sandbox stays behind sign-in and is labelled there.
+
+import { ArrowRight, BarChart3, BookOpen, CheckCircle2, FileText, Map as MapIcon, Play, Search, ShieldCheck } from "lucide-react";
+import { PAIN_STATS } from "../../data/painStats.ts";
+import { navigate } from "../../app/store.ts";
+import { Button, Tag } from "../primitives/index.tsx";
+import { BrandImage } from "../primitives/BrandImage.tsx";
+
+const STEPS = [
+  { icon: Search, title: "Search", text: "Fetch postings from a permitted employer board, only when you ask." },
+  { icon: FileText, title: "Read", text: "Confirm each requirement as an exact quotation. A paraphrase is rejected." },
+  { icon: BarChart3, title: "See the trend", text: "Counts over the postings you reviewed, with an interval. Never a score." },
+  { icon: MapIcon, title: "Decide", text: "Map a skill to an outcome. Keep, refresh or revise, with the hours in view." },
+  { icon: BookOpen, title: "Brief and teach", text: "A meeting brief and a teaching pack, both editable, with every receipt." },
+];
+const PROOF = [
+  { value: "152", label: "automated checks pass on the current code" },
+  { value: "727", label: "real postings fetched live from one employer's public board in 1.7 seconds" },
+  { value: "0", label: "AI keys needed. The core is deterministic and works offline" },
+  { value: "100%", label: "of stored quotations re-verified against their source on every view" },
+];
+
+function HeroArt() {
+  return <svg viewBox="0 0 520 300" role="img" aria-label="Three stages: postings with receipts, a course outline, a meeting brief" className="hero-art">
+    <rect x="12" y="40" width="150" height="200" rx="12" fill="var(--surface)" stroke="var(--border)" />
+    <rect x="28" y="60" width="118" height="10" rx="5" fill="var(--accent-soft)" /><rect x="28" y="82" width="96" height="8" rx="4" fill="var(--surface-2)" /><rect x="28" y="98" width="110" height="8" rx="4" fill="var(--surface-2)" />
+    <rect x="28" y="126" width="118" height="30" rx="6" fill="var(--accent-soft)" /><rect x="40" y="136" width="94" height="8" rx="4" fill="var(--accent)" />
+    <rect x="28" y="170" width="118" height="30" rx="6" fill="var(--accent-soft)" /><rect x="40" y="180" width="70" height="8" rx="4" fill="var(--accent)" />
+    <path d="M170 140 L200 140" stroke="var(--ink-3)" strokeWidth="3" /><path d="M196 134 L204 140 L196 146" fill="none" stroke="var(--ink-3)" strokeWidth="3" />
+    <rect x="210" y="40" width="150" height="200" rx="12" fill="var(--surface)" stroke="var(--border)" />
+    <rect x="226" y="60" width="80" height="10" rx="5" fill="var(--ink-3)" />
+    <rect x="226" y="90" width="118" height="8" rx="4" fill="var(--surface-2)" /><rect x="226" y="90" width="72" height="8" rx="4" fill="var(--accent)" />
+    <rect x="226" y="112" width="118" height="8" rx="4" fill="var(--surface-2)" /><rect x="226" y="112" width="54" height="8" rx="4" fill="var(--accent)" />
+    <rect x="226" y="134" width="118" height="8" rx="4" fill="var(--surface-2)" /><rect x="226" y="134" width="36" height="8" rx="4" fill="var(--accent)" />
+    <rect x="226" y="170" width="118" height="30" rx="6" fill="var(--ok-soft)" /><rect x="238" y="180" width="80" height="8" rx="4" fill="var(--ok)" />
+    <path d="M368 140 L398 140" stroke="var(--ink-3)" strokeWidth="3" /><path d="M394 134 L402 140 L394 146" fill="none" stroke="var(--ink-3)" strokeWidth="3" />
+    <rect x="408" y="40" width="100" height="200" rx="12" fill="var(--surface)" stroke="var(--border)" />
+    <rect x="422" y="60" width="72" height="10" rx="5" fill="var(--ink-3)" /><rect x="422" y="84" width="60" height="6" rx="3" fill="var(--surface-2)" /><rect x="422" y="96" width="72" height="6" rx="3" fill="var(--surface-2)" />
+    <rect x="422" y="108" width="52" height="6" rx="3" fill="var(--surface-2)" /><rect x="422" y="140" width="72" height="44" rx="6" fill="var(--accent-soft)" /><rect x="430" y="150" width="56" height="6" rx="3" fill="var(--accent)" /><rect x="430" y="164" width="40" height="6" rx="3" fill="var(--accent)" />
+    <rect x="422" y="200" width="72" height="20" rx="10" fill="var(--ok)" />
+  </svg>;
+}
+
+export function LandingScreen() {
+  const scopes: Array<"Malaysia" | "Asia" | "World"> = ["Malaysia", "Asia", "World"];
+  return <div className="landing">
+    <header className="landing-bar"><span className="page-title">Lyceum</span>
+      <div className="button-row"><Button variant="quiet" onClick={() => window.dispatchEvent(new Event("lyceum:play-demo"))}><Play size={14} /> Watch the tour</Button><Button variant="primary" data-demo-id="index-signin" onClick={() => navigate("login")}>Try it as a lecturer <ArrowRight size={15} /></Button></div></header>
+    <section className="landing-hero">
+      <div>
+        <p className="eyebrow">A lecturer's course workspace</p>
+        <h1>Course decisions, with receipts.</h1>
+        <p className="landing-lead">Gather what employers ask for, confirm every requirement as a quotation from its source, see honest counts, decide what the course should do about it, and take a brief to the meeting. Nothing runs by itself. Nothing changes a course without you.</p>
+        <div className="button-row"><Button variant="primary" onClick={() => navigate("login")}>Try it as a lecturer <ArrowRight size={15} /></Button><Button onClick={() => window.dispatchEvent(new Event("lyceum:play-demo"))}><Play size={14} /> Watch the five-minute tour</Button></div>
+      </div>
+      <BrandImage name="hero" alt="Illustration of postings becoming a course decision and a meeting brief" fallback={<HeroArt />} />
+    </section>
+
+    <section className="landing-section" aria-labelledby="pain-title">
+      <h2 id="pain-title">The gap is real, and it lands on the lecturer's desk</h2>
+      <p className="landing-lead">Graduates find jobs; the match between what they learned and what the job asks is the problem. Course reviews exist, but the evidence behind them lives in browser tabs and memory.</p>
+      {scopes.map((scope) => { const stats = PAIN_STATS.filter((s) => s.scope === scope); return stats.length ? <div key={scope} className="stat-scope"><Tag>{scope}</Tag>
+        <div className="stat-grid">{stats.map((s) => <div className="stat-tile" key={s.value + s.label}><span className="stat-value">{s.value}</span><span className="stat-label">{s.label}</span><a className="stat-source" href={s.url} target="_blank" rel="noreferrer">{s.source}</a></div>)}</div></div> : null; })}
+    </section>
+
+    <section className="landing-section" aria-labelledby="how-title">
+      <h2 id="how-title">How it works, in five steps you control</h2>
+      <ol className="landing-steps">{STEPS.map((s, i) => { const Icon = s.icon; return <li key={s.title}><span className="landing-step-icon" aria-hidden><Icon size={20} /></span><span className="landing-step-num">{i + 1}</span><strong>{s.title}</strong><p>{s.text}</p></li>; })}</ol>
+    </section>
+
+    <section className="landing-section" aria-labelledby="proof-title">
+      <h2 id="proof-title">What is proven today</h2>
+      <div className="stat-grid">{PROOF.map((p) => <div className="stat-tile" key={p.label}><span className="stat-value">{p.value}</span><span className="stat-label">{p.label}</span></div>)}</div>
+      <ul className="proof-list">
+        <li><CheckCircle2 size={16} /> Live collection from the Greenhouse and Lever employer board APIs, on request, with the source policy shown.</li>
+        <li><CheckCircle2 size={16} /> Editable teaching packs and brief decks generated from saved data, with speaker notes and no AI-written text.</li>
+        <li><CheckCircle2 size={16} /> Versioned course revisions checked against hours, links and protected foundations.</li>
+        <li><ShieldCheck size={16} /> Not built yet: shared accounts, collectors for sites without an API, Teams and Slack surfaces, model-drafted slide text. The earlier illustrative screens stay behind sign-in, labelled.</li>
+      </ul>
+    </section>
+
+    <section className="landing-section" aria-labelledby="who-title">
+      <h2 id="who-title">Built for the people who do the work</h2>
+      <div className="who-grid">
+        <div><strong>Lecturers</strong><p>Prepare a class or a course refresh with evidence you can show, in an afternoon.</p></div>
+        <div><strong>Coordinators and programme owners</strong><p>Receive briefs with receipts instead of opinions; keep the formal process in charge.</p></div>
+        <div><strong>Quality and accreditation units</strong><p>Versioned outlines, decision records and cited evidence, exportable for review.</p></div>
+      </div>
+    </section>
+    <footer className="landing-footer">Local prototype. Your data stays in your browser. Built by Hafiz Azman. <Button variant="quiet" onClick={() => navigate("login")}>Sign in</Button></footer>
+  </div>;
+}
+// Sign in (spec 6.2). The identity block leads; the demo people are clean rows
+// with their real scope. The public landing page (how Lyceum works) is
+// reachable from here without signing in.
+
+import { ArrowRight, ShieldCheck } from "lucide-react";
+import { hatsOn, subjectsForPerson } from "../../app/roles.ts";
+import { login, navigate, useStore } from "../../app/store.ts";
+import type { Person } from "../../types.ts";
+
+export function LoginScreen() {
+  const state = useStore();
+
+  function scopeLine(person: Person): string {
+    if (person.orgRole === "management") return "Management, faculty approvals";
+    if (person.orgRole === "department") return "Department, Bachelor of Computer Science";
+    const subjects = subjectsForPerson(person.id, state.assignments);
+    const parts = subjects.map((sid) => {
+      const hats = hatsOn(person.id, sid, state.assignments);
+      const label =
+        hats.includes("coordinator") && hats.includes("lecturer")
+          ? "Coordinator and Lecturer"
+          : hats.includes("coordinator")
+            ? "Coordinator"
+            : "Lecturer";
+      return `${label}, ${sid}`;
+    });
+    return parts.join(" Â· ");
+  }
+
+  return (
+    <div
+      style={{
+        minHeight: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 32,
+      }}
+    >
+      <div style={{ display: "flex", gap: 72, maxWidth: 980, width: "100%", flexWrap: "wrap" }}>
+        {/* identity */}
+        <div style={{ flex: "1 1 380px", minWidth: 320, paddingTop: 24 }}>
+          <div className="page-title" style={{ fontSize: 44 }}>
+            Lyceum
+          </div>
+          <p style={{ fontSize: 17, color: "var(--ink)", margin: "14px 0 8px", maxWidth: 420 }}>
+            Course decisions, with receipts.
+          </p>
+          <p style={{ fontSize: 13.5, color: "var(--ink-2)", maxWidth: 420 }}>
+            Gather what employers ask for, confirm every requirement as an exact
+            quotation, see honest counts, decide what the course should do about
+            it, and take a brief to the meeting. Nothing runs by itself.
+          </p>
+          <button
+            data-demo-id="view-index"
+            onClick={() => navigate("index")}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              marginTop: 10,
+              padding: 0,
+              border: "none",
+              background: "none",
+              color: "var(--accent)",
+              fontSize: 13.5,
+              fontWeight: 500,
+              cursor: "pointer",
+            }}
+          >
+            See how Lyceum works <ArrowRight size={14} />
+          </button>
+          <div style={{ marginTop: 56, fontSize: 11.5, color: "var(--ink-3)" }}>
+            Local prototype. Your work stays in this browser. Synthetic examples are labelled where they appear.
+          </div>
+        </div>
+
+        {/* role picker */}
+        <div style={{ flex: "1 1 380px", minWidth: 320 }}>
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              color: "var(--ink-3)",
+              letterSpacing: "0.03em",
+              marginBottom: 10,
+            }}
+          >
+            SIGN IN AS
+          </div>
+          <div
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--radius-l)",
+              boxShadow: "var(--shadow-1)",
+              overflow: "hidden",
+            }}
+          >
+            {state.people.map((p, i) => (
+              <button
+                key={p.id}
+                data-demo-id={`login-${p.id}`}
+                onClick={() => login(p.id)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  width: "100%",
+                  padding: "13px 16px",
+                  border: "none",
+                  borderTop: i === 0 ? "none" : "1px solid var(--border)",
+                  background: "transparent",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  transition: "background 150ms ease-out",
+                }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "var(--accent-soft)")}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "transparent")}
+              >
+                <span
+                  aria-hidden
+                  style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: "50%",
+                    background: "var(--accent-soft)",
+                    color: "var(--accent)",
+                    fontWeight: 600,
+                    fontSize: 13,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  {p.name
+                    .split(" ")
+                    .map((w) => w[0])
+                    .slice(0, 2)
+                    .join("")}
+                </span>
+                <span style={{ flex: 1, minWidth: 0 }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 600, fontSize: 14 }}>
+                    {p.name}
+                    {p.verified ? <ShieldCheck size={14} color="var(--ok)" aria-label="Verified" /> : null}
+                  </span>
+                  <span style={{ display: "block", fontSize: 12.5, color: "var(--ink-2)" }}>
+                    {scopeLine(p)}
+                  </span>
+                </span>
+                <ArrowRight size={15} color="var(--ink-3)" />
+              </button>
+            ))}
+          </div>
+          <div style={{ fontSize: 11.5, color: "var(--ink-3)", marginTop: 10 }}>
+            One faculty, five local personas. Lecturers: choose Dr Sobri or Ms Tan for the full course workflow.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content src/ui/primitives/Journey.tsx; Get-Content src/app/journey.ts; Get-Content scripts/integrity-smoke.mjs' in C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content src/ui/screens/Office.tsx; Get-Content src/ui/screens/Evaluation.tsx' in C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content docs/lyceum-v3-as-built-2026-10-09.md' in C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+ succeeded in 69ms:
+// The guided journey: a horizontal bar in Course Studio and a card on Home.
+// Both read the same computed steps, so "done" means the workspace holds the
+// result, and "next" is always one concrete action.
+
+import { ArrowRight, Check } from "lucide-react";
+import { journeyFor, nextJourneyStep } from "../../app/journey.ts";
+import { navigate, selectStudioTab, selectSubject, type AppState } from "../../app/store.ts";
+import { Button, Tag } from "./index.tsx";
+
+function go(step: { screen: "courses" | "studio" | "inbox" | string; tab?: AppState["studioTab"] }, subjectId: string | null) {
+  if (step.screen === "studio") { if (subjectId) selectSubject(subjectId); if (step.tab) selectStudioTab(step.tab); navigate("studio"); return; }
+  navigate(step.screen as "courses");
+}
+
+export function JourneyBar({ state, subjectId }: { state: AppState; subjectId: string }) {
+  const steps = journeyFor(state, subjectId);
+  const next = nextJourneyStep(steps);
+  const done = steps.filter((s) => s.done).length;
+  return <nav className="journey-bar" aria-label="Your progress on this course" data-demo-id="journey-bar">
+    <ol className="journey-steps">
+      {steps.map((step, index) => <li key={step.id} className={step.done ? "is-done" : step.id === next?.id ? "is-next" : ""}>
+        <button type="button" onClick={() => go(step, subjectId)} aria-current={step.id === next?.id ? "step" : undefined} aria-label={step.title + (step.done ? ", done" : step.id === next?.id ? ", next" : "")}>
+          <span className="journey-mark" aria-hidden>{step.done ? <Check size={13} /> : index + 1}</span>
+          <span className="journey-title">{step.title}</span>
+        </button>
+      </li>)}
+    </ol>
+    <div className="journey-next">
+      {next ? <><Tag tone="accent">Next</Tag><span>{next.help}</span><Button variant="quiet" onClick={() => go(next, subjectId)}>{next.title} <ArrowRight size={14} /></Button></>
+        : <><Tag tone="ok">All seven steps done</Tag><span>{done} of {steps.length}. Refresh the evidence next term, or send the brief to another colleague.</span></>}
+    </div>
+  </nav>;
+}
+
+export function JourneyCard({ state, subjectId, title }: { state: AppState; subjectId: string | null; title?: string }) {
+  const steps = journeyFor(state, subjectId);
+  const next = nextJourneyStep(steps);
+  const done = steps.filter((s) => s.done).length;
+  return <section className="workspace-panel journey-card" aria-labelledby="journey-card-title" data-demo-id="journey-card">
+    <div className="section-heading"><div><h2 id="journey-card-title">{title ?? (subjectId ? "Your progress on " + subjectId : "Start here")}</h2>
+      <p className="muted">{done} of {steps.length} steps done. Each step is one screen and one action; the guide reads your real work.</p></div>
+      {next ? <Button variant="primary" onClick={() => go(next, subjectId)} data-demo-id="journey-next">{next.title} <ArrowRight size={15} /></Button> : null}</div>
+    <ol className="journey-grid">
+      {steps.map((step, index) => <li key={step.id} className={step.done ? "is-done" : step.id === next?.id ? "is-next" : ""}>
+        <span className="journey-mark" aria-hidden>{step.done ? <Check size={14} /> : index + 1}</span>
+        <div><strong>{step.title}</strong><p className="muted">{step.done ? step.count : step.help}</p></div>
+        <Button variant="quiet" aria-label={(step.done ? "Open " : "Do ") + step.title} onClick={() => go(step, subjectId)}>{step.done ? "Open" : "Do it"}</Button>
+      </li>)}
+    </ol>
+  </section>;
+}
+// The lecturer's journey, computed from real state so the guide never lies:
+// a step is done when the workspace holds the thing it produces.
+
+import type { AppState } from "./store.ts";
+import type { Screen } from "./roles.ts";
+
+export interface JourneyStep {
+  id: string;
+  title: string; // two or three words
+  help: string; // one sentence: what to do
+  done: boolean;
+  count: string; // what exists, for example "3 sources"
+  screen: Screen;
+  tab?: AppState["studioTab"];
+}
+
+export function journeyFor(state: AppState, subjectId: string | null): JourneyStep[] {
+  const id = subjectId ?? "";
+  const definition = id ? state.courseDefinitions[id] : undefined;
+  const adopted = state.curriculumDrafts.some((d) => d.subjectId === id && d.status === "adopted");
+  const sources = state.evidenceSources.filter((s) => s.subjectId === id);
+  const reviewed = sources.filter((s) => s.reviewed && !s.duplicateOf);
+  const mentions = state.skillMentions.filter((m) => m.subjectId === id);
+  const mappings = state.skillMappings.filter((m) => m.subjectId === id);
+  const sessions = state.teachingPlans.find((p) => p.subjectId === id)?.sessions ?? [];
+  const briefs = state.evidenceBriefs.filter((b) => b.subjectId === id);
+  const outcomes = state.clos.filter((c) => c.subjectId === id);
+  return [
+    { id: "course", title: "Open a course", help: "Pick an assigned course or create a personal workspace.", done: Boolean(id), count: id || "none yet", screen: "courses" },
+    { id: "outline", title: "Confirm the outline", help: "Start a revision, check the outcomes and topics against the hours, and adopt the version.",
+      done: adopted || (definition?.topics.length ?? 0) > 0, count: outcomes.length + " outcomes, " + (definition?.topics.length ?? 0) + " topics", screen: "studio", tab: "curriculum" },
+    { id: "collect", title: "Collect evidence", help: "Fetch postings from an employer board and keep the ones worth reading.", done: sources.length > 0,
+      count: sources.length + " sources", screen: "studio", tab: "evidence" },
+    { id: "confirm", title: "Confirm quotations", help: "Scan for the skills you name, confirm each exact quotation, mark the postings reviewed.",
+      done: mentions.length > 0 && reviewed.length > 0, count: mentions.length + " quotations, " + reviewed.length + " reviewed", screen: "studio", tab: "evidence" },
+    { id: "map", title: "Map to outcomes", help: "Say what the course does about each skill today and what it should reach.", done: mappings.length > 0,
+      count: mappings.length + " mapped", screen: "studio", tab: "evidence" },
+    { id: "plan", title: "Plan a class", help: "Save a session linked to an outcome and download its teaching pack.", done: sessions.length > 0,
+      count: sessions.length + " sessions", screen: "studio", tab: "plan" },
+    { id: "brief", title: "Brief the meeting", help: "Prepare the brief, download it as slides, or send it to a colleague.", done: briefs.length > 0,
+      count: briefs.filter((b) => b.sentAt).length + " sent of " + briefs.length, screen: "studio", tab: "evidence" },
+  ];
+}
+
+export function nextJourneyStep(steps: JourneyStep[]): JourneyStep | null {
+  return steps.find((s) => !s.done) ?? null;
+}
+// Run after a production build. Uses an isolated headless browser, blocks
+// external requests, and saves review screenshots in an OS temporary directory.
+import assert from "node:assert/strict";
+import { existsSync, mkdtempSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { preview } from "vite";
+import puppeteer from "puppeteer-core";
+
+const executablePath = [
+  "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
+  "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
+  "C:/Program Files/Microsoft/Edge/Application/msedge.exe",
+].find(existsSync);
+assert.ok(executablePath, "Chrome or Edge must be installed");
+
+const output = mkdtempSync(join(tmpdir(), "lyceum-integrity-"));
+const origin = "http://127.0.0.1:4211";
+const server = await preview({
+  configFile: false,
+  preview: { host: "127.0.0.1", port: 4211, strictPort: true },
+});
+let browser;
+try {
+  console.log("Launching isolated headless browser");
+  browser = await puppeteer.launch({ executablePath, headless: true, timeout: 15000 });
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1440, height: 1000 });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(String(error)));
+  await page.setRequestInterception(true);
+  page.on("request", (request) => {
+    const url = request.url();
+    if (url.startsWith(`${origin}/`) || url.startsWith("data:") || url.startsWith("blob:")) {
+      void request.continue();
+    } else {
+      void request.abort();
+    }
+  });
+  const click = async (id) => {
+    const selector = `[data-demo-id="${id}"]`;
+    await page.waitForSelector(selector, { timeout: 8000 });
+    await page.click(selector);
+  };
+
+  await page.goto(origin, { waitUntil: "networkidle0" });
+  await click("view-index");
+  await page.waitForFunction(() => document.body.innerText.includes("Course decisions, with receipts"));
+  // The public landing page carries no synthetic figure, so it carries no prototype-data notice.
+  assert.equal(await page.$$eval('[aria-label="Prototype data limitations"]', (elements) => elements.length), 0);
+  assert.ok(!(await page.evaluate(() => document.body.innerText.includes("synthetic fixture"))));
+  assert.ok(await page.evaluate(() => document.body.innerText.includes("Not built yet")));
+  await page.screenshot({ path: join(output, "landing.png"), fullPage: true });
+  console.log("PASS public landing page: no synthetic figures, limits stated, no notice");
+
+  await click("index-signin");
+  await click("login-P-SOBRI");
+  // The notice shows only where synthetic data is on screen: the research sandbox.
+  const noticeScreens = new Set(["acceptance", "trends", "backtest", "dataroom", "index"]);
+  for (const screen of ["courses", "studio", "acceptance", "trends", "backtest", "dataroom", "office", "evaluation", "index", "upload", "inbox"]) {
+    await click(`nav-${screen}`);
+    await page.waitForFunction((target) => window.__lyceum?.getState().screen === target, {}, screen);
+    assert.equal(await page.$$eval('[aria-label="Prototype data limitations"]', (elements) => elements.length), noticeScreens.has(screen) ? 1 : 0, screen);
+    if (screen === "index") {
+      await click("index-CS310");
+      await page.waitForFunction(() => document.body.innerText.includes("sources disagree"));
+      await page.waitForFunction(() => [...document.querySelectorAll(".fade-in")].every((element) => getComputedStyle(element).opacity === "1"));
+      assert.ok(await page.evaluate(() => document.body.innerText.includes("synthetic fixture")));
+      await page.screenshot({ path: join(output, "relevance-index-sandbox.png"), fullPage: true });
+    }
+    if (screen === "dataroom") {
+      assert.ok(await page.evaluate(() => document.body.innerText.includes("illustrative records")));
+      await page.screenshot({ path: join(output, "data-room.png"), fullPage: true });
+    }
+    if (screen === "office") {
+      assert.ok(await page.evaluate(() => document.body.innerText.includes("What actually happened")));
+      await page.screenshot({ path: join(output, "how-it-works.png"), fullPage: true });
+    }
+    if (screen === "evaluation") {
+      await page.waitForFunction(() => document.body.innerText.includes("Requirement scan benchmark"));
+      await page.screenshot({ path: join(output, "evaluation.png"), fullPage: true });
+    }
+  }
+  assert.deepEqual(errors, []);
+  console.log("PASS eleven signed-in screens, notice only on sandbox screens, fixture labels kept, zero page errors");
+  console.log(`Screenshots: ${output}`);
+} finally {
+  if (browser) await browser.close();
+  await new Promise((resolve) => server.httpServer.close(resolve));
+}
+
+ succeeded in 82ms:
+// How Lyceum works: the seven roles as a pipeline, then the real step-by-step
+// record for the course you are working on. Every event on the timeline is
+// derived from something the workspace holds; nothing here is a fixture.
+
+import { useState } from "react";
+import { BarChart3, BookOpen, ChevronDown, ChevronRight, Map as MapIcon, PenLine, Presentation, Search, ShieldCheck, type LucideIcon } from "lucide-react";
+import { ROLES, runTimeline, type RoleId } from "../../app/runs.ts";
+import { subjectsForPerson } from "../../app/roles.ts";
+import { currentPerson, navigate, selectStudioTab, selectSubject, useStore } from "../../app/store.ts";
+import { Button, Page, PageHead, Select, Tag } from "../primitives/index.tsx";
+
+const ICONS: Record<RoleId, LucideIcon> = { folio: BookOpen, scout: Search, atlas: MapIcon, quill: PenLine, prism: Presentation, lens: BarChart3, steward: ShieldCheck };
+
+export function OfficeScreen() {
+  const state = useStore();
+  const person = currentPerson();
+  const [open, setOpen] = useState<RoleId | null>(null);
+  if (!person) return null;
+  const mine = person.orgRole === "academic" ? subjectsForPerson(person.id, state.assignments) : state.subjects.map((s) => s.id);
+  const subjectId = state.selectedSubjectId && mine.includes(state.selectedSubjectId) ? state.selectedSubjectId : mine[0] ?? null;
+  const events = runTimeline(state, subjectId);
+  const roleName = (id: RoleId) => ROLES.find((r) => r.id === id)!;
+  return <Page wide>
+    <PageHead title="How Lyceum works" context="Seven roles, one afternoon, nothing automatic. Each role reads what you confirmed and hands the next one a record you can open." />
+    <ol className="pipeline" aria-label="The seven roles in order">
+      {ROLES.map((role) => { const Icon = ICONS[role.id]; const expanded = open === role.id; return <li key={role.id} className={expanded ? "is-open" : ""}>
+        <button type="button" className="pipeline-card" aria-expanded={expanded} onClick={() => setOpen(expanded ? null : role.id)} data-demo-id={"role-" + role.id}>
+          <span className="pipeline-icon" aria-hidden><Icon size={22} /></span>
+          <span className="pipeline-name">{role.name}</span>
+          <span className="pipeline-job">{role.job}</span>
+          <span className="pipeline-more" aria-hidden>{expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}</span>
+        </button>
+        {expanded ? <dl className="pipeline-detail"><div><dt>Reads</dt><dd>{role.reads}</dd></div><div><dt>Produces</dt><dd>{role.produces}</dd></div><div><dt>Cannot</dt><dd>{role.cannot}</dd></div></dl> : null}
+      </li>; })}
+    </ol>
+    <div className="principle-strip" aria-label="Principles">
+      <div><strong>Only on request</strong><span>Nothing fetches or drafts until you ask.</span></div>
+      <div><strong>Exact quotations</strong><span>A requirement is a sentence from its source, or it is rejected.</span></div>
+      <div><strong>Denominator in view</strong><span>Counts over postings you reviewed, with an interval. No score.</span></div>
+      <div><strong>People decide</strong><span>Briefs go to colleagues; the university's process stays in charge.</span></div>
+    </div>
+
+    <section className="workspace-panel" aria-labelledby="run-record">
+      <div className="section-heading"><div><h2 id="run-record">What actually happened{subjectId ? " on " + subjectId : ""}</h2><p className="muted">Every line below is derived from a record in this workspace, in the order it was created.</p></div>
+        {mine.length > 1 ? <label className="course-switcher">Course<Select aria-label="Choose course" value={subjectId ?? ""} onChange={(e) => selectSubject(e.target.value)}>{mine.map((id) => <option key={id} value={id}>{id}</option>)}</Select></label> : null}</div>
+      {events.length ? <ol className="timeline" data-demo-id="run-timeline">{events.map((e, i) => <li key={i}>
+        <span className="timeline-time num">{e.at.slice(0, 16).replace("T", " ")}</span>
+        <span className="timeline-role"><Tag tone="accent">{roleName(e.role).name}</Tag><span className="muted">{roleName(e.role).job}</span></span>
+        <div className="timeline-body"><strong>{e.title}</strong><p className="muted">{e.detail}</p></div>
+        {e.tab && subjectId ? <Button variant="quiet" aria-label={"Open " + e.title} onClick={() => { selectSubject(subjectId); selectStudioTab(e.tab!); navigate("studio"); }}>Open</Button> : null}
+      </li>)}</ol>
+        : <div className="empty-run"><p>No step has run on this course yet. Open the course and follow the journey bar, or press Play demo on the sign-in screen to watch one afternoon end to end.</p>
+          <Button variant="primary" onClick={() => navigate("courses")}>Open a course</Button></div>}
+    </section>
+    <p className="muted">Want to see how this is tested? <Button variant="quiet" onClick={() => navigate("evaluation")}>Open Evaluation</Button></p>
+  </Page>;
+}
+// Evaluation: how Lyceum is tested, what passes right now in this browser, the
+// labelled scan benchmark, and the protocol for the student-agent benchmark
+// against course outcomes and surveys. Numbers here are computed live or
+// quoted with their date; none is a projection.
+
+import { useMemo } from "react";
+import { runScanBenchmark, workspaceChecks } from "../../lib/benchmark.ts";
+import { BENCHMARK_LEXICON } from "../../data/scanBenchmark.ts";
+import { parseWorkspaceBackup } from "../../lib/workspaceBackup.ts";
+import { exportWorkspaceBackup, navigate, useStore } from "../../app/store.ts";
+import { Button, Page, PageHead, Tag } from "../primitives/index.tsx";
+import { BarList } from "../primitives/ShareBar.tsx";
+
+const SUITES: Array<[string, number, string]> = [
+  ["Acceptance scenario (illustrative spine)", 12, "canonical numbers of the synthetic scenario"],
+  ["Backtest (synthetic)", 4, "closed-loop arithmetic on synthetic data"],
+  ["Flow and roles", 28, "store, permissions, state machine"],
+  ["Signal reveal (fixture)", 12, "the staged fixture reveal"],
+  ["Intake parsing", 18, "xlsx, csv, pdf, pptx parse and interpret"],
+  ["Integrity", 13, "evidence edge cases, approval guards"],
+  ["Teaching plans", 10, "scope, validation, export"],
+  ["Curriculum", 28, "revisions, constraints, adoption, recovery"],
+  ["Evidence", 13, "citations, duplicates, Wilson intervals, mappings, backups"],
+  ["Collector", 6, "text extraction, cache, rate limits, timeouts"],
+  ["Research run", 5, "import on request, exact proposals, briefs"],
+  ["Slides", 3, "decks unzipped and read back"],
+];
+
+export function EvaluationScreen() {
+  const state = useStore();
+  const bench = useMemo(() => runScanBenchmark(), []);
+  const checks = workspaceChecks(state);
+  const backup = useMemo(() => parseWorkspaceBackup(exportWorkspaceBackup(), state.people.map((p) => p.id)), [state]);
+  const total = SUITES.reduce((n, s) => n + s[1], 0);
+  const pass = (ok: boolean) => <Tag tone={ok ? "ok" : "danger"}>{ok ? "Pass" : "Check"}</Tag>;
+  return <Page wide>
+    <PageHead title="Evaluation" context="How Lyceum is tested, what passes right now in this browser, and the benchmark we will run with real course data." />
+
+    <section className="workspace-panel" aria-labelledby="live-checks">
+      <div className="section-heading"><div><h2 id="live-checks">Live checks on this workspace</h2><p className="muted">Recomputed every time this page renders, over the data in this browser.</p></div></div>
+      <div className="stat-grid">
+        <div className="stat-tile"><span className="stat-value">{checks.verified} of {checks.quotations}</span><span className="stat-label">stored quotations found verbatim in their source text right now</span>{pass(checks.verified === checks.quotations)}</div>
+        <div className="stat-tile"><span className="stat-value">{checks.duplicates}</span><span className="stat-label">duplicate copies detected by text fingerprint and counted once</span>{pass(true)}</div>
+        <div className="stat-tile"><span className="stat-value">{checks.eligible}</span><span className="stat-label">reviewed postings in the denominator, out of {checks.sources} sources</span>{pass(checks.eligible <= checks.sources)}</div>
+        <div className="stat-tile"><span className="stat-value">{backup.ok ? "Valid" : "Invalid"}</span><span className="stat-label">workspace backup re-validated: every record, link and quotation</span>{pass(backup.ok)}</div>
+      </div>
+    </section>
+
+    <section className="workspace-panel" aria-labelledby="scan-bench">
+      <div className="section-heading"><div><h2 id="scan-bench">Requirement scan benchmark</h2><p className="muted">{bench.sentences} hand-labelled sentences in job-posting style, a fixed lexicon of {BENCHMARK_LEXICON.length} terms, scored against the deterministic scan. The lecturer still confirms every proposal; this measures how much help the scan gives.</p></div></div>
+      <BarList caption="Scan detection on the labelled set. Precision: proposals that were right. Recall: labelled skills that were found. Level accuracy: required or preferred read correctly among true positives." width={260} rows={[
+        { label: "Precision", share: bench.precision, note: bench.truePositives + " of " + bench.proposed },
+        { label: "Recall", share: bench.recall, note: bench.truePositives + " of " + bench.goldMentions },
+        { label: "F1", share: bench.f1 },
+        { label: "Level accuracy", share: bench.levelAccuracy, note: bench.levelCorrect + " of " + bench.truePositives },
+      ]} />
+      {bench.misses.length ? <details><summary>{bench.misses.length} sentences where the scan and the label disagree</summary><ul className="bench-misses">{bench.misses.map((m) => <li key={m.text}><span>{m.text}</span><span className="muted">expected {m.expected.join(", ") || "nothing"}; got {m.got.join(", ") || "nothing"}</span></li>)}</ul></details> : <p className="muted">The scan matches every label in this set.</p>}
+      <p className="muted">Limits: a small set written by one person; whole-word matching cannot find a skill named indirectly. Extend the set in <code>src/data/scanBenchmark.ts</code>; the proofs re-run it.</p>
+    </section>
+
+    <section className="workspace-panel" aria-labelledby="suites">
+      <div className="section-heading"><div><h2 id="suites">Automated checks on the current code</h2><p className="muted">{total} checks across {SUITES.length} suites, plus four headless browser runs and the full-tour demo. Last run 11 October 2026. Reproduce with <code>npm run prove:all</code> and the smoke scripts.</p></div></div>
+      <div className="table-scroll"><table className="evidence-table"><thead><tr><th scope="col">Suite</th><th scope="col">Checks</th><th scope="col">Covers</th></tr></thead>
+        <tbody>{SUITES.map(([name, n, covers]) => <tr key={name}><th scope="row">{name}</th><td className="num">{n}</td><td>{covers}</td></tr>)}</tbody></table></div>
+    </section>
+
+    <section className="workspace-panel" aria-labelledby="student-bench">
+      <div className="section-heading"><div><h2 id="student-bench">Student-agent benchmark: the protocol</h2><p className="muted">The earlier Cohort agent simulates learners to estimate the effect of a course change. Its numbers are not evidence until they are benchmarked against real outcomes. This is how we will do it.</p></div></div>
+      <ol className="protocol">
+        <li><strong>Ground truth.</strong> One course, one term: per-outcome attainment from the filed results (earned marks over available marks per CLO, with the allocation rules stated) and the CLO self-rating survey, kept separate from marks.</li>
+        <li><strong>Prediction before the term.</strong> The simulation's predicted mastery per CLO is frozen with the course version, cohort, term and model version, before results exist. Upload time is never teaching time.</li>
+        <li><strong>Scoring.</strong> Mean absolute error and calibration of predicted against actual attainment per CLO; correlation with the survey; a naive baseline (last term's attainment) that the model must beat.</li>
+        <li><strong>Transparency.</strong> Sample sizes, missingness and subgroup results reported; a learning-impact claim is made only after a held-out term, not from a fit.</li>
+      </ol>
+      <div className="stat-grid">
+        <div className="stat-tile"><span className="stat-value">0.009</span><span className="stat-label">mean absolute error of the simulation on its synthetic backtest. Synthetic data; not evidence of real accuracy.</span><Tag tone="warn">Synthetic</Tag></div>
+        <div className="stat-tile"><span className="stat-value">0</span><span className="stat-label">real terms benchmarked so far. The protocol needs one course and one term of results.</span><Tag tone="warn">Not yet run</Tag></div>
+      </div>
+      <p className="muted">Until that benchmark runs, the acceptance scenario stays in the research sandbox, labelled illustrative, and no learning gain is claimed anywhere in the product.</p>
+    </section>
+
+    <section className="workspace-panel" aria-labelledby="pilot">
+      <div className="section-heading"><div><h2 id="pilot">Pilot measures with lecturers</h2></div></div>
+      <ul className="proof-list">
+        <li>Task completion without coaching, and time to an accepted brief.</li>
+        <li>Citation fidelity: zero fabricated quotations in a checked sample, by construction and by audit.</li>
+        <li>Educational alignment judged by a lecturer rubric; constraints never violated silently.</li>
+        <li>Repeat use next week and next term, and the actual cost per accepted pack.</li>
+      </ul>
+      <Button variant="quiet" onClick={() => navigate("office")}>Back to How Lyceum works</Button>
+    </section>
+  </Page>;
+}
+
+ succeeded in 81ms:
+# Lyceum v3: as-built report, 9 October 2026
+
+This report describes the prototype as it exists and was verified on 9 October 2026. It replaces the July 2026 as-built document, which is kept in `docs/history/` for the record and describes an earlier storyline that the current build no longer claims. Every statement here was checked against the running code on the owner's machine on 9 October; the verification table lists the commands and their results.
+
+## 1. Summary
+
+Lyceum is a lecturer's course workspace. It helps a lecturer gather what employers ask for from permitted sources, keep every requirement as an exact quotation from its source, count honestly with the denominator in view, map skills to course outcomes with cited course evidence, revise outcomes and topics under explicit constraints, prepare teaching sessions, and take a meeting brief with every receipt to colleagues. Nothing runs by itself, nothing changes a course without the lecturer, and no AI key is needed for any of it.
+
+The product runs locally: a React and TypeScript web workspace with a browser-local store and validated JSON backups, plus a thin Node and Hono API that parses documents and fetches postings from two documented public job-board APIs on request. It is a working local prototype with automated verification. It is not yet a shared, multi-user service.
+
+## 2. Problem and positioning
+
+A lecturer who wants to refresh a course has three jobs: find out what employers actually ask for, work out what the course already introduces, practises and assesses, and defend the change to colleagues and the quality committee. Today that evidence lives in browser tabs, inboxes and memory, and the decision is hard to explain later. In Malaysia, DOSM counted 5.98 million graduates in 2024 with unemployment at 3.2 percent but underemployment at 32.2 percent, and MOHE reviews courses for relevance.
+
+Lyceum is advisory. Lecturers accept, edit, reject or defer every suggestion. Formal syllabus approval stays in the university's existing process. Lyceum does not claim to monitor the labour market, score employability, predict learning gains or certify accreditation.
+
+## 3. What a lecturer can do today
+
+**Home.** Resume the latest teaching plan, see the work queue for the current role, read notifications. An evidence brief sent by a colleague opens here with its receipts and can be downloaded.
+
+**Courses.** Search and filter the catalogue, open an assigned course, or create a personal course workspace with a code, title and optional programme. A personal workspace is private preparation, not an official course.
+
+**Course Studio, Outcomes and topics.** Start a revision from the current version; add, edit or remove course learning outcomes with Bloom level, achievement evidence and programme outcome mappings; add topics with hours, weeks, outcome links, prerequisites and protected foundations. Save incomplete drafts. Check constraints: broken links, prerequisite cycles and reversed order, exceeded contact or self-study budgets and removed protected topics block a candidate; unknown budgets stay visible warnings. Compare before and after, record a rationale and teaching term, then explicitly adopt the candidate as the local course version. The baseline, the version history and the decision record are preserved; affected teaching sessions and assessments are flagged for review rather than rewritten.
+
+**Course Studio, Evidence.** The research run:
+1. Search. Choose a source with a stated policy: the Greenhouse job board API, the Lever postings API, or a dated saved sample of real postings. Enter role keywords, fetch, keep the postings worth reading and import them. Each imported posting is a source with its title, employer, link, publication date as published, retrieval time, text and text fingerprint. Identical texts become duplicate copies and count once.
+2. Read. Name the skills that matter, with aliases. The scan proposes, per posting and term, the first sentence that uses the term, as an exact substring, with a heuristic reading of required or preferred that the lecturer can change. The lecturer confirms or dismisses each quotation. A quotation that is not in the retained text is rejected, including hand-typed paraphrases. Every stored quotation is re-verified on display and on backup import.
+3. Review. The lecturer vouches that a posting's extraction is complete. Only reviewed postings enter the denominator.
+4. See the trend. Observed requirements show, per skill, the numerator and denominator, the share, a 95 percent Wilson interval, required against preferred wording, distinct employers, contextual documents, the reviewed coverage stage against its target, and the shortfall. Empty evidence is unknown, never zero. A demand-weighted coverage index is reported with the share of quoted weight whose stage or target is unknown. No trend over time is shown until a comparable earlier window exists.
+5. Decide and brief. Map a skill to one or more course outcomes with a documented stage and cited course evidence. Prepare a meeting brief with the decision requested, the evidence base, the table, the options, the lecturer's notes, the limitations and every receipt. Download it as Markdown or as editable slides (one receipt slide per source), or send it to colleagues inside Lyceum. The evidence report itself also exports as Markdown with receipts.
+
+A document the lecturer is permitted to keep can also be pasted in as a source.
+
+**Course Studio, Teaching plan.** Save sessions with week, topic, duration, outcome links, activity, learning check and resources; ready and delivered sessions require preparation details. Export the plan as Markdown. Any saved session downloads as an editable teaching pack (.pptx): a title slide, the session's outcomes, the employer evidence linked to those outcomes with exact quotations, the activity, the check and the resources, each with speaker notes. No model writes a word of it. A course change flags affected sessions for review while keeping their content.
+
+**Course Studio, Assessment and Proposal.** Prepare a blueprint without a proposal; item generation uses local templates. An affected assessment needs a recorded course-change review and repaired links before another submission. The Proposal tab retains the earlier review workflow, whose scenario results are illustrative.
+
+**Guide and progress.** Section guides for every screen, a role filter, search, the list of unbuilt work, and workspace backup and restore: a schema-versioned JSON file with a preview, validation of every record and link, a replacement acknowledgement and a pre-restore recovery copy. Older backup versions restore with later collections empty.
+
+**The self-driving demo.** Play demo on the sign-in screen plays a full tour of CS310 over the real app with a simulated cursor, in about five and a half minutes after three intro cards: a course revision under constraint checks with its version history, the research run on the saved sample, exact quotations with a rejected paraphrase, bulk review, a coverage mapping, a teaching session with its slide pack downloaded, a template assessment, a meeting brief with slides sent to the programme owner, the guide and backup page, and the recipient reading the brief.
+
+## 4. What is real and what is illustrative
+
+|---|---|
+| `npm run typecheck` | Passed. |
+| `npm run prove:all` | 152 checks passed across twelve suites: acceptance, backtest, flow, signal, intake, integrity, teaching, curriculum, evidence, collector, research and slides. |
+| `npm run build` | Passed with the normal Vite CLI; the main chunk exceeds 500 kB, a warning only. |
+| `npm run smoke:curriculum` | Passed: course creation, constraint failure and correction, local adoption, outline export, teaching session and its downloaded teaching pack, assessment review, version history, evidence receipts, rejected misquote, scan, brief sent and its downloaded deck, JSON backup and restore, 390 and 320 pixel reflow, zero page errors. Both decks are unzipped and their slides read. |
+| `npm run smoke:workspace` and `npm run smoke:integrity` | Passed. |
+| `npm run smoke` | Passed: the full-tour demo adopts a revision, imports sample postings, confirms quotations, maps CLO5, saves a session, generates template items, downloads the teaching pack and the brief deck, sends the brief and has it read, with no page errors. |
+| `node scripts/generate-guide.mjs --check` | The generated lecturer guide matches the in-app catalogue. |
+| Live API | Greenhouse and Lever fetched; cache, token validation, unknown board, unknown provider and rapid-retry responses behaved as specified. |
+
+Browser checks run in isolated headless profiles with external requests blocked, except the explicit live API check.
+
+## 6. Architecture
+
+A diagram is at `docs/presentation/architecture.png`.
+
+- Browser workspace: React and TypeScript, hash routing, a single persistent store, browser-local persistence with exit flush and visible storage failure, validated JSON backups at schema version 3.
+- Deterministic core in `src/lib/`: curriculum constraints and diffs, teaching plans, evidence calculations (citation validator, fingerprints, Wilson intervals, coverage stages, report and brief), board payload normalisation and keyword filters, backup validation.
+- Local API: Hono on Node 24. `/api/parse` for xlsx, csv, pdf, pptx and docx. `/api/collect/:provider/:board` for the two permitted job-board hosts, with board-token validation, a one-hour cache, a 15-second gap between fetches of the same board, at most 20 fetches per ten minutes, a 15 MB size cap, a 20-second timeout and plain error messages. `/api/agent` for optional model streaming with a deterministic fallback.
+- Planned: a shared API and identity (plan W02) as the contract for Teams through Copilot Studio, Slack and LTI surfaces, so a university reaches Lyceum from the tools it already uses.
+
+## 7. Data, sources and policies
+
+- Source policies are shown in the app for each collection source: owner, method, retention, refresh, policy review date and a note on intended use. Greenhouse and Lever publish these APIs for employers' career pages; Lyceum fetches a named employer's board at low volume on request and does not collect from LinkedIn or anything behind a login. Scheduled or bulk collection would need confirmation of intended use first.
+- Provenance per source: lecturer-supplied or collected, with provider, board, posting id, retrieval time and policy label. Publication dates are shown as published and never manufactured from the retrieval time.
+- Everything is stored in the lecturer's browser. Backups may contain course material and uploaded learner records and belong to the lecturer. No data is sent to a provider unless a model key is configured, and then only the payload of the specific request.
+
+## 8. Known limitations and not built
+
+- No shared accounts, server permissions, server store or multi-device sync; the browser is the only persistence, with JSON backups as the recovery path.
+- Collection covers two documented board APIs and manual paste. No page collectors for employer sites without an API, no snapshots of arbitrary sites, no cross-site vacancy clustering, no scheduled refresh.
+- The Lever API does not state the employer name, so the site token is used.
+- No comparable time windows yet, so no trend over time is reported.
+- Assessment items are template-based; exact mark allocation, model answers and rubrics are pending.
+- Slide packs are generated from saved data with no model-written text. Model-drafted slide content with lecturer review, selective regeneration, institutional templates, handouts, and DOCX or PDF export of the brief are pending.
+- The Trends, Relevance Index, Acceptance test and Closed loop screens remain on synthetic fixtures and should be quarantined from the lecturer's navigation.
+- The optional model integration uses an older SDK and a previous-generation model id; the intake route forces a tool call that current models reject. This is scheduled work.
+- Accessibility: labels, focus, keyboard tabs, reflow and contrast are checked by the smokes; a full WCAG 2.2 AA audit with a screen reader is pending.
+- No lecturer pilot has run; no educational or commercial validation is claimed.
+
+## 9. Next steps
+
+In order: quarantine the synthetic screens; the provider upgrade; comparable time windows for trends; employer naming for Lever; model-drafted slide content with lecturer review on top of the deterministic packs; DOCX and PDF export of the brief; code splitting; an accessibility pass; an OpenAPI description of collect, report and brief as the contract for the shared API; the shared API and identity when a pilot has a date; then the Teams or Slack surface for the pilot institution's tool.
+
+## 10. Market and pitch references
+
+Labelled estimates with sources are in the improvement plan, Sections 26 to 28: over 22,000 accredited institutions and over 14 million tertiary teachers worldwide (UNESCO); roughly 45,000 lecturers in Malaysia (MOHE 2023) across 20 public universities and about 355 private institutions (MIDA); adjacent curriculum software spend estimated between USD 0.48 billion and USD 3.5 billion for 2025 by publishers who disagree; incumbents Lightcast Skillabi and Chmura JobsEQ selling to institutions from above. The pitch follows the AWS five-V structure: Value, Visualize, Validate, Verify, Venture.
+
+## 11. Repository map
+
+- `docs/lyceum-improvement-plan.md`: the master plan with dated execution records.
+- `DECISIONS.md`: the decisions log.
+- `README.md`, `JUDGES.md`, `docs/lecturer-guide.md`: how to run, judge and use the prototype.
+- `docs/presentation/`: pitch pack, deck brief, architecture diagram and app screenshots.
+- `src/lib/evidence.ts`, `src/lib/collect.ts`, `server/collect.ts`: the research run's logic and collector.
+- `src/lib/slides.ts`: the teaching pack and brief deck generator.
+- `src/lib/curriculum.ts`, `src/lib/teachingPlan.ts`, `src/lib/workspaceBackup.ts`: curriculum, teaching and backup logic.
+- `src/prove-*.ts` and `scripts/*-smoke.mjs`: the automated checks named in Section 5.
+- `docs/history/`: the July 2026 implementation specification and as-built report, superseded by this document.
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content src/demo/script.ts' in C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+ succeeded in 55ms:
+// The self-driving demo script: the storyline the cursor performs over the real
+// app. Every step targets a data-demo-id that exists in the shipped screens
+// (a target ending in * matches by prefix); `wait` steps poll real store state,
+// never a duration.
+//
+// The storyline is a full tour of one course in one afternoon: a coordinator
+// revises the outline under constraint checks, runs his own research against a
+// dated sample of real postings, confirms exact quotations and watches a
+// paraphrase get rejected, reviews the denominator, maps a skill to an outcome,
+// plans a session and downloads its editable slide pack, drafts a template
+// assessment, prepares a meeting brief with slides and sends it to the
+// programme owner, who reads it with the receipts attached. Nothing runs by
+// itself and nothing changes the course without the lecturer.
+
+export interface DemoStep {
+  caption: string;
+  target?: string; // data-demo-id, or a prefix followed by *
+  action: "move" | "click" | "type" | "select" | "wait" | "switchUser" | "hold" | "sampleIfFailed";
+  value?: string; // text for type, option value for select, personId for switchUser, predicate for wait
+  settleMs: number; // pause after the action
+  scroll?: string; // "top" | "bottom" | a data-demo-id to centre
+}
+
+export const SCRIPT: DemoStep[] = [
+  // ---- Act 1: the coordinator's question ----
+  { caption: "Dr Sobri coordinates CS310. He wants to check it against what employers ask for.", action: "switchUser", value: "P-SOBRI", settleMs: 2400 },
+  { caption: "His courses, with the preparation each one needs.", target: "nav-courses", action: "click", settleMs: 1600 },
+  { caption: "CS310: current outcome, teaching context, sources and the next class to prepare.", target: "course-open-CS310", action: "click", settleMs: 3200 },
+
+  // ---- Act 2: the course outline under constraints ----
+  { caption: "Outcomes and topics. A revision starts from the current version; the baseline is preserved.", target: "tab-curriculum", action: "click", settleMs: 1800 },
+  { caption: "He starts a revision.", target: "curriculum-start", action: "click", settleMs: 1800 },
+  { caption: "He sharpens the outcome wording himself.", target: "curriculum-outcome-text", action: "type", value: " with dashboards that answer a stakeholder's question", settleMs: 1200 },
+  { caption: "A new topic, with its hours declared. Adding a topic never expands the timetable.", target: "curriculum-add-topic", action: "click", settleMs: 1000 },
+  { caption: "", target: "curriculum-topic-title", action: "type", value: "Dashboards and data storytelling", settleMs: 600 },
+  { caption: "Three contact hours.", target: "curriculum-topic-hours", action: "type", value: "3", settleMs: 800 },
+  { caption: "Linked to the outcome it supports.", target: "topic-outcome-CLO5", action: "click", settleMs: 1200 },
+  { caption: "Why, and for which term. The reason travels with the version.", target: "curriculum-reason", action: "type", value: "Employers ask for dashboards; the course names visualisation but has no dashboard exercise.", settleMs: 600 },
+  { caption: "", target: "curriculum-term", action: "type", value: "2026/2027 semester 1", settleMs: 800 },
+  { caption: "Save, then check: broken links, cycles, exceeded hours and removed protected topics would block it.", target: "curriculum-save", action: "click", settleMs: 1400 },
+  { caption: "Checked. Unknown budgets stay visible as warnings, never hidden in a score.", target: "curriculum-check", action: "click", settleMs: 2600 },
+  { caption: "His explicit decision: use it as the local course version. University approval stays in its process.", target: "curriculum-ack", action: "click", settleMs: 1200 },
+  { caption: "", target: "curriculum-adopt", action: "click", settleMs: 800 },
+  { caption: "A new version, with the previous one kept and the decision recorded.", action: "wait", value: "revision-adopted", settleMs: 2400 },
+  { caption: "History: every version and every decision, exportable.", target: "tab-history", action: "click", settleMs: 3400 },
+
+  // ---- Act 3: the research run ----
+  { caption: "Evidence: research the lecturer runs, not a feed that runs itself.", target: "tab-evidence", action: "click", settleMs: 2200 },
+  { caption: "A source with a stated policy. He picks an employer's public job board and fetches it live, through the local API.", target: "collect-provider", action: "select", value: "greenhouse", settleMs: 1800 },
+  { caption: "The employer's board token, the same one in its careers page link.", target: "collect-board", action: "type", value: "stripe", settleMs: 800 },
+  { caption: "The roles his graduates apply to.", target: "collect-query", action: "type", value: "data analyst", settleMs: 1000 },
+  { caption: "Fetch. Watch the log: the request to the board, the bytes received, the retrieval time.", target: "collect-run", action: "click", settleMs: 600 },
+  { caption: "Postings published recently, each with its link. Nothing invented, nothing pasted.", action: "wait", value: "collect-done", settleMs: 4200, scroll: "collect-log" },
+  { caption: "If the board cannot be reached, the dated saved sample of the same board stands in, and the log says so.", action: "sampleIfFailed", settleMs: 1200 },
+  { caption: "He keeps the ones worth reading.", target: "collect-select-all", action: "click", settleMs: 1400 },
+  { caption: "Imported as sources. They count only after he reviews them.", target: "collect-import", action: "click", settleMs: 800 },
+  { caption: "Each posting is now a receipt he can open.", action: "wait", value: "sources-imported", settleMs: 2600 },
+
+  // ---- Act 4: exact quotations ----
+  { caption: "The skills he cares about, in his own words.", target: "lexicon-terms", action: "type", value: "SQL, Python, dashboards|dashboard, stakeholders|stakeholder, statistics|statistical", settleMs: 1000 },
+  { caption: "Saved with the course.", target: "lexicon-save", action: "click", settleMs: 1400 },
+  { caption: "Scan: the sentence that names each term, proposed for his confirmation.", target: "scan-run", action: "click", settleMs: 800 },
+  { caption: "Exact sentences from the postings.", action: "wait", value: "scan-proposals", settleMs: 4000 },
+  { caption: "He confirms them. Each quotation is verified against its source.", target: "scan-confirm-all", action: "click", settleMs: 2200 },
+  { caption: "What if he paraphrases instead? He types a quotation that is not in the posting.", target: "mention-skill", action: "type", value: "Python", settleMs: 600 },
+  { caption: "", target: "mention-excerpt", action: "type", value: "experience with Python", settleMs: 600 },
+  { caption: "Rejected: the words are not in the saved source text. Only exact quotations are kept.", target: "mention-add", action: "click", settleMs: 4200 },
+  { caption: "He vouches for the extraction before the postings count.", target: "review-all-ack", action: "click", settleMs: 1200 },
+  { caption: "Now the denominator is honest: reviewed postings only.", target: "review-all", action: "click", settleMs: 1000 },
+  { caption: "Numerator, denominator and a confidence interval. No employability score.", action: "hold", settleMs: 5200, scroll: "observed-requirements" },
+
+  // ---- Act 5: the course decision ----
+  { caption: "What does CS310 do about the most-requested skill today? He maps it to its outcome.", target: "mapping-open", action: "click", settleMs: 1600 },
+  { caption: "CLO5 covers visualisation.", target: "mapping-outcome-CLO5", action: "click", settleMs: 1200 },
+  { caption: "Documented coverage today: introduced.", target: "mapping-stage", action: "select", value: "introduced", settleMs: 1200 },
+  { caption: "The target for this course: practised.", target: "mapping-target", action: "select", value: "practised", settleMs: 1200 },
+  { caption: "With the course evidence cited.", target: "mapping-evidence", action: "type", value: "Week 6 lab touches this; no dedicated exercise yet.", settleMs: 800 },
+  { caption: "Saved as his reviewed judgement, not a measured outcome.", target: "mapping-save", action: "click", settleMs: 2600 },
+
+  // ---- Act 6: the teaching session and its slide pack ----
+  { caption: "Teaching plan: the class that turns the evidence into learning.", target: "tab-plan", action: "click", settleMs: 1800 },
+  { caption: "A new session.", target: "plan-add", action: "click", settleMs: 1200 },
+  { caption: "", target: "session-topic", action: "type", value: "Dashboard lab: from a messy dataset to a decision", settleMs: 600 },
+  { caption: "Linked to the outcome, so the evidence follows it.", target: "session-clo-CLO5", action: "click", settleMs: 1000 },
+  { caption: "What students will do.", target: "session-activity", action: "type", value: "In pairs, build a dashboard from the sample dataset and defend one design choice.", settleMs: 600 },
+  { caption: "How he will know it worked.", target: "session-check", action: "type", value: "Exit question: which chart here would mislead a stakeholder, and why?", settleMs: 600 },
+  { caption: "Ready to teach requires an outcome, an activity and a check.", target: "session-status", action: "select", value: "ready", settleMs: 1000 },
+  { caption: "", target: "session-save", action: "click", settleMs: 800 },
+  { caption: "Saved. One click more: an editable slide pack for the class.", action: "wait", value: "session-saved", settleMs: 2000 },
+  { caption: "Outcomes, the employer evidence behind them with exact quotations, the activity and the check. Editable in PowerPoint; no AI text.", target: "session-slides-*", action: "click", settleMs: 5200 },
+
+  // ---- Act 7: the assessment ----
+  { caption: "Assessment: a blueprint and template items, honestly labelled.", target: "tab-assessment", action: "click", settleMs: 1800 },
+  { caption: "", target: "assessment-start", action: "click", settleMs: 1600 },
+  { caption: "Template items against the outcome weights. Exact marks and rubrics are the next package.", target: "assessment-generate", action: "click", settleMs: 800 },
+  { caption: "", action: "wait", value: "items-generated", settleMs: 3600 },
+
+  // ---- Act 8: the meeting ----
+  { caption: "Time to bring it to the programme meeting.", target: "tab-evidence", action: "click", settleMs: 1200 },
+  { caption: "His recommendation.", target: "brief-recommendation", action: "select", value: "refresh", settleMs: 1200, scroll: "meeting-brief" },
+  { caption: "In his words.", target: "brief-notes", action: "type", value: "Add a dashboard exercise in week 6 within existing hours; keep the statistics foundation.", settleMs: 800 },
+  { caption: "A brief with the table, the options and every receipt.", target: "brief-prepare", action: "click", settleMs: 800 },
+  { caption: "Ready to download, as a document or as slides.", action: "wait", value: "brief-ready", settleMs: 2600 },
+  { caption: "The same brief as editable slides for the meeting, generated from the receipts.", target: "brief-slides", action: "click", settleMs: 4200 },
+  { caption: "He sends it to Dr Rahman, who owns the programme.", target: "brief-recipient-P-RAHMAN", action: "click", settleMs: 1200 },
+  { caption: "Sent. The decision stays with people.", target: "brief-send", action: "click", settleMs: 2400 },
+
+  // ---- Act 9: the guide and the reader ----
+  { caption: "Every section has a guide, and the workspace backs up to a validated file that restores with a preview.", target: "nav-guide", action: "click", settleMs: 4600, scroll: "backup-export" },
+  { caption: "Dr Rahman signs in.", action: "switchUser", value: "P-RAHMAN", settleMs: 1400 },
+  { caption: "The brief is waiting on his Home page.", target: "nav-inbox", action: "click", settleMs: 2400 },
+  { caption: "He reads it with the receipts attached.", target: "inbox-open-top", action: "click", settleMs: 1000 },
+  { caption: "Evidence he can inspect. A change the lecturer controls. Materials the lecturer can use.", action: "wait", value: "brief-read", settleMs: 6400 },
+  { caption: "Lyceum. Research the lecturer runs, decisions the lecturer explains.", action: "hold", settleMs: 3600 },
+];
+
+// ---- runtime estimate (for the progress bar) ----
+import { PRE_ACT_MS, TWEEN_MS, TYPE_CHAR_MS, SWITCH_PAD_MS } from "./timing.ts";
+
+const WAIT_MS: Record<string, number> = {
+  "revision-adopted": 400,
+  "collect-done": 1200,
+  "sources-imported": 400,
+  "scan-proposals": 400,
+  "session-saved": 400,
+  "items-generated": 400,
+  "brief-ready": 400,
+  "brief-read": 400,
+};
+
+function stepCost(step: DemoStep): number {
+  switch (step.action) {
+    case "move":
+      return TWEEN_MS + step.settleMs;
+    case "switchUser":
+      return TWEEN_MS * 2 + PRE_ACT_MS + SWITCH_PAD_MS + step.settleMs;
+    case "click":
+    case "select":
+      return TWEEN_MS + PRE_ACT_MS + step.settleMs;
+    case "sampleIfFailed":
+      return step.settleMs;
+    case "type":
+      return TWEEN_MS + PRE_ACT_MS + (step.value?.length ?? 0) * TYPE_CHAR_MS + step.settleMs;
+    case "wait":
+      return (step.value ? (WAIT_MS[step.value] ?? 0) : 0) + step.settleMs;
+    default:
+      return step.settleMs;
+  }
+}
+
+export const INTRO_HOLDS = [6400, 8400, 8400];
+const SCROLL_ALLOWANCE_MS = 12000;
+
+/** Deterministic full-speed runtime estimate in ms (intro + walkthrough). */
+export function estimateTotalMs(): number {
+  return (
+    INTRO_HOLDS.reduce((a, b) => a + b, 0) +
+    SCRIPT.reduce((a, s) => a + stepCost(s), 0) +
+    SCROLL_ALLOWANCE_MS
+  );
+}
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content src/ui/screens/Evaluation.tsx; Get-Content src/ui/primitives/Journey.tsx; Get-Content src/app/journey.ts' in C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+ succeeded in 59ms:
+// Evaluation: how Lyceum is tested, what passes right now in this browser, the
+// labelled scan benchmark, and the protocol for the student-agent benchmark
+// against course outcomes and surveys. Numbers here are computed live or
+// quoted with their date; none is a projection.
+
+import { useMemo } from "react";
+import { runScanBenchmark, workspaceChecks } from "../../lib/benchmark.ts";
+import { BENCHMARK_LEXICON } from "../../data/scanBenchmark.ts";
+import { parseWorkspaceBackup } from "../../lib/workspaceBackup.ts";
+import { exportWorkspaceBackup, navigate, useStore } from "../../app/store.ts";
+import { Button, Page, PageHead, Tag } from "../primitives/index.tsx";
+import { BarList } from "../primitives/ShareBar.tsx";
+
+const SUITES: Array<[string, number, string]> = [
+  ["Acceptance scenario (illustrative spine)", 12, "canonical numbers of the synthetic scenario"],
+  ["Backtest (synthetic)", 4, "closed-loop arithmetic on synthetic data"],
+  ["Flow and roles", 28, "store, permissions, state machine"],
+  ["Signal reveal (fixture)", 12, "the staged fixture reveal"],
+  ["Intake parsing", 18, "xlsx, csv, pdf, pptx parse and interpret"],
+  ["Integrity", 13, "evidence edge cases, approval guards"],
+  ["Teaching plans", 10, "scope, validation, export"],
+  ["Curriculum", 28, "revisions, constraints, adoption, recovery"],
+  ["Evidence", 13, "citations, duplicates, Wilson intervals, mappings, backups"],
+  ["Collector", 6, "text extraction, cache, rate limits, timeouts"],
+  ["Research run", 5, "import on request, exact proposals, briefs"],
+  ["Slides", 3, "decks unzipped and read back"],
+];
+
+export function EvaluationScreen() {
+  const state = useStore();
+  const bench = useMemo(() => runScanBenchmark(), []);
+  const checks = workspaceChecks(state);
+  const backup = useMemo(() => parseWorkspaceBackup(exportWorkspaceBackup(), state.people.map((p) => p.id)), [state]);
+  const total = SUITES.reduce((n, s) => n + s[1], 0);
+  const pass = (ok: boolean) => <Tag tone={ok ? "ok" : "danger"}>{ok ? "Pass" : "Check"}</Tag>;
+  return <Page wide>
+    <PageHead title="Evaluation" context="How Lyceum is tested, what passes right now in this browser, and the benchmark we will run with real course data." />
+
+    <section className="workspace-panel" aria-labelledby="live-checks">
+      <div className="section-heading"><div><h2 id="live-checks">Live checks on this workspace</h2><p className="muted">Recomputed every time this page renders, over the data in this browser.</p></div></div>
+      <div className="stat-grid">
+        <div className="stat-tile"><span className="stat-value">{checks.verified} of {checks.quotations}</span><span className="stat-label">stored quotations found verbatim in their source text right now</span>{pass(checks.verified === checks.quotations)}</div>
+        <div className="stat-tile"><span className="stat-value">{checks.duplicates}</span><span className="stat-label">duplicate copies detected by text fingerprint and counted once</span>{pass(true)}</div>
+        <div className="stat-tile"><span className="stat-value">{checks.eligible}</span><span className="stat-label">reviewed postings in the denominator, out of {checks.sources} sources</span>{pass(checks.eligible <= checks.sources)}</div>
+        <div className="stat-tile"><span className="stat-value">{backup.ok ? "Valid" : "Invalid"}</span><span className="stat-label">workspace backup re-validated: every record, link and quotation</span>{pass(backup.ok)}</div>
+      </div>
+    </section>
+
+    <section className="workspace-panel" aria-labelledby="scan-bench">
+      <div className="section-heading"><div><h2 id="scan-bench">Requirement scan benchmark</h2><p className="muted">{bench.sentences} hand-labelled sentences in job-posting style, a fixed lexicon of {BENCHMARK_LEXICON.length} terms, scored against the deterministic scan. The lecturer still confirms every proposal; this measures how much help the scan gives.</p></div></div>
+      <BarList caption="Scan detection on the labelled set. Precision: proposals that were right. Recall: labelled skills that were found. Level accuracy: required or preferred read correctly among true positives." width={260} rows={[
+        { label: "Precision", share: bench.precision, note: bench.truePositives + " of " + bench.proposed },
+        { label: "Recall", share: bench.recall, note: bench.truePositives + " of " + bench.goldMentions },
+        { label: "F1", share: bench.f1 },
+        { label: "Level accuracy", share: bench.levelAccuracy, note: bench.levelCorrect + " of " + bench.truePositives },
+      ]} />
+      {bench.misses.length ? <details><summary>{bench.misses.length} sentences where the scan and the label disagree</summary><ul className="bench-misses">{bench.misses.map((m) => <li key={m.text}><span>{m.text}</span><span className="muted">expected {m.expected.join(", ") || "nothing"}; got {m.got.join(", ") || "nothing"}</span></li>)}</ul></details> : <p className="muted">The scan matches every label in this set.</p>}
+      <p className="muted">Limits: a small set written by one person; whole-word matching cannot find a skill named indirectly. Extend the set in <code>src/data/scanBenchmark.ts</code>; the proofs re-run it.</p>
+    </section>
+
+    <section className="workspace-panel" aria-labelledby="suites">
+      <div className="section-heading"><div><h2 id="suites">Automated checks on the current code</h2><p className="muted">{total} checks across {SUITES.length} suites, plus four headless browser runs and the full-tour demo. Last run 11 October 2026. Reproduce with <code>npm run prove:all</code> and the smoke scripts.</p></div></div>
+      <div className="table-scroll"><table className="evidence-table"><thead><tr><th scope="col">Suite</th><th scope="col">Checks</th><th scope="col">Covers</th></tr></thead>
+        <tbody>{SUITES.map(([name, n, covers]) => <tr key={name}><th scope="row">{name}</th><td className="num">{n}</td><td>{covers}</td></tr>)}</tbody></table></div>
+    </section>
+
+    <section className="workspace-panel" aria-labelledby="student-bench">
+      <div className="section-heading"><div><h2 id="student-bench">Student-agent benchmark: the protocol</h2><p className="muted">The earlier Cohort agent simulates learners to estimate the effect of a course change. Its numbers are not evidence until they are benchmarked against real outcomes. This is how we will do it.</p></div></div>
+      <ol className="protocol">
+        <li><strong>Ground truth.</strong> One course, one term: per-outcome attainment from the filed results (earned marks over available marks per CLO, with the allocation rules stated) and the CLO self-rating survey, kept separate from marks.</li>
+        <li><strong>Prediction before the term.</strong> The simulation's predicted mastery per CLO is frozen with the course version, cohort, term and model version, before results exist. Upload time is never teaching time.</li>
+        <li><strong>Scoring.</strong> Mean absolute error and calibration of predicted against actual attainment per CLO; correlation with the survey; a naive baseline (last term's attainment) that the model must beat.</li>
+        <li><strong>Transparency.</strong> Sample sizes, missingness and subgroup results reported; a learning-impact claim is made only after a held-out term, not from a fit.</li>
+      </ol>
+      <div className="stat-grid">
+        <div className="stat-tile"><span className="stat-value">0.009</span><span className="stat-label">mean absolute error of the simulation on its synthetic backtest. Synthetic data; not evidence of real accuracy.</span><Tag tone="warn">Synthetic</Tag></div>
+        <div className="stat-tile"><span className="stat-value">0</span><span className="stat-label">real terms benchmarked so far. The protocol needs one course and one term of results.</span><Tag tone="warn">Not yet run</Tag></div>
+      </div>
+      <p className="muted">Until that benchmark runs, the acceptance scenario stays in the research sandbox, labelled illustrative, and no learning gain is claimed anywhere in the product.</p>
+    </section>
+
+    <section className="workspace-panel" aria-labelledby="pilot">
+      <div className="section-heading"><div><h2 id="pilot">Pilot measures with lecturers</h2></div></div>
+      <ul className="proof-list">
+        <li>Task completion without coaching, and time to an accepted brief.</li>
+        <li>Citation fidelity: zero fabricated quotations in a checked sample, by construction and by audit.</li>
+        <li>Educational alignment judged by a lecturer rubric; constraints never violated silently.</li>
+        <li>Repeat use next week and next term, and the actual cost per accepted pack.</li>
+      </ul>
+      <Button variant="quiet" onClick={() => navigate("office")}>Back to How Lyceum works</Button>
+    </section>
+  </Page>;
+}
+// The guided journey: a horizontal bar in Course Studio and a card on Home.
+// Both read the same computed steps, so "done" means the workspace holds the
+// result, and "next" is always one concrete action.
+
+import { ArrowRight, Check } from "lucide-react";
+import { journeyFor, nextJourneyStep } from "../../app/journey.ts";
+import { navigate, selectStudioTab, selectSubject, type AppState } from "../../app/store.ts";
+import { Button, Tag } from "./index.tsx";
+
+function go(step: { screen: "courses" | "studio" | "inbox" | string; tab?: AppState["studioTab"] }, subjectId: string | null) {
+  if (step.screen === "studio") { if (subjectId) selectSubject(subjectId); if (step.tab) selectStudioTab(step.tab); navigate("studio"); return; }
+  navigate(step.screen as "courses");
+}
+
+export function JourneyBar({ state, subjectId }: { state: AppState; subjectId: string }) {
+  const steps = journeyFor(state, subjectId);
+  const next = nextJourneyStep(steps);
+  const done = steps.filter((s) => s.done).length;
+  return <nav className="journey-bar" aria-label="Your progress on this course" data-demo-id="journey-bar">
+    <ol className="journey-steps">
+      {steps.map((step, index) => <li key={step.id} className={step.done ? "is-done" : step.id === next?.id ? "is-next" : ""}>
+        <button type="button" onClick={() => go(step, subjectId)} aria-current={step.id === next?.id ? "step" : undefined} aria-label={step.title + (step.done ? ", done" : step.id === next?.id ? ", next" : "")}>
+          <span className="journey-mark" aria-hidden>{step.done ? <Check size={13} /> : index + 1}</span>
+          <span className="journey-title">{step.title}</span>
+        </button>
+      </li>)}
+    </ol>
+    <div className="journey-next">
+      {next ? <><Tag tone="accent">Next</Tag><span>{next.help}</span><Button variant="quiet" onClick={() => go(next, subjectId)}>{next.title} <ArrowRight size={14} /></Button></>
+        : <><Tag tone="ok">All seven steps done</Tag><span>{done} of {steps.length}. Refresh the evidence next term, or send the brief to another colleague.</span></>}
+    </div>
+  </nav>;
+}
+
+export function JourneyCard({ state, subjectId, title }: { state: AppState; subjectId: string | null; title?: string }) {
+  const steps = journeyFor(state, subjectId);
+  const next = nextJourneyStep(steps);
+  const done = steps.filter((s) => s.done).length;
+  return <section className="workspace-panel journey-card" aria-labelledby="journey-card-title" data-demo-id="journey-card">
+    <div className="section-heading"><div><h2 id="journey-card-title">{title ?? (subjectId ? "Your progress on " + subjectId : "Start here")}</h2>
+      <p className="muted">{done} of {steps.length} steps done. Each step is one screen and one action; the guide reads your real work.</p></div>
+      {next ? <Button variant="primary" onClick={() => go(next, subjectId)} data-demo-id="journey-next">{next.title} <ArrowRight size={15} /></Button> : null}</div>
+    <ol className="journey-grid">
+      {steps.map((step, index) => <li key={step.id} className={step.done ? "is-done" : step.id === next?.id ? "is-next" : ""}>
+        <span className="journey-mark" aria-hidden>{step.done ? <Check size={14} /> : index + 1}</span>
+        <div><strong>{step.title}</strong><p className="muted">{step.done ? step.count : step.help}</p></div>
+        <Button variant="quiet" aria-label={(step.done ? "Open " : "Do ") + step.title} onClick={() => go(step, subjectId)}>{step.done ? "Open" : "Do it"}</Button>
+      </li>)}
+    </ol>
+  </section>;
+}
+// The lecturer's journey, computed from real state so the guide never lies:
+// a step is done when the workspace holds the thing it produces.
+
+import type { AppState } from "./store.ts";
+import type { Screen } from "./roles.ts";
+
+export interface JourneyStep {
+  id: string;
+  title: string; // two or three words
+  help: string; // one sentence: what to do
+  done: boolean;
+  count: string; // what exists, for example "3 sources"
+  screen: Screen;
+  tab?: AppState["studioTab"];
+}
+
+export function journeyFor(state: AppState, subjectId: string | null): JourneyStep[] {
+  const id = subjectId ?? "";
+  const definition = id ? state.courseDefinitions[id] : undefined;
+  const adopted = state.curriculumDrafts.some((d) => d.subjectId === id && d.status === "adopted");
+  const sources = state.evidenceSources.filter((s) => s.subjectId === id);
+  const reviewed = sources.filter((s) => s.reviewed && !s.duplicateOf);
+  const mentions = state.skillMentions.filter((m) => m.subjectId === id);
+  const mappings = state.skillMappings.filter((m) => m.subjectId === id);
+  const sessions = state.teachingPlans.find((p) => p.subjectId === id)?.sessions ?? [];
+  const briefs = state.evidenceBriefs.filter((b) => b.subjectId === id);
+  const outcomes = state.clos.filter((c) => c.subjectId === id);
+  return [
+    { id: "course", title: "Open a course", help: "Pick an assigned course or create a personal workspace.", done: Boolean(id), count: id || "none yet", screen: "courses" },
+    { id: "outline", title: "Confirm the outline", help: "Start a revision, check the outcomes and topics against the hours, and adopt the version.",
+      done: adopted || (definition?.topics.length ?? 0) > 0, count: outcomes.length + " outcomes, " + (definition?.topics.length ?? 0) + " topics", screen: "studio", tab: "curriculum" },
+    { id: "collect", title: "Collect evidence", help: "Fetch postings from an employer board and keep the ones worth reading.", done: sources.length > 0,
+      count: sources.length + " sources", screen: "studio", tab: "evidence" },
+    { id: "confirm", title: "Confirm quotations", help: "Scan for the skills you name, confirm each exact quotation, mark the postings reviewed.",
+      done: mentions.length > 0 && reviewed.length > 0, count: mentions.length + " quotations, " + reviewed.length + " reviewed", screen: "studio", tab: "evidence" },
+    { id: "map", title: "Map to outcomes", help: "Say what the course does about each skill today and what it should reach.", done: mappings.length > 0,
+      count: mappings.length + " mapped", screen: "studio", tab: "evidence" },
+    { id: "plan", title: "Plan a class", help: "Save a session linked to an outcome and download its teaching pack.", done: sessions.length > 0,
+      count: sessions.length + " sessions", screen: "studio", tab: "plan" },
+    { id: "brief", title: "Brief the meeting", help: "Prepare the brief, download it as slides, or send it to a colleague.", done: briefs.length > 0,
+      count: briefs.filter((b) => b.sentAt).length + " sent of " + briefs.length, screen: "studio", tab: "evidence" },
+  ];
+}
+
+export function nextJourneyStep(steps: JourneyStep[]): JourneyStep | null {
+  return steps.find((s) => !s.done) ?? null;
+}
+
+codex
+The demo now tries a live Greenhouse fetch first and falls back to the dated sample if needed. The hands-on guide will follow the journey’s saved results, then point judges to How it works and Evaluation. I also found older README claims that conflict with the code, so I’m using the current code for behavior and attributing any verification counts to the report.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content src/ui/shell/Shell.tsx' in C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+ succeeded in 75ms:
+// The app shell (spec 6.1): persistent sidebar with the person's nav and their
+// subjects (hat badges), topbar with breadcrumb, search (command palette),
+// notification bell and account menu, the toast, and the right-side agent
+// panel. This chrome is what makes Lyceum read as an app you live in rather
+// than a deck of screens.
+
+import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Bell, Check, ChevronDown, LogOut, Menu, RotateCcw, Search, ShieldCheck } from "lucide-react";
+import type { Screen } from "../../app/roles.ts";
+import { hatsOn, navFor, subjectsForPerson } from "../../app/roles.ts";
+import {
+  currentPerson,
+  dismissToast,
+  logout,
+  navigate,
+  resetWorkspace,
+  selectSubject,
+  switchUser,
+  unreadFor,
+  useStore,
+} from "../../app/store.ts";
+import { NAV_META, screenLabel } from "./nav.ts";
+import { CommandPalette } from "./CommandPalette.tsx";
+import { AgentPanel } from "./AgentPanel.tsx";
+import { Kbd } from "../primitives/index.tsx";
+import { PrototypeNotice } from "../primitives/PrototypeNotice.tsx";
+import { SectionHelp } from "../primitives/SectionHelp.tsx";
+
+const SIDEBAR_W = 240;
+const TOPBAR_H = 56;
+
+/** Screens that explain the product rather than do the work. */
+const UNDERSTAND: Screen[] = ["office", "evaluation"];
+/** The earlier illustrative screens: synthetic data, kept behind sign-in and labelled. */
+const SANDBOX: Screen[] = ["trends", "acceptance", "backtest", "dataroom", "index"];
+/** Where the prototype-data notice shows: the sandbox and the illustrative approval workflow. */
+const NOTICE_SCREENS: Screen[] = [...SANDBOX, "approval"];
+
+export function Shell(props: { children: ReactNode }) {
+  const state = useStore();
+  const person = currentPerson();
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Cmd+K / Ctrl+K opens the palette from anywhere.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((v) => !v);
+      }
+      if (e.key === "Escape") { setMenuOpen(false); setNavOpen(false); }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Click-away for the account menu.
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    }
+    window.addEventListener("mousedown", onClick);
+    return () => window.removeEventListener("mousedown", onClick);
+  }, [menuOpen]);
+
+  // Toast auto-dismiss.
+  useEffect(() => {
+    if (!state.toast) return;
+    const t = setTimeout(() => dismissToast(), 4000);
+    return () => clearTimeout(t);
+  }, [state.toast]);
+
+  useEffect(() => {
+    setNavOpen(false);
+    mainRef.current?.scrollTo(0, 0);
+    mainRef.current?.focus({ preventScroll: true });
+    document.title = screenLabel(state.screen) + " Â· Lyceum";
+  }, [state.screen, state.selectedSubjectId]);
+
+  if (!person) return <>{props.children}</>;
+
+  const nav = navFor(person, state.assignments);
+  const mySubjects = subjectsForPerson(person.id, state.assignments);
+  const unread = unreadFor(person.id).length;
+
+  const roleLine =
+    person.orgRole === "management"
+      ? "Management"
+      : person.orgRole === "department"
+        ? "Department"
+        : "Academic";
+
+  return (
+    <div className={"app-shell" + (navOpen ? " nav-open" : "")} style={{ display: "flex", height: "100%", overflow: "hidden" }}>
+      <a className="skip-link" href="#main-content">Skip to main content</a>
+      <div className="mobile-navigation"><span className="page-title">Lyceum</span><button aria-label="Toggle navigation" aria-expanded={navOpen} aria-controls="primary-sidebar" onClick={() => setNavOpen((open) => !open)}><Menu size={20} /> Navigation</button></div>
+      {/* ---------- sidebar ---------- */}
+      <aside
+        id="primary-sidebar"
+        className="app-sidebar"
+        onClick={(event) => { if ((event.target as HTMLElement).closest("button")) setNavOpen(false); }}
+        style={{
+          width: SIDEBAR_W,
+          flexShrink: 0,
+          borderRight: "1px solid var(--border)",
+          background: "var(--surface)",
+          display: "flex",
+          flexDirection: "column",
+          overflowY: "auto",
+        }}
+      >
+        <div style={{ padding: "18px 16px 10px" }}>
+          <button
+            className="page-title"
+            style={{ fontSize: 21, cursor: "pointer", border: 0, padding: 0, background: "none", color: "var(--ink)" }}
+            onClick={() => navigate("inbox")}
+          >
+            Lyceum
+          </button>
+          <div style={{ fontSize: 11.5, color: "var(--ink-3)", marginTop: 2 }}>
+            Course decisions, with receipts
+          </div>
+        </div>
+
+        <nav aria-label="Main navigation" style={{ padding: "6px 8px", flex: 1 }}>
+          {nav
+            .filter((s) => !UNDERSTAND.includes(s) && !SANDBOX.includes(s) && s !== "guide")
+            .map((s) => (
+              <NavItem key={s} screen={s} active={state.screen === s} badge={s === "inbox" ? unread : 0} />
+            ))}
+
+          {mySubjects.length > 0 ? (
+            <>
+              <div
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "var(--ink-3)",
+                  letterSpacing: "0.03em",
+                  padding: "16px 10px 4px",
+                }}
+              >
+                MY SUBJECTS
+              </div>
+              {mySubjects.map((sid) => {
+                const hats = hatsOn(person.id, sid, state.assignments);
+                return (
+                  <button
+                    key={sid}
+                    data-demo-id={`subject-${sid}`}
+                    onClick={() => {
+                      selectSubject(sid);
+                      navigate("studio");
+                    }}
+                    style={{
+                      width: "100%", border: "none", minHeight: 36,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "6px 10px",
+                      borderRadius: "var(--radius-s)",
+                      cursor: "pointer",
+                      color: "var(--ink-2)",
+                      fontSize: 13,
+                      background:
+                        state.selectedSubjectId === sid && state.screen === "studio"
+                          ? "var(--accent-soft)"
+                          : "transparent",
+                    }}
+                  >
+                    <span className="num">{sid}</span>
+                    <span style={{ display: "flex", gap: 3 }}>
+                      {hats.includes("coordinator") ? <HatBadge label="C" title="Coordinator" /> : null}
+                      {hats.includes("lecturer") ? <HatBadge label="L" title="Lecturer" /> : null}
+                    </span>
+                  </button>
+                );
+              })}
+            </>
+          ) : null}
+
+          <div className="nav-group-label">UNDERSTAND</div>
+          {UNDERSTAND.filter((s) => nav.includes(s)).map((s) => (
+            <NavItem key={s} screen={s} active={state.screen === s} badge={0} />
+          ))}
+          <NavItem screen="guide" active={state.screen === "guide"} badge={0} />
+          {SANDBOX.some((s) => nav.includes(s)) ? (
+            <>
+              <div className="nav-group-label">RESEARCH SANDBOX <span className="nav-group-note">illustrative</span></div>
+              {SANDBOX.filter((s) => nav.includes(s)).map((s) => (
+                <NavItem key={s} screen={s} active={state.screen === s} badge={0} />
+              ))}
+            </>
+          ) : null}
+        </nav>
+
+        <div style={{ padding: "10px 16px", borderTop: "1px solid var(--border)", fontSize: 11.5, color: "var(--ink-3)" }}>
+          Local prototype. Your work stays in this browser.
+          <br />
+          Sandbox screens use synthetic data and say so.
+        </div>
+      </aside>
+
+      {/* ---------- main column ---------- */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, minHeight: 0 }}>
+        <header
+          className="app-topbar"
+          style={{
+            height: TOPBAR_H,
+            flexShrink: 0,
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            padding: "0 20px",
+            borderBottom: "1px solid var(--border)",
+            background: "var(--surface)",
+          }}
+        >
+          <div style={{ fontWeight: 600, fontSize: 15 }}>{screenLabel(state.screen)}</div>
+          <div style={{ flex: 1 }} />
+
+          <button
+            className="search-trigger"
+            onClick={() => setPaletteOpen(true)}
+            aria-label="Search (Ctrl+K)"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              height: 34,
+              padding: "0 12px",
+              borderRadius: "var(--radius-s)",
+              border: "1px solid var(--border)",
+              background: "var(--bg)",
+              color: "var(--ink-3)",
+              cursor: "pointer",
+              fontSize: 13,
+              minWidth: 200,
+            }}
+          >
+            <Search size={15} />
+            <span style={{ flex: 1, textAlign: "left" }}>Search or jump to</span>
+            <Kbd>Ctrl K</Kbd>
+          </button>
+
+          <button
+            data-demo-id="topbar-bell"
+            onClick={() => navigate("inbox")}
+            aria-label={`Notifications, ${unread} unread`}
+            style={{
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 36,
+              height: 36,
+              borderRadius: "var(--radius-s)",
+              border: "1px solid var(--border)",
+              background: "var(--surface)",
+              cursor: "pointer",
+              color: "var(--ink-2)",
+            }}
+          >
+            <Bell size={17} />
+            {unread > 0 ? (
+              <span
+                className="num"
+                style={{
+                  position: "absolute",
+                  top: -5,
+                  right: -5,
+                  minWidth: 17,
+                  height: 17,
+                  padding: "0 4px",
+                  borderRadius: 999,
+                  background: "var(--accent)",
+                  color: "var(--accent-ink)",
+                  fontSize: 10.5,
+                  fontWeight: 600,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {unread}
+              </span>
+            ) : null}
+          </button>
+
+          {/* account menu */}
+          <div ref={menuRef} style={{ position: "relative" }}>
+            <button
+              className="account-trigger"
+              aria-label={"Account: " + person.name}
+              aria-expanded={menuOpen}
+              aria-controls="account-options"
+              data-demo-id="account-menu"
+              onClick={() => setMenuOpen((v) => !v)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                height: 36,
+                padding: "0 10px",
+                borderRadius: "var(--radius-s)",
+                border: "1px solid var(--border)",
+                background: "var(--surface)",
+                cursor: "pointer",
+              }}
+            >
+              <Avatar name={person.name} />
+              <span className="account-name" style={{ fontSize: 13, fontWeight: 500 }}>{person.name}</span>
+              {person.verified ? (
+                <ShieldCheck size={14} color="var(--ok)" aria-label="Verified" />
+              ) : null}
+              <ChevronDown size={14} color="var(--ink-3)" />
+            </button>
+            {menuOpen ? (
+              <div
+                id="account-options"
+                className="fade-up"
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: 42,
+                  width: 260,
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius-m)",
+                  boxShadow: "var(--shadow-2)",
+                  padding: 6,
+                  zIndex: 60,
+                }}
+              >
+                <div style={{ padding: "8px 10px", borderBottom: "1px solid var(--border)" }}>
+                  <div style={{ fontWeight: 600, fontSize: 13 }}>{person.name}</div>
+                  <div style={{ fontSize: 12, color: "var(--ink-2)" }}>
+                    {roleLine}
+                    {person.email ? ` Â· ${person.email}` : ""}
+                  </div>
+                  <div style={{ fontSize: 11.5, marginTop: 3, color: person.verified ? "var(--ok)" : "var(--warn)" }}>
+                    {person.verified
+                      ? "Verified coordinator identity"
+                      : "Unverified: edits carry an unverified tag"}
+                  </div>
+                </div>
+                <div style={{ padding: "6px 10px 2px", fontSize: 11, fontWeight: 600, color: "var(--ink-3)" }}>
+                  SWITCH PERSON
+                </div>
+                {state.people.map((p) => (
+                  <button
+                    key={p.id}
+                    data-demo-id={`switch-${p.id}`}
+                    onClick={() => {
+                      switchUser(p.id);
+                      setMenuOpen(false);
+                    }}
+                    style={menuItemStyle}
+                  >
+                    <Avatar name={p.name} />
+                    <span style={{ flex: 1, textAlign: "left" }}>{p.name}</span>
+                    {p.id === person.id ? <Check size={14} color="var(--accent)" /> : null}
+                  </button>
+                ))}
+                <div style={{ borderTop: "1px solid var(--border)", marginTop: 4, paddingTop: 4 }}>
+                  <button
+                    onClick={() => {
+                      if (window.confirm("Reset this browser's workspace? This removes saved teaching plans, drafts and uploads. Export any plan you want to keep first.")) resetWorkspace();
+                      setMenuOpen(false);
+                    }}
+                    style={menuItemStyle}
+                  >
+                    <RotateCcw size={14} />
+                    <span>Reset workspace</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setMenuOpen(false);
+                    }}
+                    style={menuItemStyle}
+                  >
+                    <LogOut size={14} />
+                    <span>Sign out</span>
+                  </button>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </header>
+
+        <main ref={mainRef} id="main-content" tabIndex={-1} style={{ flex: 1, overflowY: "auto", minWidth: 0 }} data-demo-id="main-scroll">
+          {NOTICE_SCREENS.includes(state.screen) ? <PrototypeNotice /> : null}
+          {state.persistenceStatus === "unavailable" ? <div role="alert" className="storage-warning">Browser storage is unavailable. Changes only last while this page is open. Export your teaching plan before closing.</div> : null}
+          <SectionHelp screen={state.screen} />
+          {props.children}
+        </main>
+      </div>
+
+      {/* ---------- overlays ---------- */}
+      {paletteOpen ? <CommandPalette onClose={() => setPaletteOpen(false)} /> : null}
+      <AgentPanel />
+      {state.toast ? (
+        <div
+          className="fade-up"
+          role="status"
+          aria-live="polite"
+          style={{
+            position: "fixed",
+            bottom: 22,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "var(--ink)",
+            color: "#fff",
+            padding: "9px 16px",
+            borderRadius: "var(--radius-m)",
+            boxShadow: "var(--shadow-2)",
+            fontSize: 13.5,
+            zIndex: 80,
+            maxWidth: 520,
+          }}
+        >
+          {state.toast}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+const menuItemStyle: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+  width: "100%",
+  padding: "7px 10px",
+  border: "none",
+  background: "transparent",
+  borderRadius: "var(--radius-s)",
+  cursor: "pointer",
+  fontSize: 13,
+  color: "var(--ink)",
+};
+
+function NavItem(props: { screen: Screen; active: boolean; badge: number }) {
+  if (props.screen === "login") return null;
+  const meta = NAV_META[props.screen];
+  const Icon = meta.icon;
+  return (
+    <button
+      data-demo-id={`nav-${props.screen}`}
+      onClick={() => navigate(props.screen)}
+      aria-current={props.active ? "page" : undefined}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        width: "100%",
+        padding: "7px 10px",
+        marginBottom: 1,
+        borderRadius: "var(--radius-s)",
+        border: "none",
+        cursor: "pointer",
+        fontSize: 13.5,
+        fontWeight: props.active ? 600 : 400,
+        color: props.active ? "var(--accent)" : "var(--ink-2)",
+        background: props.active ? "var(--accent-soft)" : "transparent",
+        transition: "background 150ms ease-out",
+      }}
+    >
+      <Icon size={16} strokeWidth={1.75} />
+      <span style={{ flex: 1, textAlign: "left" }}>{meta.label}</span>
+      {props.badge > 0 ? (
+        <span
+          className="num"
+          style={{
+            minWidth: 18,
+            height: 18,
+            padding: "0 5px",
+            borderRadius: 999,
+            background: "var(--accent)",
+            color: "var(--accent-ink)",
+            fontSize: 11,
+            fontWeight: 600,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {props.badge}
+        </span>
+      ) : null}
+    </button>
+  );
+}
+
+function HatBadge(props: { label: string; title: string }) {
+  return (
+    <span
+      title={props.title}
+      style={{
+        width: 16,
+        height: 16,
+        borderRadius: 4,
+        background: "var(--surface-2)",
+        color: "var(--ink-3)",
+        fontSize: 10,
+        fontWeight: 600,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {props.label}
+    </span>
+  );
+}
+
+function Avatar(props: { name: string }) {
+  const initials = props.name
+    .split(" ")
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("");
+  return (
+    <span
+      aria-hidden
+      style={{
+        width: 24,
+        height: 24,
+        borderRadius: "50%",
+        background: "var(--accent-soft)",
+        color: "var(--accent)",
+        fontSize: 10.5,
+        fontWeight: 600,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+      }}
+    >
+      {initials}
+    </span>
+  );
+}
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content src/ui/screens/Office.tsx; Get-Content src/app/runs.ts; Get-Content package.json; git status --short' in C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+ succeeded in 72ms:
+// How Lyceum works: the seven roles as a pipeline, then the real step-by-step
+// record for the course you are working on. Every event on the timeline is
+// derived from something the workspace holds; nothing here is a fixture.
+
+import { useState } from "react";
+import { BarChart3, BookOpen, ChevronDown, ChevronRight, Map as MapIcon, PenLine, Presentation, Search, ShieldCheck, type LucideIcon } from "lucide-react";
+import { ROLES, runTimeline, type RoleId } from "../../app/runs.ts";
+import { subjectsForPerson } from "../../app/roles.ts";
+import { currentPerson, navigate, selectStudioTab, selectSubject, useStore } from "../../app/store.ts";
+import { Button, Page, PageHead, Select, Tag } from "../primitives/index.tsx";
+
+const ICONS: Record<RoleId, LucideIcon> = { folio: BookOpen, scout: Search, atlas: MapIcon, quill: PenLine, prism: Presentation, lens: BarChart3, steward: ShieldCheck };
+
+export function OfficeScreen() {
+  const state = useStore();
+  const person = currentPerson();
+  const [open, setOpen] = useState<RoleId | null>(null);
+  if (!person) return null;
+  const mine = person.orgRole === "academic" ? subjectsForPerson(person.id, state.assignments) : state.subjects.map((s) => s.id);
+  const subjectId = state.selectedSubjectId && mine.includes(state.selectedSubjectId) ? state.selectedSubjectId : mine[0] ?? null;
+  const events = runTimeline(state, subjectId);
+  const roleName = (id: RoleId) => ROLES.find((r) => r.id === id)!;
+  return <Page wide>
+    <PageHead title="How Lyceum works" context="Seven roles, one afternoon, nothing automatic. Each role reads what you confirmed and hands the next one a record you can open." />
+    <ol className="pipeline" aria-label="The seven roles in order">
+      {ROLES.map((role) => { const Icon = ICONS[role.id]; const expanded = open === role.id; return <li key={role.id} className={expanded ? "is-open" : ""}>
+        <button type="button" className="pipeline-card" aria-expanded={expanded} onClick={() => setOpen(expanded ? null : role.id)} data-demo-id={"role-" + role.id}>
+          <span className="pipeline-icon" aria-hidden><Icon size={22} /></span>
+          <span className="pipeline-name">{role.name}</span>
+          <span className="pipeline-job">{role.job}</span>
+          <span className="pipeline-more" aria-hidden>{expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}</span>
+        </button>
+        {expanded ? <dl className="pipeline-detail"><div><dt>Reads</dt><dd>{role.reads}</dd></div><div><dt>Produces</dt><dd>{role.produces}</dd></div><div><dt>Cannot</dt><dd>{role.cannot}</dd></div></dl> : null}
+      </li>; })}
+    </ol>
+    <div className="principle-strip" aria-label="Principles">
+      <div><strong>Only on request</strong><span>Nothing fetches or drafts until you ask.</span></div>
+      <div><strong>Exact quotations</strong><span>A requirement is a sentence from its source, or it is rejected.</span></div>
+      <div><strong>Denominator in view</strong><span>Counts over postings you reviewed, with an interval. No score.</span></div>
+      <div><strong>People decide</strong><span>Briefs go to colleagues; the university's process stays in charge.</span></div>
+    </div>
+
+    <section className="workspace-panel" aria-labelledby="run-record">
+      <div className="section-heading"><div><h2 id="run-record">What actually happened{subjectId ? " on " + subjectId : ""}</h2><p className="muted">Every line below is derived from a record in this workspace, in the order it was created.</p></div>
+        {mine.length > 1 ? <label className="course-switcher">Course<Select aria-label="Choose course" value={subjectId ?? ""} onChange={(e) => selectSubject(e.target.value)}>{mine.map((id) => <option key={id} value={id}>{id}</option>)}</Select></label> : null}</div>
+      {events.length ? <ol className="timeline" data-demo-id="run-timeline">{events.map((e, i) => <li key={i}>
+        <span className="timeline-time num">{e.at.slice(0, 16).replace("T", " ")}</span>
+        <span className="timeline-role"><Tag tone="accent">{roleName(e.role).name}</Tag><span className="muted">{roleName(e.role).job}</span></span>
+        <div className="timeline-body"><strong>{e.title}</strong><p className="muted">{e.detail}</p></div>
+        {e.tab && subjectId ? <Button variant="quiet" aria-label={"Open " + e.title} onClick={() => { selectSubject(subjectId); selectStudioTab(e.tab!); navigate("studio"); }}>Open</Button> : null}
+      </li>)}</ol>
+        : <div className="empty-run"><p>No step has run on this course yet. Open the course and follow the journey bar, or press Play demo on the sign-in screen to watch one afternoon end to end.</p>
+          <Button variant="primary" onClick={() => navigate("courses")}>Open a course</Button></div>}
+    </section>
+    <p className="muted">Want to see how this is tested? <Button variant="quiet" onClick={() => navigate("evaluation")}>Open Evaluation</Button></p>
+  </Page>;
+}
+// What actually happened, step by step, told by role. Every event is derived
+// from a record the workspace holds (a source, a quotation, a version, a brief),
+// so the timeline can only show work that was really done.
+
+import type { AppState } from "./store.ts";
+import { SOURCE_POLICIES } from "../lib/collect.ts";
+import { evidenceReport } from "../lib/evidence.ts";
+
+export type RoleId = "folio" | "scout" | "atlas" | "quill" | "prism" | "lens" | "steward";
+export interface Role { id: RoleId; name: string; job: string; reads: string; produces: string; cannot: string }
+export const ROLES: Role[] = [
+  { id: "folio", name: "Folio", job: "Course reader", reads: "Your syllabus, outline and uploaded documents", produces: "A course record with outcomes, topics and locators", cannot: "Declare a document official" },
+  { id: "scout", name: "Scout", job: "Industry researcher", reads: "Permitted employer boards, on your request", produces: "Postings with link, publication date, retrieval time and text", cannot: "Collect without being asked, or change the curriculum" },
+  { id: "atlas", name: "Atlas", job: "Curriculum mapper", reads: "The kept postings and the skills you name", produces: "Proposed exact quotations and skill-to-outcome mappings for you to confirm", cannot: "Confirm a quotation or a mapping for you" },
+  { id: "quill", name: "Quill", job: "Course designer", reads: "The course brief, constraints and the evidence you confirmed", produces: "Outline revisions checked against hours, links and protected topics", cannot: "Approve its own revision" },
+  { id: "prism", name: "Prism", job: "Teaching-material creator", reads: "A saved session and the evidence linked to its outcomes", produces: "An editable teaching pack with speaker notes", cannot: "Publish anything or write a word with a model" },
+  { id: "lens", name: "Lens", job: "Evidence analyst", reads: "Reviewed postings and confirmed quotations", produces: "Counts with the denominator, intervals, coverage against targets", cannot: "Score employability or predict learning" },
+  { id: "steward", name: "Steward", job: "Review assistant", reads: "The brief, its sources and the decision context", produces: "A brief with receipts, sent to the people who decide", cannot: "Decide; the lecturer and the university do" },
+];
+
+export interface RunEvent { at: string; role: RoleId; title: string; detail: string; tab?: AppState["studioTab"] }
+
+const time = (iso: string) => iso;
+
+export function runTimeline(state: AppState, subjectId: string | null): RunEvent[] {
+  if (!subjectId) return [];
+  const events: RunEvent[] = [];
+  const name = (id: string) => state.people.find((p) => p.id === id)?.name ?? id;
+  for (const draft of state.curriculumDrafts.filter((d) => d.subjectId === subjectId)) {
+    for (const h of draft.history) {
+      const titles: Record<string, string> = { created: "Revision started", saved: "Revision saved", checked: "Constraints checked", adopted: "Version adopted", discarded: "Revision discarded" };
+      events.push({ at: h.at, role: "quill", title: titles[h.action] ?? h.action, detail: h.note + " (" + name(h.byPersonId) + ")", tab: h.action === "adopted" ? "history" : "curriculum" });
+    }
+  }
+  const sources = state.evidenceSources.filter((s) => s.subjectId === subjectId);
+  const batches = new Map<string, typeof sources>();
+  for (const s of sources.filter((x) => x.collection)) {
+    const key = s.collection!.label + "|" + s.collection!.retrievedAt;
+    batches.set(key, [...(batches.get(key) ?? []), s]);
+  }
+  for (const [, batch] of batches) {
+    const first = batch[0];
+    const policy = SOURCE_POLICIES[first.collection!.provider];
+    events.push({ at: first.addedAt, role: "scout", title: "Fetched on request, " + batch.length + " postings kept", detail: policy.name + " Â· retrieved " + time(first.collection!.retrievedAt) + " Â· " + batch.filter((b) => b.duplicateOf).length + " duplicate copies", tab: "evidence" });
+  }
+  for (const s of sources.filter((x) => !x.collection)) events.push({ at: s.addedAt, role: "folio", title: "Document recorded: " + s.title, detail: (s.organisation || "organisation not named") + " Â· pasted by " + name(s.addedBy), tab: "evidence" });
+  const mentions = state.skillMentions.filter((m) => m.subjectId === subjectId);
+  const byMinute = new Map<string, number>();
+  for (const m of mentions) { const key = m.addedAt.slice(0, 16); byMinute.set(key, (byMinute.get(key) ?? 0) + 1); }
+  for (const [minute, count] of byMinute) events.push({ at: minute + ":00.000Z", role: "atlas", title: count + " exact quotations confirmed", detail: "Each verified against its source text; paraphrases rejected", tab: "evidence" });
+  const reviewed = sources.filter((s) => s.reviewed && !s.duplicateOf);
+  if (reviewed.length) {
+    const report = evidenceReport(subjectId, state.evidenceSources, state.skillMentions, state.skillMappings, state.clos.filter((c) => c.subjectId === subjectId));
+    const latest = reviewed.map((s) => s.addedAt).sort().at(-1)!;
+    const top = report.rows.filter((r) => r.postings > 0).slice(0, 3).map((r) => r.skill + " " + r.postings + " of " + report.eligible).join(", ");
+    events.push({ at: latest, role: "lens", title: "Counted over " + report.eligible + " reviewed postings", detail: top ? "Top: " + top + ". Wilson 95% intervals shown; no score." : "No requirement quoted yet", tab: "evidence" });
+  }
+  for (const m of state.skillMappings.filter((x) => x.subjectId === subjectId)) {
+    const labels = m.cloIds.map((id) => state.clos.find((c) => c.id === id)?.label ?? id).join(", ") || "no outcome";
+    events.push({ at: m.updatedAt, role: "atlas", title: "Mapped " + m.skill + " to " + labels, detail: "Coverage " + m.stage + ", target " + m.target + (m.evidence ? " Â· " + m.evidence : ""), tab: "evidence" });
+  }
+  for (const s of state.teachingPlans.find((p) => p.subjectId === subjectId)?.sessions ?? []) events.push({ at: s.updatedAt, role: "prism", title: "Session saved: week " + s.week + ", " + s.topic, detail: s.minutes + " minutes Â· " + (s.cloIds.length ? "linked to " + s.cloIds.join(", ") : "no outcome linked") + " Â· teaching pack available", tab: "plan" });
+  for (const t of state.testDrafts.filter((x) => x.subjectId === subjectId)) if (t.items.length) events.push({ at: state.subjectVersions.find((v) => v.id === t.courseVersionId)?.changedAt ?? "", role: "quill", title: t.items.length + " template assessment items drafted", detail: "Blueprint over " + t.blueprint.cloWeights.length + " outcomes Â· labelled as templates", tab: "assessment" });
+  for (const b of state.evidenceBriefs.filter((x) => x.subjectId === subjectId)) {
+    events.push({ at: b.createdAt, role: "steward", title: "Meeting brief prepared", detail: b.recommendation + " Â· by " + name(b.createdBy) + " Â· receipts attached", tab: "evidence" });
+    if (b.sentAt) events.push({ at: b.sentAt, role: "steward", title: "Brief sent to " + b.recipients.map(name).join(", "), detail: "Read " + (state.notifications.filter((n) => n.briefId === b.id && n.read).length) + " of " + b.recipients.length + " so far", tab: "evidence" });
+  }
+  return events.filter((e) => e.at).sort((a, b) => a.at.localeCompare(b.at));
+}
+{
+  "name": "lyceum",
+  "private": true,
+  "version": "3.0.0",
+  "type": "module",
+  "description": "Lyceum: a lecturer's workspace for reviewing course outcomes and topics, preparing teaching, and documenting advisory decisions.",
+  "author": "Hafiz Azman",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "concurrently -n web,api -c blue,green \"vite\" \"node --watch server/index.ts\"",
+    "dev:web": "vite",
+    "dev:api": "node --watch server/index.ts",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "prove": "node src/prove-acceptance.ts",
+    "prove:backtest": "node src/prove-backtest.ts",
+    "prove:flow": "node src/prove-flow.ts",
+    "prove:signal": "node src/prove-signal.ts",
+    "prove:intake": "node src/prove-intake.ts",
+    "prove:integrity": "node --test src/prove-integrity.ts",
+    "prove:all": "node src/prove-acceptance.ts && node src/prove-backtest.ts && node src/prove-flow.ts && node src/prove-signal.ts && node src/prove-intake.ts && node --test src/prove-integrity.ts && node --test src/prove-teaching.ts && node --test src/prove-curriculum.ts && node --test src/prove-evidence.ts && node --test src/prove-collect.ts && node --test src/prove-research.ts && node --test src/prove-slides.ts",
+    "gen:demo": "node scripts/gen-demo-files.mjs",
+    "gen:music": "node scripts/gen-music.mjs",
+    "smoke": "node scripts/demo-smoke.mjs",
+    "smoke:integrity": "node scripts/integrity-smoke.mjs",
+    "shots": "node scripts/shots.mjs",
+    "prove:teaching": "node --test src/prove-teaching.ts",
+    "smoke:workspace": "node scripts/workspace-smoke.mjs",
+    "prove:curriculum": "node --test src/prove-curriculum.ts",
+    "prove:evidence": "node --test src/prove-evidence.ts",
+    "prove:collect": "node --test src/prove-collect.ts",
+    "prove:research": "node --test src/prove-research.ts",
+    "prove:slides": "node --test src/prove-slides.ts",
+    "gen:sample": "node scripts/gen-collected-sample.mjs",
+    "smoke:curriculum": "node scripts/curriculum-smoke.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@hono/node-server": "^1.13.7",
+    "hono": "^4.6.14",
+    "jszip": "^3.10.1",
+    "lucide-react": "^0.469.0",
+    "pptxgenjs": "^4.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "unpdf": "^0.12.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.0",
+    "puppeteer-core": "^23.11.1",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5"
+  }
+}
+warning: unable to access 'C:\Users\abdul/.config/git/ignore': Permission denied
+warning: unable to access 'C:\Users\abdul/.config/git/ignore': Permission denied
+ M .env.example
+ M DECISIONS.md
+ M JUDGES.md
+ M README.md
+RM lyceum-v3-as-built.md -> docs/history/lyceum-v3-as-built.md
+RM lyceum-v3-implementation.md -> docs/history/lyceum-v3-implementation.md
+ M package-lock.json
+ M package.json
+ M scripts/demo-smoke.mjs
+ M server/index.ts
+ M src/App.tsx
+ M src/agents/client.ts
+ M src/agents/evaluator.ts
+ M src/app/roles.ts
+ M src/app/store.ts
+ M src/data/market.ts
+ M src/demo/DemoOverlay.tsx
+ M src/demo/runner.ts
+ M src/demo/script.ts
+ M src/theme/global.css
+ M src/theme/tokens.ts
+ M src/types.ts
+ M src/ui/primitives/index.tsx
+ M src/ui/screens/Acceptance.tsx
+ M src/ui/screens/Backtest.tsx
+ M src/ui/screens/Courses.tsx
+ M src/ui/screens/DataRoom.tsx
+ M src/ui/screens/Inbox.tsx
+ M src/ui/screens/Index.tsx
+ M src/ui/screens/Login.tsx
+ M src/ui/screens/Office.tsx
+ M src/ui/screens/Studio.tsx
+ M src/ui/screens/Trends.tsx
+ M src/ui/screens/index.ts
+ M src/ui/shell/CommandPalette.tsx
+ M src/ui/shell/Shell.tsx
+ M src/ui/shell/nav.ts
+?? docs/lecturer-guide.md
+?? docs/lyceum-improvement-plan.md
+?? docs/lyceum-v3-as-built-2026-10-09.md
+?? docs/presentation/
+?? docs/research/
+?? docs/review/
+?? docs/screenshots/workspace-course-mobile.png
+?? docs/screenshots/workspace-curriculum-mobile.png
+?? docs/screenshots/workspace-curriculum.png
+?? docs/screenshots/workspace-home.png
+?? docs/screenshots/workspace-teaching-plan.png
+?? public/demo/collected-sample.json
+?? scripts/curriculum-smoke.mjs
+?? scripts/gen-collected-sample.mjs
+?? scripts/gen-sample-decks.mjs
+?? scripts/generate-guide.mjs
+?? scripts/integrity-smoke.mjs
+?? scripts/presentation-shots.mjs
+?? scripts/workspace-smoke.mjs
+?? server/collect.ts
+?? src/app/journey.ts
+?? src/app/runs.ts
+?? src/app/sectionGuides.ts
+?? src/app/unsaved.ts
+?? src/data/painStats.ts
+?? src/data/scanBenchmark.ts
+?? src/lib/benchmark.ts
+?? src/lib/collect.ts
+?? src/lib/curriculum.ts
+?? src/lib/download.ts
+?? src/lib/evidence.ts
+?? src/lib/slides.ts
+?? src/lib/sourceAgreement.ts
+?? src/lib/teachingPlan.ts
+?? src/lib/workspaceBackup.ts
+?? src/prove-collect.ts
+?? src/prove-curriculum.ts
+?? src/prove-evidence.ts
+?? src/prove-integrity.ts
+?? src/prove-research.ts
+?? src/prove-slides.ts
+?? src/prove-teaching.ts
+?? src/ui/primitives/BrandImage.tsx
+?? src/ui/primitives/Journey.tsx
+?? src/ui/primitives/PrototypeNotice.tsx
+?? src/ui/primitives/SectionHelp.tsx
+?? src/ui/primitives/ShareBar.tsx
+?? src/ui/screens/CourseCreation.tsx
+?? src/ui/screens/CourseWorkspace.tsx
+?? src/ui/screens/CurriculumWorkspace.tsx
+?? src/ui/screens/Evaluation.tsx
+?? src/ui/screens/EvidenceResearch.tsx
+?? src/ui/screens/EvidenceWorkspace.tsx
+?? src/ui/screens/Guide.tsx
+?? src/ui/screens/Landing.tsx
+?? src/ui/screens/WorkspaceBackup.tsx
+?? src/ui/useUnsavedEditor.ts
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n 'label:|Start here|sample|Select all shown|Import selected|Mark postings|Teaching pack|Confirm all|Prepare brief' src/ui/shell/nav.ts src/ui/screens/Inbox.tsx src/ui/screens/EvidenceResearch.tsx src/ui/screens/EvidenceWorkspace.tsx src/ui/screens/CourseWorkspace.tsx; rg -n 'Play demo|Escape|confirm|reset' src/demo/DemoOverlay.tsx src/demo/runner.ts" in C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+ succeeded in 50ms:
+src/ui/screens/EvidenceWorkspace.tsx:45:        rows={[...report.rows].sort((a, b) => b.postings - a.postings).slice(0, 8).map((r) => ({ label: r.skill, share: r.share, low: r.interval?.low ?? null, high: r.interval?.high ?? null, note: r.postings + " of " + report.eligible }))} /> : null}
+src/ui/screens/EvidenceWorkspace.tsx:47:        <caption className="muted">Share is the postings quoting the skill divided by the reviewed postings. The interval is a 95% Wilson interval; it does not correct how this sample was chosen.</caption>
+src/ui/screens/CourseWorkspace.tsx:185:          <div className="button-row"><Button data-demo-id={"session-slides-" + session.id} aria-label={"Download teaching pack for " + session.topic} onClick={() => void downloadDeck(sessionDeck(subject, session, clos, evidenceReport(subject.id, state.evidenceSources, state.skillMentions, state.skillMappings, clos), state.skillMentions, state.evidenceSources, state.people, nowIso()))}><Download size={15} /> Teaching pack (.pptx)</Button><span className="muted">Editable slides from this session and the evidence linked to its outcomes. No AI text.</span></div>
+src/ui/screens/EvidenceResearch.tsx:23:  const [provider, setProvider] = useState<CollectionProvider>("sample");
+src/ui/screens/EvidenceResearch.tsx:34:  const boardOk = provider === "sample" || BOARD_TOKEN.test(board.trim());
+src/ui/screens/EvidenceResearch.tsx:45:        {provider !== "sample" ? <Field label="Employer board token" hint={provider === "greenhouse" ? "The name in boards.greenhouse.io/NAME, or in an employer's careers link." : "The name in jobs.lever.co/NAME."}><Input data-demo-id="collect-board" maxLength={80} value={board} onChange={(e) => setBoard(e.target.value)} placeholder={provider === "greenhouse" ? "e.g. stripe" : "e.g. palantir"} /></Field> : null}
+src/ui/screens/EvidenceResearch.tsx:56:      {run ? <div data-demo-id="collect-log"><div className="button-row"><h4>Collection log</h4>{run.status === "running" ? <Tag tone="warn">Fetching now</Tag> : run.status === "failed" ? <Tag tone="danger">Failed</Tag> : run.provider === "sample" ? <Tag>Saved sample, no network</Tag> : run.cached ? <Tag tone="accent">Local cache of a live fetch</Tag> : <Tag tone="ok">Fetched live</Tag>}</div>
+src/ui/screens/EvidenceResearch.tsx:63:            <Button data-demo-id="collect-select-all" onClick={() => setSelected(postings.filter((p) => !imported.has(p.id)).map((p) => p.id))}>Select all shown</Button>
+src/ui/screens/EvidenceResearch.tsx:122:          <Button variant="primary" data-demo-id="scan-confirm-all" onClick={() => { const result = confirmProposals(subject.id, proposals.map(withLevel)); setMessage(result.added + " quotations recorded, " + result.skipped + " skipped."); }}>Confirm all {proposals.length}</Button>
+src/ui/screens/EvidenceResearch.tsx:156:      }}>Prepare brief</Button></div>
+src/ui/shell/nav.ts:25:export const NAV_META: Record<Exclude<Screen, "login">, { label: string; icon: LucideIcon }> = {
+src/ui/shell/nav.ts:26:  inbox: { label: "Home", icon: Inbox },
+src/ui/shell/nav.ts:27:  trends: { label: "Trends", icon: TrendingUp },
+src/ui/shell/nav.ts:28:  approval: { label: "Approvals", icon: CheckSquare },
+src/ui/shell/nav.ts:29:  programme: { label: "Programme", icon: Layers },
+src/ui/shell/nav.ts:30:  "new-subject": { label: "New subject", icon: PlusSquare },
+src/ui/shell/nav.ts:31:  assignments: { label: "Assignments", icon: Users },
+src/ui/shell/nav.ts:32:  courses: { label: "Courses", icon: BookOpen },
+src/ui/shell/nav.ts:33:  studio: { label: "Course Studio", icon: PenLine },
+src/ui/shell/nav.ts:34:  acceptance: { label: "Acceptance test", icon: FlaskConical },
+src/ui/shell/nav.ts:35:  upload: { label: "Upload", icon: UploadCloud },
+src/ui/shell/nav.ts:36:  backtest: { label: "Closed loop", icon: Target },
+src/ui/shell/nav.ts:37:  dataroom: { label: "Data room", icon: Database },
+src/ui/shell/nav.ts:38:  office: { label: "How it works", icon: Workflow },
+src/ui/shell/nav.ts:39:  evaluation: { label: "Evaluation", icon: ListChecks },
+src/ui/shell/nav.ts:40:  index: { label: "Relevance Index", icon: Globe },
+src/ui/shell/nav.ts:41:  guide: { label: "Guide & progress", icon: BookMarked },
+src/demo/DemoOverlay.tsx:3:// Playing pins the clock and resets the workspace so every recording is
+src/demo/DemoOverlay.tsx:4:// identical; Escape stops it and unpins.
+src/demo/DemoOverlay.tsx:8:import { resetDemoState, resetSignalReveal, setClockPinned, useStore } from "../app/store.ts";
+src/demo/DemoOverlay.tsx:47:  // Escape aborts a running demo.
+src/demo/DemoOverlay.tsx:50:      if (e.key === "Escape") abortRef.current = true;
+src/demo/DemoOverlay.tsx:75:    if (hasSavedWork && !window.confirm("Playing the demo resets this browser's workspace, including saved plans, drafts and uploads. Export any plan you want to keep first. Continue?")) return;
+src/demo/DemoOverlay.tsx:78:    resetDemoState();
+src/demo/DemoOverlay.tsx:79:    resetSignalReveal();
+src/demo/DemoOverlay.tsx:143:        <Play size={14} /> Play demo
+
+2026-10-10T18:55:40.245547Z ERROR codex_core::tools::router: error=apply_patch verification failed: invalid patch: multiple operations target C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3\JUDGES.md
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "@'
+# Five minutes with Lyceum (for judges)
+
+Lyceum is a lecturer's course workspace. The part worth judging is the research
+run: fetch permitted employer postings on request, keep the ones worth reading,
+confirm requirements as exact quotations, count with the denominator in view,
+map skills to course outcomes, and take a brief with every receipt to a meeting.
+Nothing changes the course without the lecturer. No model key or external
+account is needed. Live collection needs the local API and a network connection;
+a dated saved sample of real postings works without them.
+
+"'```bash
+npm install
+npm run dev         # web UI + local API (document parsing, live board collection); open the printed URL
+```
+
+`npm run build` then `npm run preview` serves the UI alone. The saved sample
+still works there; live boards and PDF, PPTX and DOCX parsing need the API.
+On Windows PowerShell, use `npm.cmd` if execution policy blocks `npm.ps1`.
+
+## Find your way in
+
+On the sign-in screen, **See how Lyceum works** opens the public landing page
+at `#/index` while signed out. It shows pain figures with source links, the
+steps **Search**, **Read**, **See the trend**, **Decide**, **Brief and teach**,
+and what is proven and not built. **Try it as a lecturer** returns to sign-in.
+The public page is no longer the illustrative Relevance Index.
+
+Once signed in, the sidebar puts the main work screens first. **UNDERSTAND**
+contains **How it works**, **Evaluation** and **Guide & progress**.
+**RESEARCH SANDBOX**, labelled **illustrative**, contains **Trends**,
+**Acceptance test**, **Closed loop**, **Data room** and **Relevance Index**.
+
+## Option A: hands off
+
+Click **Play demo** on the sign-in screen, or **Watch the tour** on the public
+landing page. A simulated cursor plays over the real app with captions.
+[README.md](README.md) estimates about five and a half minutes after the intro
+cards; live collection can vary.
+
+1. Dr Sobri opens CS310, revises its outcome wording and topics, checks the
+   constraints, adopts the local version and opens its history.
+2. In **Evidence**, he tries Greenhouse'"'s "'`stripe` board with `data analyst`.
+   If collection fails, the dated saved sample stands in and the log says so.
+   He selects postings and imports their receipts.
+3. He names skills, scans and confirms exact sentences. A typed paraphrase is
+   rejected. He marks the postings reviewed before they enter the denominator.
+4. He maps a skill to CLO5 with a documented stage, target and course evidence,
+   saves a dashboard lab and downloads its editable teaching pack.
+5. He generates template assessment items, prepares a meeting brief, downloads
+   its slides and sends it to Dr Rahman.
+6. **Guide & progress** shows the guides and backup controls. Dr Rahman then
+   reads the brief from **Home**, receipts attached.
+
+Press Escape to take over. Playing resets the local workspace; the app warns
+first if it detects saved work. Open How it works and Evaluation afterwards to
+inspect the records and checks.
+
+## Option B: hands on (the same work, your clicks)
+
+Sign in as **Dr Sobri**. Follow the **Start here** card on **Home** and the
+journey bar in **Course Studio**. Completion comes from workspace state, not
+visiting a screen. Existing results may already tick a step.
+
+1. **Open a course.** Open **Courses**, then **CS310**, or create a personal
+   workspace. Use CS310 for the CLO5 example below.
+2. **Confirm the outline.** In **Outcomes & topics**, start a revision, edit
+   the outline, save and check it, then explicitly choose **Use as my course
+   version**. The journey recognises an adopted revision or an outline with topics.
+3. **Collect evidence.** In **Evidence**, keep the saved sample for a repeatable
+   run, search `analyst`, fetch, select and import postings. Alternatively choose
+   Greenhouse with `stripe` and the local API running. Read the source policy.
+   Fetching alone does not finish the step; sources must be saved.
+4. **Confirm quotations.** Enter `SQL, Python, dashboards|dashboard,
+   stakeholders|stakeholder`, save the terms and scan. Confirm or dismiss the
+   proposals. Tick the extraction acknowledgement and mark the postings reviewed.
+   The step needs saved quotations and reviewed, nonduplicate sources. Inspect
+   the numerator, denominator and interval in the observed requirements table.
+5. **Map to outcomes.** Map a quoted skill, such as dashboards, to CLO5.
+   Save its documented coverage stage, target stage and cited course evidence.
+   This is your reviewed judgement.
+6. **Plan a class.** In **Teaching plan**, save a session linked to CLO5 with
+   an activity and learning check. Download **Teaching pack (.pptx)** for its
+   outcomes, linked evidence and teaching content, with speaker notes. The
+   journey checks for a saved session, not a download.
+7. **Brief the meeting.** Back in **Evidence**, choose a recommendation, write
+   a note and **Prepare brief**. Read it, download Markdown or slides, and send
+   it to **Dr Rahman**. Preparing the brief completes the step; sending is optional.
+
+Then open **How it works** under **UNDERSTAND**. Expand the role cards for
+**Reads**, **Produces** and **Cannot**. Select CS310 and inspect **What actually
+happened**: its timeline comes from saved workspace records, including the work
+you just did. **Open** takes you back to the relevant course tab.
+
+Next open **Evaluation**. Live checks re-examine quotations, duplicates, reviewed
+postings and backup validity in this browser. The **Requirement scan benchmark**
+shows detection metrics and disagreements on a small hand-labelled set, with its
+limits stated. The automated suites table reports verification separately from
+these live checks. The **Student-agent benchmark: the protocol** is labelled
+**Not yet run**; its synthetic backtest is not real-world accuracy.
+
+## Things worth poking
+
+- Paste a permitted job description under **Sources and receipts**. Quote its
+  exact words, then try a paraphrase. Record it again and inspect duplicate handling.
+- In **Outcomes & topics**, remove protected content or exceed a declared hour
+  budget and watch the check refuse it. Adopt a valid change and inspect affected
+  teaching sessions flagged for review.
+- Switch to **Dr Rahman** from the account menu. On **Home**, **Read brief**
+  opens the sent brief with its receipts.
+- In **Guide & progress**, download a JSON workspace backup, change something,
+  restore with its preview and acknowledgement, then download the recovery copy.
+- **Reset workspace** in the account menu restores the seed for a clean slate.
+
+For reproducible checks, run `npm run prove:all`. The
+[9 October as-built report](docs/lyceum-v3-as-built-2026-10-09.md), section 5,
+records 152 passing checks. After `npm run build`, `npm run smoke:integrity`
+checks the public landing page'"'s limits and absence of a prototype-data notice,
+notice placement on the visited signed-in screens, the Index's source-disagreement
+warning, Data room's illustrative label, the timeline and benchmark headings,
+and absence of page errors. These are software checks, not learning validation.
+
+## What is real and what is not
+
+- Real: requested board collection, exact-quotation validation, counts, revisions,
+  plans, briefs, editable decks and backups. The saved sample is real Stripe
+  postings retrieved 9 October 2026, truncated and labelled as a saved sample.
+- Prototype: personas, seeded courses and browser-local role switching. Sending
+  a brief is an in-app local workflow, not an external message or shared service.
+- Illustrative: sandbox market figures and learner records. The sidebar labels
+  the sandbox; its screens and **Approvals** carry the prototype-data notice.
+  That notice is not a blanket banner on work screens or the public landing page.
+  Evaluation separately labels its synthetic backtest and unrun protocol.
+- Not built: shared accounts, server permissions and sync, collectors for sites
+  without an API, scheduled refresh, comparable time-window trends, Teams or
+  Slack surfaces, model-drafted slide text, and complete assessment marks and
+  rubrics. Briefs export as Markdown or slides, not DOCX or PDF.
+- Never claimed: representative labour-market counts, employability scores,
+  proven learning gains or accreditation. No lecturer pilot has run. Formal
+  syllabus approval stays in the university's process.
+'@ | Set-Content -LiteralPath JUDGES.md -Encoding utf8" in C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+ succeeded in 35ms:
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$guide = Get-Content -Raw JUDGES.md; ($guide -split '"'\\s+' | Where-Object { "'$_ }).Count; [regex]::Matches($guide, '"'[\\u2013\\u2014]').Count; git diff --check -- JUDGES.md; rg -n 'JourneyCard|Start here' src/ui/screens/Inbox.tsx; Get-Content src/ui/screens/EvidenceResearch.tsx | Select-Object -Skip 60 -First 13" in C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+ succeeded in 127ms:
+1253
+0
+warning: in the working copy of 'JUDGES.md', LF will be replaced by CRLF the next time Git touches it
+24:import { JourneyCard } from "../primitives/Journey.tsx";
+93:      {person.orgRole === "academic" ? <JourneyCard state={state} subjectId={recentCourse?.id ?? null} /> : null}
+        {postings.length ? <>
+          <div className="button-row">
+            <Button data-demo-id="collect-select-all" onClick={() => setSelected(postings.filter((p) => !imported.has(p.id)).map((p) => p.id))}>Select all shown</Button>
+            <Button onClick={() => setSelected([])}>Clear selection</Button>
+            <Button variant="primary" data-demo-id="collect-import" disabled={!selected.length} onClick={() => {
+              const result = importCollectedPostings(subject.id, selected);
+              setMessage(result.ok ? "" : result.error);
+              if (result.ok) setSelected([]);
+            }}>Import {selected.length ? selected.length + " " : ""}selected as sources</Button>
+          </div>
+          <div className="table-scroll"><table className="evidence-table">
+            <thead><tr><th scope="col">Keep</th><th scope="col">Title</th><th scope="col">Employer</th><th scope="col">Location</th><th scope="col">Published</th><th scope="col">Matched</th></tr></thead>
+            <tbody>{postings.map((p) => <tr key={p.id}>
+
+codex
+Updated only [JUDGES.md](JUDGES.md) with current navigation, demo behavior, journey steps, Evaluation, and limitations.
+
+Verified: 1,253 words, no em or en dashes, and no whitespace errors. Verification counts are attributed to the as-built report.
+tokens used
+54,956
+Updated only [JUDGES.md](JUDGES.md) with current navigation, demo behavior, journey steps, Evaluation, and limitations.
+
+Verified: 1,253 words, no em or en dashes, and no whitespace errors. Verification counts are attributed to the as-built report.
