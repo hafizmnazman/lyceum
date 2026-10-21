@@ -22,7 +22,7 @@ function Count({ w }: { w: WindowCount }) {
 
 function coverage(c: SkillChange) {
   if (!c.coverageChanged) return <span className="muted">Unchanged ({STAGE_LABEL[c.stageAfter]})</span>;
-  return <span>{STAGE_LABEL[c.stageBefore]} → {STAGE_LABEL[c.stageAfter]}{c.targetBefore !== c.targetAfter ? <span className="muted"> · target {STAGE_LABEL[c.targetBefore]} → {STAGE_LABEL[c.targetAfter]}</span> : null}</span>;
+  return <span>From {STAGE_LABEL[c.stageBefore].toLowerCase()} to {STAGE_LABEL[c.stageAfter].toLowerCase()}{c.targetBefore !== c.targetAfter ? <span className="muted"> · target from {STAGE_LABEL[c.targetBefore].toLowerCase()} to {STAGE_LABEL[c.targetAfter].toLowerCase()}</span> : null}</span>;
 }
 
 export function EvidenceWatch({ state, subject, mayEdit }: Props) {
@@ -100,7 +100,7 @@ export function EvidenceWatch({ state, subject, mayEdit }: Props) {
           <div className="guide-entry-body"><ul className="source-list">
             {comparison.postingsAdded.map((p) => <li key={"a" + p.identity}><strong>New: {p.title}</strong><span>{p.organisation || "Organisation not named"}{p.sourceDate ? " · published " + p.sourceDate : ""}</span></li>)}
             {comparison.postingsGone.map((p) => <li key={"g" + p.identity}><strong>No longer in the reviewed set: {p.title}</strong><span>{p.organisation || "Organisation not named"}{p.sourceDate ? " · published " + p.sourceDate : ""}</span></li>)}
-            {comparison.textChanged.map((p) => <li key={"t" + p.after.identity}><strong>Text changed: {p.after.title}</strong><span className="tabular">{p.before.textHash} → {p.after.textHash}</span></li>)}
+            {comparison.textChanged.map((p) => <li key={"t" + p.after.identity}><strong>Text changed: {p.after.title}</strong><span className="tabular">fingerprint {p.before.textHash} changed to {p.after.textHash}</span></li>)}
           </ul></div></details> : null}
         <p className="limitation">A skill is rising or falling only when the two intervals do not overlap. That is stricter than a formal test, so a real shift can show as no clear change. Both windows are samples you chose; a change describes them, not the labour market, and nothing here changes the course.</p>
       </> : null}

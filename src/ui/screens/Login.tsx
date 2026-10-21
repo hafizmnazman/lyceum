@@ -12,21 +12,18 @@ import type { Person } from "../../types.ts";
 export function LoginScreen() {
   const state = useStore();
 
+  // One line per person: what they can do in the loop (plan Section 4.2), worked out from today's hats.
   function scopeLine(person: Person): string {
-    if (person.orgRole === "management") return "Management, faculty approvals";
-    if (person.orgRole === "department") return "Department, Bachelor of Computer Science";
+    if (person.orgRole === "management") return "Management: appears only in the illustrative approval sandbox; no part in the loop";
+    if (person.orgRole === "department") return "Programme owner: decides on the briefs for every course in the programme, and assigns positions";
     const subjects = subjectsForPerson(person.id, state.assignments);
-    const parts = subjects.map((sid) => {
-      const hats = hatsOn(person.id, sid, state.assignments);
-      const label =
-        hats.includes("coordinator") && hats.includes("lecturer")
-          ? "Coordinator and Lecturer"
-          : hats.includes("coordinator")
-            ? "Coordinator"
-            : "Lecturer";
-      return `${label}, ${sid}`;
-    });
-    return parts.join(" · ");
+    const coordinating = subjects.filter((sid) => hatsOn(person.id, sid, state.assignments).includes("coordinator"));
+    const lecturing = subjects.filter((sid) => !coordinating.includes(sid));
+    const parts = [];
+    if (coordinating.length) parts.push("Coordinator of " + coordinating.join(" and ") + ": runs the loop, decides and adopts; a decision on their own brief is self-recorded");
+    if (lecturing.length) parts.push("Lecturer on " + lecturing.join(" and ") + ": watches, reports, briefs and teaches, but does not decide or adopt");
+    if (!person.verified) parts.push("unverified, so edits are flagged");
+    return parts.join("; ");
   }
 
   return (

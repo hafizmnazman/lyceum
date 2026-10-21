@@ -58,8 +58,11 @@ try {
   await click("subject-CS310");
   await page.screenshot({ path: "docs/presentation/shot-studio-journey.png" });
   console.log("wrote shot-studio-journey.png");
-  await click("tab-evidence");
+  // Report: the Count sub-step holds the counted table, the Brief sub-step the meeting brief.
+  await click("rail-report");
+  await click("subrail-count");
   await shotOf("observed-requirements", "shot-evidence-table.png");
+  await click("subrail-brief");
   await shotOf("meeting-brief", "shot-meeting-brief.png");
 
   // How it works: the record of the afternoon, by role.

@@ -6,7 +6,7 @@
 // when a request failed, in which case the screen shows the error, not a mascot.
 // The host's moods follow the loop for the course (the ring), not activity.
 
-import { loopStatus } from "./loop.ts";
+import { loopState } from "./loop.ts";
 import type { AppState, InFlightRequest } from "./store.ts";
 
 export type HelperRole = "folio" | "scout" | "atlas" | "lens" | "quill" | "prism" | "steward";
@@ -64,11 +64,11 @@ export function moodsFor(state: AppState, requests: readonly InFlightRequest[], 
     steward: mood(false, briefs.some((b) => !b.sentAt), briefs.some((b) => within(b.sentAt, now))),
   };
 
-  // The host follows the loop: greeting before any step is done, celebrating in
-  // the moments after the loop closes, reflecting once it has closed, resting mid-loop.
-  const steps = loopStatus(state, subjectId).filter((s) => s.id !== "course" && s.id !== "history");
-  const doneCount = steps.filter((s) => s.done).length;
-  const closedJustNow = doneCount === steps.length && Object.values(helpers).includes("done");
-  const host: HostMood = doneCount === 0 ? "greeting" : doneCount === steps.length ? (closedJustNow ? "celebrating" : "reflecting") : "resting";
+  // The host follows the loop the ring shows: greeting before any of the six steps is done this term,
+  // celebrating in the moments after the loop closes, reflecting once it has closed, resting mid-loop.
+  const loop = loopState(state, subjectId);
+  const doneCount = loop.steps.filter((s) => s.id !== "course" && s.id !== "history" && s.done).length;
+  const closedJustNow = loop.closed && Object.values(helpers).includes("done");
+  const host: HostMood = doneCount === 0 ? "greeting" : loop.closed ? (closedJustNow ? "celebrating" : "reflecting") : "resting";
   return { host, helpers };
 }

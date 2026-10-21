@@ -94,6 +94,7 @@ try {
         reviewed: sources.filter((x) => x.reviewed && !x.duplicateOf).length,
         mentions: s.skillMentions.filter((m) => m.subjectId === "CS310").length,
         mappings: s.skillMappings.filter((m) => m.subjectId === "CS310" && m.cloIds.includes("CLO5")).length,
+        snapshots: s.evidenceSnapshots.filter((x) => x.subjectId === "CS310").length,
         briefSent: Boolean(brief?.sentAt), briefRecipients: brief?.recipients ?? [], briefMarkdown: brief?.markdown ?? "",
         read: Boolean(notification?.read), currentPerson: s.currentPersonId,
         adopted: s.curriculumDrafts.filter((d) => d.subjectId === "CS310" && d.status === "adopted").length,
@@ -112,6 +113,7 @@ try {
     check("the reviewed denominator is non-empty", end.reviewed >= 3, String(end.reviewed));
     check("exact quotations were confirmed", end.mentions >= 5, String(end.mentions));
     check("a coverage mapping links a skill to CLO5", end.mappings === 1, String(end.mappings));
+    check("an evidence snapshot was frozen for the next window", end.snapshots === 1, String(end.snapshots));
     check("the brief was sent to Dr Rahman", end.briefSent && end.briefRecipients.includes("P-RAHMAN"), JSON.stringify(end.briefRecipients));
     check("the brief carries the table and the receipts", /Small refresh within existing hours \(recommended\)/.test(end.briefMarkdown) && /## Appendix: evidence report with receipts/.test(end.briefMarkdown) && /convenience sample/.test(end.briefMarkdown));
     check("the reader is Dr Rahman", end.currentPerson === "P-RAHMAN", String(end.currentPerson));

@@ -4,12 +4,13 @@ import { COVERAGE_STAGES, EVIDENCE_KINDS, REQUIREMENT_LEVELS, locateExcerpt, ski
 
 export const WORKSPACE_DATA_KEYS = ["programme", "assignments", "subjects", "clos", "survey", "proposals",
   "notifications", "predictions", "resultUploads", "dataSources", "subjectVersions", "testDrafts", "teachingPlans",
-  "courseDefinitions", "curriculumDrafts", "evidenceSources", "skillMentions", "skillMappings", "evidenceBriefs", "evidenceSnapshots", "skillLexicon", "relevanceRatings", "idSeq"] as const;
-/** Collections added after schema version 1 (2: evidence, 3: briefs and lexicon, 4: evidence snapshots). Older backups restore with these empty. */
-const LATER_DEFAULTS: Partial<Record<typeof WORKSPACE_DATA_KEYS[number], unknown>> = { evidenceSources: [], skillMentions: [], skillMappings: [], evidenceBriefs: [], evidenceSnapshots: [], skillLexicon: {} };
-export const BACKUP_SCHEMA_VERSION = 4;
+  "courseDefinitions", "curriculumDrafts", "evidenceSources", "skillMentions", "skillMappings", "evidenceBriefs", "evidenceSnapshots", "briefDecisions", "events", "skillLexicon", "relevanceRatings", "idSeq"] as const;
+/** Collections added after schema version 1 (2: evidence, 3: briefs and lexicon, 4: evidence snapshots, 5: the decision record and
+ *  the event log). Older backups restore with these empty. */
+const LATER_DEFAULTS: Partial<Record<typeof WORKSPACE_DATA_KEYS[number], unknown>> = { evidenceSources: [], skillMentions: [], skillMappings: [], evidenceBriefs: [], evidenceSnapshots: [], briefDecisions: [], events: [], skillLexicon: {} };
+export const BACKUP_SCHEMA_VERSION = 5;
 export type WorkspaceData = Pick<AppState, typeof WORKSPACE_DATA_KEYS[number]>;
-export interface WorkspaceBackup { application: "Lyceum"; schemaVersion: 1 | 2 | 3 | 4; exportedAt: string; data: WorkspaceData }
+export interface WorkspaceBackup { application: "Lyceum"; schemaVersion: 1 | 2 | 3 | 4 | 5; exportedAt: string; data: WorkspaceData }
 export const MAX_BACKUP_BYTES = 20 * 1024 * 1024;
 type Check = (value: unknown) => boolean;
 const record = (x: unknown): x is Record<string, unknown> => typeof x === "object" && x !== null && !Array.isArray(x);
@@ -49,7 +50,7 @@ const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
       drillRoot: shape({ studentId: id, cloId: id, theta: num, itemId: id, b: num, p: num, cause: str }),
       prerequisiteConflicts: array(shape({ subjectId: id, missingPrereqId: id, edge: strings })),
       groundedOnLearners: integer, isProxyCohort: boolean })) })),
-  notifications: array(shape({ id, toPersonId: id, kind: one("ping-update","ping-new-subject","review-request","test-done","approved","rejected","evidence-brief"),
+  notifications: array(shape({ id, toPersonId: id, kind: one("ping-update","ping-new-subject","review-request","test-done","approved","rejected","evidence-brief","brief-decision"),
     subjectId: opt(id), proposalId: opt(id), agentFindings: opt(str), briefId: opt(id), read: boolean, createdAt: str })),
   predictions: array(shape({ proposalId: id, subjectId: id, predictedMastery: num, madeAt: str, actualMastery: opt(num), residual: opt(num) })),
   resultUploads: array(shape({ id, subjectId: id, uploadedBy: id, term: str, filedAt: str, sourceFileName: opt(str),
@@ -80,6 +81,11 @@ const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
     eligible: integer, organisations: integer, unreviewed: integer, duplicates: integer, contextual: integer, lookedFor: array(str, 10000),
     skills: array(shape({ key: str, skill: str, postings: integer, required: integer, preferred: integer, stage: one(...COVERAGE_STAGES), target: one(...COVERAGE_STAGES), sourceIds: array(id, 10000) }), 10000),
     postings: array(shape({ id, identity: str, title: str, organisation: str, url: str, sourceDate: str, textHash: str }), 10000) }), 1000),
+  briefDecisions: array(shape({ id, briefId: id, subjectId: id, courseVersionId: id, term: str, byPersonId: id, at: str,
+    outcome: one("adopt", "retain", "defer", "return"), note: str }), 100000),
+  events: array(shape({ id, at: str, byPersonId: id,
+    kind: one("brief-prepared", "brief-sent", "brief-read", "decision-recorded", "snapshot-frozen", "version-adopted", "term-set"),
+    refs: shape({ subjectId: id, briefId: opt(id), decisionId: opt(id), snapshotId: opt(id), versionId: opt(id), draftId: opt(id), term: opt(str), previousTerm: opt(str) }) }), 100000),
   skillLexicon: dict(array(str, 100)),
   relevanceRatings: array(shape({ subjectId: id, score: num, band: one("aligned","drifting","misaligned","unrated"),
     perCLO: array(shape({ cloId: id, score: num, movedBy: array(str) })),
@@ -112,7 +118,7 @@ export function parseWorkspaceBackup(raw: string, knownPersonIds: string[]): { o
   for (const key of WORKSPACE_DATA_KEYS) if (!predicates[key](data[key])) return fail("Invalid workspace data in " + key + ".");
   const backup = parsed as unknown as WorkspaceBackup;
   const d = backup.data;
-  if (![d.subjects,d.clos,d.proposals,d.notifications,d.resultUploads,d.subjectVersions,d.testDrafts,d.curriculumDrafts,d.evidenceSources,d.skillMentions,d.evidenceBriefs,d.evidenceSnapshots].every(uniqueIds))
+  if (![d.subjects,d.clos,d.proposals,d.notifications,d.resultUploads,d.subjectVersions,d.testDrafts,d.curriculumDrafts,d.evidenceSources,d.skillMentions,d.evidenceBriefs,d.evidenceSnapshots,d.briefDecisions,d.events].every(uniqueIds))
     return fail("The backup contains duplicate record identities.");
   const subjects = new Set(d.subjects.map(s => s.id)), people = new Set(knownPersonIds);
   if (!people.has(d.programme.departmentOwnerId)) return fail("The programme owner is unknown to this local workspace.");
@@ -199,6 +205,20 @@ export function parseWorkspaceBackup(raw: string, knownPersonIds: string[]): { o
     if (new Set(snap.skills.map(k => k.key)).size !== snap.skills.length) return fail("An evidence snapshot lists a skill twice.");
     if (snap.skills.some(k => k.postings > snap.eligible || k.required + k.preferred > k.postings || k.sourceIds.length !== k.postings || k.sourceIds.some(x => !postingIds.has(x))))
       return fail("An evidence snapshot's counts do not match its postings.");
+  }
+  // The decision record: each decision belongs to a known brief of the same course, by a known person, with a reason.
+  const briefById = new Map(d.evidenceBriefs.map(b => [b.id, b]));
+  for (const decision of d.briefDecisions) {
+    const brief = briefById.get(decision.briefId);
+    if (!brief || brief.subjectId !== decision.subjectId || !people.has(decision.byPersonId) || !decision.note.trim() || decision.note.length > 2000)
+      return fail("A decision refers to an unknown brief or person, or has no reason.");
+  }
+  // Events are append-only, so an event may outlive what it names (a removed snapshot); briefs and decisions are never removed.
+  const decisionIds = new Set(d.briefDecisions.map(x => x.id));
+  for (const e of d.events) {
+    if (!subjects.has(e.refs.subjectId) || !people.has(e.byPersonId) || (e.refs.briefId !== undefined && !briefIds.has(e.refs.briefId)) ||
+      (e.refs.decisionId !== undefined && !decisionIds.has(e.refs.decisionId)))
+      return fail("An event refers to an unknown course, person, brief or decision.");
   }
   const mappingKeys = new Set<string>();
   for (const mapping of d.skillMappings) {

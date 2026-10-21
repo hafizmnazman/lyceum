@@ -51,6 +51,10 @@ import type {
   TeachingPlan,
   CourseDefinition,
   CurriculumDraft,
+  DecisionOutcome,
+  LoopEvent,
+  LoopEventKind,
+  BriefDecision,
   BriefRecommendation,
   CollectedPosting,
   CollectionProvider,
@@ -90,7 +94,9 @@ import { BOARD_TOKEN, SOURCE_POLICIES } from "../lib/collect.ts";
 import { CURRENT_ID, buildSnapshot, compareSnapshots, comparisonMarkdown, snapshotLabelError, type SnapshotComparison } from "../lib/snapshots.ts";
 import { fetchCollection, type CollectionOutcome, type CollectionRequest } from "../agents/client.ts";
 import { downloadDeck, type DeckSpec } from "../lib/slides.ts";
-import { stepDef, stepForTab, type CourseStep } from "./loop.ts";
+import { DECISION_OUTCOMES, NOTE_MAX, OUTCOME_LABEL, briefDecisionState } from "../lib/decisions.ts";
+import { stepDef, stepForTab, termWindow, type CourseStep, type ReportTab } from "./loop.ts";
+export { REPORT_TABS, type ReportTab } from "./loop.ts";
 import { hashFor, type CourseRoute } from "./routes.ts";
 import { ITEMS, itemsForCLOs } from "../data/items.ts";
 import {
@@ -152,8 +158,9 @@ export interface AppState {
   screen: Screen;
   selectedSubjectId: SubjectId | null;
   selectedProposalId: ProposalId | null;
-  studioTab: "overview" | "curriculum" | "evidence" | "plan" | "content" | "assessment" | "history";
+  studioTab: "overview" | "curriculum" | "plan" | "history"; // the Studio's panels: Course, Update, Teach, History
   courseStep: CourseStep | null; // the loop rail step in view (app/loop.ts); read through routes.effectiveStep
+  reportTab: ReportTab; // the Report step's sub-step, in the URL as #/course/:id/report/<tab>
 
   // mutable world
   proposals: ChangeProposal[];
@@ -171,6 +178,8 @@ export interface AppState {
   skillMappings: SkillMapping[];
   evidenceBriefs: EvidenceBrief[];
   evidenceSnapshots: EvidenceSnapshot[]; // frozen evidence windows, compared to watch change over time
+  briefDecisions: BriefDecision[]; // the decision record on briefs (plan Section 4); never edited
+  events: LoopEvent[]; // append-only: decisions, snapshots, adoptions, briefs prepared, sent and read, term changes
   skillLexicon: Record<string, string[]>; // per course: the terms the lecturer scans for
   relevanceRatings: RelevanceRating[];
 
@@ -228,6 +237,7 @@ function seedState(): AppState {
     selectedProposalId: CANONICAL_PROPOSAL.id,
     studioTab: "overview",
     courseStep: null,
+    reportTab: "quote",
 
     proposals: [structuredClone(CANONICAL_PROPOSAL)],
     notifications: [],
@@ -244,6 +254,8 @@ function seedState(): AppState {
     skillMappings: [],
     evidenceBriefs: [],
     evidenceSnapshots: [],
+    briefDecisions: [],
+    events: [],
     skillLexicon: {},
     relevanceRatings: computeRelevanceRatings(SUBJECTS, CLOS, SEED_NOW),
 
@@ -300,6 +312,8 @@ const PERSISTED_KEYS = [
   "skillMappings",
   "evidenceBriefs",
   "evidenceSnapshots",
+  "briefDecisions",
+  "events",
   "skillLexicon",
   "relevanceRatings",
   "idSeq",
@@ -383,7 +397,7 @@ export function useStore(): AppState {
 
 function nextId(prefix: string): string {
   const used = new Set([...state.proposals, ...state.notifications, ...state.resultUploads, ...state.subjectVersions,
-    ...state.testDrafts, ...state.curriculumDrafts, ...state.agentRuns, ...state.evidenceSources, ...state.skillMentions, ...state.evidenceBriefs, ...state.evidenceSnapshots, ...state.teachingPlans.flatMap(p => p.sessions)].map(x => x.id));
+    ...state.testDrafts, ...state.curriculumDrafts, ...state.agentRuns, ...state.evidenceSources, ...state.skillMentions, ...state.evidenceBriefs, ...state.evidenceSnapshots, ...state.briefDecisions, ...state.events, ...state.teachingPlans.flatMap(p => p.sessions)].map(x => x.id));
   let id: string;
   do { id = `${prefix}-${state.idSeq}`; state = { ...state, idSeq: state.idSeq + 1 }; } while (used.has(id));
   return id;
@@ -437,7 +451,10 @@ function updateTeachingPlan(subjectId: SubjectId, update: (plan: TeachingPlan) =
 
 export function saveTeachingPlanDetails(subjectId: SubjectId, details: { term: string; notes: string }): SaveResult {
   if (!mayPlan(subjectId)) return { ok: false, error: "Only an assigned lecturer or coordinator can edit this teaching plan." };
+  const previousTerm = state.teachingPlans.find((p) => p.subjectId === subjectId)?.term ?? "";
   updateTeachingPlan(subjectId, (plan) => ({ ...plan, term: details.term.trim(), notes: details.notes.trim() }));
+  // A change of term is an event: from one stated term to another, it starts a new loop (app/loop.ts termWindow).
+  if (details.term.trim() !== previousTerm) logEvent("term-set", { subjectId, term: details.term.trim(), ...(previousTerm ? { previousTerm } : {}) });
   return { ok: true };
 }
 
@@ -574,14 +591,20 @@ export function navigate(screen: Screen, course?: CourseRoute) {
     if (typeof window !== "undefined") window.history.replaceState(null, "", hashFor(state));
     return;
   }
-  if (!course) { set({ screen, courseStep: screen === "studio" ? stepForTab(state.studioTab, state.courseStep) : null }); return; }
+  if (!course) {
+    const step = screen === "studio" ? stepForTab(state.studioTab, state.courseStep) : screen === "watch" || screen === "report" || screen === "decide" ? screen : null;
+    set({ screen, courseStep: step });
+    return;
+  }
   const tab = stepDef(course.step).tab;
-  set({ screen: target, selectedSubjectId: course.subjectId, courseStep: course.step, ...(tab ? { studioTab: tab } : {}) });
+  set({ screen: target, selectedSubjectId: course.subjectId, courseStep: course.step, ...(tab ? { studioTab: tab } : {}), ...(course.reportTab ? { reportTab: course.reportTab } : {}) });
 }
 /** One step of a course's loop: the rail, the handoff cards and the deep links all come through here. */
-export function openStep(subjectId: SubjectId, step: CourseStep) {
-  navigate(stepDef(step).screen, { subjectId, step });
+export function openStep(subjectId: SubjectId, step: CourseStep, reportTab?: ReportTab) {
+  navigate(stepDef(step).screen, { subjectId, step, ...(reportTab ? { reportTab } : {}) });
 }
+/** The Report step's sub-step (Quote, Review, Count, Map, Brief); it lives in the URL. */
+export function selectReportTab(reportTab: ReportTab) { set({ reportTab }); }
 export function selectSubject(subjectId: SubjectId | null) {
   if (subjectId !== state.selectedSubjectId && !confirmLeaveEditor()) return;
   set({ selectedSubjectId: subjectId, studioTab: "overview", courseStep: state.screen === "studio" ? "course" : state.courseStep });
@@ -644,24 +667,25 @@ export function openNotification(id: string) {
   const n = state.notifications.find((x) => x.id === id);
   if (!n) return;
   if (n.kind === "evidence-brief") {
-    // A brief is read where it arrived; management and department staff have no studio to land in.
-    set((s) => ({ notifications: s.notifications.map((x) => (x.id === id ? { ...x, read: true } : x)), selectedBriefId: n.briefId ?? null, screen: "inbox" }));
+    // A brief is read where it arrived, on Home, where the recipient can also record a decision.
+    if (!n.read && n.subjectId && currentPerson()) logEvent("brief-read", { subjectId: n.subjectId, briefId: n.briefId });
+    set((s) => ({ notifications: s.notifications.map((x) => (x.id === id ? { ...x, read: true } : x)), selectedBriefId: n.briefId ?? null, screen: "inbox", courseStep: null }));
     return;
   }
   set((s) => ({
     notifications: s.notifications.map((x) => (x.id === id ? { ...x, read: true } : x)),
   }));
+  // A decision on your brief: open the Decide step of that course.
+  if (n.kind === "brief-decision" && n.subjectId) { openStep(n.subjectId, "decide"); return; }
   if (n.proposalId) selectProposal(n.proposalId);
   if (n.subjectId) selectSubject(n.subjectId);
-  selectStudioTab("content");
-  // Land the reader in context.
+  // Land the reader in context. The old proposal chain lives in the illustrative sandbox (plan Section 4.2).
   const person = currentPerson();
   if (!person) return;
-  if (n.kind === "review-request") navigate("studio");
-  else if (n.kind === "ping-update") navigate("studio");
+  if (n.kind === "review-request" || n.kind === "ping-update") navigate("proposal");
   else if (n.kind === "ping-new-subject") navigate("new-subject");
   else if (n.kind === "test-done" || n.kind === "approved" || n.kind === "rejected") {
-    navigate(person.orgRole === "management" ? "approval" : "studio");
+    navigate(person.orgRole === "management" ? "approval" : "proposal");
   }
 }
 
@@ -873,7 +897,7 @@ export function uploadResults(subjectId: SubjectId) {
   const upload = runIntake(DEMO_SHEET, subjectId, {
     uploadedBy: person.id,
     term: TERM,
-    filedAt: SEED_NOW,
+    filedAt: nowIso(),
     uploadId: `RU-${subjectId}-${TERM}`,
   });
   set((s) => {
@@ -883,7 +907,7 @@ export function uploadResults(subjectId: SubjectId) {
       subjectId,
       term: TERM,
       recordCount: upload.rows.reduce((m, r) => Math.max(m, r.n), 0),
-      ingestedAt: SEED_NOW,
+      ingestedAt: upload.filedAt,
       verified: true,
     };
     const dataSources = [
@@ -1055,9 +1079,7 @@ export function startDraft(subjectId: SubjectId): ProposalId | null {
     (p) => p.subjectId === subjectId && p.status !== "approved" && p.status !== "rejected",
   );
   if (existing) {
-    selectSubject(subjectId);
-    selectProposal(existing.id);
-    selectStudioTab("content");
+    set({ selectedSubjectId: subjectId, selectedProposalId: existing.id, screen: "proposal", courseStep: null });
     return existing.id;
   }
   const clo = state.clos.find((c) => c.subjectId === subjectId);
@@ -1081,7 +1103,8 @@ export function startDraft(subjectId: SubjectId): ProposalId | null {
     idSeq: s.idSeq + 1,
     selectedSubjectId: subjectId,
     selectedProposalId: id,
-    studioTab: "content",
+    screen: "proposal",
+    courseStep: null,
   }));
   return id;
 }
@@ -1821,6 +1844,7 @@ export function adoptCurriculumRevision(draftId: string, expectedRevision: numbe
   const draft = editableRevision(draftId, expectedRevision);
   if (typeof draft === "string") return { ok: false, error: draft };
   if (draft.checkedRevision !== draft.revision) return { ok: false, error: "Check this saved revision before using it." };
+  if (!mayAdopt(draft.subjectId)) return { ok: false, error: "Only the course coordinator can make a checked revision the course version. The checked revision is saved for them." };
   if (!draft.reason.trim() || !draft.effectiveTerm.trim()) return { ok: false, error: "Record the decision rationale and teaching term." };
   if (!acknowledgement) return { ok: false, error: "Confirm the local decision boundary and review the affected teaching work." };
   if (draft.definition.outcomes.some(c => state.clos.some(existing => existing.id === c.id && existing.subjectId !== draft.subjectId))) return { ok: false, error: "An outcome identity now belongs to another course." };
@@ -1853,6 +1877,7 @@ export function adoptCurriculumRevision(draftId: string, expectedRevision: numbe
     proposals: s.proposals.map(p => p.subjectId === subject.id && p.status !== "approved" && p.status !== "rejected"
       ? { ...p, baselineVersionId: p.baselineVersionId ?? subject.currentVersionId, acceptanceResult: undefined, status: "drafting" } : p),
     toast: "New local course version saved. Review affected teaching sessions and assessments." }));
+  logEvent("version-adopted", { subjectId: subject.id, versionId, draftId }, at);
   return { ok: true };
 }
 export function discardCurriculumRevision(draftId: string, expectedRevision: number, note: string): SaveResult {
@@ -2105,6 +2130,7 @@ export function prepareEvidenceBrief(subjectId: SubjectId, input: { recommendati
     changes ? { since: changes.before.label, note: changes.note, lines: comparisonMarkdown(changes) } : undefined);
   const brief: EvidenceBrief = { id: nextId("BR-" + subjectId), subjectId, createdBy: person.id, createdAt: at, recommendation: input.recommendation, notes: input.notes.trim(), markdown, recipients: [], sentAt: null };
   set((s) => ({ evidenceBriefs: [...s.evidenceBriefs, brief], selectedBriefId: brief.id, toast: "Brief prepared. Review it, then download or send it." }));
+  logEvent("brief-prepared", { subjectId, briefId: brief.id }, at);
   return { ok: true, briefId: brief.id };
 }
 export function sendEvidenceBrief(briefId: string, recipientIds: string[]): SaveResult {
@@ -2117,10 +2143,57 @@ export function sendEvidenceBrief(briefId: string, recipientIds: string[]): Save
   if (recipients.some((id) => !personById(id))) return { ok: false, error: "A recipient is unknown to this workspace." };
   const at = nowIso();
   set((s) => ({ evidenceBriefs: s.evidenceBriefs.map((b) => (b.id === briefId ? { ...b, recipients, sentAt: at } : b)) }));
+  logEvent("brief-sent", { subjectId: brief.subjectId, briefId }, at);
   for (const toPersonId of recipients) notify({ toPersonId, kind: "evidence-brief", subjectId: brief.subjectId, briefId,
     agentFindings: "Evidence brief for " + brief.subjectId + " from " + person.name + ": " + RECOMMENDATION_LABEL[brief.recommendation] + "." });
   set({ toast: "Brief sent to " + recipients.map((id) => personById(id)?.name ?? id).join(", ") + "." });
   return { ok: true };
+}
+
+// ---------- the event log and the decision record (plan Section 4) ----------
+/** Append one event. Events are never edited or removed; the How it works timeline reads them first. */
+function logEvent(kind: LoopEventKind, refs: LoopEvent["refs"], at = nowIso()): LoopEvent {
+  const event: LoopEvent = { id: nextId("EVT-" + refs.subjectId), at, byPersonId: currentPerson()!.id, kind, refs };
+  set((s) => ({ events: [...s.events, event] }));
+  return event;
+}
+/** May this person record a decision on the course (Section 4.2)? Coordinators, the programme owner,
+ *  and the owner of a personal course workspace, who holds both positions. */
+export function mayDecide(subjectId: SubjectId, person = currentPerson()): boolean {
+  const subject = subjectById(subjectId);
+  if (!person || !subject) return false;
+  return can(person, "decide", { subjectId, assignments: state.assignments }) || (Boolean(subject.workspaceOnly) && hatsOn(person.id, subjectId, state.assignments).length > 0);
+}
+/** May this person make a checked revision the course version? The coordinator, or a personal workspace's owner. */
+export function mayAdopt(subjectId: SubjectId, person = currentPerson()): boolean {
+  const subject = subjectById(subjectId);
+  if (!person || !subject) return false;
+  return can(person, "adopt", { subjectId, assignments: state.assignments }) || (Boolean(subject.workspaceOnly) && hatsOn(person.id, subjectId, state.assignments).length > 0);
+}
+/** Record one person's decision on a brief. The record is immutable; deciding again is an amendment, a new
+ *  record that becomes the person's standing decision. The note is required: it says why. */
+export function recordDecision(briefId: string, outcome: DecisionOutcome, note: string): SaveResult & { decisionId?: string } {
+  const person = currentPerson();
+  const brief = state.evidenceBriefs.find((b) => b.id === briefId);
+  if (!person || !brief) return { ok: false, error: "Choose a brief to decide on." };
+  if (!DECISION_OUTCOMES.includes(outcome)) return { ok: false, error: "Choose adopt, retain, defer or return." };
+  if (typeof note !== "string" || !note.trim()) return { ok: false, error: "Write the reason for this decision. The note travels with the record." };
+  if (note.length > NOTE_MAX) return { ok: false, error: "Keep the note within " + NOTE_MAX + " characters." };
+  if (!mayDecide(brief.subjectId, person)) return { ok: false, error: "Only a course coordinator or the programme owner can record a decision on this course." };
+  const isAuthor = brief.createdBy === person.id;
+  if (!isAuthor && !brief.recipients.includes(person.id)) return { ok: false, error: "Only a recipient of this brief can record a decision on it." };
+  const subject = subjectById(brief.subjectId)!;
+  if (briefDecisionState(brief, state.evidenceBriefs, state.briefDecisions, Boolean(subject.workspaceOnly)).supersededBy)
+    return { ok: false, error: "A newer brief exists for this course. Record the decision on the latest brief." };
+  const at = nowIso();
+  const decision: BriefDecision = { id: nextId("DEC-" + brief.subjectId), briefId, subjectId: brief.subjectId, courseVersionId: subject.currentVersionId,
+    term: termWindow(state, brief.subjectId).term, byPersonId: person.id, at, outcome, note: note.trim() };
+  set((s) => ({ briefDecisions: [...s.briefDecisions, decision] }));
+  logEvent("decision-recorded", { subjectId: brief.subjectId, briefId, decisionId: decision.id }, at);
+  if (!isAuthor) notify({ toPersonId: brief.createdBy, kind: "brief-decision", subjectId: brief.subjectId, briefId,
+    agentFindings: person.name + " recorded a decision on your " + brief.subjectId + " brief: " + OUTCOME_LABEL[outcome] + "." });
+  set({ toast: isAuthor && !subject.workspaceOnly ? "Decision recorded as self-recorded. A second person's confirmation is open." : "Decision recorded: " + OUTCOME_LABEL[outcome] + "." });
+  return { ok: true, decisionId: decision.id };
 }
 
 // ---------- watching the evidence over time (the Watch step) ----------
@@ -2142,6 +2215,7 @@ export function takeEvidenceSnapshot(subjectId: SubjectId, label: string): SaveR
   if (report.eligible === 0) return { ok: false, error: "Review at least one posting first. A snapshot with no reviewed postings has no denominator to compare later." };
   const snapshot = buildSnapshot({ id: nextId("SN-" + subjectId), subjectId, label, takenBy: currentPerson()!.id, takenAt: nowIso() },
     report, state.evidenceSources, state.skillMentions, state.skillLexicon[subjectId] ?? []);
+  logEvent("snapshot-frozen", { subjectId, snapshotId: snapshot.id }, snapshot.takenAt);
   set((s) => ({ evidenceSnapshots: [...s.evidenceSnapshots, snapshot],
     toast: "Snapshot \"" + snapshot.label + "\" frozen: " + snapshot.eligible + " reviewed postings, " + snapshot.skills.length + " skills. Later evidence is compared with it." }));
   return { ok: true, snapshotId: snapshot.id };

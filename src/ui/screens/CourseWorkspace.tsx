@@ -29,7 +29,7 @@ export function CourseOverview({ state, person, subject, proposal, onPlan, onPro
     <div className="workspace-columns">
       <div>
         <section className="workspace-panel" aria-labelledby="current-outcomes">
-          <div className="section-heading"><h2 id="current-outcomes">Current learning outcomes</h2><Button onClick={onCurriculum}>Edit outcomes & topics</Button></div>
+          <div className="section-heading"><h2 id="current-outcomes">Current learning outcomes</h2><Button onClick={onCurriculum}>Revise in Update</Button></div>
           <p className="muted">Current version: {subject.currentVersionId}</p>
           <p className="muted">Use these outcomes to plan what students will practise and how you will check their understanding.</p>
           {clos.length ? <ul className="outcome-list">{clos.map((clo) => <li key={clo.id}>
@@ -83,15 +83,15 @@ export function CourseOverview({ state, person, subject, proposal, onPlan, onPro
         </section>
         <section className="workspace-panel">
           <h2>Curriculum review</h2>
-          <p>{proposal ? "An open proposal is " + proposal.status.replaceAll("-", " ") + ". Review its changes separately from your teaching preparation." : "Propose a formal change when course outcomes or topics need revision."}</p>
-          <Button onClick={onProposal}>{proposal ? "Continue proposal" : "View proposal workspace"}</Button>
-          <p className="muted">Use Outcomes & topics to review and save your own course version. Institutional approval remains external.</p>
+          <p>Course decisions are recorded in Decide, on the brief and its receipts; the revision itself is made in Update. Institutional approval stays in the university's process.</p>
+          <Button onClick={onProposal}>{proposal ? "Open the illustrative proposal" : "Open the illustrative proposal sandbox"}</Button>
+          <p className="muted">The old proposal and approval chain is kept in the research sandbox and labelled illustrative.</p>
         </section>
         <section className="workspace-panel">
           <h2>Evidence</h2>
           <p>{evidenceSources ? evidenceSources + " recorded sources · " + quotedRequirements + " quoted requirements" : "Record job postings or professional documents and quote the exact requirements you consider."}</p>
-          <Button onClick={onEvidence}>{evidenceSources ? "Open evidence" : "Add evidence"}</Button>
-          <p className="muted">Lecturer-supplied receipts with exact excerpts. Nothing is collected from the web.</p>
+          <Button onClick={onEvidence}>{evidenceSources ? "Open Watch" : "Watch employers"}</Button>
+          <p className="muted">Postings collected on request from a permitted board or the dated saved sample, and documents you paste, each quoted exactly.</p>
         </section>
       </aside>
     </div>

@@ -6,8 +6,8 @@ import { test } from "node:test";
 import { PEOPLE_IDS } from "./data/seed.ts";
 import {
   adoptCurriculumRevision, beginRequest, checkCurriculumRevision, confirmProposals, createCourseWorkspace, endRequest, getState, importCollectedPostings,
-  login, nowIso, prepareEvidenceBrief, resetDemoState, runCollection, saveCurriculumRevision, scanForRequirements, sendEvidenceBrief, setSkillLexicon,
-  setSkillMapping, setSourcesReviewed, trackRequest, type AppState, type InFlightRequest,
+  login, nowIso, prepareEvidenceBrief, recordDecision, resetDemoState, runCollection, saveCurriculumRevision, saveTeachingSession, scanForRequirements,
+  sendEvidenceBrief, setSkillLexicon, setSkillMapping, setSourcesReviewed, startCurriculumRevision, trackRequest, uploadResults, type AppState, type InFlightRequest,
 } from "./app/store.ts";
 import { DONE_WINDOW_MS, HELPER_ROLES, moodsFor, type CourseMoods } from "./app/moods.ts";
 import type { CollectedPosting, CourseDefinition } from "./types.ts";
@@ -137,6 +137,23 @@ test("the host follows the loop, not activity", async () => {
   importCollectedPostings("CS310", POSTINGS.map((p) => p.id));
   setSourcesReviewed("CS310", getState().evidenceSources.filter((s) => s.subjectId === "CS310").map((s) => s.id), true);
   assert.equal(moodsFor(getState(), [], "CS310", LATER()).host, "resting", "mid-loop the host rests");
+
+  // Close the loop: quote, map, brief, a second person decides, adopt, teach, file results.
+  setSkillLexicon("CS310", ["SQL"]); scanForRequirements("CS310"); confirmProposals("CS310", getState().scanProposals);
+  setSkillMapping("CS310", { skill: "SQL", cloIds: ["CLO5"], stage: "introduced", target: "practised", evidence: "Week 3 lab." });
+  const briefId = prepareEvidenceBrief("CS310", { recommendation: "refresh", notes: "Add a SQL lab." }).briefId!;
+  sendEvidenceBrief(briefId, [PEOPLE_IDS.rahman]);
+  login(PEOPLE_IDS.rahman); recordDecision(briefId, "adopt", "Add the SQL lab."); login(PEOPLE_IDS.sobri);
+  assert.equal(moodsFor(getState(), [], "CS310", LATER()).host, "resting", "a recorded decision alone does not close the loop");
+  const draftId = startCurriculumRevision("CS310").draftId;
+  const draft = getState().curriculumDrafts.find((d) => d.id === draftId)!;
+  const definition = structuredClone(draft.definition); definition.outcomes[0].text += " with SQL";
+  saveCurriculumRevision(draft.id, draft.revision, { definition, reason: "Add the SQL lab.", effectiveTerm: "2026-S2" });
+  checkCurriculumRevision(draft.id, draft.revision + 1); adoptCurriculumRevision(draft.id, draft.revision + 1, true);
+  saveTeachingSession("CS310", { week: 3, topic: "SQL lab", minutes: 90, cloIds: ["CLO5"], activity: "Query a sales table.", learningCheck: "Explain one join.", resources: "", status: "ready" });
+  uploadResults("CS310");
+  assert.equal(moodsFor(getState(), [], "CS310", NOW()).host, "celebrating", "the moments after the loop closes");
+  assert.equal(moodsFor(getState(), [], "CS310", LATER()).host, "reflecting", "once closed, the host reflects");
 });
 
 test("a tracked request is cleared even when the work fails", async () => {

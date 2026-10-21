@@ -29,6 +29,7 @@ export function Page(props: { children: ReactNode; wide?: boolean }) {
  *  on every route change (Shell). */
 export function PageHead(props: {
   title: string;
+  eyebrow?: ReactNode;
   question?: string;
   context?: ReactNode;
   actions?: ReactNode;
@@ -36,6 +37,7 @@ export function PageHead(props: {
   return (
     <div className="page-heading">
       <div className="page-heading-text">
+        {props.eyebrow ? <span className="eyebrow page-eyebrow">{props.eyebrow}</span> : null}
         <h1 className="page-title" tabIndex={-1}>{props.title}</h1>
         {props.question ? <p className="page-question">{props.question}</p> : null}
         {props.context ? <div className="page-context">{props.context}</div> : null}

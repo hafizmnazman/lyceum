@@ -13,7 +13,8 @@ import { BOARD_TOKEN, SOURCE_POLICIES, matchedKeywords, parseKeywords } from "..
 import { RECOMMENDATION_LABEL, REQUIREMENT_LEVELS, evidenceReport, parseLexicon, type MentionProposal } from "../../lib/evidence.ts";
 import { downloadText } from "../../lib/download.ts";
 import type { BriefRecommendation, CollectionProvider, MentionRequirement, Person, Subject } from "../../types.ts";
-import { Button, Field, Input, Select, Tag, Textarea } from "../primitives/index.tsx";
+import { Button, Disclosure, Field, Input, Select, Tag, Textarea } from "../primitives/index.tsx";
+import { Meter, SourcePane } from "../primitives/loop.tsx";
 import { useUnsavedEditor } from "../useUnsavedEditor.ts";
 
 type Props = { state: AppState; person: Person; subject: Subject; mayEdit: boolean };
@@ -83,54 +84,64 @@ export function ResearchRun({ state, subject, mayEdit }: Props) {
   </section>;
 }
 
-export function RequirementScan({ state, subject, mayEdit }: Props) {
+/** Report, Quote: name the skills, scan the kept postings, and judge each proposed sentence beside its source. */
+export function QuoteProposals({ state, subject, mayEdit }: Props) {
   const saved = state.skillLexicon[subject.id] ?? [];
   const [terms, setTerms] = useState(saved.join(", "));
-  const [ack, setAck] = useState(false);
   const [message, setMessage] = useState("");
   const [levels, setLevels] = useState<Record<string, MentionRequirement>>({});
   const proposals = state.scanProposals.filter((p) => state.evidenceSources.some((s) => s.id === p.sourceId && s.subjectId === subject.id));
-  const key = (p: MentionProposal) => p.sourceId + "\n" + p.term;
+  const key = (p: MentionProposal) => p.sourceId + "|" + p.term;
   const postings = state.evidenceSources.filter((s) => s.subjectId === subject.id && s.kind === "job-posting" && !s.duplicateOf);
-  const unreviewed = postings.filter((s) => !s.reviewed);
   const dirty = JSON.stringify(parseLexicon(terms)) !== JSON.stringify(saved);
   useUnsavedEditor(dirty);
   const withLevel = (p: MentionProposal) => ({ ...p, requirement: levels[key(p)] ?? p.requirement });
-  return <section className="workspace-panel" aria-labelledby="requirement-scan">
-    <div className="section-heading"><div><h3 id="requirement-scan">Scan for requirements</h3><p className="muted">Name the skills you care about. The scan proposes the sentence in each posting that uses a term; you confirm every quotation.</p></div></div>
-    {mayEdit ? <>
+  if (!mayEdit) return <p className="muted">Only assigned lecturers and coordinators can quote evidence for this course.</p>;
+  return <section aria-labelledby="requirement-scan">
+    <div className="section-heading"><div><h3 id="requirement-scan">Proposed quotations</h3><p className="muted">The scan proposes the sentence in each posting that names a skill you care about. You confirm every quotation, judging it against its source.</p></div>
+      <Button variant="primary" data-demo-id="scan-run" disabled={dirty || !saved.length || !postings.length} onClick={() => {
+        const result = scanForRequirements(subject.id);
+        setMessage(result.ok ? result.count + " proposals across " + postings.length + " postings. Confirm the quotations you accept." : result.error);
+        setLevels({});
+      }}>Scan postings</Button></div>
+    <Disclosure summary={saved.length ? "Skills to look for: " + saved.length + " saved" : "Skills to look for"} defaultOpen={!saved.length} data-demo-id="lexicon">
       <Field label="Skills to look for" hint="Comma-separated. Use | for an alias, for example machine learning|ML. Matching is whole-word and case-insensitive."><Textarea data-demo-id="lexicon-terms" value={terms} onChange={(e) => setTerms(e.target.value)} placeholder="e.g. SQL, Python, dashboards|dashboard, data visualisation, stakeholders|stakeholder" /></Field>
-      <div className="button-row">
-        <Button data-demo-id="lexicon-save" disabled={!dirty} onClick={() => { const result = setSkillLexicon(subject.id, parseLexicon(terms)); setMessage(result.ok ? "Terms saved with the course." : result.error); }}>Save terms</Button>
-        <Button variant="primary" data-demo-id="scan-run" disabled={dirty || !saved.length || !postings.length} onClick={() => {
-          const result = scanForRequirements(subject.id);
-          setMessage(result.ok ? result.count + " proposals across " + postings.length + " postings. Confirm the quotations you accept." : result.error);
-          setLevels({});
-        }}>Scan postings</Button>
+      <Button data-demo-id="lexicon-save" disabled={!dirty} onClick={() => { const result = setSkillLexicon(subject.id, parseLexicon(terms)); setMessage(result.ok ? "Terms saved with the course. Scan the postings next." : result.error); }}>Save terms</Button>
+    </Disclosure>
+    {message ? <p role="status" className="save-status">{message}</p> : null}
+    {proposals.length ? <>
+      <div className="button-row proposal-actions">
+        <Button variant="primary" data-demo-id="scan-confirm-all" onClick={() => { const result = confirmProposals(subject.id, proposals.map(withLevel)); setMessage(result.added + " quotations recorded, " + result.skipped + " skipped."); }}>Confirm all {proposals.length}</Button>
+        <Button onClick={() => clearProposals()}>Dismiss all</Button>
       </div>
-      {message ? <p role="status" className="save-status">{message}</p> : null}
-      {proposals.length ? <>
-        <div className="table-scroll"><table className="evidence-table">
-          <thead><tr><th scope="col">Posting</th><th scope="col">Skill</th><th scope="col">Proposed quotation</th><th scope="col">Requirement</th><th scope="col">Decision</th></tr></thead>
-          <tbody>{proposals.map((p) => <tr key={key(p)}>
-            <th scope="row">{p.sourceTitle}</th><td>{p.skill}</td><td><blockquote className="proposal-quote">{p.excerpt}</blockquote></td>
-            <td><Select aria-label={"Requirement level for " + p.skill + " in " + p.sourceTitle} value={levels[key(p)] ?? p.requirement} onChange={(e) => setLevels({ ...levels, [key(p)]: e.target.value as MentionRequirement })}>{REQUIREMENT_LEVELS.map((r) => <option key={r} value={r}>{r}</option>)}</Select></td>
-            <td><div className="button-row"><Button onClick={() => confirmProposals(subject.id, [withLevel(p)])}>Confirm</Button><Button variant="quiet" onClick={() => dismissProposal(p.sourceId, p.term)}>Dismiss</Button></div></td>
-          </tr>)}</tbody>
-        </table></div>
-        <div className="button-row">
-          <Button variant="primary" data-demo-id="scan-confirm-all" onClick={() => { const result = confirmProposals(subject.id, proposals.map(withLevel)); setMessage(result.added + " quotations recorded, " + result.skipped + " skipped."); }}>Confirm all {proposals.length}</Button>
-          <Button onClick={() => clearProposals()}>Dismiss all</Button>
+      <ol className="proposal-list">{proposals.map((p) => { const source = state.evidenceSources.find((s) => s.id === p.sourceId)!; return <li key={key(p)} className="proposal-item">
+        <div className="proposal-side">
+          <span className="eyebrow">Proposed quotation · {p.skill}</span>
+          <blockquote className="proposal-quote">{p.excerpt}</blockquote>
+          <Field label={"Requirement level for " + p.skill}><Select aria-label={"Requirement level for " + p.skill + " in " + p.sourceTitle} value={levels[key(p)] ?? p.requirement} onChange={(e) => setLevels({ ...levels, [key(p)]: e.target.value as MentionRequirement })}>{REQUIREMENT_LEVELS.map((r) => <option key={r} value={r}>{r}</option>)}</Select></Field>
+          <div className="button-row"><Button variant="primary" onClick={() => confirmProposals(subject.id, [withLevel(p)])}>Confirm</Button><Button variant="quiet" onClick={() => dismissProposal(p.sourceId, p.term)}>Dismiss</Button></div>
         </div>
-      </> : null}
-      {postings.length ? <div className="curriculum-object"><h4>Reviewed denominator</h4>
-        <p className="muted">{postings.length - unreviewed.length} of {postings.length} postings are marked reviewed. A posting counts only after you confirm its extraction is complete.</p>
-        {unreviewed.length ? <>
-          <label className="checkbox-line"><input type="checkbox" data-demo-id="review-all-ack" checked={ack} onChange={(e) => setAck(e.target.checked)} />I have checked the quotations for these {unreviewed.length} postings, or deliberately skipped what the course does not need.</label>
-          <Button data-demo-id="review-all" disabled={!ack} onClick={() => { setSourcesReviewed(subject.id, unreviewed.map((s) => s.id), true); setAck(false); }}>Mark {unreviewed.length} postings reviewed</Button>
-        </> : <p className="muted">All postings are reviewed. Unmark one from its card below if you need to revisit it.</p>}
-      </div> : null}
-    </> : null}
+        <SourcePane source={source} excerpt={p.excerpt} term={p.term.split("|")[0]} />
+      </li>; })}</ol>
+    </> : saved.length ? <p className="muted">No proposal waiting. Scan the postings to propose quotations, or quote one by hand below.</p> : null}
+  </section>;
+}
+
+/** Report, Review: the denominator. A posting counts only once the lecturer vouches that its extraction is complete. */
+export function DenominatorReview({ state, subject, mayEdit }: Props) {
+  const [ack, setAck] = useState(false);
+  const postings = state.evidenceSources.filter((s) => s.subjectId === subject.id && s.kind === "job-posting" && !s.duplicateOf);
+  const duplicates = state.evidenceSources.filter((s) => s.subjectId === subject.id && s.duplicateOf).length;
+  const unreviewed = postings.filter((s) => !s.reviewed);
+  const reviewed = postings.length - unreviewed.length;
+  return <section aria-labelledby="denominator">
+    <h3 id="denominator">The reviewed denominator</h3>
+    <Meter value={reviewed} max={postings.length} label={<><strong className="tabular">{reviewed} of {postings.length}</strong> kept postings reviewed</>}
+      note={duplicates ? duplicates + " duplicate " + (duplicates === 1 ? "copy" : "copies") + " set aside: each counts once, through its original." : "No duplicate copies."} />
+    {mayEdit && unreviewed.length ? <div className="curriculum-object">
+      <label className="checkbox-line"><input type="checkbox" data-demo-id="review-all-ack" checked={ack} onChange={(e) => setAck(e.target.checked)} />I have checked the quotations for these {unreviewed.length} postings, or deliberately skipped what the course does not need.</label>
+      <Button variant="primary" data-demo-id="review-all" disabled={!ack} onClick={() => { setSourcesReviewed(subject.id, unreviewed.map((s) => s.id), true); setAck(false); }}>Mark {unreviewed.length} postings reviewed</Button>
+    </div> : postings.length ? <p className="muted">All kept postings are reviewed. Unmark one below if you need to revisit it.</p> : <p className="muted">No posting kept yet. Keep postings in Watch first.</p>}
   </section>;
 }
 

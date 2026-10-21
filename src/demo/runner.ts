@@ -122,7 +122,7 @@ async function applyScroll(scroll: string): Promise<void> {
 /** Click the real interactive element; fall through to the first clickable
  *  descendant when the data-demo-id sits on a wrapper. */
 function clickReal(el: HTMLElement) {
-  const interactive = "button, a, [role=button], input, textarea, select";
+  const interactive = "summary, button, a, [role=button], input, textarea, select";
   const target = el.matches(interactive)
     ? el
     : ((el.querySelector(interactive) as HTMLElement | null) ?? el);
@@ -177,6 +177,7 @@ function predicate(key: string): boolean {
   if (key === "collect-done") return s.collectRun?.status === "done" || s.collectRun?.status === "failed";
   if (key === "sources-imported") return s.evidenceSources.some((x) => x.subjectId === "CS310");
   if (key === "scan-proposals") return s.scanProposals.length > 0;
+  if (key === "snapshot-frozen") return s.evidenceSnapshots.some((x) => x.subjectId === "CS310");
   if (key === "brief-ready") return s.evidenceBriefs.length > 0;
   if (key === "brief-read") return s.notifications.some((n) => n.kind === "evidence-brief" && n.read);
   return true;

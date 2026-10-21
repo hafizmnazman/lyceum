@@ -10,7 +10,10 @@ import { ProgrammeScreen } from "./Programme.tsx";
 import { NewSubjectScreen } from "./NewSubject.tsx";
 import { AssignmentsScreen } from "./Assignments.tsx";
 import { CoursesScreen } from "./Courses.tsx";
-import { StudioScreen } from "./Studio.tsx";
+import { ProposalScreen, StudioScreen } from "./Studio.tsx";
+import { WatchScreen } from "./Watch.tsx";
+import { ReportScreen } from "./Report.tsx";
+import { DecideScreen } from "./Decide.tsx";
 import { AcceptanceScreen } from "./Acceptance.tsx";
 import { UploadScreen } from "./Upload.tsx";
 import { BacktestScreen } from "./Backtest.tsx";
@@ -32,6 +35,10 @@ export const SCREENS: Record<Screen, ComponentType> = {
   assignments: AssignmentsScreen,
   courses: CoursesScreen,
   studio: StudioScreen,
+  watch: WatchScreen,
+  report: ReportScreen,
+  decide: DecideScreen,
+  proposal: ProposalScreen,
   acceptance: AcceptanceScreen,
   upload: UploadScreen,
   backtest: BacktestScreen,

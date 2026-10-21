@@ -6,26 +6,26 @@ Reviewed 11 October 2026. Generated from the same section catalogue used by the 
 
 1. Start the app (`npm run dev`; use `npm.cmd` in Windows PowerShell). Choose Dr Sobri or Ms Tan on the demo sign-in page. These are local personas, not authenticated accounts.
 2. Open **Courses**. Choose an assigned course or **Create course workspace** to enter a unique code, title and optional programme. A personal workspace is private preparation, not an official university course.
-3. Open **Outcomes & topics**. An existing course needs **Start course revision**; a new personal course starts with an empty revision.
-4. Record the course brief and only the constraints you know. Add CLO wording, Bloom level, achievement evidence and optional programme-outcome mappings. Add topics, hours, weeks, CLO links and prerequisites. Protect foundational content that must remain.
-5. **Save revision**, then **Check saved revision**. Incomplete drafts can be saved. Errors such as broken links, prerequisite cycles and exceeded time budgets block use of the candidate. Unknown budgets and missing evidence remain visible warnings.
-6. Inspect **Before and after** and affected teaching work. Record why you are changing the course and the teaching term. Review the acknowledgement, then choose **Use as my course version**. This activates the local outline and preserves the baseline; university approval stays in its existing process. **Discard revision** requires a reason and leaves the current version unchanged.
-7. Open **Evidence**. Run a research run against a permitted employer board (Greenhouse or Lever, through the local API) or the dated saved sample, keep the postings worth reading, scan them for the skills you name and confirm each exact quotation (a paraphrase is rejected), mark the extraction reviewed so the postings count, map each quoted skill to an outcome with a reviewed coverage stage and target, freeze a snapshot of the reviewed evidence at each review and compare the next window with it, then prepare a meeting brief to download or send to a colleague; with a snapshot, the brief reports what changed since it. You can also paste a document you are permitted to keep. Shares show the numerator and denominator with a 95% Wilson interval. Collection happens only when you ask, and nothing changes the course by itself.
-8. Open **Teaching plan**. Save course notes and add a session with a week, topic, duration, CLO links, activity and check for understanding. Ready/delivered sessions require preparation details; those checks do not establish teaching effectiveness. Course changes flag affected sessions and assessments for review while retaining the content. **Teaching pack (.pptx)** on any session downloads an editable deck built from the saved session and the evidence linked to its outcomes; the meeting brief also downloads as slides. No model writes a word of either.
-9. Use **Export current outline** or **Export plan (.md)** for a readable Markdown document. **History** lets you inspect and export previous course versions and read revision decisions. These documents are not slide decks or restorable backups.
-10. In **Guide & progress** or **Courses → Backups**, download a JSON workspace backup. To restore, choose the JSON file, review counts and export date, acknowledge replacement, then restore. Download the pre-restore recovery copy to recover the previous workspace. Backups exclude original uploaded files, credentials and unsaved edits.
-11. **Assessment** can prepare a blueprint without a proposal and keeps saved drafts selectable. Item generation uses local templates; exact marks/task/rubric work remains pending. An affected assessment requires a recorded course-change review and repaired links before another submission. **Proposal** retains the prototype review workflow and illustrative forecasts.
+3. The course opens on **Course**, the setup step: what the course promises today. The loop rail lists the six steps that follow, **Watch**, **Report**, **Decide**, **Update**, **Teach** and **Learn**, with **History** as the record. A step says Done only when its record exists this term; a new term starts a new loop and keeps the last one on the record.
+4. **Watch**. Run a research run against a permitted employer board (Greenhouse or Lever, through the local API) or the dated saved sample, keep the postings worth reading, or paste a document you are permitted to keep. Freeze a snapshot of the reviewed evidence at each review and compare the next window with it. Collection happens only when you ask, and nothing changes the course by itself.
+5. **Report** has its own five steps. **Quote**: name the skills, scan, and confirm each proposed sentence beside its source (a paraphrase is rejected). **Review**: mark the postings you have read so they count. **Count**: each skill's share with its numerator, denominator and 95% Wilson interval. **Map**: place each skill on an outcome's coverage ladder against a target. **Brief**: prepare the meeting brief with its receipts, download it as a document or editable slides, or send it to the people who decide; with a snapshot, the brief reports what changed since it.
+6. **Decide**. A coordinator or the programme owner who received the brief records adopt, retain, defer or return with a required reason. A decision on your own brief is self-recorded and stays open until a second person decides, except on a personal single-owner course. A record is never edited; deciding again adds a new one. Retain is a complete outcome: Update then shows no change this term.
+7. **Update**. An existing course needs **Start course revision**; a new personal course starts with an empty revision. Record the course brief and only the constraints you know; add CLO wording, Bloom level, achievement evidence and optional programme-outcome mappings; add topics, hours, weeks, CLO links and prerequisites; protect foundational content that must remain. **Save revision**, then **Check saved revision**: errors such as broken links, prerequisite cycles and exceeded time budgets block the candidate, while unknown budgets and missing evidence remain visible warnings. Inspect **Before and after** and the affected teaching work, record why and the teaching term, then the coordinator (or the owner of a personal course) chooses **Use as my course version**. The baseline is preserved; university approval stays in its existing process. **Discard revision** requires a reason and leaves the current version unchanged.
+8. **Teach**. Save course notes and add a session with a week, topic, duration, CLO links, activity and check for understanding. Ready and delivered sessions require preparation details; those checks do not establish teaching effectiveness. Course changes flag affected sessions and assessments for review while keeping the content. **Teaching pack (.pptx)** on any session downloads an editable deck built from the saved session and the evidence linked to its outcomes; the meeting brief also downloads as slides. No model writes a word of either. The assessment blueprint and template items sit behind a disclosure on this step; an affected assessment needs a recorded course-change review and repaired links before another submission.
+9. **Learn**. File results through Upload; the step is done when this term's results are filed. **History** keeps the course versions and the recorded decisions and exports a previous outline. **Export current outline** and **Export plan (.md)** write readable Markdown documents, which are not slide decks or restorable backups.
+10. In **Guide & progress** or the Backups panel on **Courses**, download a JSON workspace backup. To restore, choose the JSON file, review counts and export date, acknowledge replacement, then restore. Download the pre-restore recovery copy to recover the previous workspace. Backups exclude original uploaded files, credentials and unsaved edits.
+11. The earlier proposal and approval chain, with its illustrative acceptance forecast, is kept in the research sandbox and labelled illustrative. Decisions on the loop are recorded in Decide.
 
 ## Saving and navigation
 
 - Courses, saved revisions, version history, plans and notes are kept in this browser. There is one teaching plan per course, shared by its assigned local personas. There is no cross-device sync, separate term archive or institutional database yet.
-- Each editor has an explicit Save button. Changing tabs preserves an open editor. Leaving the page/course, switching persona or closing the page warns about unsaved edits. Save before downloading a JSON backup; it contains saved workspace data.
+- Each editor has an explicit Save button. Moving between Course, Update, Teach and History preserves an open editor. Leaving for another page or course, switching persona or closing the page warns about unsaved edits. Save before downloading a JSON backup; it contains saved workspace data.
 - A visible storage warning means changes cannot survive closing the page. Download a JSON backup or Markdown export while the page is open. A restore that cannot be written to storage leaves the current workspace unchanged.
 - Reset workspace removes local saved work and restores seed examples. Download a JSON backup first. A Markdown outline/plan cannot be restored; only the validated JSON workspace format can.
 - Play demo is available on sign-in/public screens and Guide & progress. It resets the local workspace; existing saved work triggers a confirmation first. Download a workspace backup before continuing.
-- The journey bar in a course workspace and the Start here card on Home read your saved work: a step is done only when the workspace holds its result. **How it works** shows the seven roles and the real record of each step on your course; **Evaluation** shows the live checks and benchmarks.
+- The loop rail in a course and the receipts ring on Home read your saved work: a step is done only when its record exists this term. **How it works** shows the seven roles and the record of each step on your course, with derived lines labelled; **Evaluation** shows the live checks and benchmarks.
 - Use **How to use [section]** above each signed-in page for contextual instructions. **Guide & progress** includes every section, a role filter, search and unfinished development work.
-- Ctrl+K opens navigation search. Course tabs support Left/Right Arrow, Home and End. Small screens use the Navigation button. Keyboard focus is visible and a skip link leads to main content.
+- Ctrl+K opens navigation search. The Report sub-rail supports Left and Right Arrow, Home and End. Small screens use the Navigation button and a step strip above each step. Keyboard focus is visible and a skip link leads to main content.
 
 ## How to read the status labels
 
@@ -41,11 +41,11 @@ The seeded catalogue, market figures and learner examples are illustrative. Uplo
 
 Resume course preparation and respond to work routed to you.
 
-1. Open a course to continue preparation.
-2. Use the work queue for drafts or reviews in your role.
-3. Open a notification to see the request in context. An evidence brief opens here with its receipts and can be downloaded.
+1. Read the receipts ring for your course: each step says Done only when its record exists this term, and Continue opens the next one.
+2. Open a brief waiting for a decision. A brief sent to you opens here with its receipts; if you hold the decide position, record adopt, retain, defer or return with the reason.
+3. Open a notification to see the request in context. A decision on your own brief opens that course's Decide step.
 
-**Output:** A next action tied to an actual course, session or proposal in this workspace.
+**Output:** A next action tied to an actual course, brief or session in this workspace.
 
 **Current limit:** No real timetable, deadlines, email reminders or institutional notifications are connected.
 
@@ -64,23 +64,80 @@ Find your courses and see what preparation each one needs.
 
 **Current limit:** The initial catalogue is illustrative. Personal courses use your entered content and have no calibrated market or learning score. Counts describe saved work, not academic quality.
 
-## Course Studio
+## Course, Update, Teach and History
 
 **For:** Assigned lecturers and coordinators · **Status:** Partial
 
-Develop the course outline, prepare classes and keep a traceable local revision history.
+Set up the course, make the decided change, prepare classes and keep a traceable local history.
 
-1. Overview: inspect current outcomes, prerequisites, source records and unfinished preparation.
-2. Outcomes & topics: start a revision. Add, edit or remove CLOs and topics; record achievement evidence, PLO mappings, hours, prerequisites and protected foundations.
-3. Save and check the revision. Fix errors, inspect warnings and the before/after comparison, then record your rationale and teaching term. Use as my course version requires your explicit review; university approval stays in its existing process.
-4. Evidence: run a research run against a permitted employer board or the dated saved sample, keep the postings worth reading, scan them for the skills you name and confirm each exact quotation (paraphrases are rejected), mark the extraction reviewed so the postings count, map each quoted skill to an outcome with a reviewed coverage stage and target, freeze a snapshot of the reviewed evidence at each review and compare a later window with it (a skill is called rising or falling only when the two 95% intervals separate), then prepare a meeting brief to download as a document or as editable slides, or send to a colleague; once a snapshot exists the brief reports what changed since it. Shares show the numerator, denominator and a Wilson interval. Collection happens only when you ask.
-5. Teaching plan: save CLO-linked sessions, activities, learning checks and references; export the plan; download an editable teaching pack (.pptx) for any session with its outcomes, the employer evidence behind them, the activity and the check. Review affected sessions after a course change.
-6. Assessment: prepare a blueprint independently of a proposal, select preserved drafts and inspect illustrative item generation. A changed course requires another assessment review before submission. Proposal retains the legacy review workflow.
-7. History: inspect preserved course versions and revision decisions, and export a previous outline.
+1. Course: inspect the outcomes, prerequisites, source records and unfinished preparation. The loop rail lists the six steps that follow.
+2. Update: start a revision. Add, edit or remove CLOs and topics; record achievement evidence, PLO mappings, hours, prerequisites and protected foundations. Save and check it, inspect the warnings and the before and after comparison, then record the rationale and teaching term. The coordinator, or the owner of a personal course, makes it the course version; university approval stays in its existing process. When the decision was retain, Update shows no change this term.
+3. Teach: save CLO-linked sessions, activities, learning checks and references; export the plan; download an editable teaching pack (.pptx) for any session with its outcomes, the employer evidence behind them, the activity and the check. The assessment blueprint and template items sit behind a disclosure. Review affected sessions after a course change.
+4. History: inspect preserved course versions and the decisions recorded on briefs, and export a previous outline.
 
-**Output:** An editable course definition, candidate and active local versions, decision history, evidence receipts with an exportable report, teaching plan, Markdown outlines and assessment draft.
+**Output:** An editable course definition, candidate and active local versions, the decision history, a teaching plan, Markdown outlines and an assessment draft.
 
-**Current limit:** One teaching plan per course in this browser. Local version activation does not attest institutional approval. Evidence describes the recorded set only. Collection is on request from two documented board APIs (Greenhouse and Lever) through the local API, or from the dated saved sample; snapshots compare frozen windows, but employer-balanced views and scheduled refresh are not built. Slide packs are generated from saved data with no model-written text; model-drafted slide content and template import remain to be built. Configurable institution-wide reviews, term archives and accurate assessment allocation remain to be built. Agent drafting still uses fixtures.
+**Current limit:** One teaching plan per course in this browser. Local version activation does not attest institutional approval. Slide packs are generated from saved data with no model-written text; model-drafted slide content and template import remain to be built. Configurable institution-wide reviews, term archives and accurate assessment allocation remain to be built. Agent drafting still uses fixtures.
+
+## Watch
+
+**For:** Assigned lecturers and coordinators · **Status:** Working locally
+
+See what employers are asking for, right now and over time.
+
+1. Run a research run against a permitted employer board (Greenhouse or Lever, through the local API) or the dated saved sample. Collection happens only when you ask.
+2. Keep the postings worth reading. Each keeps its link, publication date, retrieval time and fingerprint; a copy of a kept posting is flagged as a duplicate and not counted twice.
+3. Paste a document you are permitted to keep, such as an employer letter or an advisory board note, with its exact text.
+4. Freeze a snapshot of the reviewed evidence at each review and compare a later window with it. A skill is called rising or falling only when the two 95% intervals separate.
+
+**Output:** Dated sources with their receipts, and frozen snapshots to compare.
+
+**Current limit:** Two documented board APIs and a dated saved sample only; no other sites, no scheduled refresh and no employer-balanced view. A convenience sample describes the postings kept, not the labour market.
+
+## Report
+
+**For:** Assigned lecturers and coordinators · **Status:** Working locally
+
+Say exactly what employers ask, how often, and what the course does about it.
+
+1. Quote: name the skills, scan the kept postings and confirm each proposed sentence beside its source, with the matched words highlighted. A paraphrase is rejected.
+2. Review: mark the postings you have read so they join the denominator. Unreviewed postings are not counted.
+3. Count: read each skill's share as postings of reviewed postings, with its Wilson 95% interval. There is no score.
+4. Map: place each quoted skill on an outcome's coverage ladder (absent, introduced, practised, assessed) against a target.
+5. Brief: prepare the meeting brief with every receipt, download it as a document or as editable slides, and send it to the people who decide. With a snapshot, the brief reports what changed since it.
+
+**Output:** Confirmed quotations, a reviewed denominator, counts with intervals, coverage mappings and a meeting brief with receipts.
+
+**Current limit:** Counts describe the recorded set only. The scan proposes and a person confirms; nothing counts without review. The brief recommends; it does not decide.
+
+## Decide
+
+**For:** Coordinators and the programme owner; lecturers send briefs · **Status:** Working locally
+
+Record what will be done about the brief, by whom, when and why.
+
+1. Open the latest brief from Home or this step. It shows its recipients, who has read it and what each person decided.
+2. Choose adopt, retain, defer or return and write the reason. The note travels with the record.
+3. A decision on your own brief is self-recorded and the step stays open until a second person decides, except on a personal single-owner course.
+4. To change your mind, record again: the earlier record stays and the newest is your standing decision. A newer brief supersedes the older one, whose decisions stay on record. A decision taken before the evidence changed is marked as such.
+
+**Output:** An immutable decision record bound to the brief, the course version and the term, on the course timeline.
+
+**Current limit:** Positions are local personas and role checks are not authenticated server authorization. A recorded decision does not by itself establish official university approval. The mock-cohort try is illustrative.
+
+## Change proposal
+
+**For:** Lecturers and coordinators · **Status:** Demonstration
+
+Explore the prototype's earlier proposal and approval chain in the illustrative sandbox.
+
+1. Start a draft for a course or continue an open one.
+2. Edit the proposed outcomes and topics, ask for an agent review and submit for coordinator review.
+3. Run the acceptance scenario and pass the proposal to the approval sandbox.
+
+**Output:** An illustrative proposal with its review history.
+
+**Current limit:** This is the earlier approval chain, kept for exploration. Course decisions are recorded in each course's Decide step. Forecasts are uncalibrated and agent drafting uses fixtures.
 
 ## Upload
 
@@ -102,8 +159,8 @@ Read a document and review its interpretation before filing it.
 
 Explore the prototype's curriculum sequencing and readiness scenario.
 
-1. Prepare a proposal; a lecturer-authored proposal needs coordinator review first.
-2. Run the scenario from the proposal in Studio.
+1. Prepare a proposal in the sandbox; a lecturer-authored proposal needs coordinator review first.
+2. Run the scenario from the proposal.
 3. Inspect the explanation, assumptions and drill-down before treating it as a discussion aid.
 
 **Output:** An illustrative report routed into the management review workflow.
@@ -128,7 +185,7 @@ Explore how a market signal could prompt curriculum review.
 
 **For:** Management · **Status:** Partial
 
-Review a tested proposal and record a decision with its reasoning.
+Review a tested proposal in the illustrative sandbox and record a decision with its reasoning.
 
 1. Read the proposed changes, illustrative scenario report and review history.
 2. Approve the tested candidate or return it with a reason. Changes after testing require a new check; a changed baseline cannot be approved.
@@ -136,7 +193,7 @@ Review a tested proposal and record a decision with its reasoning.
 
 **Output:** Actual candidate CLO/topic edits in a new local version, the preserved baseline and a local decision event; approval also records an illustrative prediction.
 
-**Current limit:** This remains the prototype's fixed review chain with uncalibrated forecasts. Role checks are local, not authenticated server authorization. A local decision does not independently establish official university approval.
+**Current limit:** This remains the prototype's fixed review chain with uncalibrated forecasts, kept in the sandbox; decisions on the loop are recorded in Decide. Role checks are local, not authenticated server authorization. A local decision does not independently establish official university approval.
 
 ## Programme
 
@@ -215,12 +272,12 @@ Inspect the data behind the workspace and distinguish fixtures from uploaded rec
 See the seven roles in order, what each reads, produces and cannot do, and the real record of what happened on your course.
 
 1. Open a role card to read what it reads, produces and cannot do.
-2. Choose a course to see its timeline: every line is derived from a saved record, in order.
-3. Use Open on a timeline entry to jump to the tab that holds it.
+2. Choose a course to see its timeline. Lines from the event log (briefs prepared, sent and read, decisions, snapshots, adoptions, term changes) carry the time they happened; lines worked out from the records are labelled derived.
+3. Use Open on a timeline entry to jump to the step that holds it.
 
 **Output:** A step-by-step record of the work done on a course, told by role, with a link to each result.
 
-**Current limit:** Roles are deterministic workflow steps with optional model help, not autonomous agents. The timeline shows only recorded work; it never invents reasoning or activity.
+**Current limit:** Roles are deterministic workflow steps with optional model help, not autonomous agents. The timeline shows only recorded work; it never invents reasoning or activity, and a derived line never claims a time it does not have.
 
 ## Evaluation
 
@@ -254,7 +311,7 @@ Explore the prototype's course relevance and source-agreement presentation.
 
 - **Evidence collection:** On-request collection from the Greenhouse and Lever board APIs, exact-excerpt receipts, fingerprint duplicate detection, lexicon-assisted scanning, reviewed denominators and meeting briefs work. Scrapling page adapters, snapshots of arbitrary sites, cross-site vacancy clustering, scheduled refresh and refresh-failure reporting remain planned. Frozen evidence snapshots and their comparison work; a re-collected posting is matched by its board posting id.
 - **Defensible calculations:** Observed shares with explicit numerators and denominators, Wilson intervals, reviewed coverage stages and a demand-weighted coverage index work for recorded evidence. Comparable time windows, employer-balanced sensitivity views, publication gates and validation against real course/cohort data remain planned.
-- **Institutional review:** Local CLO/topic editing, constraints, diffs and version activation work. Institution profiles, configurable review authorities, term archives and server-enforced decisions remain to be built.
+- **Institutional review:** Local CLO/topic editing, constraints, diffs and version activation work, and decisions on briefs are recorded with their reason, person, course version and term. Institution profiles, configurable review authorities, positions as data, term archives and server-enforced decisions remain to be built.
 - **Teaching materials:** Editable PPTX teaching packs and brief decks are generated from saved sessions, outcomes and evidence receipts, with speaker notes and no model-written text. Model-drafted slide content with lecturer review, selective regeneration, institutional templates, handouts and accessibility checks of exported decks remain planned.
 - **Agent integrations:** Distinct branded roles, structured model output, provider SDK adapters, job retries, usage/cost controls and evaluation fixtures.
 - **Shared institutional workspace:** Database, authenticated roles, durable source files, validated legacy migration, term/cohort separation and collaboration. JSON backup/restore works locally; it does not include original uploaded files.

@@ -226,7 +226,8 @@ export type NotificationKind =
   | "test-done"
   | "approved"
   | "rejected"
-  | "evidence-brief";
+  | "evidence-brief"
+  | "brief-decision"; // a decision was recorded on a brief you prepared
 
 export interface Notification {
   id: string;
@@ -571,4 +572,19 @@ export type BriefRecommendation = "keep" | "refresh" | "revise" | "undecided";
 export interface EvidenceBrief {
   id: string; subjectId: SubjectId; createdBy: PersonId; createdAt: string; recommendation: BriefRecommendation; notes: string; markdown: string;
   recipients: PersonId[]; sentAt: string | null;
+}
+
+// ---------- the decision record and the event log (plan Section 4) ----------
+export type DecisionOutcome = "adopt" | "retain" | "defer" | "return";
+/** One person's decision on one brief, bound to the brief, the course version and the term. Immutable:
+ *  an amendment is a new record, and a person's latest record on a brief is their standing decision. */
+export interface BriefDecision {
+  id: string; briefId: string; subjectId: SubjectId; courseVersionId: string; term: string;
+  byPersonId: PersonId; at: string; outcome: DecisionOutcome; note: string;
+}
+export type LoopEventKind = "brief-prepared" | "brief-sent" | "brief-read" | "decision-recorded" | "snapshot-frozen" | "version-adopted" | "term-set";
+/** An append-only record of what happened and when. The How it works timeline reads these first. */
+export interface LoopEvent {
+  id: string; at: string; byPersonId: PersonId; kind: LoopEventKind;
+  refs: { subjectId: SubjectId; briefId?: string; decisionId?: string; snapshotId?: string; versionId?: string; draftId?: string; term?: string; previousTerm?: string };
 }

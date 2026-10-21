@@ -145,10 +145,11 @@ test("a re-imported posting with new text is reported as changed, not as new", a
   assert.equal(c.textChanged[0].after.title, "Data Analyst 5");
 });
 
-test("backups carry snapshots at schema 4, reject inconsistent ones, and older backups restore without them", async () => {
+test("backups carry snapshots at schema 5, reject inconsistent ones, and older backups restore without them", async () => {
   await twoSemesters();
   const raw = exportWorkspaceBackup(), people = getState().people.map((p) => p.id);
-  assert.equal(JSON.parse(raw).schemaVersion, 4);
+  assert.equal(JSON.parse(raw).schemaVersion, 5);
+  assert.equal(JSON.parse(raw).data.events.filter((e: any) => e.kind === "snapshot-frozen").length, 1, "a frozen snapshot is on the event log");
   const parsed = parseWorkspaceBackup(raw, people);
   assert.ok(parsed.ok); assert.equal(parsed.backup.data.evidenceSnapshots.length, 1);
   for (const mutate of [
@@ -163,7 +164,7 @@ test("backups carry snapshots at schema 4, reject inconsistent ones, and older b
     const candidate = JSON.parse(raw); mutate(candidate);
     assert.equal(parseWorkspaceBackup(JSON.stringify(candidate), people).ok, false, mutate.toString());
   }
-  const older = JSON.parse(raw); older.schemaVersion = 3; delete older.data.evidenceSnapshots;
+  const older = JSON.parse(raw); older.schemaVersion = 3; delete older.data.evidenceSnapshots; delete older.data.briefDecisions; delete older.data.events;
   const restoredOlder = parseWorkspaceBackup(JSON.stringify(older), people);
   assert.ok(restoredOlder.ok); assert.deepEqual(restoredOlder.backup.data.evidenceSnapshots, []);
   resetDemoState(); login(PEOPLE_IDS.sobri);
