@@ -16,14 +16,16 @@ import { Button, Tag } from "../primitives/index.tsx";
 import { Mark } from "../mascots/mark.tsx";
 import { LoopGraphic } from "./LoopGraphic.tsx";
 
-/** The doors (plan Section 11.2): where a lecturer could reach the same core. Only the web workspace is built. */
-export const DOORS: Array<{ name: string; how: string; icon: LucideIcon; built?: boolean }> = [
-  { name: "Web workspace", how: "everything that needs a full editor", icon: Monitor, built: true },
-  { name: "The university's assistant", how: "an MCP server for Claude, ChatGPT, Copilot or Gemini", icon: Plug },
-  { name: "A Lyceum skill", how: "the loop as a skill folder the assistant loads", icon: Puzzle },
-  { name: "Microsoft 365 and Teams", how: "briefs posted as cards that link to the receipts", icon: MessagesSquare },
-  { name: "Google Workspace", how: "a brief saved to Docs, a pack to Slides", icon: Globe },
-  { name: "The learning platform", how: "launched from the course page through LTI 1.3", icon: GraduationCap },
+/** The doors (plan Section 11.2): where a lecturer reaches the same core. The web workspace is built; the MCP
+ *  server runs locally over an exported workspace (docs/doors.md); the skill folder is written; the rest are planned. */
+type DoorStatus = "Built" | "Local, read-only" | "Written" | "Planned";
+export const DOORS: Array<{ name: string; how: string; icon: LucideIcon; status: DoorStatus }> = [
+  { name: "Web workspace", how: "everything that needs a full editor", icon: Monitor, status: "Built" },
+  { name: "The university's assistant", how: "an MCP server for Claude and other assistants; local over an exported workspace, remote and OAuth planned", icon: Plug, status: "Local, read-only" },
+  { name: "A Lyceum skill", how: "the loop as a skill folder the assistant loads, for the local door", icon: Puzzle, status: "Written" },
+  { name: "Microsoft 365 and Teams", how: "briefs posted as cards that link to the receipts", icon: MessagesSquare, status: "Planned" },
+  { name: "Google Workspace", how: "a brief saved to Docs, a pack to Slides", icon: Globe, status: "Planned" },
+  { name: "The learning platform", how: "launched from the course page through LTI 1.3", icon: GraduationCap, status: "Planned" },
 ];
 
 export function LandingScreen() {
@@ -68,11 +70,11 @@ export function LandingScreen() {
 
     <section className="landing-section" aria-labelledby="doors-title">
       <h2 id="doors-title">One core, many doors</h2>
-      <p className="landing-lead">The same deterministic core, reached from the tools lecturers already use. Today it is the web workspace; the other doors are planned.</p>
-      <ul className="doors-strip">{DOORS.map((d) => { const Icon = d.icon; return <li key={d.name} className={d.built ? "is-built" : ""}>
+      <p className="landing-lead">The same deterministic core, reached from the tools lecturers already use. Today it is the web workspace and a local, read-only door for an assistant; the other doors are planned.</p>
+      <ul className="doors-strip">{DOORS.map((d) => { const Icon = d.icon; return <li key={d.name} className={d.status === "Planned" ? "" : "is-built"}>
         <Icon size={24} strokeWidth={1.75} aria-hidden />
         <strong>{d.name}</strong><span className="muted">{d.how}</span>
-        <Tag tone={d.built ? "ok" : "neutral"}>{d.built ? "Built" : "Planned"}</Tag>
+        <Tag tone={d.status === "Built" ? "ok" : d.status === "Planned" ? "neutral" : "accent"}>{d.status}</Tag>
       </li>; })}</ul>
     </section>
 
@@ -84,7 +86,8 @@ export function LandingScreen() {
         <li><CheckCircle2 size={16} /> Decisions recorded as data: adopt, retain, defer or return, with the reason, the person, the course version and the term.</li>
         <li><CheckCircle2 size={16} /> Editable teaching packs and brief decks generated from saved data, with speaker notes and no AI-written text.</li>
         <li><CheckCircle2 size={16} /> Versioned course revisions checked against hours, links and protected foundations.</li>
-        <li><ShieldCheck size={16} /> Not built yet: shared accounts, the doors above, collectors for sites without an API, model-drafted slide text, and any learning claim. The earlier illustrative screens stay behind sign-in, labelled.</li>
+        <li><CheckCircle2 size={16} /> A local, read-only door: an MCP server over an exported workspace answers with the same counts and quotations, and writes nothing to the workspace.</li>
+        <li><ShieldCheck size={16} /> Not built yet: shared accounts, the remote and planned doors above, collectors for sites without an API, model-drafted slide text, and any learning claim. The earlier illustrative screens stay behind sign-in, labelled.</li>
       </ul>
     </section>
 

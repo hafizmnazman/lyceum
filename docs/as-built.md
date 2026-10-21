@@ -178,3 +178,31 @@ What was built:
 Not done in A4, by design: the door step of the tour (A5); `docs/demo-script.md`, the booth checklist of Section 15 (A8); the README's screenshot captions (A8).
 
 Accepted by: the Code lane (owner to sign).
+
+## A5, the local door: 22 October 2026
+
+What was built:
+
+- **`mcp/`, a stdio MCP server** on the official TypeScript SDK (`@modelcontextprotocol/sdk` 1.32.1, with zod 4.6.7, its required peer). It reads the workspace backup named by `LYCEUM_WORKSPACE`, validates it with `parseWorkspaceBackup` exactly as the app's restore does, reads it again on every call, and offers six tools: `lyceum_courses`, `lyceum_sources`, `lyceum_evidence_report`, `lyceum_course_outline` and `lyceum_brief_draft`, annotated read-only, and `lyceum_teaching_pack`, which writes the app's own deterministic deck to a new absolute .pptx path and never overwrites. Every reply starts with the export time; every call is logged to stderr with the host, the tool, its arguments and the record ids it touched. No tool confirms, reviews, decides, adopts or sends. `npm run mcp` starts it.
+- **`mcp/sample-workspace.json`**, the tour's end state on CS310 built by `node mcp/sample.ts` through the same store actions from `public/demo` (the dated Stripe sample and the sample results, read by the browser's own offline interpretation), identical on every run; `--check` reports a stale file. The door works offline from it.
+- **`mcp/try.ts`**, a real stdio session: it spawns the server and speaks MCP to it with the SDK's client, as a desktop host does. Its run is quoted in docs/doors.md.
+- **`skills/lyceum/SKILL.md`** under the Agent Skills specification: the loop, the labels, what the assistant may and must not say, and when to call each tool.
+- **`docs/doors.md`**: the tools, the trust boundary, the one-dataset rule before a demo, the Claude Desktop and Claude Code configuration, the stdio transcript, the steps for the manual Claude Desktop run, and the sentence "Remote access and OAuth are planned."
+- **Corrected on the way:** the exported evidence report said "Nothing was collected from the web" even when postings had been collected on request; it now names its sources (the A2a fix had reached the screen but not the report). The landing page's doors strip now says what exists: the MCP door "Local, read-only", the skill "Written", the rest Planned. The Evaluation suites live in `src/data/suites.ts`, and a proof ties the landing's check count to their total.
+
+| Command | Result |
+|:--|:--|
+| `npm run typecheck` | Passed (the typecheck now includes `mcp/`) |
+| `node --test src/prove-mcp.ts` | 5 of 5 passed: the sample is current and validates; six tools, five annotated read-only; each read tool answers with its receipts, the export time and the right scope; the pack is the app's deck and is never overwritten, nor written to a relative path, a wrong extension or a missing folder; the workspace file is untouched; unknown courses, tampered and missing exports are refused; one log line per call with the host and the records |
+| `node mcp/try.ts` | Connected over stdio to lyceum 3.0.0; six tools listed with their annotations; CS310's evidence report returned (9 reviewed postings, each share with its interval) |
+| `node mcp/sample.ts --check` | The sample workspace matches the tour's end state |
+| `npm run prove:all` | 184 passed, 0 failed, seventeen suites |
+| `npm run build` | Passed |
+| `npm run smoke:integrity`, `smoke`, `smoke:workspace`, `smoke:curriculum` | 2 of 2, 19 of 19, 7 of 7 and 6 of 6 passed |
+| Guide check, contrast check, dash scan, backup migration | Matches; CONTRAST CHECK OK; no en or em dash in 239 text files (the sample workspace's verbatim postings are exempt, as the saved sample is); BACKUP MIGRATION OK |
+
+`npm install` reported eight advisories in the production dependencies (xlsx with no fix, pptxgenjs and image-size whose fix is a major version, tar and node-pre-gyp, brace-expansion, hono, ip-address); no version was changed in Track A (docs/decisions.md).
+
+Not done in A5, by design: the recorded Claude Desktop run (on the owner's list in docs/run-log.md, steps in docs/doors.md); remote access, OAuth and the other doors (Track B).
+
+Accepted by: the Code lane (owner to sign).

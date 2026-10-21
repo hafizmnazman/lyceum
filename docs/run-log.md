@@ -6,6 +6,8 @@ The autonomous run of Track A (docs/lyceum-upgrade-plan.md Section 17.5). Times 
 
 1. **The doors strip: official marks or neutral icons?** (raised 2026-10-22 06:16, A2b) Plan Section 17.1 asks for the landing page's doors strip "with the official marks" and a `docs/brand-use.md` listing each mark and its source. A2b shipped neutral Lucide icons with each door's name and a Planned tag, because the third-party marks (Claude, ChatGPT, Copilot, Gemini, Teams, the LMS) carry usage terms nobody has checked, and showing them beside doors that are not built could read as an endorsement or an integration. To switch: approve the marks and their sources (from each brand's press or brand page), and the strip and `docs/brand-use.md` follow in one change (`DOORS` in `src/ui/screens/Landing.tsx`). Nothing else waits on this.
 
+2. **Run the local door once in Claude Desktop** (raised 2026-10-22 06:37, A5) Plan Section 17.1 asks for a recorded Claude Desktop run of the door. It needs the desktop app and your account, and configuring it changes a file outside the repository, so this session recorded a real stdio session with the official SDK client instead (`node mcp/try.ts`, in docs/doors.md). The steps and what to check are in docs/doors.md, under "The manual Claude Desktop run"; record the date and the first lines of the answer there. Nothing else waits on this.
+
 ## Codex queue
 
 The owner's Codex limit was reached on 22 October and resets within hours. A Codex run also sends the embedded files to OpenAI, which this run's rules forbid without the owner's go-ahead, so no package here waits on Codex. Reviews worth running once the limit resets and the owner approves are listed here with their files and question; each is `codex exec --sandbox read-only` with the files on stdin and the report saved under `docs/review/`.
@@ -104,12 +106,24 @@ None queued yet.
 - 06:25 check: `npm run smoke` 19 of 19, `smoke:integrity` 2 of 2, `smoke:workspace` 7 of 7, `smoke:curriculum` 6 of 6 passed.
 - 06:25 check: guide check matches; contrast check, dash scan (231 files) and the backup migration passed; `node scripts/walk.mjs` WALK OK (21 checks).
 - 06:23 three decisions logged (docs/decisions.md).
-- 06:26 ended; committed as "A4: the tour follows the loop and closes the ring, the demo smoke asserts the decision record, and the walk visits every step".
+- 06:26 ended; committed `8beb1fe` "A4: the tour follows the loop and closes the ring, the demo smoke asserts the decision record, and the walk visits every step".
 
 ### A5, the local door
+
+- 2026-10-22 06:26 started, right after the A4 commit; re-read Section 17.5 and this log, then Section 11, `workspaceBackup.ts`, `evidence.ts`, `curriculum.ts` and `slides.ts`.
+- Before 06:37: installed `@modelcontextprotocol/sdk` 1.32.1 and zod 4.6.7 (its required peer); wrote `mcp/workspace.ts`, `mcp/server.ts`, `mcp/sample.ts`, `mcp/try.ts`, `skills/lyceum/SKILL.md`, `docs/doors.md` and `src/prove-mcp.ts`. Found and fixed: the exported evidence report claimed nothing was collected from the web when postings had been (the sample check caught the knock-on change in the stored brief); a proof compared annotations against a key they never carry.
+- 06:37 eight decisions logged (docs/decisions.md); the Claude Desktop run added to Needs the owner.
+- 06:38 check: `npm run typecheck` passed; `node --test src/prove-mcp.ts` 5 of 5; `npm run prove:all` 184 passed, seventeen suites; `node mcp/sample.ts --check` matches.
+- 06:38 check: `npm run build` passed; `smoke:integrity` 2 of 2.
+- 06:39 check: `npm run smoke` 19 of 19 and `smoke:workspace` 7 of 7.
+- 06:40 check: `smoke:curriculum` 6 of 6; guide check, contrast check and the backup migration passed; `node mcp/try.ts` connected over stdio and returned the report.
+- 06:41 check: the dash scan flagged the verbatim Stripe posting inside the sample workspace (five dashes, all inside source texts); exempted like the saved sample; then clean across 239 files.
+- 06:42 ended; committed as "A5: the local door, a read-only MCP server over an exported workspace, with the skill, the sample and its proofs".
+
+### A6, deck, diagram, brief, poster
 
 - (next)
 
 ## What is left
 
-A5, A6, A7 (the parts that need no human voice), A8, in that order.
+A6, A7 (the parts that need no human voice), A8, in that order.

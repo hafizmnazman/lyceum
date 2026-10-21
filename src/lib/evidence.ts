@@ -193,10 +193,16 @@ export function evidenceMarkdown(subject: Subject, report: EvidenceReport, sourc
   const name = (id: string) => people.find((p) => p.id === id)?.name ?? id;
   const label = (id: string) => outcomes.find((c) => c.id === id)?.label ?? id;
   const courseSources = sources.filter((s) => s.subjectId === subject.id);
+  // The scope says where the sources came from: collected on request from a named board or sample, or pasted by a person.
+  const collected = courseSources.filter((s) => s.provenance === "collected");
+  const collectedFrom = [...new Set(collected.map((s) => s.collection?.label ?? "a permitted board"))];
+  const scope = collected.length
+    ? "Scope: " + collected.length + " postings collected on request from " + collectedFrom.join("; ") + (courseSources.length > collected.length ? ", and " + (courseSources.length - collected.length) + " lecturer-supplied documents" : "") + ", recorded in this workspace. Nothing is collected without a request."
+    : "Scope: lecturer-supplied documents recorded in this workspace. Nothing was collected from the web.";
   const lines = [
     "# " + subject.id + " evidence report", "",
     "Course: " + subject.title, "Generated: " + generatedAt,
-    "Scope: lecturer-supplied documents recorded in this workspace. Nothing was collected from the web.", "",
+    scope, "",
     "## Observed requirements", "",
     "Reviewed job postings in the denominator: " + report.eligible,
     "Excluded: " + report.unreviewed + " unreviewed postings, " + report.duplicates + " duplicate copies, " + report.contextual + " contextual documents (standards and advisory notes are listed, never counted as postings).",

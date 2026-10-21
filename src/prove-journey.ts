@@ -24,6 +24,7 @@ import { readFileSync } from "node:fs";
 import { ACCREDITOR_MAPPING } from "./data/accreditors.ts";
 import { PAIN_STATS } from "./data/painStats.ts";
 import { PROOF } from "./data/proof.ts";
+import { SUITE_TOTAL } from "./data/suites.ts";
 import { tourMinutes } from "./demo/script.ts";
 import type { CollectedPosting, CourseDefinition, DecisionOutcome } from "./types.ts";
 
@@ -384,6 +385,7 @@ test("every landing figure is in the claims register with its source, and every 
   assert.ok(PAIN_STATS.find((s) => s.scope === "Asia")!.vendor, "the vendor survey says so");
   for (const p of PROOF) { const r = row(p.claim); assert.ok(r && r.includes("| " + p.value + " |"), p.claim + " is registered with its figure"); }
   assert.ok(row("tour-length")?.includes("| about " + tourMinutes() + " minutes |"), "the tour's stated length is the one the script computes");
+  assert.equal(PROOF.find((p) => p.claim === "proof-checks")!.value, String(SUITE_TOTAL), "the landing's check count is the Evaluation table's total");
   for (const step of ACCREDITOR_MAPPING) for (const c of step.clauses) {
     assert.ok(c.url.startsWith("https://") && claims.includes(c.url), c.body + " has its link registered");
     const file = c.note.split(",")[0].split(" (")[0];

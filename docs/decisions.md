@@ -461,3 +461,83 @@ Chosen: (b), because the four smokes already cover the routes in CI terms and th
 Reverse it if: A8's README wants more captures; the walk writes them on demand.
 
 To reverse: `scripts/walk.mjs`.
+
+## 2026-10-22 06:37, A5: how the local door is put together
+
+Options: (a) one server file with the tools written inline. (b) The tools as plain functions over a validated export (`mcp/workspace.ts`), the MCP registration and stdio entry in `mcp/server.ts`, the export read again on every call, and each call logged to stderr as one JSON line with the host, the tool, its arguments and the record ids. (c) A long-running server that loads the export once.
+
+Chosen: (b), because the proofs can call the same functions through the protocol without spawning a process, and re-reading means a fresh export from the app is what the door answers from next, which Section 15 needs before the door is shown. Stderr is the channel a stdio host keeps for logs.
+
+Reverse it if: an export grows large enough that reading it per call is slow.
+
+To reverse: `mcp/workspace.ts` and `mcp/server.ts`.
+
+## 2026-10-22 06:37, A5: zod as a direct dependency
+
+Options: (a) rely on whatever zod is hoisted, which is puppeteer's 3.23.8, outside the SDK's required peer range (3.25 or 4). (b) Install zod 4 as a direct dependency, the SDK's required peer, so the schemas the door defines are the version the SDK validates with. (c) Describe the inputs as raw JSON Schema, which this SDK version does not accept for `registerTool`.
+
+Chosen: (b), because the plan names the official SDK and zod is its non-optional peer; npm deduplicates it with the SDK's own copy, and puppeteer keeps its nested 3.23.8.
+
+Reverse it if: a later SDK drops the zod peer.
+
+To reverse: `package.json` and `mcp/server.ts`.
+
+## 2026-10-22 06:37, A5: what the brief draft and the pack tool may claim and touch
+
+Options: (a) let the brief draft name a person as its preparer, and let the pack tool write anywhere, overwriting. (b) The draft's preparer is a label, "the local door, as a draft for a lecturer to review", under a first line saying it is a draft that decides nothing; the pack tool takes only an absolute path ending in .pptx in an existing folder, refuses an existing file, and stamps the deck with the export time so the same export gives the same deck. (c) Leave both tools out.
+
+Chosen: (b), because Section 11.3 says drafting tools return drafts and no tool sends a brief, and a door that can overwrite a file is a door that can destroy one. The pack is the app's own deck, so the two never disagree.
+
+Reverse it if: a pilot host needs the pack returned as a resource instead of a file.
+
+To reverse: `briefDraftText` and `writeTeachingPack` in `mcp/workspace.ts`.
+
+## 2026-10-22 06:37, A5: the sample workspace in the repository
+
+Options: (a) require an export from the app for every run of the door and its proofs. (b) Commit `mcp/sample-workspace.json`, the tour's end state built by `node mcp/sample.ts` through the same store actions, from the dated sample of the Stripe board and the sample results in `public/demo`, on the pinned clock so it is identical every run; `--check` and the proof fail when it is stale. (c) Build it on the fly in every proof only.
+
+Chosen: (b), because the door then works offline at the booth and in a fresh clone, and the staleness check caught a real change in this package (the report's scope line). Its timestamps are the seed clock's, which docs/doors.md says.
+
+Reverse it if: the file's size (about 310 kB) becomes a problem in the repository.
+
+To reverse: `mcp/sample.ts`, `mcp/sample-workspace.json`, the first test in `src/prove-mcp.ts`.
+
+## 2026-10-22 06:37, A5: the manual Claude Desktop run
+
+Options: (a) edit the owner's Claude Desktop configuration from this session, which changes a file outside the repository and needs the desktop app and account. (b) Record a real stdio session instead, the server spawned and spoken to with the official SDK's client exactly as a desktop host does (`mcp/try.ts`, its output in docs/doors.md), and put the Claude Desktop run on the owner's list with the steps. (c) Skip the run.
+
+Chosen: (b), because the protocol path is the same one a desktop host uses and it ran here, while a change outside the repository is the owner's call. docs/doors.md says "Recorded runs: none yet" until the owner makes one.
+
+Reverse it if: never; the owner's run replaces the line.
+
+To reverse: docs/doors.md, the run log's Needs the owner list.
+
+## 2026-10-22 06:37, A5: the evidence report's scope line
+
+Options: (a) keep "Nothing was collected from the web" in every exported evidence report, which is false whenever postings were collected on request, and which the door would repeat to an assistant. (b) Name the sources: collected postings with the board or sample they came from and any lecturer-supplied documents, and keep the old sentence only for a course with no collection, where it is true. (c) Drop the scope line.
+
+Chosen: (b), because the A2a fix had corrected the screen but not the report the export and the door carry, and a receipt that misstates its own scope is worse than none. The stored brief embeds the report, so the sample workspace was rebuilt.
+
+Reverse it if: never.
+
+To reverse: `evidenceMarkdown` in `src/lib/evidence.ts`.
+
+## 2026-10-22 06:37, A5: the doors strip after the local door
+
+Options: (a) mark the MCP door Built. (b) Mark it "Local, read-only", as Section 11.2 states its status, the skill folder "Written" because no host has loaded it in this run, and every other door Planned. (c) Leave every door but the workspace Planned.
+
+Chosen: (b), because each tag then says exactly what exists: the server works locally over an export, the skill is a file, and remote access and OAuth are not built.
+
+Reverse it if: the owner's Claude Desktop run loads the skill as well, which earns it "Local".
+
+To reverse: `DOORS` in `src/ui/screens/Landing.tsx`.
+
+## 2026-10-22 06:37, A5: the advisories npm reports
+
+Options: (a) run `npm audit fix` now, which moves locked versions of the app's own dependencies (xlsx has no fix; pptxgenjs's fix is a major version) days before a demo. (b) Record the eight advisories in the production dependencies as npm reports them and change no version in Track A; the door uses only the SDK's stdio path, not its HTTP stack. (c) Remove the SDK.
+
+Chosen: (b), because a dependency upgrade belongs in Track B with its own checks, and nothing in Track A exposes a server to a network.
+
+Reverse it if: an advisory concerns a path the demo uses.
+
+To reverse: `package.json` and `package-lock.json`.

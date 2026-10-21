@@ -4,6 +4,7 @@
 // quoted with their date; none is a projection.
 
 import { useMemo } from "react";
+import { SUITES } from "../../data/suites.ts";
 import { runScanBenchmark, workspaceChecks } from "../../lib/benchmark.ts";
 import { BENCHMARK_LEXICON } from "../../data/scanBenchmark.ts";
 import { parseWorkspaceBackup } from "../../lib/workspaceBackup.ts";
@@ -11,24 +12,6 @@ import { exportWorkspaceBackup, navigate, useStore } from "../../app/store.ts";
 import { Button, Page, PageHead, Tag } from "../primitives/index.tsx";
 import { BarList } from "../primitives/ShareBar.tsx";
 
-const SUITES: Array<[string, number, string]> = [
-  ["Acceptance scenario (illustrative spine)", 12, "canonical numbers of the synthetic scenario"],
-  ["Backtest (synthetic)", 4, "closed-loop arithmetic on synthetic data"],
-  ["Flow and roles", 28, "store, permissions, state machine"],
-  ["Signal reveal (fixture)", 12, "the staged fixture reveal"],
-  ["Intake parsing", 18, "xlsx, csv, pdf, pptx parse and interpret"],
-  ["Integrity", 13, "evidence edge cases, approval guards"],
-  ["Teaching plans", 10, "scope, validation, export"],
-  ["Curriculum", 28, "revisions, constraints, adoption, recovery"],
-  ["Evidence", 13, "citations, duplicates, Wilson intervals, mappings, backups"],
-  ["Collector", 6, "text extraction, cache, rate limits, timeouts"],
-  ["Research run", 5, "import on request, exact proposals, briefs, decisions and events in backups"],
-  ["Slides", 3, "decks unzipped and read back, chart part included"],
-  ["Benchmark and self-checks", 5, "labelled scan set, metric arithmetic, live quotation re-verification, denominator rules"],
-  ["The loop and the record", 8, "done rules per term, the decision record, a new term, the event log first in the timeline, Learn matched to the version taught, the routes, every landing figure in the claims register and every quoted clause in its note"],
-  ["Evidence snapshots", 6, "frozen windows, change called only when intervals separate, identity matching, backups"],
-  ["Moods", 8, "each mood a pure function of the records, the requests in flight and the clock"],
-];
 
 export function EvaluationScreen() {
   const state = useStore();
