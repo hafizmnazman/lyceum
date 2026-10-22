@@ -1,5 +1,5 @@
 // The Lyceum Loop (plan Section 4): Setup opens the course, six steps follow,
-// and History keeps the record. One list, read by the loop rail, the ring, the
+// and History keeps the record. One list, read by the step path, the ring, the
 // hash routes (#/course/:id/<step>) and the step headers, so the names, the
 // questions and the handoffs are the same everywhere.
 //
@@ -117,7 +117,7 @@ export interface LoopState {
   summary: string; // literal and scoped; never "approved", "ready" or "good"
 }
 
-const plural = (n: number, one: string, many: string) => n + " " + (n === 1 ? one : many);
+export const plural = (n: number, one: string, many: string) => n + " " + (n === 1 ? one : many);
 
 export function loopState(state: AppState, subjectId: string): LoopState {
   const window = termWindow(state, subjectId);

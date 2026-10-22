@@ -1,6 +1,7 @@
 // The app shell (plan Section 5.2): a forest header band with the wordmark,
 // search, notifications and the account menu; a white sidebar with Home,
-// Courses, the selected course's loop rail, Explore and the labelled sandbox;
+// Courses, your courses, Explore and the labelled sandbox, folded away until
+// opened (the course's loop runs as a path across the top of each step, StepFrame);
 // and the main column on mint. The header is the one forest element a working
 // screen carries (the restraint rule, Section 6.4).
 
@@ -25,7 +26,6 @@ import {
 import { NAV_META, screenLabel } from "./nav.ts";
 import { CommandPalette } from "./CommandPalette.tsx";
 import { AgentPanel } from "./AgentPanel.tsx";
-import { LoopRail } from "./LoopRail.tsx";
 import { Mark } from "../mascots/mark.tsx";
 import { Kbd } from "../primitives/index.tsx";
 import { PrototypeNotice } from "../primitives/PrototypeNotice.tsx";
@@ -206,8 +206,6 @@ export function Shell(props: { children: ReactNode }) {
               <NavItem key={s} screen={s} active={state.screen === s} badge={s === "inbox" ? unread : 0} />
             ))}
 
-            {railCourse ? <LoopRail state={state} subjectId={railCourse} /> : null}
-
             {railCourse && mySubjects.length > 0 ? (
               <>
                 <div className="nav-group-label">Your courses</div>
@@ -239,27 +237,23 @@ export function Shell(props: { children: ReactNode }) {
               <NavItem key={s} screen={s} active={state.screen === s} badge={0} />
             ))}
             {SANDBOX.some((s) => nav.includes(s)) ? (
-              <>
-                <div className="nav-group-label">Sandbox <span className="nav-group-note">illustrative</span></div>
+              <details className="nav-fold" open={SANDBOX.includes(state.screen) || undefined}>
+                <summary className="nav-group-label" data-demo-id="nav-sandbox">Sandbox <span className="nav-group-note">illustrative</span><ChevronDown size={16} className="disclosure-chevron" aria-hidden /></summary>
                 {SANDBOX.filter((s) => nav.includes(s)).map((s) => (
                   <NavItem key={s} screen={s} active={state.screen === s} badge={0} />
                 ))}
-              </>
+              </details>
             ) : null}
           </nav>
 
-          <div className="sidebar-foot">
-            Local prototype. Your work stays in this browser.
-            <br />
-            Sandbox screens use synthetic data and say so.
-          </div>
+          <div className="sidebar-foot">Local prototype. Work is saved in this browser.</div>
         </aside>
 
         {/* ---------- main column ---------- */}
         <main ref={mainRef} id="main-content" tabIndex={-1} className="app-main" data-demo-id="main-scroll">
           {NOTICE_SCREENS.includes(state.screen) ? <PrototypeNotice /> : null}
           {state.persistenceStatus === "unavailable" ? <div role="alert" className="storage-warning">Browser storage is unavailable. Changes only last while this page is open. Export your teaching plan before closing.</div> : null}
-          <SectionHelp screen={state.screen} />
+          <SectionHelp screen={state.screen} label={state.screen === "studio" && step ? stepDef(step).label : state.screen === "office" ? "this page" : undefined} />
           {props.children}
         </main>
       </div>

@@ -16,5 +16,7 @@ Written 22 October 2026 from the organiser's Grand Final page, the briefing slid
 | Team | Lyceum, Universiti Teknologi PETRONAS, eight members, Abdul Hafiz as head of contingent | Team letter of 13 October (personal details stay out of the repository) | Confirmed |
 | What the organisers ask teams to bring | University T-shirts and banners | Grand Final page | Booth lane |
 | Organiser | The Association of Global AI Technomics, Education and Exchange (GATEE); general chairs include Yiyu Cai (NTU) | Steering committee page | Published |
+| Awards | Gold, Silver and Bronze announced on 30 October 2026 (a Friday) at the Holland Conference on AI for Education, VU Amsterdam | hackastone.varteledu.com, read 22 October 2026 (`docs/research/judge-experience-and-wow-2026-10-22.md`, Format check) | Unconfirmed: not in the briefing slides; affects the return flight. Check the finalist pack |
+| Pitch timing, as a finalist reports it | A 10-minute presentation, a 5-minute Q&A and a live demonstration | ITS news on its finalist EduVent, 9 October 2026 (<https://www.its.ac.id/?p=72149>) | Conflicts with the briefing's 8 plus 2; the briefing is the organiser's own and stands until the finalist pack says otherwise. Rehearse both lengths |
 
 Things not known on 22 October: the flight times (which set the freeze), the booth equipment (power, screen, wifi), whether the pitch laptop is ours or theirs, the finalist pack's final weights and descriptors. Record each answer here with its date.

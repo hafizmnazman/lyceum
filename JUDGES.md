@@ -29,7 +29,7 @@ On the public landing page (`#/index`, **See how Lyceum works** on the sign-in s
 
 ## Option B: hands on
 
-Sign in as **Dr Sobri**, open **Courses**, then **CS310**. The rail beside the course follows the loop; each step opens with its question and ends with the handoff to the next.
+Sign in as **Dr Sobri**, open **Courses**, then **CS310**. The path of round stops across the top follows the loop: green with a check when a step's record exists, dark where you are. Each step opens with its question, asked by the step's helper, and ends with the handoff to the next.
 
 1. **Course.** Set the term, 2026/2027 semester 1.
 2. **Watch.** Keep the saved sample, fetch, select the postings and keep them.

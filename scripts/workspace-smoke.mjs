@@ -52,7 +52,7 @@ try {
   await textIncludes("Current learning outcomes");
   assert.equal(await page.$eval(selector("rail-course"), (e) => e.getAttribute("aria-current")), "page");
   assert.equal(await page.evaluate(() => location.hash), "#/course/CS310");
-  // The loop rail is reached by keyboard: Tab walks the steps in order and Enter opens one.
+  // The step path is reached by keyboard: Tab walks the steps in order and Enter opens one.
   await page.focus(selector("rail-course"));
   for (const step of ["watch", "report", "decide", "update", "teach"]) {
     await page.keyboard.press("Tab");
@@ -61,7 +61,7 @@ try {
   await page.keyboard.press("Enter");
   await page.waitForFunction(() => location.hash === "#/course/CS310/teach");
   assert.equal(await page.$eval(selector("rail-teach"), (e) => e.getAttribute("aria-current")), "page");
-  console.log("PASS course without a proposal has an overview and a keyboard-accessible loop rail to the teaching plan");
+  console.log("PASS course without a proposal has an overview and a keyboard-accessible step path to the teaching plan");
 
   await click("plan-add");
   await page.type(selector("session-topic"), "Designing clear visual encodings");
@@ -104,7 +104,8 @@ try {
   await click("nav-inbox");
   await textIncludes("Continue teaching plan");
   await page.screenshot({ path: join(output, "home-desktop.png"), fullPage: true });
-  // The old proposal chain lives in the illustrative sandbox, not in the loop.
+  // The old proposal chain lives in the illustrative sandbox, folded away in the sidebar, not in the loop.
+  await click("nav-sandbox");
   await click("nav-proposal");
   await page.waitForFunction(() => document.querySelector(".page-eyebrow")?.textContent === "Sandbox · illustrative");
   await page.select('[aria-label="Choose course for the proposal"]', "CS220");

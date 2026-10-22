@@ -41,7 +41,7 @@ A lecturer can suggest a change before the next review, but cannot show why: no 
 ### <samp>hafiz@lyceum:~$ open ./loop</samp>
 
 <p align="center">
-  <img src=".github/readme/shots/home-ring.png" alt="Home for Dr Sobri: the loop for CS310 closed for 2026/2027 semester 1, seven of seven steps done, each with the record behind it" width="850">
+  <img src=".github/readme/shots/step.png" alt="Report on CS310: the loop as a path of seven round stops, each done with a check and its count, Report the dark stop where you are, and Lens, the evidence analyst, asking the step's question in a speech bubble" width="850">
 </p>
 
 | step | the question | the record it leaves |

@@ -138,7 +138,7 @@ img { display: block; }
 .head-row { display: flex; align-items: center; gap: 28px; }
 .head-row .by { display: inline-flex; align-items: center; gap: 12px; font-size: 25px; color: var(--ink-2); }
 .head-row .helper { width: 48px; height: 48px; }
-.s-live .screens { grid-template-columns: 1000px 1fr; align-items: start; }
+.s-live .screens { grid-template-columns: 920px 1fr; align-items: start; }
 /* A crop of a real screenshot, given in the image's own pixels: the frame keeps the region's shape and the image is scaled and shifted inside it. */
 .region { position: relative; overflow: hidden; aspect-ratio: var(--w) / var(--h); border: 1px solid var(--border); border-radius: 16px; background: var(--white); }
 .region img { position: absolute; left: 0; top: 0; max-width: none; width: calc(var(--iw) / var(--w) * 100%); margin-left: calc(var(--x) / var(--w) * -100%); margin-top: calc(var(--y) / var(--w) * -100%); }

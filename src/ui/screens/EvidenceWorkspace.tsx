@@ -6,6 +6,7 @@
 // course by itself.
 
 import { useState } from "react";
+import { plural } from "../../app/loop.ts";
 import {
   addEvidenceSource, addSkillMention, evidenceTrendNote, nowIso, removeEvidenceSource, removeSkillMention, setEvidenceSourceReviewed, setSkillMapping, type AppState,
 } from "../../app/store.ts";
@@ -57,24 +58,45 @@ export function RecordSourceForm({ subject, mayEdit }: Props) {
   </form>;
 }
 
-/** The kept sources as cards on a dated timeline: one entry per collection run (or per pasted document). */
+const PROVENANCE_LABEL: Record<EvidenceSource["provenance"], string> = { collected: "Collected on request", "lecturer-supplied": "Lecturer-supplied" };
+
+/** How many of a run's cards show before "Show all": the rest are one press away, never dropped. */
+const FIRST_CARDS = 3;
+
+/** The kept sources as cards on a dated timeline: one entry per collection run (or per pasted document).
+ *  A run's shared provenance is said once, in its head; a card repeats it only when the run is mixed. */
 export function SourceTimeline({ state, subject, mayEdit }: Props) {
   const sources = state.evidenceSources.filter((s) => s.subjectId === subject.id);
   if (!sources.length) return <p className="muted">No source kept yet. Fetch postings above, or paste a document you are permitted to keep.</p>;
   const groups = new Map<string, EvidenceSource[]>();
   for (const s of sources) {
-    const key = s.collection ? s.collection.label + " · retrieved " + s.collection.retrievedAt.slice(0, 10) : "Pasted by hand · recorded " + s.addedAt.slice(0, 10);
+    const retrieved = s.collection?.retrievedAt.slice(0, 10);
+    const key = s.collection ? s.collection.label + (s.collection.label.includes(retrieved!) ? "" : " · retrieved " + retrieved) : "Pasted by hand · recorded " + s.addedAt.slice(0, 10);
     groups.set(key, [...(groups.get(key) ?? []), s]);
   }
   return <ol className="source-timeline" data-demo-id="source-timeline">
-    {[...groups.entries()].map(([key, group]) => <li key={key}>
-      <div className="source-timeline-head"><span className="mono">{group[0].addedAt.slice(0, 16).replace("T", " ")}</span><strong>{key}</strong><Tag>{group.length} {group.length === 1 ? "source" : "sources"}</Tag></div>
-      <div className="source-cards">{group.map((s) => <SourceCard key={s.id} source={s} original={s.duplicateOf ? sources.find((o) => o.id === s.duplicateOf) : undefined} mayEdit={mayEdit} />)}</div>
-    </li>)}
+    {[...groups.entries()].map(([key, group]) => {
+      const shared = group.every((s) => s.provenance === group[0].provenance) ? group[0].provenance : null;
+      return <li key={key}>
+        <div className="source-timeline-head"><span className="mono">{group[0].addedAt.slice(0, 16).replace("T", " ")}</span><strong>{key}</strong><Tag>{group.length} {group.length === 1 ? "source" : "sources"}</Tag>{shared ? <Tag>{PROVENANCE_LABEL[shared]}</Tag> : null}</div>
+        <SourceGroup group={group} sources={sources} mayEdit={mayEdit} showProvenance={!shared} />
+      </li>;
+    })}
   </ol>;
 }
 
-function SourceCard({ source, original, mayEdit }: { source: EvidenceSource; original?: EvidenceSource; mayEdit: boolean }) {
+function SourceGroup({ group, sources, mayEdit, showProvenance }: { group: EvidenceSource[]; sources: EvidenceSource[]; mayEdit: boolean; showProvenance: boolean }) {
+  const [all, setAll] = useState(false);
+  const shown = all ? group : group.slice(0, FIRST_CARDS);
+  return <>
+    <div className="source-cards">{shown.map((s) => <SourceCard key={s.id} source={s} original={s.duplicateOf ? sources.find((o) => o.id === s.duplicateOf) : undefined} mayEdit={mayEdit} showProvenance={showProvenance} />)}</div>
+    {group.length > FIRST_CARDS ? <div className="button-row source-more">
+      <Button aria-expanded={all} onClick={() => setAll(!all)}>{all ? "Show the first " + FIRST_CARDS : "Show all " + group.length + " sources"}</Button>
+    </div> : null}
+  </>;
+}
+
+function SourceCard({ source, original, mayEdit, showProvenance }: { source: EvidenceSource; original?: EvidenceSource; mayEdit: boolean; showProvenance: boolean }) {
   const [removing, setRemoving] = useState(false);
   const posting = source.kind === "job-posting";
   return <article className="source-card" data-demo-id="evidence-source">
@@ -84,7 +106,7 @@ function SourceCard({ source, original, mayEdit }: { source: EvidenceSource; ori
     </div>
     <div className="button-row">
       {original ? <Tag>Duplicate of {original.title}, counts once</Tag> : posting ? <Tag tone={source.reviewed ? "ok" : "warn"}>{source.reviewed ? "Reviewed, counted" : "Unreviewed, not counted"}</Tag> : <Tag>Contextual, not a posting</Tag>}
-      <Tag>{source.provenance === "collected" ? "Collected on request" : "Lecturer-supplied"}</Tag>
+      {showProvenance ? <Tag>{PROVENANCE_LABEL[source.provenance]}</Tag> : null}
     </div>
     <Disclosure summary={"Source text (" + source.text.length + " characters) and fingerprint"}>
       <p className="muted mono">Fingerprint {source.textHash}</p>
@@ -127,19 +149,32 @@ export function QuoteByHand({ state, subject, mayEdit }: Props) {
 }
 
 /** Every confirmed quotation, by source, re-verified against its source text on display. */
+/** How many confirmed quotations show before "Show all". A quotation that fails its check always shows, first. */
+const FIRST_QUOTATIONS = 5;
+
 export function ConfirmedQuotations({ state, subject, mayEdit }: Props) {
+  const [all, setAll] = useState(false);
   const sources = state.evidenceSources.filter((s) => s.subjectId === subject.id);
   const mentions = state.skillMentions.filter((m) => m.subjectId === subject.id);
   if (!mentions.length) return <p className="muted">No quotation confirmed yet.</p>;
-  return <ul className="mention-list" data-demo-id="confirmed-quotations">{mentions.map((m) => {
+  const checked = mentions.map((m) => {
     const source = sources.find((s) => s.id === m.sourceId);
-    const located = source ? locateExcerpt(source.text, m.excerpt) : { ok: false as const };
-    return <li key={m.id}><div className="button-row"><strong>{m.skill}</strong><Tag tone={m.requirement === "required" ? "accent" : "neutral"}>{m.requirement}</Tag>
-      <Tag tone={located.ok ? "ok" : "danger"}>{located.ok ? (located.match === "exact" ? "Verified in source" : "Verified, spacing differs") : "Not in source"}</Tag>
-      <span className="muted">{source?.title ?? "missing source"}</span>
-      {mayEdit ? <Button variant="quiet" aria-label={"Remove quotation for " + m.skill} onClick={() => removeSkillMention(m.id)}>Remove</Button> : null}</div>
-      <blockquote>{m.excerpt}</blockquote></li>;
-  })}</ul>;
+    return { m, source, located: source ? locateExcerpt(source.text, m.excerpt) : { ok: false as const } };
+  });
+  const failing = checked.filter((c) => !c.located.ok), passing = checked.filter((c) => c.located.ok);
+  const shown = all ? [...failing, ...passing] : [...failing, ...passing.slice(0, FIRST_QUOTATIONS)];
+  return <>
+    <p className="muted" role="status">{plural(mentions.length, "quotation", "quotations")} confirmed; {passing.length} of {mentions.length} verified in their source text right now.</p>
+    <ul className="mention-list" data-demo-id="confirmed-quotations">{shown.map(({ m, source, located }) =>
+      <li key={m.id}><div className="button-row"><strong>{m.skill}</strong><Tag tone={m.requirement === "required" ? "accent" : "neutral"}>{m.requirement}</Tag>
+        <Tag tone={located.ok ? "ok" : "danger"}>{located.ok ? (located.match === "exact" ? "Verified in source" : "Verified, spacing differs") : "Not in source"}</Tag>
+        <span className="muted">{source?.title ?? "missing source"}</span>
+        {mayEdit ? <Button variant="quiet" aria-label={"Remove quotation for " + m.skill} onClick={() => removeSkillMention(m.id)}>Remove</Button> : null}</div>
+        <blockquote>{m.excerpt}</blockquote></li>)}</ul>
+    {passing.length > FIRST_QUOTATIONS ? <div className="button-row source-more">
+      <Button aria-expanded={all} onClick={() => setAll(!all)}>{all ? "Show the first " + FIRST_QUOTATIONS : "Show all " + mentions.length + " quotations"}</Button>
+    </div> : null}
+  </>;
 }
 
 // ---------- Report: Review ----------
@@ -150,7 +185,7 @@ export function ReviewList({ state, subject, mayEdit }: Props) {
   const mentions = state.skillMentions.filter((m) => m.subjectId === subject.id);
   if (!postings.length) return null;
   return <ul className="review-list">{postings.map((s) => <li key={s.id}>
-    <div><strong>{s.title}</strong><span className="muted">{s.organisation || "Organisation not named"} · {mentions.filter((m) => m.sourceId === s.id).length} quotations</span></div>
+    <div><strong>{s.title}</strong><span className="muted">{s.organisation || "Organisation not named"} · {plural(mentions.filter((m) => m.sourceId === s.id).length, "quotation", "quotations")}</span></div>
     <div className="button-row"><Tag tone={s.reviewed ? "ok" : "warn"}>{s.reviewed ? "Reviewed, counted" : "Unreviewed, not counted"}</Tag>
       {mayEdit ? <label className="checkbox-line"><input type="checkbox" data-demo-id="source-reviewed" checked={s.reviewed} onChange={(e) => setEvidenceSourceReviewed(s.id, e.target.checked)} />Extraction reviewed</label> : null}</div>
   </li>)}</ul>;
@@ -239,7 +274,6 @@ function LadderRow({ row, subject, outcomes, mayEdit, startOpen }: { row: SkillR
         {row.target === rung ? <span className="ladder-mark is-target">Target</span> : null}
       </li>)}
     </ol>
-    {row.stage === "unknown" ? <p className="muted">Coverage today is unknown until you review it.</p> : null}
     {row.mapping?.evidence ? <Disclosure summary="Cited course evidence"><p>{row.mapping.evidence}</p></Disclosure> : null}
     {open ? <div className="ladder-editor">
       <fieldset className="clo-choices"><legend>Outcomes this skill relates to</legend>

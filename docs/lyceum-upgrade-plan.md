@@ -188,7 +188,7 @@ Everything is one story. The app, the demo, the deck, the film, the brief, the p
 | Surface | Beats it carries | Where its artefacts come from |
 |:--|:--|:--|
 | Landing page | 1 to 4, then 6 to 8 in short | The ring, the mascots, the sourced figures, the doors strip |
-| Home and the loop rail | 4 and 5 as the lecturer lives them: each step screen opens with the question it answers and closes with the handoff to the next step | The ring and the saved records |
+| Home and the step path | 4 and 5 as the lecturer lives them: each step screen opens with the question it answers and closes with the handoff to the next step | The ring and the saved records |
 | How it works | 4, 5 and 6: the loop, the roles, the derived record of a real course | The timeline built from saved records |
 | The demo tour | 1 to 8 in one afternoon, the captions carrying the "but" and the "therefore" | The real app on the dated sample |
 | The deck | All eight, one beat per slide group (Section 14) | Real screenshots, the film, the diagram |
@@ -240,16 +240,16 @@ The landing page (`#/index`): the loop as a hero graphic with the host at its ce
 ```text
 Home                      the ring for the selected course, "Start here", the inbox, briefs waiting for a decision
 Courses                   catalogue, create a workspace, backups
-Course  (the loop rail)   Course · Watch · Report · Decide · Update · Teach · Learn · History
+Course  (the step path)   Course · Watch · Report · Decide · Update · Teach · Learn, and History beside it
 Explore                   How it works · Evaluation · Guide and progress · Sandbox (illustrative)
 ```
 
-- The sidebar shows Home, Courses, the selected course's loop rail, Explore. The rail is the primary navigation inside a course; it replaces the Studio tabs. Every rail item shows its mascot, its done mark and a count ("4 sources", "2 decisions").
+- The sidebar shows Home, Courses, your courses as chips, Explore, and the illustrative sandbox folded away until opened. Inside a course the loop runs as a path of round stops across the top of every step (revised 22 October 2026 on the owner's direction, docs/decisions.md): the path is the primary navigation inside a course and replaces the Studio tabs. Every stop shows its step's icon, its state in a word and a mark, and a count ("4 sources", "2 decisions"); the stop you are on is the dark one, History sits beside the path, and the step's helper speaks its question in a bubble below it.
 - Routes are hash routes with the course id in the path so deep links, refresh and back keep working: `#/course/CS310/report/map`. The existing `screen` and `studioTab` state map onto these; `navigate()` grows a `course` argument.
-- On narrow screens the rail becomes a horizontal scroller under the course title, and the sidebar collapses to a bottom bar with Home, Courses, Course, Explore and More (five items at most).
+- On narrow screens the path becomes a horizontal strip of pills under the course title, and the sidebar collapses to a bottom bar with Home, Courses, Course, Explore and More (five items at most).
 - Report's sub-rail (Quote, Review, Count, Map, Brief) is a secondary tab list with `role="tablist"`, keyboard arrows, and the active step in the URL.
 - Focus moves to the main heading on every route change; the skip link stays; the account menu and sidebar return focus to their trigger on dismissal (the Codex review's open items).
-- The loop reads as chapters. Each step screen opens with one line under its title stating the question it answers ("What are employers asking for, right now and over time?") and closes with a handoff card to the next step once its record exists ("Brief prepared. Next: Decide."). The rail, the ring and the handoff cards are the same story told three ways, so a lecturer never wonders what comes next.
+- The loop reads as chapters. Each step screen opens with the question it answers under its title, in the helper's speech bubble ("What are employers asking for, right now and over time?"), and closes with a handoff card to the next step once its record exists ("Brief prepared. Next: Decide."). The path, the ring and the handoff cards are the same story told three ways, so a lecturer never wonders what comes next.
 
 ### 5.3 The screens, one visual and one action each
 
@@ -349,13 +349,13 @@ Rules that follow: lime text, bars, lines and chips only on forest and the inner
 ### 6.4 Space, shape, depth, motion
 
 - Spacing on a 4-point grid: 4, 8, 12, 16, 24, 32, 48, 64.
-- Radius: 8 (chips, inputs), 12 (buttons), 16 (cards), 24 (hero and tool cards, as on the poster).
-- Depth by surface, not shadow: mint page, white cards with a `--border` hairline, forest cards for the hero, the header and the tools. Shadows only under mascots and open menus.
+- Radius: 12 (buttons, inputs), 16 (cards), 24 (hero and tool cards, as on the poster, and the speech bubble); tags and chips are pills.
+- Depth by outline and lip (revised 22 October 2026 on the owner's direction, docs/decisions.md): a mint page; white panels and every control with a 2 px forest outline and a flat lip under everything that can be pressed, never a blur; cards inside a panel outlined lightly in `--border`; forest cards for the hero, the header and the tools. A press moves the control down onto its lip. Anything outlined with a lip is a control; a flat pill is a label.
 - The dot grid on the page background (`--dots`, 2 px dots on a 28 px grid, masked away under dense tables).
 - Motion tokens: 120 ms feedback, 200 ms state change, 320 ms enter, 220 ms exit; ease-out in, ease-in out; springs only for mascots. `prefers-reduced-motion` stops every animation, including the demo cursor and the mascot idle.
-- Icons: Lucide at 1.75 stroke, 16, 20, 24. No emoji anywhere.
+- Icons: Lucide at 1.75 stroke (2.25 on the path's stops), 16, 20, 24. No emoji anywhere.
 
-**Restraint, so it does not read as a generated dashboard.** The forest cards, the dot grid, the uppercase mono eyebrows and the oversized numbers belong to the landing page, the header, the tools strip and the deck. The working screens (Watch, Report, Decide, Update, Teach, Learn) are an editorial workspace on white and mint: the source, the quotation, the judgement and the action, in reading order, with at most one forest element on the screen and numbers at body size beside the words they belong to. Structure is felt, not seen.
+**Bold enough to hold a judge's eye, one task at a time so it never reads as a dashboard** (revised 22 October 2026: the owner judged the earlier restraint congested and not intuitive, and asked for a friendlier, slightly brutalist workspace). Each step screen reads top to bottom: the path, the helper's question, the work, the handoff. The forest cards, the dot grid and the oversized numbers still belong to the landing page, the header, the tools strip and the deck; the working screens stay white and mint with forest text, the dark "you are here" stop and the header are their forest elements, and lime marks one thing a screen, on forest surfaces only. Numbers sit at body size beside the words they belong to. The earlier rule (hairline cards, shadows only under mascots and menus, structure felt and not seen, one forest element) is superseded.
 
 ### 6.5 Charts
 
@@ -363,7 +363,7 @@ Emerald single-hue bars on white; the interval printed beside the percentage, ne
 
 ### 6.6 Components
 
-Refactor in place, in `src/ui/primitives/`: Page, PageHead, SectionLabel, Card (light, tint, forest), Row, Button (primary emerald, lime on forest only, quiet, danger), Tag, Field, Input, Textarea, Select, Spinner, EmptyState, Stat, Kbd, Provenance, BarList. New: `LoopRail`, `SubRail`, `Ring`, `Meter` (the denominator and hours budget), `SkillCard`, `SourcePane`, `ReceiptSlip`, `DecisionCard`, `Mascot`, `MoodBadge`, `Milestone`, `Disclosure`, `Waffle`. Every component has hover, focus-visible, active, disabled and loading states defined in one place, and a 44 px minimum target on touch.
+Refactor in place, in `src/ui/primitives/`: Page, PageHead, SectionLabel, Card (light, tint, forest), Row, Button (primary emerald, lime on forest only, quiet, danger), Tag, Field, Input, Textarea, Select, Spinner, EmptyState, Stat, Kbd, Provenance, BarList. New: `StepPath` (the loop's path, once the sidebar's `LoopRail`), `SubRail`, `Ring`, `Meter` (the denominator and hours budget), `SkillCard`, `SourcePane`, `ReceiptSlip`, `DecisionCard`, `Mascot`, `MoodBadge`, `Milestone`, `Disclosure`, `Waffle`. Every component has hover, focus-visible, active, disabled and loading states defined in one place, and a 44 px minimum target on touch.
 
 ### 6.7 Accessibility baseline
 
@@ -402,7 +402,7 @@ The first versions are static SVG with four poses each; they already read as cha
 |:--|:--|:--|
 | Resting | Nothing pending for this role on this course | Static. No idle motion in the workspace; a slow float is allowed only on the landing page and in the film, where nothing is being worked on |
 | Working | A real request is in flight (a fetch, a scan, a pack render) | The prop moves; a short progress line beside the mascot |
-| Waiting for you | A proposal exists and needs confirmation (a scan proposal, a brief awaiting a decision, a check result awaiting adoption) | The mascot faces the control; a lime dot on the rail item |
+| Waiting for you | A proposal exists and needs confirmation (a scan proposal, a brief awaiting a decision, a check result awaiting adoption) | The mascot faces the control; a dot on the step's stop in the path |
 | Done | The record this step produces was saved in the last few seconds | One spring (damping 12), then rest |
 | Stuck | A request failed | No mascot; the error card with the cause, the fix and retry |
 
@@ -410,7 +410,7 @@ A proof suite (`src/prove-moods.ts`) asserts that each mood is a pure function o
 
 ### 7.3 Placement
 
-Characters appear where they serve a purpose, never beside every control, so routine work for university staff does not read as a children's app. The host: the landing hero, the sign-in screen, Home's Start here card, the empty course, the term recap. Each helper: once per step, in the step's header card beside the question the step answers, and in that step's empty state; Scout's header card sits above the fetch controls, Atlas's above the proposals, and so on. The rail uses neutral Lucide role icons at 24 px with the step names; the ring at the top of the rail carries the host's leaf. On How it works, the host stands at the centre of the loop graphic and the seven helpers at their stations; the host's card introduces them ("seven helpers, one afternoon, nothing automatic"). Never more than one character in motion per screen. Never on error, billing or security moments.
+Characters appear where they serve a purpose, never beside every control, so routine work for university staff does not read as a children's app. The host: the landing hero, the sign-in screen, Home's Start here card, the empty course, the term recap. Each helper: once per step, in the step's header card beside the question the step answers, and in that step's empty state; Scout's header card sits above the fetch controls, Atlas's above the proposals, and so on. The path uses neutral Lucide role icons at 24 px with the step names, and the step's helper speaks in the bubble below it. On How it works, the host stands at the centre of the loop graphic and the seven helpers at their stations; the host's card introduces them ("seven helpers, one afternoon, nothing automatic"). Never more than one character in motion per screen. Never on error, billing or security moments.
 
 ### 7.4 Production
 
@@ -426,7 +426,7 @@ Characters appear where they serve a purpose, never beside every control, so rou
 
 What rewards quality and completion, never volume or speed (Deci, Koestner and Ryan 1999; Mekler et al 2017; Sailer and Homner 2020; Kim and Werbach 2016):
 
-- **The receipts ring** per course and per term: Course plus six segments. A segment fills only when its record exists for the current term (a reviewed posting with a confirmed quotation, a recorded decision, an adopted version or a retain decision). Its completion text is scoped and literal ("Loop closed for 2026 S1: 24 postings reviewed, 1 decision, 1 version, 3 sessions"); it never says approved, ready or good. A new term starts a new ring; the old one stays in the recap. It replaces the journey bar and lives on Home, on the course header and in the rail.
+- **The receipts ring** per course and per term: Course plus six segments. A segment fills only when its record exists for the current term (a reviewed posting with a confirmed quotation, a recorded decision, an adopted version or a retain decision). Its completion text is scoped and literal ("Loop closed for 2026 S1: 24 postings reviewed, 1 decision, 1 version, 3 sessions"); it never says approved, ready or good. A new term starts a new ring; the old one stays in the recap. It replaces the journey bar and lives on Home; on a course's steps the path's progress bar counts the same seven records.
 - **Milestones**, each once per course, each a saved record: first verified quotation; first reviewed set (reviewed postings reach the Krejcie-Morgan figure for the kept set, or all of them); first mapping with cited course evidence; first brief sent; first decision recorded; first adopted version; first teaching pack downloaded; first term of results matched to the taught version; first loop closed. A milestone shows once, as a small card with the mascot in its done pose, and stays in the term recap.
 - **The term recap**: one page per course and term, generated from records: what employers asked for, what was decided, what changed, what was taught, what came back. Exportable as the evidence pack for the periodic review.
 - **Evidence-quality signals** instead of scores: reviewed of kept; interval width; share of quoted weight with a known coverage stage; response adequacy on surveys.

@@ -881,3 +881,79 @@ Chosen: (b), because the package sections are the dated evidence the plan-versus
 Reverse it if: the file grows past what a judge will read; then the changelog moves to `docs/history/`.
 
 To reverse: `docs/as-built.md`, and `git mv` the 9 October report back.
+
+## 2026-10-22 11:08, after Track A: the sample's seed clock, on the owner's word
+
+Options: (a) keep the seed clock at 1 July 2026, as the 10:18 entry chose, so the sample's brief, decision and results stay dated before the postings they cite were retrieved (9 October). (b) Move it to 22 October 2026, after the retrieval, and build the proofs' "a day later" and "a day earlier" moments from the clock itself instead of fixed July dates, so the proofs hold for any seed date. (c) A separate clock for the sample workspace only.
+
+Chosen: (b), because the owner asked for the dates to be consistent, and with the proofs' moments derived from `SEED_NOW` the change is one constant; all 185 checks, the four smokes and the walk passed on it, and the sample workspace, the screenshots, the deck, the brief, the poster and the sample decks were rebuilt from it.
+
+Reverse it if: a later seed needs a date before the saved sample's retrieval; then the saved sample's dates move with it.
+
+To reverse: `SEED_NOW` in `src/app/store.ts`, then `node mcp/sample.ts`, `npm run shots`, `npm run deck`, `node scripts/gen-brief-pdf.mjs`, `node scripts/gen-poster.mjs` and `node scripts/gen-sample-decks.mjs`.
+
+## 2026-10-22 11:34, after Track A: where the landing page is published, on the owner's word
+
+Options: (a) the production build as a static site on Vercel, from the owner's signed-in Vercel command line (`npx vercel@latest deploy --prod`), as the owner suggested. (b) The Vercel connector in this session, which uploads every file inline; the build is about 11 MB, so it was impractical. (c) GitHub Pages, which means a workflow in a repository and a push, which this run does not do.
+
+Chosen: (a), because the owner asked for it and it sends only the built `dist/` folder, which holds no workspace data (the app keeps work in the visitor's browser). The project is `lyceum`; the production address is <https://lyceum-rho.vercel.app>. Checked: the address answers 200 and opens on the landing page at `#/index`.
+
+Reverse it if: the team wants the page under the university's or the team's own domain; then the QR code and the poster follow the new address.
+
+To reverse: remove the `lyceum` project in the owner's Vercel account; then make a new QR image and run `node scripts/gen-poster.mjs --qr <file>`.
+
+## 2026-10-22 11:36, after Track A: the poster's QR code
+
+Options: (a) a QR code to the site's root, which opens on the sign-in screen. (b) A QR code to `#/index`, the public landing page. (c) A short link that forwards to the page.
+
+Chosen: (b), because a judge who scans the poster should land on the page that explains Lyceum, without signing in, and a short link adds a service that can lapse. The image is `docs/presentation/qr-landing.png`, 900 px, forest modules on white, made with `qrcode` 1.5.4 and decoded back with OpenCV to the same address; `scripts/gen-poster.mjs` now uses the saved image when no `--qr` is given, and the poster PDF was rebuilt with it at 11:37.
+
+Reverse it if: the page moves to another address.
+
+To reverse: `node scripts/gen-poster.mjs --qr <new image>`, or delete `docs/presentation/qr-landing.png` to put the planned slot back.
+
+## 2026-10-22 12:00, after Track A: a friendlier workspace, as a concept first (approved by the owner by 12:42)
+
+The owner, 11:31: the UI "is congested, not intuitive enough"; keep the colours and the graphics, with "more duolingo vibe" that is "slight brutalist".
+
+Options: (a) keep plan Section 6.4's restraint (hairline cards, depth by surface, shadows only under mascots and open menus, "structure is felt, not seen", at most one forest element on a working screen) and only tidy the spacing. (b) The owner's direction, on the same tokens: 2 px forest outlines and a flat lip under every control and panel (no blur), pills for tags and chips, bigger and bolder type, more air; the loop as a path of round stops across the top of each step instead of the sidebar rail (each stop with its state in a word and a mark, and its count, as plan Section 5.2 asks of the rail); the step's helper asking its question in a speech bubble; the sandbox folded in the sidebar. (c) Rework every screen's content at once.
+
+Chosen: (b), built as a concept on the real screens and shown to the owner before it goes further, because it breaks five of Section 6.4's rules (the outlines and lips, structure that is seen, the forest "you are here" stop beside the header, pills instead of the 8 px chip radius, and a 2.25 icon stroke on the path's stops instead of 1.75) and that is the owner's call to confirm. The palette, the honesty labels, the six steps and their order are unchanged; colours still come only from `tokens.ts`, and the contrast check passes. All 185 proofs, the four smokes and the walk pass on it; the integrity smoke and the walk now enter the loop from the selected course chip, and the sandbox screens are opened from the fold.
+
+Reverse it if: the owner prefers the quieter workspace once it is seen.
+
+To reverse: delete the chunky layer at the end of `src/theme/global.css`; put the sidebar rail back from `git show HEAD:src/ui/shell/LoopRail.tsx` and `HEAD:src/ui/shell/Shell.tsx`, and the step header from `HEAD:src/ui/screens/StepFrame.tsx`; restore the deleted rail styles from `HEAD:src/theme/global.css`; drop the fold steps from `scripts/integrity-smoke.mjs`, `scripts/walk.mjs` and `scripts/workspace-smoke.mjs`.
+
+Approved: the owner, by 12:42: "The rules is AI generated anyway. i prefer something that more attract judges attention so yeah thank you proceed". Plan Sections 5.2, 6.4 and 6.6 now describe the path, the bubble and the depth by outline and lip, and the rollout below carries it to every screen.
+
+## 2026-10-22 12:52, after Track A: Watch, shorter without changing the tour
+
+Options: (a) split Watch into sub-steps, as Report has (Fetch, Kept, Over time). (b) Keep one page: show the first three kept sources of a run with "Show all", say a run's shared provenance once in its head instead of on every card, and give the long source name a wider column. (c) Leave Watch as it was.
+
+Chosen: (b), because the self-driving tour fetches on Watch, goes to Report and comes back to Watch to freeze a snapshot, and the film is cut from that tour by caption; sub-steps would add tour steps and move every later caption and clip. (b) takes about 700 px off the page at 1440 px and leaves the tour, its captions and the film's script as they are. Nothing is dropped: every source is one press away, and a mixed run still labels each card.
+
+Reverse it if: testers still find Watch long; then (a), with the tour, `video/script.md` and the film's clips changed together.
+
+To reverse: `SourceGroup`, `FIRST_CARDS` and `PROVENANCE_LABEL` in `src/ui/screens/EvidenceWorkspace.tsx`, and `form-grid-wide-first` in `src/ui/screens/EvidenceResearch.tsx`.
+
+## 2026-10-22 13:47, after Track A: what the team repo gets
+
+Options: (a) the whole working tree, as the first snapshot had it. (b) The working code and what its checks and generators read (the claims register, the research notes, the lecturer guide, the palette and its audit, the doors and brand notes, the generated presentation assets), without the plans, the run records, the reviews, the history, the booth script, `JUDGES.md` and the AI brief. (c) The code alone, without docs.
+
+Chosen: (b), because the owner asked for the functional part without the plan, and (c) would fail the proofs (the journey proof reads the research notes) and the deck, brief and poster checks (they read the claims register). Proved on the exact snapshot from a fresh install: every check and smoke passed. The first snapshot's history still holds what (a) published on 20 October; removing it means rewriting the team repo's history, which only the owner can choose.
+
+Reverse it if: the team needs the plan's lanes or the decisions log; send them separately, or drop their lines from EXCLUDE.
+
+To reverse: `EXCLUDE` in `scripts/team.mjs`, then `node scripts/team.mjs publish`.
+
+## 2026-10-22 14:00, after Track A: the text people see
+
+The owner, 13:58: "evaluate the text people see. i think some are straight up chartjunk", showing the sidebar's footer and the sandbox's notice.
+
+Options: (a) leave the copy as it is. (b) Cut what repeats itself or explains the interface to itself, and keep every honesty label, number, receipt and checked string. (c) Rewrite every screen's copy from the start.
+
+Chosen: (b). Junk here means a sentence that repeats the helper's line, the heading or another line on the same screen; one sentence repeated on every row of a list; a subtitle that names the page again; an explanation of where something will appear; a button that repeats the sidebar; a zero count beside a sentence that already says so. What stays: real, prototype, illustrative, planned and synthetic wherever they apply; a number with its denominator and interval; the verified tag on each quotation and the review state of each posting, because each is that row's receipt; a failing check's warning, always shown, first. (c) would move the strings the smokes check, the guide the guide check compares, and the tour's captions the film is cut from, for little gain over (b).
+
+Reverse it if: a tester misses an explanation; it comes back in that screen's How to use panel rather than on the screen.
+
+To reverse: the copy is in `src/ui/screens/` (Inbox, Watch, EvidenceResearch, EvidenceWatch, EvidenceWorkspace, Report, CurriculumWorkspace, CourseWorkspace, Studio, Decide, Learn, Guide, Courses, Office, Evaluation, Landing, Login), `src/ui/shell/Shell.tsx`, `src/ui/primitives/PrototypeNotice.tsx` and `src/ui/primitives/loop.tsx`.

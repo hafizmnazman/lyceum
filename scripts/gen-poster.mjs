@@ -3,8 +3,9 @@
 // to 4 across the top (the person, why now, the receipt, the loop with the
 // mascots) and 6 to 8 below (the doors, what is real, the ask), on the tokens and
 // the bundled faces, every number registered in docs/claims.md as on the deck.
-// The QR code to the public landing page waits for a deployed page: pass
-// `--qr <png>` to place one; until then its slot says planned.
+// The QR code goes to the public landing page (https://lyceum-rho.vercel.app/#/index):
+// docs/presentation/qr-landing.png, or another image passed with `--qr <png>`; without
+// either, its slot says planned.
 // Run `node scripts/gen-poster.mjs` (add `--preview <dir>` for a PNG preview).
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { isAbsolute, join, resolve } from "node:path";
@@ -17,7 +18,8 @@ import { PROOF } from "../src/data/proof.ts";
 const OUT = join(ROOT, "docs/presentation/poster-a1.pdf");
 const arg = (name) => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : null; };
 const PREVIEW_DIR = arg("--preview");
-const QR = arg("--qr");
+const SAVED_QR = join(ROOT, "docs/presentation/qr-landing.png");
+const QR = arg("--qr") ?? (existsSync(SAVED_QR) ? SAVED_QR : null);
 const W = 841, H = 594; // A1 landscape, in mm
 
 const dataUri = (file, type) => "data:" + type + ";base64," + readFileSync(isAbsolute(file) ? file : join(ROOT, file)).toString("base64");
@@ -31,8 +33,8 @@ const STATIONS = [
 const PEOPLE_SVG = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>`;
 /** The refused paraphrase from scripts/presentation-shots.mjs, cropped to the excerpt and the refusal, at a width in mm. */
 function paraphrase(widthMm) {
-  const b = readFileSync(join(ROOT, "docs/presentation/shot-report-paraphrase.png")), w = b.readUInt32BE(16), y = 336, h = 372, s = widthMm / w;
-  return `<div class="frame" style="height:${(h * s).toFixed(2)}mm"><img alt="A quotation typed by hand, experience with Python, refused because the words are not in the saved source text." src="data:image/png;base64,${b.toString("base64")}" style="width:${widthMm}mm;margin-top:${(-y * s).toFixed(2)}mm"></div>`;
+  const b = readFileSync(join(ROOT, "docs/presentation/shot-report-paraphrase.png")), w = b.readUInt32BE(16), y = 404, h = 398, s = widthMm / w;
+  return `<div class="frame" style="width:${widthMm}mm;height:${(h * s).toFixed(2)}mm"><img alt="A quotation typed by hand, experience with Python, refused because the words are not in the saved source text." src="data:image/png;base64,${b.toString("base64")}" style="width:${widthMm}mm;margin-top:${(-y * s).toFixed(2)}mm"></div>`;
 }
 const cells = (n, on, cls) => Array.from({ length: n }, (_, i) => `<i class="${i < on ? cls : ""}"></i>`).join("");
 const qrSlot = QR
@@ -156,7 +158,7 @@ img { display: block; }
         <p class="count" data-claim="deck-receipt"><strong>1 of 9</strong> reviewed postings</p>
         <p class="link" data-ref>stripe.com/jobs/search?gh_jid=8194291 · retrieved 2026-10-09 · fnv1a-68604535-974</p>
       </article>
-      <figure class="shot">${paraphrase(218)}<figcaption>A paraphrase, refused before it is stored. Nothing invented, nothing pasted.</figcaption></figure>
+      <figure class="shot">${paraphrase(196)}<figcaption>A paraphrase, refused before it is stored. Nothing invented, nothing pasted.</figcaption></figure>
     </div>
 
     <div class="card loop-card">

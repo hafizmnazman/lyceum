@@ -106,7 +106,8 @@ for (const f of T.fontFiles) {
   fontCopies.push({ from: join(pkgDir, "files", f.file), to: join(FONT_DIR, f.file) }, { from: join(pkgDir, "LICENSE"), to: join(FONT_DIR, slug + "-LICENSE.txt") });
 }
 // Licences are text, so a checkout's line endings are not drift; the fonts are compared byte for byte.
-const sameFile = (a, b) => a.endsWith(".txt")
+// The copy is the one named .txt; the package's own file is plain LICENSE.
+const sameFile = (a, b) => b.endsWith(".txt")
   ? readFileSync(a, "utf8").replace(/\r\n/g, "\n") === readFileSync(b, "utf8").replace(/\r\n/g, "\n")
   : readFileSync(a).equals(readFileSync(b));
 for (const c of fontCopies) {

@@ -1,0 +1,1143 @@
+Reading additional input from stdin...
+OpenAI Codex v0.156.1
+--------
+workdir: C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: max
+reasoning summaries: none
+session id: 01a162ea-3489-7263-a32c-d092eef97def
+--------
+user
+Review the Lyceum depth plan exactly as instructed in the text that follows on stdin; all files are embedded there. Write the review in plain Markdown with no en or em dashes.
+
+<stdin>
+You are a sceptical reviewer with ten years in a Malaysian university quality office and five judging education-technology finals. The files below are a plan (docs/lyceum-depth-plan.md), the four research notes it cites, the first sections of the as-built record and the repository's operating brief. Review the plan only. Report, in this order: claims in the plan that the notes do not support, quoting both; places where the plan contradicts the as-built record or the operating brief; packages whose scope cannot fit the day given, with what to cut first; anything a quality office would call wrong about the course record, the surveys or the attainment arithmetic; what a judge would still find thin after this track, in three lines. No praise, no rewriting, no dashes in your output.
+
+===== FILE: docs/lyceum-depth-plan.md =====
+# Lyceum: the depth plan (Track C, after Track A, before Amsterdam)
+
+> **What this file is.** The second plan over the built tree. Track A gave Lyceum its loop, its theme, its characters, its deck and its film. This plan gives it depth: a course record a quality office would recognise, a semester of teaching material, the two student surveys, attainment computed the way Malaysian universities report it, a before and after a judge can see, and a judge's own way through the app with the host as the guide. It plans only. Nothing in it is built, captured or rendered until the owner says so, and recording is gated to the end (Section 0.3).
+
+**Stamp.**
+
+- Written: 22 October 2026, evening, Kuala Lumpur time, by the planning session that wrote the four research notes it cites.
+- Over: `main` after the A8 commit (`b4bfdc4`) plus the owner's uncommitted follow-ups of 22 October, as [as-built.md](as-built.md) records them (stamp 15:05). Where this plan and the code disagree about what exists, the code and the as-built record win; where this plan and [lyceum-upgrade-plan.md](lyceum-upgrade-plan.md) disagree about what to build next, this plan wins, because it is later and was written against the built tree.
+- For: the HACKaSTONE 2026 Grand Final, Thursday 29 October 2026, Amsterdam ([competition/grand-final-2026.md](competition/grand-final-2026.md)).
+- Status: a draft for the owner's review. The Codex review of it, once run, sits in `docs/review/` and its verified changes are folded in here with a line in the changelog at the end.
+
+## Contents
+
+0. [Read this first](#0-read-this-first)
+1. [Where the depth is missing today](#1-where-the-depth-is-missing-today)
+2. [What depth and wow mean here](#2-what-depth-and-wow-mean-here)
+3. [The demo institution: UTP, labelled](#3-the-demo-institution-utp-labelled)
+4. [The course record, to accreditation depth](#4-the-course-record-to-accreditation-depth)
+5. [A semester of teaching material](#5-a-semester-of-teaching-material)
+6. [Before and after](#6-before-and-after)
+7. [The two student surveys](#7-the-two-student-surveys)
+8. [Attainment, the way quality offices report it](#8-attainment-the-way-quality-offices-report-it)
+9. [The judge's way through, with the host](#9-the-judges-way-through-with-the-host)
+10. [Assessment items and exports](#10-assessment-items-and-exports)
+11. [The data model and the migration](#11-the-data-model-and-the-migration)
+12. [Checks, documentation and the sample workspace](#12-checks-documentation-and-the-sample-workspace)
+13. [What goes stale, and the gated capture](#13-what-goes-stale-and-the-gated-capture)
+14. [Work packages, order and schedule](#14-work-packages-order-and-schedule)
+15. [Codex and the other tools](#15-codex-and-the-other-tools)
+16. [Running it as one autonomous session](#16-running-it-as-one-autonomous-session)
+17. [Session prompts for Opus](#17-session-prompts-for-opus)
+18. [Needs the owner, before the run](#18-needs-the-owner-before-the-run)
+19. [Risks](#19-risks)
+20. [Sources](#20-sources)
+
+## 0. Read this first
+
+### 0.1 What this plan is
+
+A plan for one more autonomous build run (Track C) on the days left before the freeze, in the same shape as Track A: numbered packages, each with a scope, an acceptance line, its verification and an Opus prompt; one driver prompt; decisions logged in `docs/decisions.md`; progress in `docs/run-log.md`; the result recorded in `docs/as-built.md`. It is written from the code as it stands, not from memory: every "today" statement in Section 1 names the file it was read in.
+
+### 0.2 Rules that bind every session
+
+All of [CLAUDE.md](../CLAUDE.md) and the master plan's Section 0 still bind. Added for this track:
+
+1. **No recording, capture, render, export or screenshot run without the owner's written go in that session.** That means none of: `npm run shots`, `node video/capture/capture.mjs`, the Remotion renders and the determinism check, `npm run gen:sample-decks`, `npm run deck`, `node scripts/gen-brief-pdf.mjs`, `node scripts/gen-poster.mjs`, and the README screenshot copy. They are package D9 and run once, at the end, after the owner has seen everything else. The owner's words: "everytime you add something don't record straight away the video etc. waste of credit. Not unless I am satisfied with everything, only then you can record."
+2. **The tour's captions are frozen.** `src/demo/script.ts` keeps its 95 captions and its step order, because the film is cut from the tour by caption (`docs/as-built.md`, mismatch 2). Targets and typed values may change only where the richer sample course requires it, the smokes must still pass, and the change is logged. New guided experiences (Section 9) are separate scripts, never edits to the tour.
+3. **Synthetic says synthetic, and the demo institution says demo.** Every sample record, every mock slide, every survey response and every mark in this track carries the existing `sample` flag or a visible "Sample, synthetic" label, and every surface that shows the UTP mark says "a demo course at UTP; not a UTP course" (Section 3).
+4. **Sample content is authored at build time, reviewed, and shipped as data.** The course record, the slides, the lab sheets, the quiz and the survey responses are written during the build, kept under `src/data/sample-course/`, read as fixtures, and never generated by a model at runtime. The runtime rule ("no model-written text inside shipped artefacts before the pilot") is unchanged. The owner confirms this reading before the run (Section 18, item 1).
+5. **Every new figure on a surface is a claims-register row or a synthetic label.** Attainment shares, survey counts and change counters on the sample course are synthetic and say so; the check count on the landing page changes with the suites and `prove-journey` keeps it honest.
+6. **Every comparison is honest by construction.** A before and after shows two stored records and the decision between them; nothing is animated that is not in the event log.
+7. **The host speaks at welcome, empty states, completions and the recap, and never on errors, constraint failures, data provenance or pricing.** The helpers keep their one bubble per step.
+8. **Codex sees files only when the owner has said so in the session**, read-only, embedded through stdin, reports saved under `docs/review/`, every claim verified before it is kept (Section 15).
+
+### 0.3 The recording gate, in one table
+
+| Surface | Built from | Changes in this track | Rebuilt when |
+|:--|:--|:--|:--|
+| The screenshots (`docs/screenshots/`, `docs/presentation/shot-*.png`, `.github/readme/shots/`) | `npm run shots` on the sample workspace | The Course, Teach, Learn, History and Courses screens look different | D9, on the owner's go |
+| The film (`video/out/*.mp4`, `deck/media/loop90.mp4`) | The tour captured once, cut by caption | The screens inside the capture change; the captions do not | D9, on the owner's go; the silent renders stay valid as a record of the 22 October build until then |
+| The deck's PDF and PPTX, the brief, the poster | Generators that read the screenshots and the claims register | Slides 6 and 7 gain the before and after and the attainment table (Section 13.2) | D9, on the owner's go |
+| The teaching pack as PowerPoint draws it (`docs/presentation/pack/`) | `npm run gen:sample-decks` with PowerPoint | The pack gains masters and the UTP mark | D9, on the owner's go |
+| The sample workspace (`mcp/sample-workspace.json`) | `node mcp/sample.ts` from the tour's end state | Every package | D8, as a check (not a capture) |
+
+### 0.4 How to use it with Opus
+
+Section 16 is the driver prompt; Section 17 holds one prompt per package. Section 14 gives the order and the tiers. The run is sequential, one package committed before the next, and resumable from `docs/run-log.md`. Before the run the owner answers Section 18 or lets the defaults stand.
+
+## 1. Where the depth is missing today
+
+Read from the code on 22 October 2026, after the owner's follow-ups. Each row names where the thinness is visible and what a judge would see.
+
+| Area | Today, as built | Where read | What a judge sees |
+|:--|:--|:--|:--|
+| The course record | CS310 has one outcome (`CLO5`, "Data visualisation", Apply) and no topics: `courseDefinitions` is empty until a revision is adopted, so `definitionForCourse` returns an empty brief and `topics: []`. The Course screen prints "No topic outline is recorded yet" and "Achievement evidence not recorded". The brief holds no synopsis, no references, no assessment plan, no PLO list, no SLT | `src/data/seed.ts` lines 70 to 78; `src/lib/curriculum.ts` `courseDefinition`; `src/ui/screens/CourseWorkspace.tsx` | A course that is a title and one sentence |
+| Teaching material | A session has a topic, minutes, an activity, a check and a resources line. Its pack is six text slides (title, outcomes, evidence, activity, check, resources) in Calibri on the forest and white backgrounds, no master, no mark, no preview on screen | `src/lib/slides.ts` `sessionDeck`, `renderDeck`; `CourseWorkspace.tsx` `TeachingPlanPanel` | One session saved in the tour; a pack that opens in PowerPoint but reads as a form |
+| The sample files | `results.xlsx` holds one column, "CLO5 mark (%)"; `clo-survey.csv` is CS220's single CLO4 self-rating on 1 to 10; `syllabus.pdf` and `lecture-slides.pptx` are CS220's, five slides | `scripts/gen-demo-files.mjs`; `public/demo/` | The Learn step files a one-column file |
+| Surveys | A survey enters only as a CSV file; there is no survey instrument, no form, no student page, no response floor, no lock on comments. The data model has `SurveyRecord` (1 to 10 per CLO) and `DataSource` kinds `clo-survey` and `ssrt`, nothing more | `src/types.ts`; `src/ui/screens/Learn.tsx` ("Surveys are listed, not yet set beside the marks") | "Where is the survey?" has no answer on screen |
+| Attainment | Mean, spread and n of N per outcome, as filed; no threshold, no KPI, no interval, no indirect measure beside the direct one | `src/lib/learn.ts`; `Learn.tsx` `PLANNED` | A mean mark, which no quality office reports on its own |
+| Before and after | `curriculumChanges` produces text pairs (before and after strings) per outcome and topic; Update shows them as text; History lists versions and decisions with "Open" on each; no word-level diff, no hours chart, no slide comparison, no results comparison, no link from a change to the decision that authorised it | `src/lib/curriculum.ts` lines 123 to 142; `src/ui/screens/CurriculumWorkspace.tsx` `CurriculumHistoryPanel` | The change the whole loop exists to make is a list item |
+| The judge's way through | The landing page offers the tour and sign-in; `JUDGES.md` is text with no character; the host appears only at the centre of the loop graphic, on Home's Start here card and in the wordmark; nothing greets a judge, walks a judge, or hands a judge the weak spots | `src/ui/screens/Landing.tsx`, `Guide.tsx`, `Inbox.tsx` line 182, `LoopGraphic.tsx` line 39; `JUDGES.md` | A good app with no host at the door |
+| The programme | Seven seeded courses, one with a loop; no programme view of outcomes or rings; `Programme.tsx` is the old sandbox | `src/data/seed.ts`; `src/ui/screens/Courses.tsx` | One course, no sense of the department |
+| Assessment items | Items are template strings built from the outcome text ("Apply data visualisation on a worked scenario, showing each step"), in the old test-draft flow; no options, no lint, no export an LMS can import | `src/app/store.ts` `generateTestItems`; `src/data/items.ts` | Not shown in the loop today |
+
+What is already deep and stays as it is: Watch and Report (collection with receipts, exact quotations, the reviewed denominator, Wilson intervals, snapshots, the brief), Decide (the immutable record and the authority model), the constraint check in Update, the local door, the claims register and the checks.
+
+## 2. What depth and wow mean here
+
+A judge runs three tests in ten minutes: is this real, does it go deep, and would a university use it. The research note on judges ([judge-experience-and-wow-2026-10-22.md](research/judge-experience-and-wow-2026-10-22.md), Section 2) says a live, working, specific demo beats a more ambitious one on slides, that a named weakness raises scores, and that the sentence a judge repeats an hour later is chosen in advance. The sentence for this track: **"They showed me the course before and after, and the receipt for why."**
+
+**Depth** means the records a quality office keeps exist in the app and look like the real thing: the course file as EAC lists it (course information, the CLO to PLO matrix, the syllabus, references, assessments with marking schemes, rubrics, graded samples), the OBE course report with its KPI, the two surveys, the CQI note ([course-records-and-surveys-2026-10-22.md](research/course-records-and-surveys-2026-10-22.md), Sections 1 to 3).
+
+**Wow** means a stored record shown so well that the judge feels the change, and never a trick. The organising pattern is Duarte's "what is, what could be": hold the old state, reveal the new with one comparison pattern, and leave the comparison on screen so the information lives in the persisted view and not in the motion ([before-and-after-patterns-2026-10-22.md](research/before-and-after-patterns-2026-10-22.md), pattern 10). The ranked list of fifteen wow moments in the judge note is folded into Section 9 with a cost each; the ones chosen for Track C are the ones that are honest by construction and cheap enough for four days.
+
+## 3. The demo institution: UTP, labelled
+
+The owner supplied `utp.svg` at the repository root on 22 October 2026 (652 by 652 viewBox, two fills: `#004A84` blue and `#BC893A` gold). The demo lecturer, Dr Sobri, already carries a `utp.edu.my` address in the seed, as do Dr Rahman, Prof Lim and Mr Devan (`src/data/seed.ts` lines 47 to 51). This track makes the institution explicit and labelled.
+
+### 3.1 The institution profile
+
+A new record, `InstitutionProfile`, in the store and the backup (Section 11):
+
+| Field | Demo value | Why |
+|:--|:--|:--|
+| `name`, `shortName` | "Universiti Teknologi PETRONAS (demo)", "UTP" | The team's own university; the word demo stays in the name on every surface |
+| `mark` | `/brand/partners/utp.svg` and `.png` | Section 3.2 |
+| `kpi.passMark`, `kpi.studentShare` | 55, 0.50 | "At least 50% of students achieve 55 marks in all CLO" is the Malaysian practice the note records (UTHM FKEE 2024); it is not a UTP document, and the profile's help text says so |
+| `kpi.ploShare` | 0.60 | "Each PLO achieve at least 60% in average attainment", same source |
+| `surveyScale` | 1 to 5, target "4 or higher" | The MQA GGP AOSL worked target and the UTM end-of-course form |
+| `surveyFloor` | 5 responses | The McGill and McLennan practice in the research (UNC Charlotte uses three, Ruhr ten); below it no aggregate is shown |
+| `lms` | "Moodle (ULearn)" | UTP runs two Moodle instances (a vendor case study; marked as such), so Moodle XML is the first item export |
+| `termPattern` | "2026/2027 semester 1" | The term the tour already sets |
+
+Every threshold is editable in a small Institution panel on the Guide page (coordinator only), because the research found three different KPI conventions (55 marks and 50% of students; 60 marks and 70% of students; 70% of each tool's maximum) and a product must print its threshold beside every attainment figure.
+
+### 3.2 The mark pipeline
+
+- `scripts/gen-partner-marks.mjs` copies `utp.svg` to `public/brand/partners/utp.svg` and rasterises it with Puppeteer to `utp-1024.png` and `utp-256.png` (PNG because pptxgenjs documents SVG support only for the newest desktop PowerPoint with no fallback; the research note on slides, Section 1). `--check` reports drift.
+- The PPTX masters place the PNG; the React deck preview and the survey page use the SVG file by `<img>`; the mark is never inlined into a component, never recoloured and never combined with Lyceum's own lockup (the rule in [brand-use.md](brand-use.md)).
+- `scripts/contrast-check.mjs` excludes `public/brand/partners/` from its SVG colour scan, with a comment saying why: a third-party mark keeps its own colours. `tokens.ts` gains nothing.
+- `docs/brand-use.md` gains a row: UTP, the team's own institution, the mark supplied by the owner on 22 October; shown on sample material inside the app and in the pack, labelled demo; publication beyond the competition (the public landing page, the film) waits on the owner confirming with the university (Section 18, item 2).
+- Where the mark appears: the pack's title and content masters (top right on white; a white plate on the forest title slide), the survey's student page header, the course file's cover sheet, the OBE course report's header, the term recap's header. Never on the landing page, the poster or the deck until item 2 is answered.
+
+### 3.3 The honesty line
+
+One string, in `src/data/sample-course/index.ts`, used wherever the mark or the course appears: "A demo course at UTP, written for this prototype. CS310 is not a UTP course outline, and these marks, responses and slides are synthetic." The real UTP course in this area, TFB3133 Data Visualisation in the 2026 handbook, is named in the research note and nowhere in the app.
+
+## 4. The course record, to accreditation depth
+
+### 4.1 What a complete record holds
+
+From the research (EAC 2020 and 2024 course files; MQA GGP AOSL Table 1 and Appendix 12; UTM's Course Information elements; AUN-QA 4.0 course specification): a synopsis of 100 to 150 words; four to six CLOs, one measurable verb each, tagged with a Bloom level and an MQF cluster; the CLO to PLO matrix with a level per cell; the teaching and learning methods; the assessment plan (components, weights, the CLOs each assesses, the week) with a table of specifications; student learning time that adds to 40 hours per credit; a week-by-week schedule; references under five years old; the course materials (lecture notes, lab sheets, the project brief, rubrics, exam papers with marking schemes, graded samples at three levels); and the per-term OBE report with its CQI note. Each one maps onto a Lyceum record below; what is left out is listed in 4.5.
+
+### 4.2 The data model (additions, all optional so old backups migrate)
+
+| Record | Added fields | Notes |
+|:--|:--|:--|
+| `CourseDefinition` | `synopsis`, `methods: string[]`, `references: Reference[]`, `assessment: AssessmentComponent[]`, `slt: { lecture, lab, tutorial, selfStudy, assessment, exam }` | `slt` totals are checked against `credits * 40`; `assessment` weights are checked to sum to 100 |
+| `CourseOutcome` | `mqfCluster`, `ploLinks: { ploId, level: "H" or "M" or "L" }[]` | `ploIds` stays for compatibility and is derived from `ploLinks` |
+| `CourseTopic` | `kind: "lecture" or "lab" or "project" or "quiz" or "exam"`, `activities`, `readings`, `misconceptions: string[]` | `misconceptions` feed the distractors in Section 10 |
+| `Programme` | `plos: { id, text, cluster }[]` | Eight demo PLOs shaped on the MQF 2.0 clusters, labelled synthetic |
+| `AssessmentComponent` (new) | `id, title, kind, weight, cloIds, week, bloomLevels, description, rubricId?` | The plan's rows |
+| `Rubric` (new) | `id, title, criteria: { name, levels: [capstone, milestone2, milestone1, benchmark] }[]` | The four-level grid shape of the VALUE rubrics with our own descriptors; the AAC&U text is linked, not bundled (its licence is CC BY-NC-SA) |
+
+### 4.3 The sample course: CS310 Data Visualisation, in our words
+
+Authored during D1 under `src/data/sample-course/cs310.ts`, written by the session in its own words, modelled on the published outlines the note lists (GWU DATS 6401 Spring 2026 for the week structure and the project; UTP's TFB3133 synopsis for the local anchor on JavaScript charts, D3 and a mini project; the BTAA rubric for the criteria), credited in a `source` line on the record, with no sentence copied from any of them. The skeleton, so every session writes the same course:
+
+**Outcomes** (the existing `CLO5` keeps its id, because the tour, the smokes, the sample results file and the Map step target it; the four new outcomes take course-scoped ids `CS310-1` to `CS310-4` with display labels CLO1 to CLO4, and `CLO5` keeps the label CLO5):
+
+| Label | Bloom | MQF cluster | The outcome, our wording | PLO links |
+|:--|:--|:--|:--|:--|
+| CLO1 | Understand | Knowledge and understanding | Explain how data and task abstraction, marks and channels, and human perception decide whether a chart answers its question | PLO1 H, PLO2 M |
+| CLO2 | Apply | Functional work skills (digital) | Construct charts for categorical, temporal and geospatial data with a reproducible tool chain, with the colour and accessibility choices justified | PLO4 H, PLO6 M |
+| CLO3 | Analyse | Cognitive skills | Analyse a published visualisation against perception, Gestalt, accessibility and ethics criteria and diagnose where it misleads | PLO2 H, PLO7 M |
+| CLO4 | Evaluate | Cognitive skills | Evaluate competing designs for a stakeholder question using evidence from a usability check, and justify a recommendation | PLO2 H, PLO5 M |
+| CLO5 | Apply (before), Create (after the tour's revision) | Functional work skills (interpersonal and communication) | Before: design and present a data story for a stakeholder audience using static visualisations. After the tour's Update: design and present an interactive dashboard and data story for a stakeholder audience, with the design choices justified | PLO5 H, PLO4 M |
+
+The before and after of CLO5 is the demo's own change: the dashboards evidence in Report maps to CLO5 today, the decision adopts, and Update rewords the outcome. D1 decides how the tour's existing Update steps (which type into the outcome and add a topic) map onto the richer record without changing a caption, and logs it.
+
+**Student learning time** for 3 credits, 120 hours: lecture 14 weeks by 2 hours, 28; lab 14 by 2, 28; self-study 40; assessment work 21 (quizzes 3, labs 6, project 12); final examination 3. Contact 56, so `brief.contactHours` is 56 and the Meter on the Course screen reads 56 of 56.
+
+**Schedule**, fourteen weeks, each a `CourseTopic` with its kind, hours, outcomes, readings and two or three misconceptions:
+
+1. Why visualise: questions, data and tasks (lecture, lab 0: the tool chain installed)
+2. Data and task abstraction; tidy data
+3. Marks, channels and perception
+4. Colour, Gestalt and accessibility
+5. Charts for comparison and distribution
+6. Time: trends, seasonality and small multiples
+7. Mid-semester quiz; critique workshop on misleading charts
+8. Interaction: filter, brush and link; the project brief released
+9. Dashboards I: layout, hierarchy, at a glance
+10. Dashboards II: interactivity and publishing (the topic the tour's revision expands, within the 56 hours, by moving two lab hours from week 6)
+11. Geospatial and network data
+12. Uncertainty and ethics
+13. Data storytelling for stakeholders
+14. Project presentations and review
+
+**Assessment plan** (continuous 60, final 40, inside the 50 to 70 continuous range UTM's guide gives): quizzes 10 (CLO1, CLO3; weeks 7 and 12), labs 15 (CLO2; weeks 2 to 11), the dashboard project 25 (CLO5 and CLO4; weeks 8 to 14, with the rubric), the critique essay 10 (CLO3; week 9), the final examination 40 (CLO1, CLO2, CLO4). A table of specifications: marks per CLO per Bloom level, computed from the components and checked to equal the weights.
+
+**Rubric** for the project: four criteria shaped on the BTAA categories in our words (design and accessibility; clarity and integrity of the communication, sources cited; insight for the audience; reproducibility of the pipeline), four levels each.
+
+**References**: Munzner 2014, Few 2013, and three items under five years old chosen by the session from the course's field, each with a real title, author and year the session can verify from the research notes or a known publisher page (nothing invented; if the session cannot verify a reference it leaves a two-item list and says so).
+
+**Methods**: lectures, labs, a studio critique, the project with a defence.
+
+### 4.4 The Course screen
+
+The Course step grows from two panels to a record with sections, in this order, each a panel with the chunky outline and lip the owner approved: Synopsis (with the credits, the SLT bar lecture, lab, self-study, assessment, exam, totalling 120); Outcomes (five cards with the Bloom tag, the MQF cluster and the assessment that evidences each, and the CLO to PLO matrix as a heat table in H, M and L with the level in text in every cell); Assessment plan (the components with weights, the table of specifications behind a disclosure); Schedule (fourteen rows: week, kind, topic, hours, outcomes, the pack's thumbnail, a dot when a lab sheet or the brief exists); Materials (Section 5); References; the context and the preparation checklist as today behind disclosures. One action at the top stays: Watch employers, or Start a revision.
+
+**The course file in one click.** "Export the course file (.zip)": `course-information.md` (everything above), the fourteen packs, the lab sheets, the project brief, the rubric (`.xlsx`), the quiz (`.xml`, Moodle), the OBE course report (`.md`), the decisions and versions (`.md`), and `MANIFEST.md`, a checklist in the EAC course-file order marking each item present, sample or not included. The zip is built with the `jszip` dependency already installed.
+
+### 4.5 Left out, and said so
+
+Graded student samples at low, medium and high (synthetic student work is one step too far from honest); exam papers beyond the week 7 quiz and the final's outline with its marking scheme; the external examiner's report. `MANIFEST.md` lists them as not included, so the course file shows its own gaps.
+
+## 5. A semester of teaching material
+
+### 5.1 Sessions with slides
+
+`TeachingSession` gains `slides: SlideDraft[]` (title, bullets, notes, an optional figure: a chart from the evidence, a table, or a labelled placeholder) and `labSheet?: string` (markdown). The sample course saves fourteen sessions, one per week, with six to nine slides each written during D2 in the lecturer's voice, every slide titled, every slide with notes; the lab sheets for weeks 2 to 11; the project brief at week 8 (teams of three, a packaged workbook, a written report, a 10 to 15 minute defence, shaped on the MSU Texas brief in our words); the week 7 quiz (Section 10). The sample content is data under `src/data/sample-course/sessions.ts`, labelled "Sample slides, written for the demo".
+
+### 5.2 The pack, with masters and the mark
+
+`src/lib/slides.ts` keeps `DeckSpec` and gains a `Brand` record (the institution's name and mark PNG, the token colours, Calibri) and five masters through `defineSlideMaster`: TITLE (forest, the course and week, the lecturer, the mark on a white plate), SECTION, CONTENT (title, body placeholder, the mark top right, the footer with course code, week and slide number), TWO_COLUMN and CLOSING (the outcomes revisited, next week, the honesty line). `sessionDeck` builds from the saved slides first, then the evidence slide as today (the counts over the reviewed denominator and the exact quotation), then the check for understanding (the lint-passed items from Section 10), then resources. Objects are added in reading order, body text is 18 pt or larger, every slide has a unique title, every slide has notes, and shapes use the `pres.shapes` constants; the proof unzips the file and checks each of these in the XML, and only if it finds the malformed parts issue 1449 describes does D2 add the repair pass (verify, do not assume).
+
+### 5.3 The preview on screen
+
+`src/ui/primitives/DeckPreview.tsx` draws a `DeckSpec` to SVG at a 960 by 540 viewBox with the same layout rules as `renderDeck`: the thumbnail on each session card, a filmstrip behind "Preview the pack", the two-version comparison in Section 6, and the frames in the judge's walk. The preview says "A preview; PowerPoint draws the file" once, because it is not pixel-identical. No PowerPoint or LibreOffice is needed on the demo laptop to show slides.
+
+### 5.4 Teach, as the judge sees it
+
+Fourteen cards by week with the thumbnail, the outcomes, the status and the pack; a filter for the week in view; "Teaching pack (.pptx)" unchanged; the lab sheet and the brief as downloads where they exist. The tour's week 6 session step keeps its caption and now lands on a card that already has slides.
+
+## 6. Before and after
+
+### 6.1 One library
+
+`src/lib/diff.ts`, deterministic and proved: `wordDiff(a, b)` (a token LCS, giving kept, deleted and inserted runs); `topicDeltas(before, after)` (per topic: hours before and after, delta, moved, added, removed); `deckDiff(a: DeckSpec, b: DeckSpec)` (per slide: title changed, bullets added or removed, figure changed, slide added or removed); `resultDeltas(prior, current)` (per outcome: share before and after); `changeSummary(...)` ("3 outcomes reworded, 2 h moved, 2 slides revised", from the diffs). The library reads records only; it never guesses.
+
+### 6.2 The views, from the research's ten patterns
+
+| Where | Pattern | What the judge sees | Accessibility |
+|:--|:--|:--|:--|
+| Update, the check panel, before adopting | Word-level redline (1) | CLO5's old words struck through in the danger token and the new words inserted in the emerald text token, inside one paragraph, with "Hide changes" for the clean text | Strikethrough and underline, not colour alone; visually hidden "deleted" and "inserted" labels |
+| Update and History | Current versus proposed, two columns (2) | Topics and hours as a real table: topic, before, after, delta as text ("+2 h"), the changed cells outlined | A table with headers; the delta in words |
+| Update and History | A dumbbell per topic (3) | An SVG with two dots and a bar per topic, sorted by the size of the change; value labels on both dots; the data table beneath | Labels in text; reduced motion shows the end state |
+| Teach and History | Structural slide diff (6) and swipe or onion skin (5) | For the week 10 pack: the list of what changed (title, bullet, figure), each highlighting its region on the thumbnail; beside it the two SVG previews under a divider the judge drags or a fade | Arrow keys, click to position, "Show before" and "Show after" buttons (WCAG 2.5.7); the list is the accessible description |
+| Learn | A slopegraph for results (4) | One line per outcome from the prior term's synthetic file to this term's, CLO5 emphasised, the rest grey at 3 to 1 | Every line end labelled in text |
+| History | A version scrubber with named stops (7) | A slider across the course's versions and decisions, the stop named, who and when on hover, the diff always against the previous stop; a change links to the decision record that authorised it (through the `decision-recorded` and `version-adopted` events) | `role="slider"`, keyboard steps, the stop name announced; no autoplay |
+| History and the recap | Change counters (9) | "3 outcomes reworded, 2 h moved, 2 slides revised" counting up once | Final numbers at once under reduced motion, in a live region |
+| Everywhere | What is, what could be (10) | The before holds for a beat, the after reveals with one of the patterns above, and the comparison stays on screen | The persisted view carries the information |
+
+Object-constant animated transitions (pattern 8) are kept for Track B: the dumbbell's end state and the counters are enough for four days.
+
+### 6.3 Where the change comes from in the demo
+
+The tour's Update adopts a version: CLO5 reworded, two lab hours moved from week 6 to week 10, week 10 linked to CLO5 and its pack revised (two slides). History then holds two versions, one decision and the events between them, so every view above has real records to show, and the judge can open the decision from the diff.
+
+## 7. The two student surveys
+
+### 7.1 The instruments
+
+Two `SurveyDefinition` records in the workspace, built from the course record and the institution profile:
+
+- **The Course Outcome Survey**: one item per CLO ("I can ..." in the outcome's words), 1 to 5, the target "4 or higher", one open comment. Run at the end of the semester.
+- **The Student Self Reflection Tools Survey (SSRT)**: the teaching and learning instrument. UTP names it in a job advertisement and nowhere public, so the demo instrument is adapted from SEEQ's dimensions (learning, organisation, breadth, assessment, workload) in our words, twelve items on 1 to 5 plus two open comments, labelled "adapted; UTP's own instrument is not public".
+
+Every question carries a stable id embedded in its text ("Q3.") so an import matches on the id, not the wording.
+
+### 7.2 Collection without a server
+
+Three ways, in the order the research recommends, each labelled on the Learn screen:
+
+1. **The booth way (built for the demo)**: the local API (`server/`) gains `POST /api/survey/:token` and `GET /api/survey/:token/responses`, in memory, no identifiers; the student page is a route of the built app (`#/survey/<form>`) that reads the form from the URL fragment (lz-string, MIT; the proof checks the link stays under 2,000 characters) and posts to the laptop's address on the booth's own hotspot; the QR on screen encodes that address. Judges answer on their phones; the lecturer presses "Collect" and the responses land as a `DataSource` of kind `clo-survey` or `ssrt` with `sample: false` and "collected at the booth". Below five responses the screen says "3 of 5 responses needed; no aggregate is shown", which is itself the honest moment.
+2. **The paste way (universal)**: the student page can also produce a short code the student pastes into the LMS or an email; the lecturer pastes codes into the app.
+3. **The campus way (exports and imports)**: "Export for Microsoft Forms" writes a DOCX shaped for Quick Import (one heading per section, one numbered question per line, options as a list) with `jszip`; importers read Microsoft Forms XLSX (ID, Start time, Completion time, Email, Name, then one column per question), Google Forms CSV (Timestamp first, question text as headers) and Moodle Feedback CSV through the SheetJS dependency already installed, matched on the question id. The Google Forms API and a Cloudflare Worker collector are planned and say so.
+
+### 7.3 Rules on screen
+
+The five-response floor; free-text comments locked until the coordinator records "grades released" for the term (an event, `grades-released`, in the log, so History shows it); a consent line and a link to the institution's privacy notice on the student page (the profile holds the URL; UTP's general privacy notice is the demo link); nothing stored that identifies a student; the response rate beside n of N with Nulty's standard as the comparison ("31 of 38, 82%; Nulty asks about 58% for a class under 20 and 35% over 50; online surveys at Monash drew 31%").
+
+### 7.4 The sample responses
+
+Synthetic, under `src/data/sample-course/surveys.ts`: the prior term's Course Outcome Survey (31 of 38) and SSRT (29 of 38), with a dozen short comments written to sound like students and labelled synthetic; `scripts/gen-demo-files.mjs` also writes them as a Microsoft Forms style XLSX and a Google Forms style CSV so the importers have real fixtures.
+
+## 8. Attainment, the way quality offices report it
+
+### 8.1 The arithmetic
+
+`src/lib/attainment.ts`, proved against a hand-computed fixture:
+
+- **Direct, per CLO**: n, mean, spread, the count at or above the institution's pass mark, the share, its Wilson 95% interval (`wilsonInterval` in `src/lib/evidence.ts`), and KPI met or not against the student share. The default reads "CLO2: 29 of 38 students at 55 or above, 76% (61% to 87%); KPI 50% met".
+- **Indirect, per CLO**: the Course Outcome Survey's mean and the share at 4 or higher, shown beside the direct figure with the gap in points and never averaged with it (plan Section 9.4).
+- **The CLO to PLO roll-up**: this course's contribution to each PLO as the weighted mean of its CLO shares with H, M and L as 3, 2 and 1, labelled "this course's direct contribution; the programme figure needs every course".
+- **The UAEU variant** (attainment as the share of students at 70% of each tool's maximum, weighted by the tool's weight) as a selectable method in the profile, so the method is visibly a setting.
+
+### 8.2 What the intake keeps
+
+The results file already holds a mark per student per outcome. At intake the interpreter computes, per outcome, n, mean, sd, the count at or above the profile's pass mark and a ten-bin histogram, and stores those; it never stores a student identifier. `ResultUpload.rows` gains optional `atOrAbove` and `bins`; a row from an older backup has neither, and the screen says "distribution not filed; file the results again to compute the KPI" rather than guessing.
+
+### 8.3 The OBE course report
+
+One panel on Learn, printable, and one section of the term recap: the header (course, term, version taught, the mark); the table CLO, n of N, mean, share at or above the pass mark with its interval, KPI, met; the indirect column beside it with the gap; the PLO contribution row; the response rate and the floor; the CQI note the lecturer writes (a saved record, `CqiNote`, with the term and the version, shown in History); and the sentence that stays: "No learning gain is claimed; the benchmark has not been run." The `PLANNED` list on Learn shrinks to pooling, frozen predictions and comment themes.
+
+### 8.4 The sample results
+
+`scripts/gen-demo-files.mjs` writes `results.xlsx` with five columns (CLO1 to CLO5) for 38 synthetic students and a second file, `results-prior.xlsx`, for the prior term, so the slopegraph has two points; the seed files the prior term's upload as a labelled, never-counted example, as the CS220 example is today.
+
+## 9. The judge's way through, with the host
+
+### 9.1 The host at the door
+
+The research on mascots before professional audiences (GitHub, Mailchimp, Atlassian, Duolingo, Headspace) gives the rule, and Section 0.2 keeps it: the host greets, marks completions, names what is not built and signs off; it never explains an error and never sells. Tualang appears for the judge in five places:
+
+1. **The judge's page**, `#/judge`, reachable from the landing page ("For judges: walk with Tualang") and from the Guide page. Tualang, greeting, size 160, one line: "Six steps, one course, one term. Walk with me, or watch." Three buttons: Walk the loop, Before and after, Ask the door. Under them, the card "What is not built", Tualang holding it, listing `REMAINING_WORK` from `src/app/sectionGuides.ts` word for word.
+2. **The guided walk**: ten stops over the real app on the restored sample workspace, built on the existing demo runner (`src/demo/runner.ts`) in a new "guided" mode that waits for Next instead of a timer: Course (the record and the mark), Watch (a posting with its link and date), Report Quote (the receipt), Report Count (the interval), Decide (the record), Update (the redline and the dumbbell), Teach (the pack preview), Learn (the OBE table beside the survey), History (the scrubber), Home (the ring). At each stop a spotlight on the element, Tualang in a corner card with one line of at most twenty words and the honesty label where one applies ("synthetic marks"), Next, Back and Escape, all by keyboard. No new dependency: the runner already finds targets by `data-demo-id` and moves a cursor; driver.js stays an option in the decisions log.
+3. **The phone**: the walk and the judge page work at 320 px (the smokes already check that width), so the poster's QR leads a judge's phone to the landing page and from there to Tualang.
+4. **The term recap**, `#/course/:id/recap`: one printable A4 per course and term from records (plan Section 8): what employers asked for (the top skills with their denominators), what was decided (the record), what changed (the counters and the redline), what was taught (fourteen sessions, the packs), what came back (the OBE table, the survey beside it); Tualang reflecting in the header; the honesty line in the footer. Printed once for each judge team to keep (the booth lane).
+5. **The close**: when the ring closes, Home shows Tualang celebrating for the done window as today; the booth script ends on the receipt opening in a new tab, then Home's ring, and no new claim after it (the peak-end rule).
+
+### 9.2 The programme wall
+
+The Courses screen gains small multiples: every course in the programme as a mini ring with its term, closed or open, and under them the programme's CLO to PLO heat table in H, M and L across the seven courses (only CS310 is filled; the others say "no outline recorded", which is true). Same data at another zoom, and it answers "would a department use it".
+
+### 9.3 The kiosk
+
+`#/kiosk`: between judge teams the laptop shows Tualang resting on the forest and plays the existing Loop90 render in a loop (already rendered on 22 October; nothing new is rendered), with "Touch to walk the loop"; any key or touch opens the judge's page; thirty seconds idle returns to the kiosk. WCAG 2.2.2: the film has a visible pause.
+
+### 9.4 The fifteen wow moments, ranked and costed
+
+| # | Moment | Honest because | Cost | In Track C |
+|:--|:--|:--|:--|:--|
+| 1 | The live receipt: the quotation opens its posting | Real link, survives checking | Built (A2a) | Kept; the walk's stop 3 |
+| 2 | Tualang's two-minute walk, on a phone from the QR | The honesty label never leaves | Medium | D6 |
+| 3 | The before and after of the outline, linked to the decision | Every diff has a recorded reason | Medium | D5 |
+| 4 | The one-click pack that opens in PowerPoint, now branded, with a preview on screen | The real generator's output | Small on top of A2b | D2 |
+| 5 | The same question, two doors (Report beside Claude Desktop) | Both read one exported file | Needs the owner's Claude Desktop run | Kept as the booth's last step; the door gains `lyceum_course_record` and `lyceum_attainment` (D8) |
+| 6 | Count-up to the claims register on the judge page | Every figure already audited | Small | D6 |
+| 7 | A printed receipt from a thermal printer | Prints a stored record | Hardware | Owner's call (Section 18, item 4) |
+| 8 | The term recap, one A4 per term, printed for the judge | Each number traces to a record | Medium | D6 |
+| 9 | The programme wall | The same data at another zoom | Medium | D6 |
+| 10 | The kiosk attract loop on the existing render | A capture of the real app | Small | D6 |
+| 11 | The named weak spot, Tualang holding the card | Honest by definition | Small | D6 |
+| 12 | Decision replay on real timestamps | Animates stored events only | Large | Track B |
+| 13 | The judge as lecturer: name a skill, Watch finds a posting live | The fallback is labelled recorded | Medium | Already possible in Watch; rehearsed in the booth script, not built |
+| 14 | A second screen on a stand | None needed | Logistics | Owner's call |
+| 15 | The peak-end close | No new claim after the receipt | Small | The booth script (D8) |
+| 16 | The course file in one click (new in this plan) | Twenty parts, each a record | Small on top of D1 | D1 |
+| 17 | Three judges answer the survey on their phones and the floor refuses to aggregate | The rule is the point | Medium | D3 |
+
+### 9.5 `JUDGES.md` and the booth script
+
+`JUDGES.md` opens with Tualang (the existing PNG under `public/brand/mascots/`, the greeting pose) and gains the judge's page, the walk, the course file, the before and after and the survey as numbered things to try. `docs/demo-script.md` gains the three new steps (the before and after at Update, the survey on the judges' phones at Learn, the recap handed over at the close) with what each rests on and which check covers it, and keeps the six-minute path under six minutes by cutting narration, not steps (the Story lane times it on 26 October).
+
+## 10. Assessment items and exports
+
+Smallest useful version, last in the order:
+
+- `src/lib/items.ts`: deterministic item templates per Bloom level using the Arkansas verb list (remember: list, define, name; understand: explain, paraphrase, summarise; apply: calculate, demonstrate, use; analyse: classify, diagram, break down; evaluate: judge, defend, justify; create: design, formulate, compose), the course topic's `misconceptions` as distractors, and the outcome's words in the stem. Multiple choice with three or four options, short answer and essay.
+- The Haladyna lint, each rule named on screen: a positive stem that carries the main idea; three or four options; one keyed answer with its position varied; options of similar length; no "all of the above" or "none of the above"; no absolutes; no grammar clue; distractors from recorded misconceptions. An item that fails a rule shows the rule and cannot be exported.
+- Exports from one item model: Moodle XML first (UTP's ULearn is Moodle; `multichoice`, `shortanswer`, `essay` with the elements the research lists), QTI 2.1 second (Canvas and Blackboard Ultra), QTI 3.0 later; the rubric grid to XLSX through SheetJS.
+- Where: the Teach step's session card, "Check for understanding" becomes items with the lint beside them and "Export for Moodle (.xml)"; the week 7 quiz in the sample has ten items that pass the lint.
+- The old test-draft flow in the sandbox is left as it is and labelled illustrative, as today.
+
+## 11. The data model and the migration
+
+- Backup schema 6. `LATER_DEFAULTS` in `src/lib/workspaceBackup.ts` gains `institution`, `programme.plos`, `surveys`, `surveyResponses`, `cqiNotes`, `rubrics`; the course definition, topic, outcome, session and result-row additions are optional fields with defaults applied on restore. `scripts/check-backup-migration.mjs` restores schemas 3, 4, 5 and 6.
+- New event kinds: `grades-released`, `survey-opened`, `survey-collected`, `cqi-noted`. The How it works timeline reads them as it reads the others.
+- `ResultUpload.rows[].atOrAbove`, `bins`; `SurveyResponse` (formId, term, answers keyed by question id, collectedAt, source: booth, pasted, imported, sample); never a student identifier.
+- The moods: Lens is "waiting" while survey responses await collection and "done" when an OBE report or a CQI note is saved; Prism "done" when slides are saved; Folio "done" when the course file is exported. `prove-moods` keeps every mood a pure function of records.
+- The loop's done rules are unchanged (Section 4 of the master plan); the richer record changes no rule.
+
+## 12. Checks, documentation and the sample workspace
+
+- New suites, registered in `prove:all` and in `src/data/suites.ts`: `prove-course-record` (the sample validates; SLT sums to 120; weights sum to 100; every CLO is assessed; every topic links an outcome; the matrix has a level in every cell that is linked; the course file zip lists its parts and the manifest marks what is not included), `prove-materials` (fourteen packs render and unzip; every slide has a unique title and notes; body text is 18 pt or larger; the mark appears once per content slide; the preview SVG lists the same slides as the file), `prove-surveys` (the definitions; the URL round trip; the importers on the three fixtures; the floor; the lock), `prove-attainment` (the KPI arithmetic on the fixture; the PLO roll-up; the migration of a row without `atOrAbove`), `prove-diff` (word diff, deltas, the slide diff, the counters), `prove-judge` (every walk stop's `data-demo-id` exists on its screen; the kiosk returns; the recap's numbers equal the records they cite). The four smokes gain the judge's page, the walk by keyboard, the course file download, the survey's booth round trip and the compare view at 320 px.
+- `node mcp/sample.ts` regenerates the sample workspace from the tour's end state and the door's proof asserts the new tools. `node scripts/generate-guide.mjs --check` after the section guides gain Judge, Recap and Institution. The contrast check with the partner-mark exclusion. The dash scan. The backup migration check.
+- `docs/as-built.md` gains the Track C changelog and the dated verification table; `docs/claims.md` gains any figure a judge-facing surface shows that is not synthetic (the check count row changes by the check); `docs/doors.md` gains the two tools; `docs/lecturer-guide.md` regenerates; `README.md` gains the judge's page and the course file under the existing headings, with its screenshots untouched until D9.
+- `CLAUDE.md`'s read order gains one line after item 1: this plan, and the four research notes it cites by name (D0).
+
+## 13. What goes stale, and the gated capture
+
+### 13.1 Stale after Track C
+
+The screenshots of Course, Teach, Learn, History and Courses; the film's capture (the screens inside it); the deck's slides 6 and 7 and their PNG exports; the brief's page with the pack; the poster's screenshots; `docs/presentation/pack/`; the README's hero and pairs. None is rebuilt before D9. Until then every one of them is a true record of the 22 October build and is labelled with that date where a date is shown.
+
+### 13.2 D9, when the owner says go
+
+In this order, each with its check, on the presenting laptop or the build machine: `npm run build`; `npm run shots` (the new screens replace the stale files; the README's seven copied); `npm run gen:sample-decks` with PowerPoint; the deck's slides 6 and 7 edited to carry the before and after and the OBE table (specified in D9's prompt), then `npm run deck`, which checks every figure against the register; `node scripts/gen-brief-pdf.mjs`; `node scripts/gen-poster.mjs` (with the QR as today); `node video/capture/capture.mjs` (about seven minutes); `npm run render:loop90`, `npm run render:afternoon`, `npm run check:determinism` in `video/remotion/` (the capture and both renders took 37 minutes on 22 October, 14:21 to 14:58; the determinism check adds a second Loop90 render); copy the film into `deck/media/` and run `npm run deck` again. Then the owner's playback test on the venue's player. Estimated machine time: about one hour; one Opus session.
+
+## 14. Work packages, order and schedule
+
+### 14.1 The days
+
+Computed, not guessed: 22 October 2026 is a Thursday; the run has Friday 23, Saturday 24, Sunday 25 and Monday 26; the freeze is Tuesday 27 at 12:00 Kuala Lumpur time or 24 hours before the flight, whichever is earlier (master plan 17.1; the flight is still unconfirmed in the competition file); the rehearsals are Monday 26 (booth script); the final is Thursday 29. Tier 1 ships or nothing does; Tier 2 ships if Sunday night finds Tier 1 green; Tier 3 only if time is left; D9 only on the owner's go.
+
+| Day | Package | Tier | Scope in one line |
+|:--|:--|:--|:--|
+| Fri 23 | **D0** The institution and the mark | 1 | The profile record, the mark pipeline, the brand row, the contrast exclusion, the honesty line, `CLAUDE.md`'s line, schema 6 scaffold |
+| Fri 23 | **D1** The course record | 1 | The model additions, the CS310 sample record, the Course screen, the course file zip, `prove-course-record` |
+| Fri 23 to Sat 24 | **D2** The material | 1 | Sessions with slides, the masters and the mark, the fourteen packs, the preview, lab sheets, the brief, the rubric, `prove-materials` |
+| Sat 24 | **D5** Before and after | 1 | `diff.ts`, the eight views, the scrubber, the counters, the link to the decision, `prove-diff` |
+| Sat 24 to Sun 25 | **D3** The surveys | 2 | The two instruments, the student page, the booth collector, the paste code, the Forms exports and imports, the floor and the lock, the sample responses, `prove-surveys` |
+| Sun 25 | **D4** Attainment | 2 | `attainment.ts`, the intake's counts and bins, the OBE report, the CQI note, the PLO contribution, the prior-term file, `prove-attainment` |
+| Sun 25 | **D6** The judge's way through | 1 | The judge's page, the walk, the recap, the programme wall, the kiosk, `JUDGES.md`, `prove-judge` |
+| Mon 26 | **D7** Items and exports | 3 | `items.ts`, the lint, Moodle XML, QTI 2.1, the rubric export, the week 7 quiz |
+| Mon 26 | **D8** Checks and documentation | 1 | The suites table, the smokes, the sample workspace, the door's tools, the guide, the booth script, as-built, claims, the full verification |
+| On the owner's go | **D9** Capture and render | gated | Section 13.2 |
+
+Order inside the run: D0, D1, D2, D5, D6, D8 (Tier 1), then D3, D4 (Tier 2) with D8's verification repeated, then D7 (Tier 3) with D8 repeated. D6 before D3 and D4 because the judge's page and the walk are what the judge touches first; the walk's Learn stop shows what Learn has at that moment and the stop's line is updated when D4 lands.
+
+### 14.2 Dependencies
+
+D1 needs D0 (the profile and the mark). D2 needs D1 (the schedule and the outcomes). D5 needs D1 and D2 (two versions, two packs). D3 needs D0 (the scale and the floor) and D1 (the outcomes for the items). D4 needs D0 (the KPI) and D3 for the indirect column (the direct table ships without it). D6 needs D1, D2 and D5 for its stops; it degrades honestly if D3 or D4 is missing (the stop's line says "planned"). D7 needs D1 (`misconceptions`). D8 runs after each tier. D9 runs last.
+
+## 15. Codex and the other tools
+
+| Tool | Use it for in this track | Never for |
+|:--|:--|:--|
+| Claude Code (Opus) | Every package, the sample content, the checks, the documentation | A figure without a source; a reference it cannot verify |
+| Codex CLI, `gpt-6-astra` at max reasoning, `--sandbox read-only`, the files embedded through stdin (the tool host fails under a non-elevated shell, so nothing is read from disk by Codex) | Two reviews, each once: (1) this plan, before the run; (2) the course record and the material as an external examiner would read them, after D2. Saved under `docs/review/`, every claim verified before it is kept. The owner's Plus limit is five hours; a review that hits it is deferred, not retried | Writing code or content into the repository; anything sent without the owner's go in the session |
+| ChatGPT image generation | Not needed: no new character and the mark exists. If the owner wants a concept of the judge's page or the recap layout before it is built, one sheet, kept out of the repository | Production assets |
+| ui-ux-pro-max | The compare views, the judge's page and the recap against the accessibility, touch and animation checklists; the review before D8 | Colours or type (fixed) |
+| behavior-pro-max | The judge's page and the walk (ten to twelve steps, a first step of ten to twenty words, ungated), the survey's consent and floor | Urgency or scarcity of any kind |
+
+The review prompt for (1), run from the repository root with the plan, the four notes, `docs/as-built.md` Sections 1, 2 and 6 and `CLAUDE.md` concatenated into one stdin file:
+
+```text
+codex exec --sandbox read-only -o docs/review/astra-depth-plan-review-2026-10-22.md "You are a sceptical reviewer with ten years in a Malaysian university quality office and five judging education-technology finals. The files on stdin are a plan (docs/lyceum-depth-plan.md), the four research notes it cites, the as-built record's first sections and the repository's operating brief. Review the plan only. Report, in this order: claims in the plan that the notes do not support, quoting both; places where the plan contradicts the as-built record or the operating brief; packages whose scope cannot fit the day given, with what to cut first; anything a quality office would call wrong about the course record, the surveys or the attainment arithmetic; what a judge would still find thin after this track, in three lines. No praise, no rewriting, no dashes in your output." < <the stdin file> > docs/review/astra-depth-plan-review-run.log 2>&1
+```
+
+## 16. Running it as one autonomous session
+
+The protocol of master plan 17.5 applies with these changes: the order is Section 14.1's; the permissions granted in advance are the same (commit after every package with a plain message and no attribution trailer, install the npm packages this plan names, create and delete files inside the repository, run every check, smoke and generator that is not gated); the gated commands of Section 0.2 are added to the never list, along with "never edit a tour caption or reorder the tour, never send files to Codex except the two reviews in Section 15 and only on the owner's go in this session, never put the UTP mark on the landing page, the poster or the deck before Section 18 item 2 is answered". Decisions go to `docs/decisions.md` in the fixed shape; questions go to Needs the owner in `docs/run-log.md`; the run continues with the next package that does not depend on the answer.
+
+**The driver prompt** (copy as one message):
+
+```text
+You are running Track C of docs/lyceum-depth-plan.md on your own. Read CLAUDE.md, then the depth plan in full, then docs/as-built.md Sections 1, 2, 5 and 6, docs/decisions.md from "12:00, after Track A" to the end, docs/competition/grand-final-2026.md, and the four research notes the plan cites in Section 20, before anything else; re-read the plan's Section 16 and docs/run-log.md at the start of every package. Do not work from memory: when the plan and the code disagree about what exists, read the code and log the difference.
+
+Work through the packages in this order, one at a time, finishing and committing each before the next: D0, D1, D2, D5, D6, D8 (Tier 1); then D3, D4 and D8 again (Tier 2); then D7 and D8 again (Tier 3). The session prompt in Section 17 is each package's specification. Do not stop between packages. You have my permission in advance, so do not ask: commit after every package with a plain message and no attribution trailer; install the npm packages the plan names (lz-string; nothing else without a decision logged); create and delete files inside this repository; run every check, smoke and generator that the plan does not gate.
+
+Never: run npm run shots, node video/capture/capture.mjs, any Remotion render or the determinism check, npm run gen:sample-decks, npm run deck, node scripts/gen-brief-pdf.mjs or node scripts/gen-poster.mjs, or copy screenshots into the README (those are D9 and wait for my written go); edit a caption in src/demo/script.ts or reorder the tour; push to any remote; tag amsterdam-2026; spend money; send anything off this machine, including to Codex, unless I say so in this session; use a third-party skill without the SkillSpector scan; put the UTP mark on the landing page, the poster or the deck; change the main idea, the six steps, the palette, the honesty labels or the dates. Every sample record, slide, response and mark you write is synthetic and is labelled so, and every surface that shows the UTP mark carries the demo line from the plan's Section 3.3.
+
+Decisions: when the plan leaves a choice open or you meet one it did not foresee, decide it yourself if it stays inside the plan's rules, then log it in docs/decisions.md before moving on, in the shape the master plan's Section 17.5 gives: a dated heading with the package and the question; the options you considered, at least two, one line each with its trade-off; the one you chose and why, in two sentences; what would make me reverse it; the files to touch to reverse it. Stop and ask me only when a choice would change the main idea, the six steps, the palette, the honesty labels, the dates, money, credentials, anything leaving this machine, or a destructive action outside the repository; when a foundational check (typecheck, build, prove:all) still fails after three honest attempts; or when the plan contradicts the code in a way the plan does not resolve. Put every such question in the Needs the owner list at the top of docs/run-log.md, under a new Track C heading, and carry on with the next package that does not depend on it.
+
+Progress: keep docs/run-log.md current under a Track C heading: one line when a package starts, one per check with its result, one when it ends, the Needs the owner list, and what is left. If this session is interrupted, the next session resumes from the first unfinished package in that file. After every package run its verification from the plan and fix what fails before committing; after each D8 run the full verification (typecheck, prove:all, build, the four smokes, the walk, the guide check, the contrast check, the dash scan, the backup migration check, the sample workspace check) and write the dated table into docs/as-built.md under a Track C heading, with the stale list from the plan's Section 13.1 beside it. No en or em dashes anywhere: code strings, docs, slides, captions, commit messages. Finish with a report of what shipped by tier, the Needs the owner list, every decision logged, and the exact D9 commands waiting for my go.
+```
+
+## 17. Session prompts for Opus
+
+Each assumes the repository root, the driver's rules, and that the previous package is committed.
+
+**D0, the institution and the mark**
+
+```text
+Read docs/lyceum-depth-plan.md Sections 0, 3 and 11, docs/brand-use.md, src/theme/tokens.ts, scripts/contrast-check.mjs, src/lib/workspaceBackup.ts, scripts/check-backup-migration.mjs and src/data/seed.ts. Add InstitutionProfile to src/types.ts and the store with the demo values in the plan's Section 3.1, editable on the Guide page by a coordinator, saved in the workspace and the backup at schema 6 (LATER_DEFAULTS, the migration check restoring 3, 4, 5 and 6). Write scripts/gen-partner-marks.mjs that copies utp.svg to public/brand/partners/utp.svg and rasterises it with puppeteer-core to utp-1024.png and utp-256.png, with --check; exclude public/brand/partners/ from the contrast check's SVG scan with a comment saying why, and prove the check still fails on a planted hex elsewhere. Add the UTP row to docs/brand-use.md as Section 3.2 specifies and the demo line of Section 3.3 as one exported string in src/data/sample-course/index.ts. Add one line to CLAUDE.md's read order after item 1 naming docs/lyceum-depth-plan.md and the four notes in the plan's Section 20. Do not show the mark anywhere yet. Verify with npm run typecheck, npm run prove:all, node scripts/contrast-check.mjs, node scripts/check-backup-migration.mjs and npm run smoke:workspace.
+```
+
+**D1, the course record**
+
+```text
+Read docs/lyceum-depth-plan.md Sections 1, 3, 4 and 11, docs/research/course-records-and-surveys-2026-10-22.md in full, src/types.ts, src/lib/curriculum.ts, src/ui/screens/CourseWorkspace.tsx, src/ui/screens/CurriculumWorkspace.tsx, src/data/seed.ts, src/demo/script.ts (the Course and Update steps) and scripts/demo-smoke.mjs. Extend CourseDefinition, CourseOutcome, CourseTopic and Programme exactly as Section 4.2 lists, every field optional with a default on restore, and validateCourseDefinition with the new checks (SLT equals credits times 40; weights sum to 100; every outcome assessed; a level on every linked matrix cell). Write src/data/sample-course/cs310.ts: the record in Section 4.3, in your own words, credited in a source line, with CLO5 keeping its id and label and the four new outcomes as CS310-1 to CS310-4; fourteen topics with kind, hours, outcomes, readings and two or three misconceptions each; the assessment plan and the rubric; references you can verify, or a shorter list and a note. Seed CS310 with it as the current version's definition so the Course screen shows it before any revision, and decide how the tour's Update steps map onto it without changing a caption (log the decision; the smokes must pass). Rebuild the Course screen as Section 4.4 orders it, with the matrix as a heat table carrying the level in text in every cell, the SLT bar, the schedule rows and the course-file export built with jszip, the manifest in EAC order marking present, sample and not included. Write src/prove-course-record.ts with the checks in Section 12 and register it. Verify with npm run typecheck, npm run prove:all, npm run build, npm run smoke and npm run smoke:curriculum.
+```
+
+**D2, the material**
+
+```text
+Read docs/lyceum-depth-plan.md Sections 3, 5, 10 and 12, docs/research/slides-items-and-surveys-tech-2026-10-22.md Sections 1, 2 and 6, src/lib/slides.ts, src/prove-slides.ts, scripts/gen-sample-decks.mjs (read only; do not run it), src/ui/screens/CourseWorkspace.tsx and src/data/sample-course/cs310.ts. Add slides and labSheet to TeachingSession with defaults on restore. Write src/data/sample-course/sessions.ts: fourteen sessions, six to nine slides each with a title, bullets and notes in a lecturer's voice, every slide titled, the lab sheets for weeks 2 to 11, the project brief at week 8 and the rubric reference, all labelled sample. Give slides.ts a Brand record and five slide masters through defineSlideMaster as Section 5.2 specifies, the mark from public/brand/partners/utp-1024.png on a white plate on the title master and top right on the content master, Calibri, body 18 pt or larger, objects in reading order, shapes through the pres.shapes constants, notes on every slide, the demo line in the closing master; build sessionDeck from the saved slides first and keep the evidence slide. Write src/ui/primitives/DeckPreview.tsx drawing a DeckSpec to SVG at 960 by 540 with the same layout rules, used for the thumbnail on each session card and the filmstrip behind Preview the pack, with the sentence that PowerPoint draws the file. Extend src/prove-slides.ts or write src/prove-materials.ts: fourteen packs unzip, unique titles, notes, 18 pt, the mark once per content slide, and only if the XML shows the malformed parts of pptxgenjs issue 1449 add a repair pass and prove it. Verify with npm run typecheck, npm run prove:all, npm run build and npm run smoke.
+```
+
+**D5, before and after**
+
+```text
+Read docs/lyceum-depth-plan.md Section 6, docs/research/before-and-after-patterns-2026-10-22.md in full, src/lib/curriculum.ts (curriculumChanges), src/ui/screens/CurriculumWorkspace.tsx, src/ui/primitives/loop.tsx, src/theme/tokens.ts and src/ui/screens/Learn.tsx. Write src/lib/diff.ts with wordDiff, topicDeltas, deckDiff, resultDeltas and changeSummary, pure and proved in src/prove-diff.ts. Write src/ui/primitives/compare.tsx: Redline (strikethrough in the danger token and insertion in the emerald text token, hidden deleted and inserted labels, Hide changes), TwoColumn with the delta in text, Dumbbell as SVG sorted by change with labels and a table beneath, Slopegraph with every line end labelled, SlideCompare (the structural list highlighting the region on the DeckPreview thumbnail, and a swipe divider with onion skin, arrow keys, click to position and Show before and Show after buttons), VersionScrubber (role slider, named stops, keyboard, no autoplay) and ChangeCounters (count once; static under prefers-reduced-motion; aria-live polite). Place them as Section 6.2's table says: Update's check panel, History (the scrubber, the diff against the previous stop, the link to the decision record through the events), Teach (the week 10 pack's changed slides) and Learn (the slopegraph, once D4 files the prior term; until then the component with a labelled sample pair). Colours only from tokens; nothing animates without a record. Verify with npm run typecheck, npm run prove:all, npm run build, npm run smoke:curriculum and the 320 px layout in npm run smoke:workspace.
+```
+
+**D6, the judge's way through**
+
+```text
+Read docs/lyceum-depth-plan.md Sections 2, 9 and 12, docs/research/judge-experience-and-wow-2026-10-22.md in full, src/demo/runner.ts, src/demo/script.ts (do not edit a caption), src/ui/screens/Landing.tsx, Guide.tsx, Inbox.tsx, Courses.tsx, LoopGraphic.tsx, src/ui/mascots/index.tsx, src/app/sectionGuides.ts, src/app/routes.ts, JUDGES.md and docs/demo-script.md. Build the judge's page at #/judge as Section 9.1 item 1 specifies, with Tualang greeting, the three buttons, the count-up of the register's figures from src/data/proof.ts, and the What is not built card from REMAINING_WORK word for word. Add a guided mode to the runner that waits for Next, Back or Escape, with a spotlight and Tualang's corner card, and write src/demo/walk.ts with the ten stops in Section 9.1 item 2, each line at most twenty words with the honesty label where one applies; it restores the sample workspace first the way the tour does. Build the term recap at #/course/:id/recap from records only, printable at A4, with Tualang reflecting; the programme wall on Courses with a mini ring per course and the programme's CLO to PLO heat table; the kiosk at #/kiosk playing the existing video/out/loop90.mp4 if present (never render it) with a visible pause and a thirty-second idle return. The host speaks only where Section 0.2 rule 7 allows. Rewrite JUDGES.md to open with Tualang and the numbered things to try, and add the three new steps to docs/demo-script.md with their checks. Write src/prove-judge.ts and extend the smokes with the judge's page, the walk by keyboard and 320 px. Verify with npm run typecheck, npm run prove:all, npm run build, npm run smoke, npm run smoke:integrity and npm run smoke:workspace.
+```
+
+**D3, the surveys**
+
+```text
+Read docs/lyceum-depth-plan.md Sections 7 and 11, docs/research/slides-items-and-surveys-tech-2026-10-22.md Sections 3 to 5 and docs/research/course-records-and-surveys-2026-10-22.md Section 3, server/index.ts, src/agents/intakeLocal.ts, src/ui/screens/Upload.tsx, src/ui/screens/Learn.tsx, scripts/gen-demo-files.mjs and src/data/sample-course/cs310.ts. Add SurveyDefinition and SurveyResponse to the types, the store and schema 6; build the two instruments from the course record and the profile as Section 7.1 specifies, with the question id in each question's text. Install lz-string and build the student page at #/survey/<form> (the form in the URL fragment, the mark in the header, the consent line and the privacy link, 320 px, a short paste code as the fallback) and the booth collector in server/: POST /api/survey/:token and GET /api/survey/:token/responses, in memory, no identifiers, with Collect on the Learn screen and a QR of the laptop's address drawn with the qrcode package only if you log the decision to add it, otherwise a plain link. Write the Microsoft Forms Quick Import DOCX export with jszip and the importers for Microsoft Forms XLSX, Google Forms CSV and Moodle Feedback CSV through the xlsx dependency, matched on the question id; the five-response floor, the grades-released event and the comment lock as Section 7.3 says. Extend scripts/gen-demo-files.mjs to write the sample responses in the two campus formats and seed the prior term's two surveys as sample. Write src/prove-surveys.ts. Verify with npm run typecheck, npm run prove:all, npm run build, npm run smoke:workspace and a curl round trip against the local API recorded in the run log.
+```
+
+**D4, attainment**
+
+```text
+Read docs/lyceum-depth-plan.md Sections 3, 8 and 11, docs/research/course-records-and-surveys-2026-10-22.md Section 2 and docs/research/statistics-2026-10-22.md, src/lib/learn.ts, src/lib/evidence.ts (wilsonInterval), src/agents/intakeLocal.ts, src/ui/screens/Learn.tsx, src/data/seed.ts and scripts/gen-demo-files.mjs. Write src/lib/attainment.ts as Section 8.1 specifies, with the UAEU variant behind the profile's method setting, proved in src/prove-attainment.ts against a hand-computed fixture written in the test. Extend the intake to compute atOrAbove and ten bins per outcome and never keep an identifier; extend ResultUpload rows; a row without the counts shows the sentence in Section 8.2. Extend scripts/gen-demo-files.mjs to write results.xlsx with five outcome columns for 38 synthetic students and results-prior.xlsx for the prior term; seed the prior file as a labelled, never-counted example. Build the OBE course report panel on Learn with the table, the indirect column and the gap when D3's responses exist, the PLO contribution, the response rate and floor, the CQI note as a saved record shown in History, and keep the learning-gain sentence; shrink the planned list to pooling, predictions and comment themes. Verify with npm run typecheck, npm run prove:all, npm run build and npm run smoke.
+```
+
+**D7, items and exports**
+
+```text
+Read docs/lyceum-depth-plan.md Section 10 and docs/research/slides-items-and-surveys-tech-2026-10-22.md Section 3, src/data/items.ts, src/app/store.ts (generateTestItems, read only), src/data/sample-course/cs310.ts and src/ui/screens/CourseWorkspace.tsx. Write src/lib/items.ts: the templates per Bloom level with the Arkansas verbs, distractors from the topic's misconceptions, the Haladyna lint with each rule named, and writers for Moodle XML (multichoice, shortanswer, essay with the elements the note lists, UTF-8, the declaration alone on line 1), QTI 2.1 and the rubric to XLSX. Put the items on the session card under Check for understanding with the lint beside them and Export for Moodle (.xml); write the week 7 quiz into the sample with ten items that pass. Leave the sandbox's test-draft flow as it is. Write src/prove-items.ts, including a well-formedness check of the XML with the parser already in the repository or a minimal one. Verify with npm run typecheck, npm run prove:all and npm run build.
+```
+
+**D8, checks and documentation** (run after each tier)
+
+```text
+Read docs/lyceum-depth-plan.md Sections 12 and 13, docs/as-built.md, docs/claims.md, docs/doors.md, docs/demo-script.md, JUDGES.md, README.md, src/data/suites.ts, src/app/sectionGuides.ts, mcp/server.ts and mcp/sample.ts. Register every new suite in prove:all and the suites table with its measured count; extend the four smokes and the walk for the new routes; regenerate the sample workspace with node mcp/sample.ts and add lyceum_course_record and lyceum_attainment to the door, read-only, proved in src/prove-mcp.ts and described in docs/doors.md and skills/lyceum/SKILL.md; regenerate the section guides and the lecturer guide; update the claims register for any non-synthetic figure a surface shows and let prove-journey confirm the check count; refresh README.md and JUDGES.md text under the existing headings without touching a screenshot. Run the full verification (typecheck, prove:all, build, the four smokes, the walk, the guide check, the contrast check, the dash scan, the backup migration check, the sample workspace check) and write the dated table into docs/as-built.md under a Track C heading with the stale list from Section 13.1 beside it. Do not run any gated command.
+```
+
+**D9, capture and render** (only after the owner's written go in the session)
+
+```text
+The owner has said go. Read docs/lyceum-depth-plan.md Section 13 and docs/as-built.md's Track C table. Run npm run build, then npm run shots and copy the README's seven; npm run gen:sample-decks with PowerPoint; edit deck/index.html so slide 6 carries the before and after (the redline and the dumbbell from the new screenshots) and slide 7 the OBE table beside the survey, every figure a claims row or labelled synthetic on the slide, then npm run deck and read the PDF back; node scripts/gen-brief-pdf.mjs; node scripts/gen-poster.mjs; node video/capture/capture.mjs; in video/remotion, npm run render:loop90, npm run render:afternoon and npm run check:determinism; copy the film into deck/media and run npm run deck again. Record every command, its duration and its result in docs/run-log.md and the as-built table, and list what the owner must still test on the venue's player.
+```
+
+## 18. Needs the owner, before the run
+
+1. **Sample content authorship.** Rule 0.2.4 reads the runtime rule as applying to runtime: the course record, the slides, the lab sheets, the quiz and the survey responses are written by the build session as reviewed fixtures, labelled sample. Confirm, or name a teammate who will author or review them instead (the Story lane, or the lecturer on the team).
+2. **The UTP mark.** In the app's sample material and the pack, labelled demo: confirm. On the public landing page, the poster, the deck and the film: only after you confirm with the university, or never. Until answered, the mark stays off those surfaces.
+3. **The booth collector.** Recommended: the local API on the booth laptop over the team's own hotspot, no third party, with the paste code as the fallback. Alternative: a Cloudflare Worker on your account (free tier, sends responses off the machine). Choose.
+4. **Hardware.** A second screen on a stand (the research's packing list), and the thermal printer for printed receipts (optional, only if one is to hand). Choose.
+5. **The record day.** D9 runs only on your word; the best moment is after Tier 2 lands and you have seen the screens, which the schedule puts on Sunday 25 or Monday 26. Say when.
+6. **The deck.** Slides 6 and 7 change at D9 to carry the before and after and the OBE table; the receipt on slide 1 and the five figures do not change. Confirm, or keep the deck as it is and show the new screens only in the booth.
+7. **Open from Track A.** TRL 6 or TRL 5 (run-log item 4), the pitch's opening order (item 5), the GitHub description (item 6), the Claude Desktop run (item 2), the flight time that sets the freeze.
+
+## 19. Risks
+
+| Risk | Why it matters | Guard |
+|:--|:--|:--|
+| The sample course breaks the tour | The tour targets `data-demo-id`s and types into fields that D1 redesigns | D1 keeps every id or remaps it in the same session; `npm run smoke` is in D1's verification; captions untouched |
+| Four days is not enough | D2's content and D5's eight views are the long ones | Tiers; D6 and D8 before Tier 2; cut D7 first, then D3's campus exports, then the programme wall |
+| The 500 kB bundle advisory grows | The compare views and the preview add code | `jszip` and the DOCX writer behind dynamic import like pptxgenjs; measured in D8 |
+| The contrast check and the partner mark | A third-party SVG carries non-token colours | The exclusion in D0 with its reason; the mark never inlined |
+| pptxgenjs issue 1449 | String shape presets write invalid XML | Shape constants; the proof reads the XML; the repair only if the proof finds the fault |
+| PDPA and consent | A survey of students collects personal data in a real deployment | No identifiers stored; the consent line; the floor; the lock; the policy note is Track B's `docs/learning-analytics-policy.md` |
+| Realism of the course record | A quality officer on the panel will know a thin course file | The EAC and MQA lists in Section 4.1; the external examiner review by Codex after D2; the manifest that names its own gaps |
+| The KPI reads as UTP's rule | It is UTHM's practice from the research, not a UTP document | The profile's help text and the research note say so; the threshold is a setting |
+| Someone records anyway | The owner's credit and time | The gate in the driver prompt's never list; D9 is the only package that names those commands |
+
+## 20. Sources
+
+The four research notes written for this plan on 22 October 2026, each with its URLs and source keys:
+
+- [research/course-records-and-surveys-2026-10-22.md](research/course-records-and-surveys-2026-10-22.md): the course file lists (EAC 2020 and 2024, MQA GGP AOSL 2023, GGP PDD 2023, UTM 2026, MQF 2024, UTHM's template, UTP's handbook, ABET, AUN-QA, Lancaster); attainment (UTHM 2024, UAEU, Derouich 2025, Hamid 2016, CLOAP, ABET, AACSB); the surveys (UTP's SSRT mention, Awang 2012, UiTM SuFO, SEEQ, Nulty, Rutgers, the Forms and Moodle exports); the CS310 content models (GWU DATS 6401, UW-Madison, CCBC, Columbus State, MSU Texas, Anurag, BTAA).
+- [research/before-and-after-patterns-2026-10-22.md](research/before-and-after-patterns-2026-10-22.md): diff and compare UX (GitHub, Google Docs, Word, Notion, Figma, Confluence, PowerPoint, Pitch, Gamma), change charts (slopegraph, dumbbell, FT, Gleicher, Heer and Robertson, Bostock, WCAG 2.2.2 and 2.3.3, Chartability), curriculum systems (CIM, Curriculog, Kuali, Coursedog, committee forms), scrubbers, slide diffs, wow patterns (Juxtapose, WCAG 2.5.7, View Transitions, Duarte, NN/g).
+- [research/slides-items-and-surveys-tech-2026-10-22.md](research/slides-items-and-surveys-tech-2026-10-22.md): pptxgenjs 4.0.1 (masters, images, charts, limits, issue 1449, thumbnails), alternatives, QTI 3.0 and 2.1, Moodle XML, the Arkansas verbs, Haladyna 2002, the VALUE rubrics' licence, survey collection (Microsoft Forms, Google Forms API, lz-string, QR, Formspree, Apps Script, Cloudflare), imports, anonymity and consent (McGill, PDPA 2024, UTP's notice), institutional templates and the Accessibility Checker rules.
+- [research/judge-experience-and-wow-2026-10-22.md](research/judge-experience-and-wow-2026-10-22.md): tours (driver.js, Navattic, Arcade, kiosks, Duo), what wins (a judge's notes, Wharton, Imagine Cup), booths, honest wow mechanics, mascot presence (GitHub, Mailchimp, Duolingo, Atlassian, Headspace), live demo sites, the ranked fifteen; and the format check (the awards on 30 October per the official site; ITS's report of ten plus five), recorded as unconfirmed in the competition file.
+
+Earlier notes still in force: [research/statistics-2026-10-22.md](research/statistics-2026-10-22.md) for the intervals and the perception gap; [research/hackastone-and-competitors-2026-10-22.md](research/hackastone-and-competitors-2026-10-22.md) for the readiness levels.
+
+## Changelog
+
+- 22 October 2026, evening: first draft, written from the code and the four notes. Codex review: pending the owner's go and the Plus limit.
+
+
+===== FILE: docs/research/course-records-and-surveys-2026-10-22.md =====
+# Research note: what a complete course record holds, how attainment is reported, and what the student surveys look like
+
+Date: 22 October 2026, evening. For the depth plan: the sample course must read as a real course record under outcome-based education in Malaysia and internationally, the Learn step must compute attainment the way quality offices do, and the surveys must be real instruments. Compiled in a research session on 22 October 2026. Key: **P** primary (an official standard, template, syllabus or policy page); **S** secondary (a paper or guidance quoting a standard); **V** vendor. Extracted texts of the PDFs cited were saved to the session scratchpad for quoting.
+
+## 1. What a complete course record contains
+
+- **EAC Malaysia course files (the clearest Malaysian list).** "Course files, for every course offered by the programme, provide the course information to include the targeted course learning outcomes, a matrix linking course outcomes to programme outcomes, course synopsis/syllabus, and a list of references. Examination papers complete with answer scheme and graded examination papers with low, medium and high grades, projects, quizzes, tutorial questions, assignments, class projects, copies of the course notes. Sample of projects with low, medium and high grades. Assessment rubrics." Engineering Programme Accreditation Standard 2020, effective 1 May 2020 (UTHM mirror): https://fkaab.uthm.edu.my/docs/EAC-Standard-2020.pdf. The 2024 Standard, effective 1 January 2025, repeats the list (item viii, Appendix C): https://office.iium.edu.my/kca/wp-content/uploads/2024/10/Engineering-Programme-Accreditation-Standard-2024.pdf **P**
+- **MQA course assessment plan columns.** Guidelines to Good Practices: Assessment of Student Learning, 2nd edition, November 2023, Table 1: CLO, CLO statement, taxonomy domain, PLO, topics and content, contact hours, teaching and learning method, assessment methods, weightage; a Table of Specifications (2.5); Appendix 12 "Course Assessment Plan, Instruction and Rubric"; Figure 20 "Overview of the CQI Process". https://ppa.upsi.edu.my/wp-content/uploads/2024/04/DOKUMEN-GGP-AOSL-9223-FINAL-V3.pdf **P**
+- **MQA curriculum map down to lessons.** Guidelines to Good Practices: Programme Design and Delivery, 2nd edition, 2023: PLOs map to CLOs and then to lesson outcomes; "each of the CLOs should be connected directly and explicitly to assessment methods and tasks"; Table 2.3 is a PLO-to-courses map for a Bachelor of Computer Science example with enabling, intermediate and culminating indicators; Table 2.4 a programme assessment plan. https://ppq.umk.edu.my/download/SURAT%20MAKLUMAN%20MQA%20BIL.%208%202023_.pdf **P**
+- **A Malaysian Course Information document, 2026.** UTM training deck, 2 March 2026: seven elements: a synopsis of 100 to 150 words; CLOs with one measurable verb each, tagged Bloom C1 to C6, P1 to P7, A1 to A5; the CLO to PLO to MQF-cluster map; teaching and learning methods; assessment (continuous 50 to 70%, summative 30 to 50%); student learning time (one credit is 40 hours; a 3-credit example: 14 weeks of 3 hours of lecture, 42; 14 weeks of 1 hour of tutorial, 14; 40 hours of self-study; 12 hours of assessment preparation; 12 hours of final assessment; 120 in all); two or three references under five years old in APA. https://dvcai.utm.my/utmcaq/wp-content/uploads/sites/20/2026/03/29.-Garis-Panduan-Penyediaan-Course-Information_CERAMAH-CI-FC-2.3.2026.pdf **P**
+- **MQF 2nd edition, 2024.** Five clusters: Knowledge and Understanding; Cognitive Skills; Functional Work Skills (practical, interpersonal and communication, digital, numeracy, leadership); Personal and Entrepreneurial Skills; Ethics and Professionalism. One credit is 40 notional learning hours. https://office.iium.edu.my/kca/wp-content/uploads/2024/10/MQF-V2-2024.pdf **P**
+- **A filled course OBE report (in Malay).** UTHM "Laporan OBE Kursus" template, 31 August 2021: CLO to PLO to learning-domain map; CLOs tagged (C4, P4, A4); CLO to teaching method, assessment method and KPI; OBE achievement from the TCIS system; grade analysis overall and per section; CLO attained or not attained with percentages; the CQI report attached. https://fptp.uthm.edu.my/images/FORM_MENU/Quality%20%20OBE/Template%20Laporan%20OBE%20Kursus%20BPB%20-%20Pindaan%20V2%202021.pdf **P** (an example, not a national template)
+- **UTP itself.** The Undergraduate Student Handbook Part B (January 2026, updated August 2026) lists TFB3133 Data Visualisation (3 credits, in the Minor in Data Science): JavaScript charts, interactivity, treemaps, heat maps, network graphs, word clouds, timelines, geographic data, D3.js, a mini project; and BBB3103 Data Visualisation (business). No UTP course-outline template, CLO list or OBE handbook is public. https://www.utp.edu.my/sites/Publishing/PublishingContent/StudentHandbook/UG%20STUDENT%20HANDBOOK%20B%20-%202026%20UPDATED%20AUG%202026.pdf **P**
+- **ABET.** The EAC Self-Study Questionnaire 2025 to 2026 (E002): Appendix A course syllabi, "maximum length is two pages per syllabus", with a suggested format; Criterion 4 reports assessment processes, frequency, "expected level of attainment for each of the student outcomes", result summaries and how they are documented. https://abet.org/e002_eac-self-study-questionnaire_2025-2026. The CAC criteria 2025 to 2026 give the five computing outcomes plus the computer science outcome 6. https://www.abet.org/accreditation/accreditation-criteria/criteria-for-accrediting-computing-programs-2025-2026/ **P**
+- **AUN-QA version 4.0 (August 2020).** A course specification holds the title, prerequisites and credits, expected outcomes (knowledge, skills, attitude), teaching, learning and assessment methods, the outline, assessment details, and "the date on which the course specification was written or revised"; the programme specification needs "a matrix that shows how the programme learning outcomes are achieved through the courses"; requirement 4.4 asks for rubrics, marking schemes and timelines. https://natres.psu.ac.th/qa/doc/CUPT%20QA/aun2020.pdf **P** (mirror)
+- **UK.** Lancaster's curriculum and assessment mapping guidance (2017, revised November 2024): programme outcomes limited to 8 to 10, modules marked Introduced, Developed or Assessed, a separate assessment map of methods and weightings. https://www.lancaster.ac.uk/media/lancaster-university/content-assets/documents/student-based-services/asq/pdda/curriculum-and-assessment-mapping/CurriculumandAssessmentMappingguidance.pdf **S**
+
+## 2. How CLO attainment is computed and reported
+
+- **The Malaysian KPI, direct measurement.** UTHM FKEE "OBE Practices 2024": "At least 50% of students achieve 55 marks in all CLO"; "Each PLO achieve at least 60% in average attainment"; the PLO direct measure is a CLO-to-PLO analysis "on all faculty's courses using the average approach (every semester)"; the indirect measure is a yearly graduate exit survey (a five-point Likert mean per PLO) and an employer survey; PEOs by tracer study three to five years after graduation. The OBE system's steps: define PEO, PLO and CLO; key in marks; analyse; "suggest mid/end course CQI"; report by cohort and programme. https://fkee.uthm.edu.my/images/2024/obe2024/2024%20OBE%20FKEE%20Practices.pdf **P**
+- The UTHM template above applies the same rule ("50% of students reach 55% (C+) and above") and reports CLO1 84.44%, CLO2 97.04%, CLO3 98.52%. **P**
+- **MQA worked targets.** GGP AOSL 2023: indirect evidence is "programme entrance and exit surveys, student interviews, alumni surveys"; example targets "60% of the students score 70 or more in a programme exit examination" and "80% of the students who indicated a score of 4 or higher on the Likert scale in a programme exit survey". **P**
+- **A fully specified international formula.** UAE University "Course LOA Process": per assessment tool, attainment is the percentage of students scoring at least 70% of the tool's maximum; the CLO score is the weighted average across tools by the instructor's weights; across sections, weighted by enrolment; a projected minimum of 70%; the weighted score is actual over projected; a course effectiveness score aggregates them; an annual course assessment report. https://www.uaeu.ac.ae/en/vc/oie/pdf/clo-assessment-process.pdf **P**
+- **Weighted CLO to PLO roll-up.** Derouich, "Ensuring Outcome-Based Curriculum Coherence", accepted 13 October 2025 (Discover Education; arXiv 2510.25905): question-to-CLO and CLO-to-PLO weight matrices, PLO as the weighted sum of CLOs, intended against delivered emphasis. https://arxiv.org/pdf/2510.25905 **S**
+- **Direct and indirect disagree.** Hamid et al. (UKM), Pertanika 24, 2016: direct measures (assignment, final exam, presentation, lab report) against a pre and post survey validated with Rasch; "indirect measurement alone is not a valid measure". https://ptsldigital.ukm.my/handle/123456789/577948 **S**
+- **A dashboard example.** CLOAP (BRASS Digital Lab, 1 March 2025): an R Shiny tool; the typical threshold "70% of students achieving at least 60% on each CLO", configurable; PLOs aggregated from CLOs. https://brassbe1982-bdlweb.share.connect.posit.cloud/portfolio/cloap.html **V**
+- **ABET and AACSB.** ABET Criterion 4 (2025 to 2026): "regularly use appropriate, documented processes for assessing and evaluating the extent to which the student outcomes are being attained". AACSB Standard 5.1 (page updated 9 September 2025): assurance of learning "processes that include direct and indirect measures"; no numeric benchmark set. https://www.aacsb.edu/educators/accreditation/accreditation-process/ai-use-cases-for-accreditation/standard-5 **P**
+- Threshold practice varies (55 marks and 50% of students at UTHM; 60 marks and 70% of students in the CLOAP default; 70% of the tool maximum at UAEU), so a product must make the threshold and the KPI configurable per institution and print them beside every attainment figure.
+
+## 3. Student survey instruments
+
+- **SSRT at UTP.** A UTP job advertisement (about four years old) lists "monitoring of T&L quality (e.g. Course Outcome Survey, Student Self Reflection Tools Survey (SSRT), Lecturer's Reflection)" and the use of ULearn. So SSRT is the Student Self Reflection Tools Survey, paired with a Course Outcome Survey (the per-outcome self-rating). No public instrument, scale or schedule was found. https://ng.linkedin.com/posts/universiti-teknologi-petronas_jobvacancy-utpinme-activity-6902713869836394496-fwOL **P** (thin)
+- **UTP practice in 2012.** Awang, Singh and Dzulkarnain (UTP), 2012: "students' surveys are conducted at mid-semester and end of semester before the mid semester test and final examination"; ratings 1 to 7, below 5 "unsatisfactory, resulting in the lecturer being tasked to attend" training; 53 courses; a 39% correlation with class grade. https://research.utm.my/wp-content/uploads/sites/80/2013/03/1569534245.pdf **P** (may be outdated)
+- **The Malaysian model instrument.** UiTM's SuFO (Rahmat et al. 2025): run each semester for every course, anonymous, 7 professionalism items plus 11 teaching and learning items on a four-point scale (strongly disagree 1 to strongly agree 4), open "two weeks prior to the study week until the formal release of the examination results". https://hrmars.com/papers_submitted/26652/lecturer-professionalism-teaching-and-learning-activities-accounting-students-perceptions.pdf **S**
+- **CLO self-rating forms.** UTM's end-of-course survey rates "ability in meeting the course learning outcomes and program learning outcomes on a scale of 1 to 5" (a Scribd copy, unverified); a UPSI study used a five-point self-rating through its LMS (snippet, unverified). The GGP AOSL target "a score of 4 or higher" fits both.
+- **SEEQ (Marsh).** A university-hosted form (2018): 29 items in Learning, Enthusiasm, Organization, Group Interaction, Individual Rapport, Breadth, Examinations and Assignments on a 1 to 5 scale, three overall items from Very poor to Very good, plus difficulty, workload, pace, hours a week, prior interest and expected grade. https://www.mckendree.edu/academics/vcte/resources/studentevaluationofeducationalquality.pdf **S**
+- **Response norms.** Ahmad 2018 (PSU Research Review 2(3)): Nulty (2008) recommends about 58% for classes under 20 and 35% over 50; Nair et al. 2008 (Monash): 31% online against 56% on paper. https://www.emerald.com/prr/article/2/3/206/325045/Teaching-evaluation-and-student-response-rate **S**
+- **Timing, anonymity and release.** Rutgers SIRS: run at the end of each semester, open "during the last week of class meetings", anonymous, "professors will not see the survey results until after they submit final grades". https://sirs.rutgers.edu/ **P**
+- **Tooling and export.** Microsoft Forms "Open results in Excel" (a live link or an offline copy): https://support.microsoft.com/en-us/office/check-and-share-your-form-results-02859424-341d-406f-b32a-9a0fbaf357af. Google Forms "Link to Sheets" and "Download responses (.csv)": https://support.google.com/docs/answer/139706. Moodle's Feedback activity is "ideal for course or teacher evaluations", with an analysis tab and spreadsheet export (docs 5.3, 25 February 2026): https://docs.moodle.org/en/Feedback_activity. Explorance Blue (vendor): https://explorance.com/products/blue/ **P/V**
+
+## 4. Realistic content for CS310 Data Visualisation (attribute to a template, never to UTP)
+
+- **GWU DATS 6401 "Visualization of Complex Data", Spring 2026.** Eight outcomes (Munzner's what, why and how; encodings; Few's dashboard principles; Tableau Prep pipelines; Altair interaction; temporal, categorical and geospatial data; evaluate and iterate; present and defend). A 16-week schedule: introduction; data and task abstraction; validation; marks and channels plus Tableau; design, Gestalt, colour and accessibility; Tableau Prep; midterm; chart types and dashboard design; Altair I; break; Altair II and interaction; geospatial; temporal and uncertainty; ethics and misleading charts; storytelling. Weights: midterm 20, final 25, quizzes 15, ten in-class labs 15, a Tableau dashboard project 10 (a reproducible Prep flow, an accessibility and ethics checklist, a 5 to 10 minute defence), an Altair project 10, participation 5. Rubric emphases: task definition, data abstraction, encoding, expressiveness and effectiveness, at-a-glance principles, accessibility, uncertainty, evaluation evidence. Texts: Munzner 2014, Few 2013. https://dats.columbian.gwu.edu/syllabi/pdfs/DATS-6401-Syllabus-Spring-2026%20-%20Anya%20Mendenhall.pdf **P**
+- **Other outlines.** UW-Madison CS 765, Fall 2025 (five outcomes, seven modules): https://pages.graphics.cs.wisc.edu/765-25/pages/syllabus. CCBC CSIT 251 (revised 19 October 2021; 14 objectives, 16 topics, six quizzes, six projects, two exams, a final): https://catalog.ccbcmd.edu/mime/media/47/3087/CSIT+251+10.19.21.pdf. Columbus State CSCI 2423, Spring 2026 (outcomes on visual analytics, KPIs and dashboards; a dashboard test 19%, an interactive dashboard project 28%; Tableau and Power BI): https://www.cscc.edu/academics/syllabi/pdf/CSCI%202423%20Data%20Visualization%20II%20Spring%202026.docx **P**
+- **A dashboard project brief.** MSU Texas MIS 5603, Spring 2026: teams of three or four, a packaged workbook, a written report (dataset summary, cleaning steps, descriptive statistics, core charts, at least one map, one dashboard, one story, recommended actions), a 10 to 15 minute recorded presentation. https://directory.msutexas.edu//storage/files/syllabus_20260116111254.pdf **P**
+- **A lab list.** Anurag Engineering College CS308PC (file dated 23 August 2024): ten Tableau labs; lab 8 "Creating Dashboards and Storytelling, adding interactivity, distributing and publishing"; a CO-PO matrix in H, M and L. https://anurag.ac.in/wp-content/uploads/2024/11/Power-BI.pdf **P**
+- **A rubric.** The BTAA Love Data Week 2026 data visualisation award guide (Northwestern): four categories scored 1 to 10: Visual Design and Presentation (appropriateness, clarity, accessibility), Clarity of Communication (narrative, context, data integrity, sources cited), Creativity and Innovation, Audience Understanding and Insight; misleading visuals (a truncated y-axis, the wrong chart type) get the lowest score. https://www.northwestern.edu/provost/about/ir/love-data/btaa-ldw-2026-data-viz-scoring-rubric.pdf **P**
+- No Malaysian data-visualisation course outline with CLOs was found publicly; the UTP TFB3133 synopsis is the only local anchor.
+
+## 5. Programme-level artefacts judges recognise
+
+- **The courses-to-outcomes matrix.** EAC 2020 self-assessment reports must include "a matrix linking courses to POs to identify and track the contribution of each course" (a sample in Appendix G); MQA GGP PDD 2023 Table 2.3 (enabling, intermediate and culminating ticks) and Table 2.4; AUN-QA requires the same matrix; Lancaster uses Introduced, Developed and Assessed. **P** (Lancaster **S**)
+- **The heatmap.** No standard mandates a heatmap; the convention is H, M and L or colour-coded levels (the Anurag CO-PO matrix; a Rajahmundry workshop report, 23 October 2025, teaching "levels of attainment (Low/Medium/High)" matrices for NAAC). Vendor reports: HelioCampus' programme course outcome report (March 2023), a PLO-to-course and CLO mapping with export. **S/V**
+- **The CQI loop figure.** UTHM FKEE's flow chart: per course CLO formulation, learning and teaching activities, the lecture plan, delivery and assessment, CLO analysis, CQI at the CLO level feeding PLO analysis, then PEO analysis three to five years after graduation, with stakeholder feedback; cadence: a PLO achievement report each semester, yearly surveys and CQI, external examiner and industry advisory panel reports every one to three years. MQA GGP AOSL Figure 20 and the GGP MR-CIIQ Plan-Do-Check-Act stages with module monitoring from "summative and formative assessments, as well as through student feedback": https://office.iium.edu.my/kca/wp-content/uploads/2024/10/GGP-MR_CIIQ-BI.pdf **P**
+- **Self-study structures.** ABET E002: background, Criteria 1 to 8, programme criteria, appendices A (syllabi), B (vitae), C (equipment), D (institutional summary). EAC 2020: the report by sections 7.3.1 to 7.3.9 with an Appendix C checklist and Appendix G tables 6 to 16. AUN-QA: eight criteria. The MQA document index at IIUM lists every current MQA title with dates: https://office.iium.edu.my/kca/index.php/mqa-regulatory-documents/ **P**
+
+## What this means for Lyceum
+
+1. The sample course needs the EAC course-file set to read as real: synopsis, five or six CLOs with Bloom tags and MQF clusters, the CLO to PLO matrix, the assessment plan with weights per CLO and a table of specifications, a 14-week schedule with student learning time that adds to 120 hours, references, lecture notes per week, lab sheets, a project brief, a rubric, exam papers with marking schemes, graded samples at low, medium and high, and the per-term OBE report with its CQI note.
+2. Attainment must be computed the Malaysian way by default (the share of students at or above a mark threshold per CLO, against a KPI share) with the threshold and KPI as institution settings, the UAEU weighted variant available, direct and indirect kept apart, and the CLO to PLO roll-up as a weighted average.
+3. The two surveys are the Course Outcome Survey (one item per CLO, a 1 to 5 scale, target "4 or higher") and the Student Self Reflection Tools Survey (a teaching and learning instrument adapted from SEEQ's dimensions, labelled adapted), run at the end of the semester, anonymous, with results released to the lecturer only after grades, and with response-rate norms shown beside n of N.
+4. The content of the sample course is adapted from published syllabi (GWU DATS 6401 first) and says so on the course record; nothing is attributed to UTP's own course.
+5. Programme-level views judges recognise: the courses-to-PLO matrix with levels, the CQI loop, and the one-page course OBE report.
+
+
+===== FILE: docs/research/before-and-after-patterns-2026-10-22.md =====
+# Research note: showing before and after
+
+Date: 22 October 2026, evening. For the depth plan: how products show what changed between two versions of a document, a slide, a table or a result, how curriculum systems present proposed changes to committees, and which patterns are honest and accessible. Compiled in a research session on 22 October 2026; dates are page dates where shown.
+
+## 1. Document and content diff UX
+
+- **GitHub** renders prose diffs as source or rendered; rendered diffs highlight added and removed text and show invisible changes (a link target) in a tooltip; large diffs fall back to source. Images compare in 2-up, swipe (a slider) and onion skin (opacity). https://docs.github.com/en/repositories/working-with-files/using-files/working-with-non-code-files
+- **Google Docs Compare** (11 June 2019) writes a third document in which every difference is a suggested edit attributed to a chosen name; the originals are untouched. https://workspaceupdates.googleblog.com/2019/06/compare-docs.html
+- **Word legal blackline**: a third document with differences as tracked changes at word or character level; moves, formatting, case, white space and tables are all compared by default. https://support.microsoft.com/en-us/office/compare-document-differences-using-the-legal-blackline-option-dbfc7351-4022-43a2-a0c4-54d1898702a0
+- **Notion snapshot diffs** (26 May 2026): choose two snapshots and it highlights additions, deletions and modifications across text, images, tables and database properties. https://www.createwith.com/tool/notion/updates/notion-adds-snapshot-diffs-to-version-history-for-easier-change-tracking
+- **Figma branch review**: changed layers listed per page; side by side by default, or an overlay with an opacity toggle. https://help.figma.com/hc/en-us/articles/5691189138839
+- **Confluence** (page modified 9 October 2026): tick two versions, compare; green added, red deleted, blue formatting; unchanged blocks collapse. https://confluence.atlassian.com/doc/page-history-and-page-comparison-views-139379.html
+- **Slide tools**: PowerPoint Compare merges two decks into a Revisions pane split into slide changes and presentation changes, accepted by checkbox (https://edu.gcfglobal.org/en/powerpoint/reviewing-presentations/1); Pitch keeps per-slide history on a timeline and restores a slide as a new slide (https://pitch.com/whats-new/version-history-and-deleted-slide-recovery); Gamma restores whole versions and users complain it shows "that something changed, but not what" (https://ideas.gamma.app/ideas/p/improve-version-history). None diffs slide content structurally.
+
+## 2. Visualising change in structured data
+
+- **Slopegraph** (storytelling with data, 27 July 2020): two points per line, "the steeper the slope, the bigger the change"; unrelated categories become "piles of dried spaghetti"; use bars when exact values matter. https://www.storytellingwithdata.com/blog/2020/7/27/what-is-a-slopegraph
+- **Arrow and range (dumbbell) plots** (Datawrapper, 22 September 2017): an arrow plot "to emphasize the change between values more than the values themselves"; a range plot when the gap matters. https://www.datawrapper.de/blog/new-arrow-and-range-plots
+- **FT Visual Vocabulary**: slope is "good for showing changing data as long as the data can be simplified into 2 or 3 points"; paired columns "can become tricky to read with more than 2 series". https://github.com/Financial-Times/chart-doctor/blob/main/visual-vocabulary/README.md
+- **Juxtaposition, superposition, explicit encoding** (Gleicher et al., Information Visualization, 2011): every comparison design is one of the three; juxtaposition relies on memory, superposition on the visual system, explicit encoding computes and shows the difference. https://doi.org/10.1177/1473871611416549
+- **Animated transitions** (Heer and Robertson, 2007): animation "can significantly improve graphical perception"; staged beats unstaged; avoid rescaling axes mid-transition. https://idl.uw.edu/papers/animated-transitions. **Object constancy** (Bostock, 16 May 2012): key marks by identity so a bar can be tracked through the transition. https://bost.ocks.org/mike/constancy/
+- **Accessibility**: WCAG 2.2.2 (Level A) requires pause, stop or hide for auto-playing motion over five seconds (https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html); 2.3.3 with techniques C39 and SCR40 for prefers-reduced-motion in CSS and JS; Chartability (2022) adds vestibular and cognitive heuristics for charts (https://diglib.eg.org/handle/10.1111/cgf14522).
+
+## 3. Curriculum change presentation in universities
+
+- **CourseLeaf CIM**: "Red strike-through text is used to indicate deletions and green text is used to indicate additions" (Penn State, https://cim.psu.edu/user-guides/course-management/edit-course/); additions are green with a double underline at Ohio State; approvers filter by user, "All changes" or "Hide changes", and print follows the filter (Montana State, June 2025, https://www.montana.edu/provost/curriculum-development/approving_new_course_or_program_using_cim.html).
+- **Curriculog user tracking** (UMBC manual, 2021): "Show current", "Show original", "Show current with markup", per-user colour, who and when. https://gradschool.umbc.edu/wp-content/uploads/sites/155/2022/07/Curriculog-User-Manual-2021.pdf
+- **Kuali CM**: the approver view shows "requested changes (yellow)" against "existing course information (blue)". https://www.csupueblo.edu/kuali-student-curriculum-management/_doc/course-training-power-point.pdf
+- **Coursedog**: "View Changes" shows where new content replaces the original (https://support.stevens.edu/support/solutions/articles/19000138726); Arizona's form pairs "Current Requirements" on the left with "New Requirements" on the right (February 2026, https://curricularaffairs.arizona.edu/sites/default/files/2026-02/Guide-to-coursedog-substantial-change.pdf).
+- **Committee forms**: "Current Curriculum" and "Proposed Curriculum" columns by semester (LSU Eunice Form F, https://www.lsue.edu/academic-affairs/cdmdocs/CCFormF2.pdf); Western University's minor-modification template (January 2025) puts existing text beside the change; ETSU pairs a current and a proposed narrative per change (https://www.etsu.edu/chairshandbook/documents/august_06_13_substantialcoursemodification.pdf).
+
+## 4. Timeline and scrubber interfaces
+
+- **Figma**: a checkpoint every 30 minutes, autosaves grouped and expandable, named versions carry a title and a description, restore is non-destructive. https://help.figma.com/hc/en-us/articles/360038006754
+- **Webflow backups**: a restore point every 50th autosave; an eye icon previews a backup before restoring; a restore saves the current state first. https://help.webflow.com/hc/en-us/articles/33961244069395
+- **GitHub blame**: per-line commit blocks and "View blame prior to this change" to step back one revision. https://docs.github.com/en/repositories/working-with-files/using-files/viewing-and-understanding-files
+- **Perforce Time-lapse View**: a slider by date, changelist or revision, an "aging" shade where darker is more recent, action badges under the slider. https://www.perforce.com/manuals/p4v/Content/P4V/advanced_files.timelapse.html
+- **Keynote**: "Browse All Versions" shows a tick-marked timeline with thumbnails of each saved version. https://support.apple.com/guide/keynote/tan7f1de6ec5/mac
+- Legibility across all of them: name the stop you are on, show who and when on hover, keep unchanged content still.
+
+## 5. Slide-level change
+
+- **PowerPoint Compare**: the Revisions pane lists slide changes and presentation changes; selecting one highlights it on the slide. https://edu.gcfglobal.org/en/powerpoint/reviewing-presentations/1
+- **Google Slides**: version history with a "Show changes" box that highlights edits in green, one colour per editor; up to 40 named versions. https://support.google.com/docs/answer/190843
+- **Two versions as images**: pptx-glimpse renders PPTX to SVG or PNG in Node 22 or the browser (https://www.npmjs.com/package/pptx-glimpse); LibreOffice headless to PDF then pdftoppm; pixelmatch returns a diff image and a mismatch count (https://github.com/mapbox/pixelmatch). Since Lyceum generates packs from records, render the slide model to the DOM or SVG for both versions and diff the record, not the pixels.
+
+## 6. "Wow" patterns for change
+
+- **Before and after slider**: Knight Lab JuxtaposeJS, for "then and now" stories, with "your audience control over the slider". https://juxtapose.knightlab.com/
+- **Slider accessibility**: drag-only sliders fail WCAG 2.5.7 Dragging Movements and 2.1.1; fix with arrow keys, click-to-position, an accessible name and value, or plain "Show before" and "Show after" buttons; alt text should describe the difference. https://dev.to/agentkit/before-and-after-image-sliders-the-drag-only-widget-that-fails-wcag-22-1759. Reuters Graphics ships a keyboard-accessible BeforeAfter component: https://cdn.jsdelivr.net/npm/@reuters-graphics/graphics-components@4.7.0/dist/llm-docs/components/BeforeAfter.md
+- **Morphing**: the View Transitions API captures the old and new DOM and animates between them, "reducing users' cognitive load, helping them stay in context"; MDN warns about focus and live-region confusion. https://developer.mozilla.org/docs/Web/API/View_Transition_API. Keynote's Magic Move moves objects "from their positions on one slide to new positions on the next". https://support.apple.com/kb/ph16958
+- **Why reveals land**: Duarte's sparkline alternates "what is" with "what could be" (https://tomtunguz.com/storytelling-duarte/); NN/g (12 January 2020): motion gets feedback and state changes noticed, irrelevant motion "can substantially degrade the user experience" (https://www.nngroup.com/articles/animation-purpose-ux/); NN/g on change blindness: users miss changes far from their focus (https://www.nngroup.com/articles/change-blindness-definition/).
+- **Counters**: no independent evidence that count-up animations persuade; only vendor guidance (test it). https://documentation.unbounce.com/hc/en-us/articles/35430836874900--Tips-Scripts-Count-Up-Animation
+
+## Ten patterns for Lyceum
+
+1. **Word-level redline** for outcome wording and assessment item stems: red strikethrough and green insertion inside one paragraph, the curriculum-system convention, with a "hide changes" toggle for the clean proposed text. Never colour alone: keep the strikethrough and underline and add visually hidden "deleted" and "inserted" labels.
+2. **Current versus proposed, two columns** for topics and hours and for assessment items: the committee convention, the changed cell highlighted, an explicit delta column such as "+2 h". A real table with column headers; the delta as text, not only an arrow.
+3. **A dumbbell per topic** for hours: the before dot, the after dot, a connecting bar, sorted by the size of change; an arrow plot when direction is the story. Value labels on both dots and a data table beneath.
+4. **A slopegraph for cohort results**: one line per outcome from last semester to this, the chosen line emphasised and the rest grey. Every line end labelled in text; grey lines at 3:1 contrast.
+5. **Swipe and onion-skin slide compare**: both versions rendered to images, a divider the judge drags or an opacity fade, GitHub-style. Arrow keys, click-to-position and "Show before" and "Show after" buttons (WCAG 2.5.7).
+6. **Structural slide diff**: because packs come from records, list what changed (title, bullet, image, table cell) as a Revisions-style list that highlights the region on the thumbnail; the list is the accessible description, so no one depends on pixels.
+7. **A version scrubber with named stops** in History: grouped autosave ticks and labelled named versions, who and when on hover, the diff always against the previous stop. A slider role with keyboard steps and an announced stop name; no autoplay without a pause control.
+8. **Object-constant animated transition** for hours and results: bars animate from before to after keyed by topic id, staged so values move while axes stay fixed; with reduced motion, jump to the end state with the delta in text.
+9. **Change-summary counters**: a header such as "3 outcomes reworded, 4 h moved, 2 slides revised" computed from the diff, counting up once; final numbers rendered immediately for reduced-motion users and in a live region.
+10. **The "what is, what could be" demo arc**: hold the old state for a few seconds, reveal the new with one pattern above, and leave the comparison on screen; the persisted comparison, not the motion, carries the information.
+
+
+===== FILE: docs/research/slides-items-and-surveys-tech-2026-10-22.md =====
+# Research note: branded decks, assessment items and surveys without a server
+
+Date: 22 October 2026, evening. For the depth plan: what pptxgenjs can and cannot do for a branded, editable, accessible deck; how to preview slides in the browser; the item and rubric formats an LMS accepts; and how a local-first app can collect student survey responses. Compiled in a research session on 22 October 2026; vendor pages marked **V**, unverified items marked.
+
+## 1. pptxgenjs capabilities and limits
+
+- The current release is 4.0.1 (26 June 2025); 4.0.0 (4 May 2025) added text direction and fixed master reuse. MIT. https://github.com/gitbrent/PptxGenJS/releases
+- **Masters**: `defineSlideMaster({ title, background, margin, objects: [rect, line, text, image, placeholder], slideNumber })`; placeholders are named objects of type title, body, image, chart, table or media, filled with `addText(..., { placeholder: "body" })`; masters become editable layouts under View, Slide Master. https://gitbrent.github.io/PptxGenJS/docs/masters/
+- **Images**: PNG, JPG and GIF; SVG "supported in the newest desktop PowerPoint or Microsoft 365" with no documented fallback, so ship a PNG raster of the institution's logo and the SVG only as an extra; sizing contain, cover and crop; image hyperlinks. https://gitbrent.github.io/PptxGenJS/docs/api-images/
+- **Charts**: area, bar, bar3d, bubble, doughnut, line, pie, radar, scatter and combo as native chart XML with an embedded workbook. https://gitbrent.github.io/PptxGenJS/docs/api-charts/
+- **Tables**: colspan and rowspan, per-cell formatting, auto-paging with a repeated header ("not an exact science"). https://gitbrent.github.io/PptxGenJS/docs/api-tables/
+- Notes with `slide.addNotes()`, sections with `pptx.addSection()`, hyperlinks to a URL or a slide, `fit: shrink` or `resize`, bullets with indent levels. https://gitbrent.github.io/PptxGenJS/docs/speaker-notes/
+- **Theme**: only head and body font faces and language; no theme colour palette API, but scheme colours are accepted in colour and fill. Layouts 16:9 (10 by 5.625 inches), wide, or custom. https://gitbrent.github.io/PptxGenJS/docs/usage-pres-options/
+- **Limits**: no font embedding; animations are not on the roadmap; it cannot edit an existing PPTX.
+- **Known defects**, issue 1449 (opened 31 March 2026, still reproducing on 4.0.1 in September): string shape presets such as `"oval"` and `"roundedRectangle"` write invalid XML (use the `pres.shapes` constants), one slide-master content-types override per slide, a malformed notes master; the issue carries a post-process repair function. https://github.com/gitbrent/PptxGenJS/issues/1449
+- **Thumbnails without PowerPoint**: LibreOffice headless to PDF then pdftoppm (https://help.libreoffice.org/latest/en-US/text/shared/guide/start_parameters.html); pptx-glimpse renders PPTX to SVG or PNG in Node 22 or the browser, "not pixel-identical" (https://cdn.jsdelivr.net/npm/pptx-glimpse/README.md); pptx-browser 4.1.5 draws on a canvas (https://cdn.jsdelivr.net/npm/pptx-browser@4.1.5/README.md); Microsoft Graph converts to PDF or JPG with a 2 MB cap and a sign-in (https://learn.microsoft.com/en-us/graph/api/driveitem-get-content-format) **V**. Cheapest and most faithful for Lyceum: render Lyceum's own slide spec to SVG in React, and rasterise with Puppeteer only for export.
+
+## 2. Alternatives for slide generation
+
+- python-pptx (MIT, 1.0.0): placeholders, charts, tables, notes; no rendering. https://python-pptx.readthedocs.io/en/latest/
+- Marp CLI (MIT): `--pptx` exports images plus notes; `--pptx-editable` is experimental and needs a browser and LibreOffice Impress, with "lower slide reproducibility" and no notes. https://github.com/marp-team/marp-cli/blob/main/README.md
+- Slidev (MIT): PPTX as images by default; an editable mode rebuilds native shapes but SVG, maths and gradients stay pictures. https://sli.dev/guide/exporting
+- reveal.js (MIT): PDF through the browser or decktape; no PPTX. https://revealjs.com/pdf-export/
+- Google Slides API: `batchUpdate` creates native slides from layouts with OAuth; PPTX through Drive export. https://developers.google.com/workspace/slides/api/guides/overview **V**
+- Microsoft Graph has no PowerPoint content API. An Office Add-in can call `PowerPoint.Presentation.insertSlidesFromBase64(base64, { formatting: "UseDestinationTheme" })` (PowerPointApi 1.2), so a pptxgenjs deck can be dropped into a university's own template inside PowerPoint. https://learn.microsoft.com/en-us/javascript/api/powerpoint/powerpoint.presentation **V**
+- Editable text comes from pptxgenjs, python-pptx, the Slides API and Office.js; Marp and Slidev defaults and reveal.js give images only.
+
+## 3. Assessment item formats and generation
+
+- **QTI 3.0**, final in May 2022 (https://www.1edtech.org/standards/qti/versions). From the best-practice guide: a multiple-choice item declares a single-cardinality identifier response, a correct response, a float SCORE outcome, a choice interaction with one max choice and simple choices, and the match-correct response-processing template; short answer uses a text-entry interaction (expected length, pattern mask, placeholder); essay uses an extended-text interaction (expected lines, min and max strings, plain, preformatted or xhtml) with no automatic scoring; a rubric block takes a view (author, candidate, scorer and so on); a package is a zip with an IMS manifest. https://www.imsglobal.org/spec/qti/v3p0/impl
+- **What the LMSs import**: Canvas New Quizzes imports QTI 1.2 and 2.x (https://community.canvaslms.com/docs/DOC-26303); Blackboard Ultra banks import QTI 2.1 for true or false, multiple choice, multiple answer, fill in the blank and essay (July 2025) **V**; Moodle imports Moodle XML, GIFT and Aiken, not QTI 3.
+- **Moodle XML** (https://docs.moodle.org/en/Moodle_XML_format, checked against Moodle 4.5 source): `<question type="multichoice|shortanswer|essay">`, `<name><text>`, `<questiontext format="html"><text><![CDATA[...]]>`, `<answer fraction="100"><text>` with `<feedback>`; multichoice has `<single>`, `<shuffleanswers>`, `<answernumbering>` and the three feedback elements; shortanswer `<usecase>`; essay `<responseformat>`, `<responserequired>`, `<responsefieldlines>`, word limits, attachments, `<graderinfo>`, `<responsetemplate>`; UTF-8 with the XML declaration alone on line 1.
+- **Bloom verbs** (University of Arkansas, 26 July 2022, CC BY-NC-ND): Remember list, define, name, label, recall; Understand describe, explain, paraphrase, summarise, interpret; Apply calculate, predict, solve, demonstrate, use; Analyse classify, categorise, diagram, break down; Evaluate judge, defend, justify, argue; Create design, formulate, compose, develop. https://tips.uark.edu/using-blooms-taxonomy/
+- **Item-writing rules**: Haladyna, Downing and Rodriguez 2002 (Applied Measurement in Education 15(3)): 31 guidelines in five groups (content, format, style, the stem, the choices). https://eric.ed.gov/?id=EJ660246. The rules a deterministic generator can enforce: a positive stem that carries the main idea; three options suffice; one keyed answer in varied positions; independent, homogeneous options of equal length; no "all of the above" or "none of the above"; distractors from common errors; no absolutes or grammar clues; no trick items. https://cpl.health.unm.edu/AssetListing/Writing-Questions-for-Learning-and-Assessment-JiTL-2573/Rules-for-Multiple-Choice-Items-Haladyna-et-al-2002-5943
+- **Rubrics**: the AAC&U VALUE rubrics (2009; CC BY-NC-SA 4.0, attribution required, commercial use needs permission, adaptations share alike). https://www.aacu.org/value/how-to-cite. Ship the four-level grid shape (capstone, two milestones, benchmark) with lecturer-written descriptors, and link rather than bundle the AAC&U text.
+
+## 4. Survey collection without a server
+
+- **Microsoft Forms** has no create API ("Creating forms directly through an API in Microsoft Forms isn't supported", Microsoft Q&A, 3 January 2025, https://learn.microsoft.com/en-us/answers/questions/2139869/creating-microsoft-forms-via-graph-api-in-power-au); Quick Import builds a form from a Word or PDF file (10 MB, local file only; matching and multi-blank items become open text). https://support.microsoft.com/en-us/forms/convert-a-word-or-pdf-form-or-quiz-to-microsoft-forms **V**. **Google Forms API**: `forms.create` plus `batchUpdate` with OAuth, 375 writes a minute per project; forms created by the API after 30 June 2026 start unpublished. https://developers.google.com/workspace/forms/api/limits **V**
+- **The form in the URL**: lz-string `compressToEncodedURIComponent` (MIT, https://github.com/pieroxy/lz-string); a fragment never reaches a server; keep links under about 2,000 characters. Answers return as a short base64 token the student pastes into the LMS or an email.
+- **QR to a static page with a collector**: the qrcode npm package (MIT; byte mode holds 2,953 characters at level L, https://cdn.jsdelivr.net/npm/qrcode/README.md); Formspree free tier 50 submissions a month, cross-origin AJAX, a 30-day archive (https://formspree.io/plans/) **V**; Basin free tier one form, 50 a month **V**; a Google Apps Script web app posting into a Sheet (6 minutes per execution, https://developers.google.com/apps-script/guides/services/quotas) **V**; Cloudflare Workers free tier 100,000 requests a day with KV at 100,000 reads and 1,000 writes a day (https://developers.cloudflare.com/workers/platform/limits/, https://developers.cloudflare.com/kv/platform/limits/) **V**.
+- **Imports**: Microsoft Forms Excel exports ID, Start time, Completion time, Email, Name, then one column per question, with Name and Email blank when anonymous (https://support.microsoft.com/topic/02859424-341d-406f-b32a-9a0fbaf357af) **V**; Google Forms exports Timestamp first, Email Address only if collected, question text as headers, CSV unsorted, timestamp text locale-dependent (https://support.google.com/docs/answer/139706); Qualtrics exports CSV, TSV, XLSX and SPSS **V**; Moodle Feedback exports CSV, XLSX, HTML, JSON and ODS (https://docs.moodle.org/405/en/Data_formats).
+- **The tools universities use**: Microsoft Forms inside the Microsoft 365 tenant, Google Forms, Qualtrics, EvaSys, LMS surveys. UTP runs two Moodle instances (ULearn and ULearnX) integrated with Microsoft 365 (a Pukunui case study, undated, https://pukunui.com.my/universiti-teknologi-petronas/) **V**; https://ucs.utp.edu.my/knowledgebase/article/KA-01294/en-us
+
+## 5. Anonymity and consent
+
+- McGill (Senate, 23 April 2014): a minimum of five responses for classes of 5 to 11, then 40, 35, 30 and 25 percent by size; nothing disclosed to the instructor before final grades are processed; comments confidential to the instructor and the unit head. https://www.mcgill.ca/mercury/about/policy
+- McLennan: five per section, results after grades (https://mclennan.edu/data/Course%20Evaluations/evaluation-faqs.html); UNC Charlotte: three (https://myevals.charlotte.edu/faqs/); Ruhr University Bochum: reports from ten cases, raw free text excluded unless categorised (February 2024).
+- GDPR: Edinburgh Napier relies on the public task basis and warns that confidentiality holds "unless students identify themselves in free-text comments" (https://documentcentre.napier.ac.uk/-/media/files/university-governance/privacy-notice/privacynoticemoduleevaluation.pdf); Göttingen pseudonymises with transaction numbers.
+- Malaysia: PDPA 2010 as amended in 2024, phased in during 2025 (a data protection officer, breach notification, fines up to RM 1 million); section 3 exempts the federal and state governments and the coverage of public universities is unsettled (https://amcham.com.my/malaysian-personal-data-protection-act-2010-does-it-apply-to-government-agencies/). UTP is run by a private company, whose privacy notice for students (updated June 2025) applies: https://www.utp.edu.my/sites/Publishing/PublishingContent/privacy-notice-general.pdf
+
+## 6. Institutional slide templates
+
+- Bath: one template for all staff, 16:9, full-screen intro, title variants, content slides, "designed to meet accessibility requirements" (https://www.bath.ac.uk/guides/using-university-branded-templates/); Manchester: the logo top-left on every slide, three background families (https://www.staffnet.manchester.ac.uk/brand/visual-identity/guidelines/presentations/); Yale: a brand typeface with a system-font fallback deck (https://yaleidentity.yale.edu/guidelines/presentations); CMU: three templates in Open Sans and Source Serif Pro (https://brand.cmu.edu/resources/downloads). The pattern: a title slide (logo, title, course, lecturer), section headers, content slides, a closing slide; a footer of course code, week and slide number is lecturer practice rather than a brand rule.
+- UTP publishes no brand kit; its site describes the logo (a floral bud with the Twin Towers outline, in gold and blue). The owner's SVG is the source of truth and its hex values (#004A84 blue, #BC893A gold) come from it. https://utp.edu.my/Pages/Students/Current/Academic%20Regulations%20and%20Procedure/General-Information.aspx
+- **Accessibility Checker rules for PowerPoint**: errors are missing alt text, a slide without a title, default section names and restricted access; warnings are table structure, text contrast, captions and reading order; tips are unique section names and slide titles (https://support.microsoft.com/en-ie/office/rules-for-the-accessibility-checker-651e08f2-0fc3-4e10-aaca-74b4a67101c1) **V**. Microsoft's guidance: 18 pt or larger, a sans serif, unique titles, built-in layouts for reading order, descriptive links, no colour-only meaning. WCAG2ICT (W3C Group Note, 11 December 2025) maps WCAG 2.x to non-web documents: https://www.w3.org/TR/wcag2ict-22/
+
+## Recommended design for Lyceum
+
+1. **Decks**: keep pptxgenjs 4.0.1; a `Brand` record (a palette, head and body fonts, the logo as a PNG rasterised from the owner's SVG, the SVG as an extra) drives five slide masters (title, section, content, two-column, closing) with named placeholders; notes on every slide; a section per week; every slide titled; objects added in reading order; body text 18 pt or larger.
+2. **Deck preview**: render the same slide spec to SVG in React (no PowerPoint needed); pptx-glimpse in Node as the thumbnail and regression renderer; LibreOffice-to-PDF only in a check; shapes through the `pres.shapes` constants plus the issue-1449 repair pass.
+3. **Deck fallback**: an Office Add-in calling `insertSlidesFromBase64` with the destination theme when a university supplies its own template; the Google Slides API for Workspace campuses. Both planned.
+4. **Items**: deterministic templates keyed by Bloom level and item type, using the Arkansas verb list and the course's outcome records; a Haladyna lint (three or four options, equal length, a positive stem, no all-or-none options, distractors from recorded misconceptions).
+5. **Item export**: Moodle XML first (UTP's ULearn is Moodle), a QTI 2.1 package second (Canvas, Blackboard Ultra), QTI 3.0 third, all from one item model; rubrics as a four-level grid exported to DOCX and XLSX and as a QTI rubric block for scorers.
+6. **Surveys**: survey definitions as JSON in the workspace with two templates (the per-outcome self-rating on 1 to 5, the teaching survey); every question carries a stable id embedded in its text so imports match.
+7. **Collection, primary**: a DOCX export shaped for Microsoft Forms Quick Import (Microsoft 365 campuses) and Google Forms through its API when signed in.
+8. **Collection, fallback**: a static responder page on the public site, opened by QR, with the form in the URL fragment through lz-string, posting to a Cloudflare Worker with KV (the free tier covers a course) or Formspree; the last resort a paste-this-code token.
+9. **Results back**: importers for Microsoft Forms XLSX, Google Forms CSV, Moodle Feedback CSV and XLSX, and Qualtrics CSV through SheetJS, matched on the question id; aggregates only at five responses or more; free text locked until the lecturer marks grades released; a consent line and the privacy notice on every form; no identifiers stored.
+10. **Verification**: golden-file tests per writer (PPTX XML diff, a Moodle XML import into a local Moodle, QTI validated against the 1EdTech schema) beside the existing checks.
+
+
+===== FILE: docs/research/judge-experience-and-wow-2026-10-22.md =====
+# Research note: the judge's experience, and honest wow
+
+Date: 22 October 2026, evening. For the depth plan: guided tours and kiosk modes, what wins education hackathon demos, booth practice for a judged ten minutes, which wow mechanics are honest, how a mascot may appear before a professional audience, and how to run a public demo site. Compiled in a research session on 22 October 2026; vendor pages marked **V**, unverified items marked.
+
+## Format check
+
+The official site (hackastone.varteledu.com, read 22 October 2026) announces the Gold, Silver and Bronze awards on 30 October 2026 at the Holland Conference on AI for Education, VU Amsterdam. ITS's report on the finalist EduVent (9 October 2026, https://www.its.ac.id/?p=72149) describes a 10-minute presentation, a 5-minute Q&A and a live demonstration, not 8 plus 2. The finalist pack settles the timings; no rubric was found.
+
+## 1. Guided tours and self-guided demo modes
+
+- driver.js: MIT, about 5 kB, no dependencies, tours, hints, hooks, React support (https://driverjs.com/) **V**. Shepherd.js is AGPL-3.0 or commercial from version 14; Intro.js is also AGPL or commercial; react-joyride is MIT (3.1.0, React 16.8 to 19).
+- Navattic's 2026 report on 40,000 demos (**V**, https://www.navattic.com/report/state-of-the-interactive-product-demo-2026): the top 1% of demos hold viewers 2.2 minutes; 5 to 13 steps per flow; a first step of 10 to 20 words; completion 57% for multi-flow demos against 35%; ungated beats gated. Arcade's benchmarks (16 May 2025, **V**): the top 1% use nine steps; an opening question "which use case?" lifts the play rate 72%.
+- Kiosk: Chrome's kiosk flag has no idle reset; add an idle-reset extension and a restricted OS account (https://github.com/substantial/kiosk-manager-chrome).
+- A character guiding a tour: Duo welcomes, then asks for a goal before sign-up (https://www.reallygoodux.io/blog/duolingo-user-onboarding); Notion's corner figure asks setup questions. Clippy failed on mistimed interruptions and on being "optimised for first use" (https://www2.cio.co.nz/article/662045/what-went-wrong-clippy-virtual-assistant-pioneer-people-loved-hate/).
+
+## 2. What wins education and AI hackathon demos
+
+- A judge's notes (Magomed Kurbaitaev, 27 July, year not shown): a live working demo beats a more ambitious project on slides "almost every time"; say what it is in the first sentence; a named weakness raised scores; keep a 60-second screen capture as insurance; "pick the sentence you want a judge to repeat to another judge an hour later". https://dev.to/kurbaitaev/what-judges-actually-score-notes-from-a-year-of-hackathon-judging-3p4l
+- Wharton Hack-AI-thon, 29 May 2025: the winner (handwriting flags dyslexia, lesson plans drafted) was praised for the clear explanation of its technical reasoning. https://ai-analytics.wharton.upenn.edu/news/fighting-dyslexia-breaking-chatbots-inside-the-winning-projects-of-whartons-2025-hack-ai-thon/
+- Imagine Cup: finals are live before a judge panel; semifinals allow a live or pre-recorded demo with live narration. https://imaginecup.microsoft.com/en-us/competition/17897. Google Solution Challenge 2024: the top ten presented live on a demo day. Devpost events cap demo videos at two minutes; one education hackathon judges "a believable before-and-after" (search snippet only, unverified).
+
+## 3. Booth design for a judged ten minutes
+
+- A packing list (EdWeek MarketBrief, 7 May 2015): a sign readable across the room, a monitor on a stand so visitors do not bend over a laptop, a phone hotspot because expo wifi is overloaded; a one-person booth looks harder to approach. https://marketbrief.edweek.org/the-startup-blog/demoing_your_startup_at_an_expo_the_ultimate_packing_list/
+- A drop-in booth pattern (Wikimedia, edited March 2026): one short demo ready, non-public internet, leaflets to take away. https://meta.wikimedia.org/wiki/Learning_patterns/Drop-in_demo_booth
+- Judges in sequence (UCI showcase tips, 2025): judges rotate independently, 5 to 15 minutes each, let them physically engage, bring multiple units. https://bbcomp.tech.uci.edu/wp-content/uploads/2025/05/BB-Comp-Showcase-Tips-and-Tricks-2025.pdf. A science-fair tip sheet: prepare a 1 to 2 minute and a 5 to 7 minute version. https://stem.idaho.gov/wp-content/uploads/IDSEF/ISEF-Science-Fair-Competition-Tips.pdf
+- A memorable booth: TAR UMT's Gold Best Booth at PAASWE, 8 to 12 October 2025; judges noticed a practical bench component. https://eduadvisor.my/articles/tar-umt-paaswe-2025
+
+## 4. Honest wow mechanics
+
+- Count-up counters: only vendor guidance (trigger once, real figures). Precedent: Shopify's Live Globe shows orders per minute (2024, https://www.shopify.com/news/live-globe-2024).
+- Live links as receipts: an AAAI 2025 study found citations raised trust even when random, but users who checked them trusted less, so the link must survive checking. https://arxiv.org/abs/2501.01303
+- Before and after slider: Knight Lab JuxtaposeJS, 24 September 2014, built so journalists "can actually show change". https://knightlab.northwestern.edu/2014/09/24/introducing-juxtaposejs-an-easy-way-to-compare-two-frames/index.html
+- A one-click artefact: Microsoft's Copilot event of 16 March 2023 turned a Word file into a deck; the press caveat: "the demos looked wonderful, but how things work out when exposed to real users is an entirely different manner". https://office-watch.com/2023/sneak-peek-at-microsoft-copilot/
+- A side-by-side assistant: the MCP launch, 25 November 2024, shipped local servers in Claude Desktop. https://www.anthropic.com/news/model-context-protocol
+- A printed receipt: a GitHub-issue receipt printer (The Register, 29 March 2022, https://www.theregister.com/2022/03/29/github_issue_printer/); BERG's Little Printer: paper is "a screen that never turns off".
+- A term recap: Wrapped works on self-knowledge, self-expression and comparison. https://adma.com.au/resources/personal-shareable-no-strings-attached-the-winning-formula-behind-spotify-wrapped
+- A programme view: small multiples, "the best design solution" for a wide range of problems (Tufte, via Pew, 20 December 2018). https://www.pewresearch.org/decoded/2018/12/20/how-pew-research-center-uses-small-multiple-charts/
+- Peak-end: Kahneman et al. 1993; Redelmeier, Katz and Kahneman 2003; Kemp 2008 calls it "not an outstandingly good predictor". Picture superiority: Standing 1973, recognition of 10,000 pictures "almost limitless" (https://www.sas.upenn.edu/psych/rust-lab/publications/standing_73.pdf); Medina's 10% against 65% figure has no primary citation (unverified).
+
+## 5. Mascot presence for judges
+
+- GitHub's brand rules (read 22 October 2026): mascots fit community, celebrations and education "as long as they aren't doing the teaching"; "Don't use mascots to explain, interrupt, or sell"; apologies and crises need proper copy. https://brand.github.com/graphic-elements/mascots
+- Mailchimp: Freddie "smiles, winks, and sometimes high-fives, but he does not talk"; "If you're unsure, keep a straight face". https://styleguide.mailchimp.com/voice-and-tone/
+- Duolingo: Duo "mostly stands still, and doesn't talk or make sounds", reserved for excitement and special occasions (the design page now redirects; unverified).
+- Atlassian: the wink only "once you've built trust"; "Delight means little flourishes, not humor"; "Once may amuse, but a dozen times may annoy". https://atlassian.design/foundations/content/voice-tone. Google: never humorous error messages. https://developers.google.com/tech-writing/error-messages/set-tone
+- Headspace's 2024 rebrand kept its characters but added photography for "a more professional persona". https://www.itsnicethat.com/articles/italic-studio-headspace-graphic-design-project-250424
+- The rule for Tualang: speaks at welcome, empty states, step completions and the term recap; silent on errors, constraint failures, data provenance and pricing.
+
+## 6. Live public demo sites
+
+- Plausible's demo is its own live traffic, no login (https://plausible.io/plausible.io). Grafana Play disabled anonymous dashboard creation for security on 15 January 2025. Omeka's sandbox resets four times a week.
+- Safety: a demo-mode flag that disables destructive operations and caps sizes; Vercel WAF rate-limit rules need a follow-up deny or 429 (https://vercel.com/docs/vercel-firewall/vercel-waf/rate-limiting); Stripe keeps a test-data banner on screen (https://docs.stripe.com/test-mode).
+- QR: width about one tenth of the viewing distance, 6 to 10 cm on an A1 poster, a quiet zone of four modules, the typed URL printed under it, tested on iPhone and Android (**V**: https://www.qr-code-generator.com/blog/qr-code-distance/).
+
+## Ranked wow moments for Lyceum
+
+1. **The live receipt**: the judge clicks a quotation and the employer's posting opens with the sentence highlighted. Honest because the link is real and must survive checking; small.
+2. **Tualang's two-minute phone tour**: the judge scans the poster and Tualang walks 9 to 12 steps through the workspace, labelled synthetic on every screen. Honest because the banner never leaves; medium.
+3. **The before and after outline slider**: a Juxtapose-style handle between last term's outline and this term's, each change linked to its decision record. Honest because every diff has a recorded reason; medium.
+4. **The one-click pack**: a PPTX downloads and opens in PowerPoint, editable. Honest because it is the real generator's output; small, built.
+5. **The same question, two doors**: Lyceum's Report beside Claude Desktop answering through the read-only MCP server. Honest because both read one exported file the judge can open; medium.
+6. **Count-up to the claims register**: postings, quotations and decisions count up once, with the register beside them. Honest because every figure is already audited; small.
+7. **A printed receipt**: a thermal printer prints the quotation, URL, date and a QR code while the judge watches. Honest because it prints a stored record; medium, needs hardware.
+8. **The term recap page**: one A4 per semester in a Wrapped style, printed for the judge to keep. Honest because each number traces to a record; medium.
+9. **The programme wall**: small multiples of every course in a programme, each a mini loop ring. Honest because it is the same data at another zoom; medium.
+10. **A kiosk attract loop**: between judge teams the laptop plays the 60-second real capture and resets on touch. Honest because the capture is of the real app; small.
+11. **The named weak spot**: Tualang holds a card listing what is not built, read aloud. Honest by definition, and judges reward it; small.
+12. **Decision replay**: scrub a timeline to watch one decision form from quotation to outline change on real timestamps. Honest because it animates stored events only; large.
+13. **The judge as lecturer**: the judge names a skill and Watch finds a real posting live, with the recorded fallback one key away. Honest because the fallback is labelled recorded; medium.
+14. **A second screen**: a monitor on a stand mirrors the laptop so three judges see without bending. Small.
+15. **The peak-end close**: pitch and booth both end on the receipt opening, then a silent bow from Tualang and no new claim. Small.
+
+
+===== FILE: CLAUDE.md =====
+# Lyceum: operating brief for AI sessions in this repository
+
+Read these before doing anything, every session, in this order. Do not work from memory, from a summary or from an earlier conversation: the facts live in these files and they change.
+
+1. [docs/lyceum-upgrade-plan.md](docs/lyceum-upgrade-plan.md), the master plan. Section 0 holds the rules, Sections 4, 4.1 and 4.2 the loop, the story and the roles, Section 6 the tokens, Section 7 the characters, Section 17 the packages and the session prompts.
+2. [docs/competition/grand-final-2026.md](docs/competition/grand-final-2026.md), the date, the format, the criteria and what is still unconfirmed.
+3. [docs/design/colour-scheme-2026-10-22.png](docs/design/colour-scheme-2026-10-22.png), the palette and type poster, with [docs/design/colour-scheme-audit-2026-10-22.md](docs/design/colour-scheme-audit-2026-10-22.md), the WCAG audit that says where each colour may appear; together they are the source of `src/theme/tokens.ts`.
+4. [docs/research/](docs/research/), the dated research notes. Every figure on any surface comes from one of them or from `docs/claims.md` once it exists.
+5. [DECISIONS.md](DECISIONS.md), why things are the way they are, and [docs/lyceum-improvement-plan.md](docs/lyceum-improvement-plan.md) Section 30 for the dated execution records and the work-package numbers W00 to W17.
+6. The code a package touches, read in full before it is edited.
+
+## Do not assume
+
+If a fact is not in one of those files or in the code, say that it is not, then verify it or ask. Never fill a gap from memory. Weekdays are computed, not guessed. Counts come from running the command. Hex values come from `tokens.ts`. A claim about what works comes from a check that ran in this session. A memory file is a pointer to these references, never a source of facts.
+
+## Rules that bind every session
+
+- No en or em dashes anywhere: code strings, docs, captions, commit messages, slides.
+- Honesty labels on every surface: real, prototype, illustrative, planned. Synthetic data says synthetic. A door is planned until a pilot tenant runs it.
+- Colours and type come from `src/theme/tokens.ts` only; fonts are bundled, never fetched at runtime.
+- No model-written text inside shipped artefacts before the pilot; model streaming is optional, labelled, and never moves a number.
+- Verify before claiming: `npm run typecheck`, `npm run prove:all`, `npm run build`, the four smokes (`npm run smoke`, `smoke:integrity`, `smoke:workspace`, `smoke:curriculum`) and `node scripts/generate-guide.mjs --check`.
+- Commit only when the owner asks. The team repository is reached only through `node scripts/team.mjs`; never `git push` between the two repositories by hand.
+- Scan any third-party skill, plugin or MCP server with SkillSpector before first use (the rule is in the owner's global CLAUDE.md).
+- Characters never appear on errors, billing or security moments, and nothing animates in the workspace without a real request or a saved record.
+- Codex (`gpt-6-astra`) reviews plans and documents in a read-only sandbox with the files embedded through stdin; it never writes code into this repository, and its claims are verified before any is kept.
+
+## Where things are
+
+```text
+docs/lyceum-upgrade-plan.md   the master plan (22 October 2026)
+docs/competition/             the Grand Final facts
+docs/design/                  the colour and type poster
+docs/research/                dated research notes with sources
+docs/review/                  Codex reviews, kept as written
+docs/history/                 superseded documents, screenshots and presentations
+src/lib/                      the deterministic core
+src/app/                      store, roles, journey, runs
+src/ui/                       primitives, shell, screens, and the characters once drawn
+src/prove-*.ts                the checks; scripts/*-smoke.mjs the browser runs
+server/                       the local API: parsing, board collection, optional model streaming
+scripts/team.mjs              the only way to the team repository
+```
+
+
+===== FILE: docs/as-built.md (Sections 1, 2 and 6) =====
+## 1. What Lyceum is
+
+Lyceum turns real job postings into a course decision with receipts, every semester, inside the tools lecturers already use. A lecturer runs one loop per course and term: **Watch** (postings fetched on request from a permitted board, each with its link, date and fingerprint), **Report** (exact quotations beside their sources, the reviewed denominator, counts with Wilson intervals, a mapping to the outcomes, a brief), **Decide** (an immutable decision record by a person with the right to decide, bound to the brief, the version and the term), **Update** (a revision checked against the hours and the protected topics, adopted as a new version), **Teach** (sessions and an editable teaching pack with no model text) and **Learn** (results matched to the version taught, with n of N, and no learning gain claimed). The core is deterministic and needs no AI key; an assistant reaches it through the local, read-only door in `mcp/`. A host and seven helpers, drawn in code, make the steps visible; their moods follow records, never activity.
+
+## 2. Plan versus built
+
+Plan Section 17.1, package by package, against what this record and the code show. "Done" means built and verified on 22 October 2026; "partly" names what is missing; "not done" says why.
+
+| Package | The plan's acceptance | As built | Status |
+|:--|:--|:--|:--|
+| A0 Checkpoint and the branch | The tag exists; the snapshots suite is in prove:all; a schema 3 and a schema 4 backup restore | `pre-overhaul` on `f5b26a4`; the branch taken; the migration check restores schemas 3, 4 and 5 | Done |
+| A1 Theme and shell | Every screen in the new theme with no hand-written hex; the contrast table passes | `tokens.ts` the only source; generated CSS and bundled fonts; the loop rail, since the owner's follow-ups a path across the top of each step; the contrast check | Done |
+| A3 Mascots v1 | PNGs for every character and mood; the mark as favicon and icon; prove:moods; nothing moves without a request | Eight characters in code, four poses each; 35 SVGs and 72 PNGs; the moods proof | Done |
+| A2a Watch, Report, Decide | The journey proof with the new done rules; a decision record and an event on the timeline; 320 px reflow | The Report sub-rail, the source pane, skill cards, the decision record, the event log, the ring per term | Done |
+| A2b The other loop screens, Home, How it works, Landing | No synthetic figure on the landing; every landing figure in claims.md; the integrity smoke | Learn matched to the version taught; the landing's figures and clauses registered and proved; in A8, records from the app's sample files labelled synthetic | Done; the doors strip keeps neutral icons until the owner decides on marks |
+| A4 Demo and checks | `npm run smoke` with the decision and both decks; the guide check | The tour in loop order, setting the term first; four smokes and the walk updated | Done |
+| A5 The local door | Claude Desktop returns CS310's evidence report from a fresh export; no tool writes to the workspace | Six tools, five read-only; proofs over the real protocol; a stdio session with the official client | Partly: the Claude Desktop run needs the owner |
+| A6 Deck, diagram, brief, poster | The PPTX opens in PowerPoint with notes and the film plays; the diagram passes the C4 checklist; no dash | The deck, its PDF and PPTX opened in PowerPoint with every note and the film; the diagram; the brief; the A1 poster; in A8, the Codex pitch review's verified fixes | Partly: the playback test needs the presenting laptop |
+| A7 The film | The 90-second cut rendered and reviewed; a second render diffed | Both cuts built on the real capture and rendered; the frames of two renders diffed; captions and chapters | Partly: no voices yet (the team records them), no music bed, the phone review |
+| A8 Documentation and verification | Every claim traces to claims.md; the demo path by keyboard and NVDA; everything plays offline | This record, the claims register checked by a Codex audit, the booth script, README, JUDGES.md, FEEDBACK.md, the guide; the full verification | Partly: the NVDA pass and the wifi-off run need a person at the machine |
+
+### Known mismatches
+
+Where the build differs from the plan's text, and why. Each row's decision is in [decisions.md](decisions.md) under the time given.
+
+| # | Topic | The plan says | As built | Where |
+|:--|:--|:--|:--|:--|
+| 1 | The doors strip's marks | Section 17.1: the landing's doors strip "with the official marks" | Neutral icons with each door's name and a Planned tag; three Simple Icons marks (Claude, MCP, Greenhouse) only on the diagram, where Lyceum really connects | A2b 06:12, A6 06:55; Needs the owner 1 |
+| 2 | The film's capture | Section 16: Playwright's `recordVideo`, per scene | One screencast of the whole tour on the dated saved sample, piped into ffmpeg with each frame's arrival time; scenes cut from it by tour caption | A7 07:52, 07:58, 08:04 |
+| 3 | The lecturer's caption bar | Section 16.1: emerald | `ray3`, because emerald on forest is 2.96 to 1, under the 3 to 1 a graphic needs | A7 08:05 |
+| 4 | The film's voices | Section 16: the team's recordings, line by line | Silent renders, every line timed from its words at 2.6 a second, until the recordings exist | A7 08:07 |
+| 5 | The render check | Section 17.6, A7: render twice and diff | The frames of two renders diffed before encoding, failing above 2 levels; one set of frames encoded twice, byte for byte | A7 09:15 |
+| 6 | Third-party skills | Section 17.6, A7: remotion-dev/skills and brag, after a SkillSpector scan | None installed, so none needed a scan | A7 07:50 |
+| 7 | The Claude Desktop run | Section 17.1, A5: Claude Desktop returns the evidence report | A stdio session with the official SDK client; the desktop run needs the owner's app and account | A5 06:37; Needs the owner 2 |
+| 8 | The loop graphic | Section 7.3 and the A2b decision: eight stations, Lens as "Report and Learn" | Nine stations in loop order, Lens at Report and again at Learn, so the ring never reads Learn before Decide | A8 |
+| 9 | The rehearsed answers | Section 14: two answers word for word, one ending "it can be used from inside ChatGPT" | The deck's notes say the ChatGPT door is planned and the local door works today | A8 |
+| 10 | The latency wording | Section 2.4: "39% of workers' skills change by 2030, while programme approval takes 12 to 18 months" | Employers expect the 39%; the approval time is at the US universities cited | A8 |
+| 11 | The clause mapping | Section 4: each step is "a clause the accreditors already use", Teach as Biggs | Teach labelled a teaching principle; the heading says what reviewers already look for | A8 |
+| 12 | DECISIONS.md | Section 18: it becomes a pointer | Kept as written, because CLAUDE.md names it as required reading, with a pointer at its top | A8 |
+| 13 | The documentation set | Section 19's target layout: `problem-statement.md`, `ui-accessibility-review.md`, `user-study.md` | Not written: A8's session prompt does not name them, and the accessibility review needs the axe and NVDA passes | This record, section 6 |
+| 14 | The pitch's opening order | Section 4.1: person, urgency, receipt; Section 14: receipt, urgency, person | The deck follows Section 14 | Needs the owner |
+## 6. What needs a person
+
+What this run could not do on its own, with where each item stands. The owner's decisions are also at the top of [run-log.md](run-log.md), under Needs the owner.
+
+| Item | Why it needs a person | Where it stands |
+|:--|:--|:--|
+| The film's voices | The plan's voices are the team's own, recorded line by line | `video/script.md` holds every line; the renders are silent, with captions timed from the script, until the WAV files exist |
+| A music bed for the film | Only a track whose licence allows YouTube use | None chosen |
+| TRL 6's environment | The research note defines the relevant environment as real postings, a real syllabus and a real lecturer; the build has the real postings, a sample outline and a persona | Every surface names the environment as it is; keep TRL 6 self-assessed, present TRL 5, or run one real syllabus with one lecturer before the final |
+| The pitch's opening order and commercial framing | Plan Sections 4.1 and 14 order the opening differently, and the Codex pitch review asks who buys and what the pilot's purchase decision is | The deck follows Section 14; the review is in [review/astra-pitch-review-2026-10-22.md](review/astra-pitch-review-2026-10-22.md) |
+| Eight of the ten Q&A answers | The Story lane writes them in the team's words | [demo-script.md](demo-script.md) lists what each rests on; the Codex rehearsal of the bank is in [review/](review/) |
+| The Claude Desktop run of the local door | It needs the desktop app, an account and a change to a file outside the repository | A real stdio session with the official client is recorded in [doors.md](doors.md), with the steps for the desktop run |
+| Official marks beyond Claude, MCP and Greenhouse | Microsoft needs a licence, Google a request, Moodle permission; OpenAI's and Instructure's terms were not read | [brand-use.md](brand-use.md) lists each mark, its source and its terms |
+| The PPTX and the film on the presenting laptop | Section 14.3 asks for the playback test on the venue's player | The PPTX opened in PowerPoint here with every note, and the film loads in Chrome on slide 5 |
+| The keyboard and NVDA pass, the offline run with wifi off | A person at the machine, with a screen reader | The smokes check keyboard focus and the 320 px layout; the tour runs on the saved sample offline |
+| The story review and the rehearsals | Plan Section 4.1 and 14.1: a teammate plays the sceptical judge | [demo-script.md](demo-script.md) for the booth, the deck's notes for the pitch |
+| Remotion's licence tier | Who owns Lyceum, the team or the university, decides which applies | Recorded in [video/README.md](../video/README.md); confirm before the film is published |
+| The GitHub repository's description | The house style asks for one plain sentence on GitHub, which changes a setting off this machine | Suggested: "Lyceum turns real job postings into a course decision with receipts, every semester." |
+| Section 19's remaining documents | `problem-statement.md`, `ui-accessibility-review.md` (with the axe and NVDA passes) and `user-study.md` (the pilot protocol) | Not written in this run |
+
+
+</stdin>
+codex
+I will review only the supplied plan against the embedded notes, as built record and operating brief, in the requested order.
+
+codex
+The main conflicts are the blanket rule against model authored artefacts, the survey release rules, and attainment methods that the proposed stored data cannot calculate. I am also checking the package dependencies, because Tier 1 promises outputs assigned to later tiers.
+
+codex
+The UAEU option needs assessment tool scores that the proposed intake discards. Editable thresholds also conflict with storing only a count at the original threshold. The schedule has a separate dependency problem: its Sunday decision on Tier 2 requires a Tier 1 verification package scheduled for Monday.
+
+codex
+1. Several claims exceed what the supplied notes establish.
+
+   **A universal Malaysian method.** Plan §1 says, “A mean mark, which no quality office reports on its own.” The course record note §2 says, “Threshold practice varies,” and §1 describes the UTHM report as “an example, not a national template.” These examples do not support the universal claim or the heading “Attainment, the way quality offices report it.” Configurable institutional practice is supported. A single national reporting method is not.
+
+   **Numerical mapping weights.** Plan §8.1 specifies “H, M and L as 3, 2 and 1.” The course record note describes UTHM as “using the average approach (every semester)” and the Derouich paper as using “PLO as the weighted sum of CLOs.” Neither quoted description establishes that H, M and L should become those numerical weights. That conversion is an invented product convention, not a researched institutional rule.
+
+   **Collection priorities.** Plan §7.2 says its three collection routes appear “in the order the research recommends.” The technical note instead makes “a DOCX export shaped for Microsoft Forms Quick Import” primary, alongside Google Forms, and describes the paste token as “the last resort.” The plan puts the booth collector first, paste second and campus exports third. That is a different product decision and should not be attributed to the recommendation.
+
+   **The response floor.** Plan §3.1 attributes “5 responses” to “The McGill and McLennan practice.” The technical note §5 describes McGill as requiring “a minimum of five responses for classes of 5 to 11, then 40, 35, 30 and 25 percent by size.” McLennan supports a fixed five response example. McGill does not support treating five as its rule for every class, including the proposed class of 38.
+
+   **Release before grades.** Plan §7.3 requires “comments locked until the coordinator records” that grades are released. The technical note’s McGill policy says “nothing disclosed to the instructor before final grades are processed.” The course record note likewise requires “results released to the lecturer only after grades.” The technical note’s own final recommendation inconsistently narrows this to a comment lock. The plan follows that weaker recommendation without resolving its conflict with the cited policies.
+
+   **Nulty as a standard.** Plan §7.3 calls this “Nulty's standard as the comparison.” The course record note reports, through Ahmad, that “Nulty (2008) recommends about 58% for classes under 20 and 35% over 50.” This is a secondary summary, not an established acceptance standard for the sample class of 38. Neither quoted size category covers that class. The historical Monash response rate is also an observation, not a validity threshold.
+
+   **Judging rules and score effects.** Plan §2 states, “A judge runs three tests in ten minutes,” and says “a named weakness raises scores.” The judge note says, “The finalist pack settles the timings; no rubric was found,” and reports one judge’s observation that “a named weakness raised scores.” The plan generalises an anecdote and a presentation heuristic into expectations about this competition that the notes do not establish.
+
+2. The plan conflicts with binding rules and leaves several internal gates inconsistent.
+
+   **Model authorship directly contradicts the operating brief and as built record.** The operating brief prohibits model authored text “inside shipped artefacts before the pilot.” The as built record specifies “an editable teaching pack with no model text.” Plan §0.2.4 calls this a runtime restriction and commissions model authored course records, slides, assessments and survey responses as shipped fixtures. The original prohibition contains no runtime qualification. Reviewing the fixtures or calling them data does not change their authorship. The proposed owner confirmation would authorise a policy change; it cannot establish that the existing rule remains unchanged.
+
+   **The colour exclusion changes a binding rule.** The operating brief requires colours and type to come from `src/theme/tokens.ts`. D0 deliberately introduces partner colours outside that source and excludes their directory from the checker. This is a policy exception. Passing the altered checker would not demonstrate compliance with the unchanged rule.
+
+   **The slide specification does not fulfil the labelling rule.** The operating brief requires honesty labels on every surface. The plan additionally requires the demo line wherever the UTP mark appears. D2 specifies the mark on content slides but specifies the honesty line only on the closing master. An isolated content slide would therefore have institutional branding without the required disclosure unless an additional requirement is supplied.
+
+   **The recording gate conflicts with earlier acceptance work.** Section 0.2 prohibits every render and export run before approval. D0 rasterises marks, D1 tests an exported ZIP, and D2 generates fourteen packs for inspection. The command list does not resolve whether these verification exports are exempt. The plan cannot require them before D9 while retaining an unqualified prohibition.
+
+   **Capture approval and institutional branding approval are separate gates.** D9 captures branded app screens and places screenshots into the deck and poster. Section 18 separately restricts the mark on those surfaces and in the film. A general instruction to record would not satisfy the university confirmation requirement. The D9 prompt does not check that distinction.
+
+   **The host instructions conflict internally.** Section 0.2 limits speech to welcome, empty states, completions and recap, and excludes provenance. D6 requires explanatory speech at ten stops, including quotations, counts and synthetic results. It does not explain how those lines remain within the narrower rule.
+
+   The supplied as built extract is insufficient to verify most of §1’s detailed claims about current code. Those claims should remain unverified rather than being treated as confirmed by this review.
+
+3. The schedule fails its own dependency order before implementation speed is considered.
+
+   Tier 2 depends on Tier 1 being green on Sunday night, but Tier 1 includes D8, scheduled for Monday. Running D3 and D4 after that gate contradicts their weekend slots. The unconfirmed flight may shorten the available window further.
+
+   **D0 and D1, Friday.** D1’s complete course ZIP depends on D2’s packs and lab sheets, D4’s OBE report, and D7’s quiz and rubric exports. It cannot meet that acceptance before those packages exist. Cut the complete bundle promise first. A manifest can identify unavailable components, but that is a narrower deliverable.
+
+   **D2, Friday and Saturday.** Fourteen sessions require 84 to 126 authored slides with notes, ten lab sheets, a project brief, masters, a second renderer for previews, fourteen generated files and subject review. This cannot credibly share the stated window with the surrounding schema, course screen and comparison work. Cut the fourteen week content promise first, retaining the material needed to inspect the demonstrated revision. Automated text production does not complete subject review.
+
+   **D5, Saturday.** This combines several diff algorithms, historical data handling, structural slide highlighting, a swipe interface, a scrubber, charts, counters and accessibility checks across several screens. Cut slide swipe, onion skin, the scrubber and counters first. The wording diff, hours table and decision link carry the essential claim.
+
+   **D6, Sunday.** A new guided runner, ten stops, workspace restoration, phone layouts, a printable recap, a programme wall and a kiosk are several features, not one page. Cut the programme wall, kiosk and animated claim counters first. Their removal reduces Tier 1 itself, which cutting later tiers does not accomplish.
+
+   **D3, Saturday and Sunday.** Two instruments, a phone page, a network collector, paste codes, DOCX generation, three import formats, release controls and privacy checks do not fit this shared window as verified collection infrastructure. Cut DOCX export, additional import formats and secondary collection paths first. Cutting access controls or response integrity would leave an unsafe demonstration of the claimed survey process.
+
+   **D4, Sunday.** The direct table is much smaller than the full package. The UAEU method requires data the proposed intake does not retain, while the PLO calculation requires an unresolved measurement policy. Cut those two options first. More coding time cannot recover information already discarded at intake.
+
+   **D7, Monday.** This is the first whole package to cut. Semantic item checks, three question types, two export standards and LMS compatibility exceed the stated verification. However, cutting D7 also removes outputs already promised by D1 and D2. Those dependencies prevent it from being genuinely optional under the present acceptance lines.
+
+   **D8 and D9.** D8 is treated as documentation despite adding tools, extending integration checks and repeating full verification after each tier. Cut the new door tools before cutting regression checks. D9’s hour is explicitly machine time; it supplies no allowance for visual corrections, actual player testing or another capture after a fault. Cut secondary media outputs before compressing inspection. The outstanding Claude Desktop, NVDA and actual offline checks in the as built record also remain outstanding.
+
+4. A quality office would challenge the course record, survey process and attainment definitions on the following grounds.
+
+   **The accreditation claim exceeds the file.** The plan does not establish which accreditation framework governs the demo programme. Its engineering checklist explicitly requires evidence that §4.5 excludes, including graded samples and complete examination evidence. Naming those omissions in a manifest documents an incomplete demonstration file. It does not establish accreditation depth. The fallback to only the 2013 and 2014 references also fails the plan’s own recent reference requirement, although retaining those books alongside current references is a separate matter.
+
+   **The CLO5 taxonomy change is not defensible as written.** Both versions require students to “design and present.” The technical note places “design” under Create. Changing static output to interactive output does not by itself explain a change from Apply to Create. CLO3, CLO4 and CLO5 also contain multiple assessed actions despite the stated requirement for one measurable verb.
+
+   **The baseline already contains much of the advertised change.** It already teaches interaction, two dashboard weeks and a dashboard project. The before and after cannot imply that dashboards or interactive work were absent. The plan needs evidence that the proposed hours, assessment and materials actually change, beyond changing CLO wording.
+
+   **The table of specifications cannot be computed from the proposed fields.** A component weight, a list of CLOs and a list of Bloom levels do not allocate marks among those CLOs and levels. The 25% project and 40% examination are especially ambiguous. Counting the full component against every linked CLO would duplicate weight. Equal division would introduce an unstated assessment decision.
+
+   **The rubric cannot yet support the promised marking arithmetic.** Its model contains criteria and performance descriptions but no criterion weights, score values or allocation to CLOs. It does not explicitly assess CLO4’s usability evidence and evaluation of competing designs. A team project also needs evidence supporting individual CLO attainment; a common team mark does not establish each member’s performance.
+
+   **The SLT checks establish totals without establishing workload.** One weekly topic with one kind and an hours value does not explain the separate lecture, lab and assessment allocations. The assessment work breakdown omits the critique essay. It is unclear whether assessed lab work, quizzes and presentations are already counted within contact time. Moving two lab hours also requires a changed weekly allocation, not merely a total that remains 56.
+
+   **Item lint is being given assessment authority it cannot establish.** Surface rules can detect prohibited phrases or option counts. They cannot establish one defensible answer, plausible misconceptions, absence of semantic clues or the claimed cognitive demand. Inserting a Bloom verb into a stem does not create an assessment at that level. A lint pass is insufficient grounds for approving an item for teaching or examination use.
+
+   **Export checks stop short of their claims.** Well formed XML does not establish a valid QTI package or a successful Moodle import. The technical note explicitly recommends schema validation and an actual Moodle import; D7 substitutes a parser check. PPTX checks for titles, notes and font size likewise omit alt text and do not establish sensible reading order or absence of clipped content.
+
+   **The proposed SSRT is a new questionnaire.** Selecting and rewriting twelve items from SEEQ dimensions does not establish equivalence to SEEQ or to UTP’s undisclosed instrument. The adapted label identifies its origin but supplies no validation. The response anchors, handling of unanswered items and treatment of questions a respondent cannot assess also need definition before means and target shares have a stable interpretation.
+
+   **The collection design does not establish anonymity or enforce release restrictions.** Paste codes returned through email or an LMS can identify their sender. Comments can identify students even after name columns are discarded. The proposed API uses the same token in submission and response retrieval routes, with no separate reader authorisation specified. A display floor and a comment lock would not protect raw responses exposed through that route. Linking UTP’s general notice does not establish who operates this prototype or governs its response handling.
+
+   **Booth participants are not the course cohort.** Judges provide real answers about a demonstration, not student evidence about teaching they received. Marking those records `sample: false` without explicit exclusion from course reports risks counting booth activity as educational evidence. The plan also lacks a defined approach to repeated submissions, duplicate imports and eligible respondents. Five requests are not necessarily five distinct responses.
+
+   **The threshold counts become stale when settings change.** Intake stores `atOrAbove` but does not specify the threshold and policy version attached to that count. Changing the institution setting could relabel an old count as if it had been computed at the new threshold. Ten histogram bins cannot recover the count at an arbitrary new threshold, such as 57. Historical reports also need their original method and KPI preserved.
+
+   **The attainment denominator is unresolved.** The plan does not define how missing marks, absence, withdrawal or repeat attempts affect n, N and the KPI. Dividing successful students by valid marks and dividing them by enrolment answer different questions. Displaying n of N does not settle which denominator the attainment share uses.
+
+   **The UAEU option is not computable from the retained data.** That method requires attainment for each assessment tool, its maximum and its weight. Consider two equally weighted tools marked out of 100. Two students scoring `(70, 70)` each produce 100% tool attainment. Students scoring `(100, 40)` and `(40, 100)` produce 50% tool attainment. Both cases produce identical final CLO marks of 70 for both students. The proposed CLO summaries cannot distinguish them.
+
+   **The PLO result is an unsupported index.** A weighted average of CLO pass shares is not a measured share of students attaining a PLO. H, M and L express mapping strength, but the plan has not justified treating them as equally spaced numerical quantities. Calling the result a course contribution limits its scope without validating its weights or establishing that comparison with 60% reproduces the cited institutional method.
+
+   **The direct and indirect gap needs a defined unit.** A direct percentage cannot be subtracted from a mean on a scale of 1 to 5. Comparing two shares produces percentage points, but achievement above 55 and confidence at 4 or higher remain different constructs. Different respondent coverage further limits interpretation. Such a gap cannot establish individual miscalibration or learning gain.
+
+   **Wilson intervals need an inference target.** If all 38 eligible marks are observed, the recorded cohort proportion is known. An interval would concern a model for some wider population or repeated process, not uncertainty about the filed count itself. It does not account for missing marks, survey selection or shared team scores. The separately referenced statistics note was not supplied, so its treatment of these issues cannot be checked here.
+
+   **Historical comparisons need more than matching CLO identifiers.** CLO5 changes meaning, and the plan also changes teaching and potentially assessment. Prior and current pass shares are therefore not automatically comparable measures. The plan does not specify immutable snapshots of the assessment allocation, rubric, survey wording, threshold policy and teaching pack used for each term. A sentence denying learning gain does not resolve those measurement differences.
+
+5. A real lecturer and quality office have not tested a real course through the loop.  
+   No measured evidence shows better decisions, less staff work or improved learning.  
+   The buyer, pilot purchase decision and campus deployment remain unresolved behind one synthetic course.
+tokens used
+26,747
+1. Several claims exceed what the supplied notes establish.
+
+   **A universal Malaysian method.** Plan §1 says, “A mean mark, which no quality office reports on its own.” The course record note §2 says, “Threshold practice varies,” and §1 describes the UTHM report as “an example, not a national template.” These examples do not support the universal claim or the heading “Attainment, the way quality offices report it.” Configurable institutional practice is supported. A single national reporting method is not.
+
+   **Numerical mapping weights.** Plan §8.1 specifies “H, M and L as 3, 2 and 1.” The course record note describes UTHM as “using the average approach (every semester)” and the Derouich paper as using “PLO as the weighted sum of CLOs.” Neither quoted description establishes that H, M and L should become those numerical weights. That conversion is an invented product convention, not a researched institutional rule.
+
+   **Collection priorities.** Plan §7.2 says its three collection routes appear “in the order the research recommends.” The technical note instead makes “a DOCX export shaped for Microsoft Forms Quick Import” primary, alongside Google Forms, and describes the paste token as “the last resort.” The plan puts the booth collector first, paste second and campus exports third. That is a different product decision and should not be attributed to the recommendation.
+
+   **The response floor.** Plan §3.1 attributes “5 responses” to “The McGill and McLennan practice.” The technical note §5 describes McGill as requiring “a minimum of five responses for classes of 5 to 11, then 40, 35, 30 and 25 percent by size.” McLennan supports a fixed five response example. McGill does not support treating five as its rule for every class, including the proposed class of 38.
+
+   **Release before grades.** Plan §7.3 requires “comments locked until the coordinator records” that grades are released. The technical note’s McGill policy says “nothing disclosed to the instructor before final grades are processed.” The course record note likewise requires “results released to the lecturer only after grades.” The technical note’s own final recommendation inconsistently narrows this to a comment lock. The plan follows that weaker recommendation without resolving its conflict with the cited policies.
+
+   **Nulty as a standard.** Plan §7.3 calls this “Nulty's standard as the comparison.” The course record note reports, through Ahmad, that “Nulty (2008) recommends about 58% for classes under 20 and 35% over 50.” This is a secondary summary, not an established acceptance standard for the sample class of 38. Neither quoted size category covers that class. The historical Monash response rate is also an observation, not a validity threshold.
+
+   **Judging rules and score effects.** Plan §2 states, “A judge runs three tests in ten minutes,” and says “a named weakness raises scores.” The judge note says, “The finalist pack settles the timings; no rubric was found,” and reports one judge’s observation that “a named weakness raised scores.” The plan generalises an anecdote and a presentation heuristic into expectations about this competition that the notes do not establish.
+
+2. The plan conflicts with binding rules and leaves several internal gates inconsistent.
+
+   **Model authorship directly contradicts the operating brief and as built record.** The operating brief prohibits model authored text “inside shipped artefacts before the pilot.” The as built record specifies “an editable teaching pack with no model text.” Plan §0.2.4 calls this a runtime restriction and commissions model authored course records, slides, assessments and survey responses as shipped fixtures. The original prohibition contains no runtime qualification. Reviewing the fixtures or calling them data does not change their authorship. The proposed owner confirmation would authorise a policy change; it cannot establish that the existing rule remains unchanged.
+
+   **The colour exclusion changes a binding rule.** The operating brief requires colours and type to come from `src/theme/tokens.ts`. D0 deliberately introduces partner colours outside that source and excludes their directory from the checker. This is a policy exception. Passing the altered checker would not demonstrate compliance with the unchanged rule.
+
+   **The slide specification does not fulfil the labelling rule.** The operating brief requires honesty labels on every surface. The plan additionally requires the demo line wherever the UTP mark appears. D2 specifies the mark on content slides but specifies the honesty line only on the closing master. An isolated content slide would therefore have institutional branding without the required disclosure unless an additional requirement is supplied.
+
+   **The recording gate conflicts with earlier acceptance work.** Section 0.2 prohibits every render and export run before approval. D0 rasterises marks, D1 tests an exported ZIP, and D2 generates fourteen packs for inspection. The command list does not resolve whether these verification exports are exempt. The plan cannot require them before D9 while retaining an unqualified prohibition.
+
+   **Capture approval and institutional branding approval are separate gates.** D9 captures branded app screens and places screenshots into the deck and poster. Section 18 separately restricts the mark on those surfaces and in the film. A general instruction to record would not satisfy the university confirmation requirement. The D9 prompt does not check that distinction.
+
+   **The host instructions conflict internally.** Section 0.2 limits speech to welcome, empty states, completions and recap, and excludes provenance. D6 requires explanatory speech at ten stops, including quotations, counts and synthetic results. It does not explain how those lines remain within the narrower rule.
+
+   The supplied as built extract is insufficient to verify most of §1’s detailed claims about current code. Those claims should remain unverified rather than being treated as confirmed by this review.
+
+3. The schedule fails its own dependency order before implementation speed is considered.
+
+   Tier 2 depends on Tier 1 being green on Sunday night, but Tier 1 includes D8, scheduled for Monday. Running D3 and D4 after that gate contradicts their weekend slots. The unconfirmed flight may shorten the available window further.
+
+   **D0 and D1, Friday.** D1’s complete course ZIP depends on D2’s packs and lab sheets, D4’s OBE report, and D7’s quiz and rubric exports. It cannot meet that acceptance before those packages exist. Cut the complete bundle promise first. A manifest can identify unavailable components, but that is a narrower deliverable.
+
+   **D2, Friday and Saturday.** Fourteen sessions require 84 to 126 authored slides with notes, ten lab sheets, a project brief, masters, a second renderer for previews, fourteen generated files and subject review. This cannot credibly share the stated window with the surrounding schema, course screen and comparison work. Cut the fourteen week content promise first, retaining the material needed to inspect the demonstrated revision. Automated text production does not complete subject review.
+
+   **D5, Saturday.** This combines several diff algorithms, historical data handling, structural slide highlighting, a swipe interface, a scrubber, charts, counters and accessibility checks across several screens. Cut slide swipe, onion skin, the scrubber and counters first. The wording diff, hours table and decision link carry the essential claim.
+
+   **D6, Sunday.** A new guided runner, ten stops, workspace restoration, phone layouts, a printable recap, a programme wall and a kiosk are several features, not one page. Cut the programme wall, kiosk and animated claim counters first. Their removal reduces Tier 1 itself, which cutting later tiers does not accomplish.
+
+   **D3, Saturday and Sunday.** Two instruments, a phone page, a network collector, paste codes, DOCX generation, three import formats, release controls and privacy checks do not fit this shared window as verified collection infrastructure. Cut DOCX export, additional import formats and secondary collection paths first. Cutting access controls or response integrity would leave an unsafe demonstration of the claimed survey process.
+
+   **D4, Sunday.** The direct table is much smaller than the full package. The UAEU method requires data the proposed intake does not retain, while the PLO calculation requires an unresolved measurement policy. Cut those two options first. More coding time cannot recover information already discarded at intake.
+
+   **D7, Monday.** This is the first whole package to cut. Semantic item checks, three question types, two export standards and LMS compatibility exceed the stated verification. However, cutting D7 also removes outputs already promised by D1 and D2. Those dependencies prevent it from being genuinely optional under the present acceptance lines.
+
+   **D8 and D9.** D8 is treated as documentation despite adding tools, extending integration checks and repeating full verification after each tier. Cut the new door tools before cutting regression checks. D9’s hour is explicitly machine time; it supplies no allowance for visual corrections, actual player testing or another capture after a fault. Cut secondary media outputs before compressing inspection. The outstanding Claude Desktop, NVDA and actual offline checks in the as built record also remain outstanding.
+
+4. A quality office would challenge the course record, survey process and attainment definitions on the following grounds.
+
+   **The accreditation claim exceeds the file.** The plan does not establish which accreditation framework governs the demo programme. Its engineering checklist explicitly requires evidence that §4.5 excludes, including graded samples and complete examination evidence. Naming those omissions in a manifest documents an incomplete demonstration file. It does not establish accreditation depth. The fallback to only the 2013 and 2014 references also fails the plan’s own recent reference requirement, although retaining those books alongside current references is a separate matter.
+
+   **The CLO5 taxonomy change is not defensible as written.** Both versions require students to “design and present.” The technical note places “design” under Create. Changing static output to interactive output does not by itself explain a change from Apply to Create. CLO3, CLO4 and CLO5 also contain multiple assessed actions despite the stated requirement for one measurable verb.
+
+   **The baseline already contains much of the advertised change.** It already teaches interaction, two dashboard weeks and a dashboard project. The before and after cannot imply that dashboards or interactive work were absent. The plan needs evidence that the proposed hours, assessment and materials actually change, beyond changing CLO wording.
+
+   **The table of specifications cannot be computed from the proposed fields.** A component weight, a list of CLOs and a list of Bloom levels do not allocate marks among those CLOs and levels. The 25% project and 40% examination are especially ambiguous. Counting the full component against every linked CLO would duplicate weight. Equal division would introduce an unstated assessment decision.
+
+   **The rubric cannot yet support the promised marking arithmetic.** Its model contains criteria and performance descriptions but no criterion weights, score values or allocation to CLOs. It does not explicitly assess CLO4’s usability evidence and evaluation of competing designs. A team project also needs evidence supporting individual CLO attainment; a common team mark does not establish each member’s performance.
+
+   **The SLT checks establish totals without establishing workload.** One weekly topic with one kind and an hours value does not explain the separate lecture, lab and assessment allocations. The assessment work breakdown omits the critique essay. It is unclear whether assessed lab work, quizzes and presentations are already counted within contact time. Moving two lab hours also requires a changed weekly allocation, not merely a total that remains 56.
+
+   **Item lint is being given assessment authority it cannot establish.** Surface rules can detect prohibited phrases or option counts. They cannot establish one defensible answer, plausible misconceptions, absence of semantic clues or the claimed cognitive demand. Inserting a Bloom verb into a stem does not create an assessment at that level. A lint pass is insufficient grounds for approving an item for teaching or examination use.
+
+   **Export checks stop short of their claims.** Well formed XML does not establish a valid QTI package or a successful Moodle import. The technical note explicitly recommends schema validation and an actual Moodle import; D7 substitutes a parser check. PPTX checks for titles, notes and font size likewise omit alt text and do not establish sensible reading order or absence of clipped content.
+
+   **The proposed SSRT is a new questionnaire.** Selecting and rewriting twelve items from SEEQ dimensions does not establish equivalence to SEEQ or to UTP’s undisclosed instrument. The adapted label identifies its origin but supplies no validation. The response anchors, handling of unanswered items and treatment of questions a respondent cannot assess also need definition before means and target shares have a stable interpretation.
+
+   **The collection design does not establish anonymity or enforce release restrictions.** Paste codes returned through email or an LMS can identify their sender. Comments can identify students even after name columns are discarded. The proposed API uses the same token in submission and response retrieval routes, with no separate reader authorisation specified. A display floor and a comment lock would not protect raw responses exposed through that route. Linking UTP’s general notice does not establish who operates this prototype or governs its response handling.
+
+   **Booth participants are not the course cohort.** Judges provide real answers about a demonstration, not student evidence about teaching they received. Marking those records `sample: false` without explicit exclusion from course reports risks counting booth activity as educational evidence. The plan also lacks a defined approach to repeated submissions, duplicate imports and eligible respondents. Five requests are not necessarily five distinct responses.
+
+   **The threshold counts become stale when settings change.** Intake stores `atOrAbove` but does not specify the threshold and policy version attached to that count. Changing the institution setting could relabel an old count as if it had been computed at the new threshold. Ten histogram bins cannot recover the count at an arbitrary new threshold, such as 57. Historical reports also need their original method and KPI preserved.
+
+   **The attainment denominator is unresolved.** The plan does not define how missing marks, absence, withdrawal or repeat attempts affect n, N and the KPI. Dividing successful students by valid marks and dividing them by enrolment answer different questions. Displaying n of N does not settle which denominator the attainment share uses.
+
+   **The UAEU option is not computable from the retained data.** That method requires attainment for each assessment tool, its maximum and its weight. Consider two equally weighted tools marked out of 100. Two students scoring `(70, 70)` each produce 100% tool attainment. Students scoring `(100, 40)` and `(40, 100)` produce 50% tool attainment. Both cases produce identical final CLO marks of 70 for both students. The proposed CLO summaries cannot distinguish them.
+
+   **The PLO result is an unsupported index.** A weighted average of CLO pass shares is not a measured share of students attaining a PLO. H, M and L express mapping strength, but the plan has not justified treating them as equally spaced numerical quantities. Calling the result a course contribution limits its scope without validating its weights or establishing that comparison with 60% reproduces the cited institutional method.
+
+   **The direct and indirect gap needs a defined unit.** A direct percentage cannot be subtracted from a mean on a scale of 1 to 5. Comparing two shares produces percentage points, but achievement above 55 and confidence at 4 or higher remain different constructs. Different respondent coverage further limits interpretation. Such a gap cannot establish individual miscalibration or learning gain.
+
+   **Wilson intervals need an inference target.** If all 38 eligible marks are observed, the recorded cohort proportion is known. An interval would concern a model for some wider population or repeated process, not uncertainty about the filed count itself. It does not account for missing marks, survey selection or shared team scores. The separately referenced statistics note was not supplied, so its treatment of these issues cannot be checked here.
+
+   **Historical comparisons need more than matching CLO identifiers.** CLO5 changes meaning, and the plan also changes teaching and potentially assessment. Prior and current pass shares are therefore not automatically comparable measures. The plan does not specify immutable snapshots of the assessment allocation, rubric, survey wording, threshold policy and teaching pack used for each term. A sentence denying learning gain does not resolve those measurement differences.
+
+5. A real lecturer and quality office have not tested a real course through the loop.  
+   No measured evidence shows better decisions, less staff work or improved learning.  
+   The buyer, pilot purchase decision and campus deployment remain unresolved behind one synthetic course.

@@ -58,10 +58,17 @@ try {
   await click("login-P-SOBRI");
   // The notice shows only where synthetic data is on screen: the research sandbox.
   const noticeScreens = new Set(["acceptance", "trends", "backtest", "dataroom", "index"]);
-  // The course workspace and the upload screen are reached through the loop rail (Course and Learn).
-  const control = { studio: "rail-course", learn: "rail-learn" };
+  // The course workspace and the upload screen are reached through the course's loop (Course and Learn),
+  // entered from the sidebar's selected course chip; the sandbox screens sit in a fold that opens on click.
+  const enterCourse = async () => click(await page.$eval('.course-chip[aria-pressed="true"]', (chip) => chip.dataset.demoId));
+  const go = async (screen) => {
+    if (screen === "studio") return enterCourse();
+    if (screen === "learn") { await enterCourse(); return click("rail-learn"); }
+    if (noticeScreens.has(screen) && !(await page.$eval(".nav-fold", (fold) => fold.open))) await click("nav-sandbox");
+    return click(`nav-${screen}`);
+  };
   for (const screen of ["courses", "studio", "acceptance", "trends", "backtest", "dataroom", "office", "evaluation", "index", "learn", "inbox"]) {
-    await click(control[screen] ?? `nav-${screen}`);
+    await go(screen);
     await page.waitForFunction((target) => window.__lyceum?.getState().screen === target, {}, screen);
     assert.equal(await page.$$eval('[aria-label="Prototype data limitations"]', (elements) => elements.length), noticeScreens.has(screen) ? 1 : 0, screen);
     if (screen === "index") {

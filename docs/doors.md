@@ -61,12 +61,12 @@ Tools: lyceum_courses (read-only), lyceum_sources (read-only), lyceum_evidence_r
 
 lyceum_evidence_report { course: CS310 }, the first lines:
 
-From the Lyceum workspace exported at 2026-07-01T10:00:00Z. Read-only: nothing was changed in the workspace.
+From the Lyceum workspace exported at 2026-10-22T10:00:00Z. Read-only: nothing was changed in the workspace.
 
 # CS310 evidence report
 
 Course: Data Visualisation
-Generated: 2026-07-01T10:00:00Z
+Generated: 2026-10-22T10:00:00Z
 Scope: 10 postings collected on request from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, recorded in this workspace. Nothing is collected without a request.
 
 ## Observed requirements

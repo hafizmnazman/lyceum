@@ -1,5 +1,5 @@
 // The course's own steps (plan Section 4): Course (setup), Update, Teach and
-// History, one screen each, chosen by the loop rail. The old change proposal and
+// History, one screen each, chosen on the step path. The old change proposal and
 // its review chain live here too, as the illustrative sandbox's Proposal screen.
 
 import { useState } from "react";
@@ -103,7 +103,7 @@ function fmtWhen(iso: string): string {
   return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 }
 
-/** The course's Course, Update, Teach and History steps (plan Section 4), one per screen, chosen by the loop rail. */
+/** The course's Course, Update, Teach and History steps (plan Section 4), one per screen, chosen on the step path. */
 export function StudioScreen() {
   const state = useStore();
   const person = currentPerson();
@@ -116,7 +116,7 @@ export function StudioScreen() {
 const STUDIO_HELPER: Record<"course" | "update" | "teach" | "history", StepHelper> = {
   course: { who: "folio", line: "Reads the syllabus, the outline and the documents you file, and keeps the outcomes, topics and hours in one record." },
   update: { who: "quill", line: "Checks a revision against the hours, the links and the protected topics. It never adopts a version for you." },
-  teach: { who: "prism", line: "Builds an editable teaching pack from a saved session and the evidence behind its outcomes. No model writes a word." },
+  teach: { who: "prism", line: "Builds an editable teaching pack from a saved session and the evidence behind its outcomes." },
   history: { who: "folio", line: "Keeps every version and every decision, in the order they were made." },
 };
 
@@ -127,7 +127,6 @@ function StudioCourse({ state, person, subject, subjects }: { state: AppState; p
   const loop = loopState(state, subject.id);
   const retained = loop.decision?.governing?.outcome === "retain";
   return <StepFrame state={state} step={view} subject={subject} subjects={subjects} helper={STUDIO_HELPER[view]}>
-    <div className="course-workspace-meta"><Tag>{subject.workspaceOnly ? "Personal course workspace" : subject.status === "proposed" ? "Proposed course" : "Course workspace"}</Tag><span role="status">{state.persistenceStatus === "unavailable" ? "Browser storage unavailable. Export your plan before closing." : state.persistenceStatus === "pending" ? "Saving in this browser..." : "Changes stored in this browser"}</span></div>
     {/* Every step stays mounted and hidden when not shown, so an open editor survives a step change (unsaved.ts). */}
     <div className="step-view" hidden={view !== "course"}>
       <CourseOverview state={state} person={person} subject={subject} proposal={proposal} onCurriculum={() => openStep(subject.id, "update")} onEvidence={() => openStep(subject.id, "watch")} onPlan={() => openStep(subject.id, "teach")} onProposal={() => navigate("proposal")} />
@@ -166,7 +165,7 @@ export function ProposalScreen() {
   const lastProposal = [...state.proposals].reverse().find((p) => p.subjectId === subject.id);
   const mayDraft = can(person, "draft-change", { subjectId: subject.id, assignments: state.assignments });
   return <Page wide>
-    <PageHead eyebrow="Sandbox · illustrative" title="Change proposal" context="The earlier review chain: a drafted proposal, a coordinator review, an acceptance test on a synthetic cohort and a management approval. It is kept for the research sandbox; course decisions are recorded in each course's Decide step."
+    <PageHead eyebrow="Sandbox · illustrative" title="Change proposal" context="The earlier review chain, kept as an illustration: a drafted proposal, a coordinator review, an acceptance test on a synthetic cohort and a management approval. Course decisions are recorded in each course's Decide step."
       actions={subjects.length > 1 ? <label className="course-switcher">Course<Select aria-label="Choose course for the proposal" value={subject.id} onChange={(e) => { selectSubject(e.target.value); selectProposal(null); }}>{subjects.map((s) => <option key={s.id} value={s.id}>{s.id} · {s.title}</option>)}</Select></label> : undefined} />
     {proposal ? <>
       <div className="section-heading"><h2>{proposal.subjectId}: curriculum change proposal</h2><Tag tone={STATUS_TONE[proposal.status]}>{STATUS_LABEL[proposal.status]}</Tag></div>

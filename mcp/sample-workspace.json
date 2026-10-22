@@ -1,7 +1,7 @@
 {
   "application": "Lyceum",
   "schemaVersion": 5,
-  "exportedAt": "2026-07-01T10:00:00Z",
+  "exportedAt": "2026-10-22T10:00:00Z",
   "data": {
     "programme": {
       "id": "BSC-CS",
@@ -11464,7 +11464,7 @@
         "agentFindings": "Evidence brief for CS310 from Dr Sobri: Small refresh within existing hours.",
         "briefId": "BR-CS310-36",
         "read": true,
-        "createdAt": "2026-07-01T10:00:00Z"
+        "createdAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "N-43",
@@ -11474,7 +11474,7 @@
         "agentFindings": "Dr Rahman recorded a decision on your CS310 brief: Adopt the change.",
         "briefId": "BR-CS310-36",
         "read": false,
-        "createdAt": "2026-07-01T10:00:00Z"
+        "createdAt": "2026-10-22T10:00:00Z"
       }
     ],
     "predictions": [],
@@ -11507,7 +11507,7 @@
             "n": 24
           }
         ],
-        "filedAt": "2026-07-01T10:00:00Z",
+        "filedAt": "2026-10-22T10:00:00Z",
         "sourceFileName": "results.xlsx",
         "courseVersionId": "CS310-workspace-45",
         "sample": true
@@ -11519,7 +11519,7 @@
         "subjectId": "CS310",
         "term": "2026/2027 semester 1",
         "recordCount": 24,
-        "ingestedAt": "2026-07-01T10:00:00Z",
+        "ingestedAt": "2026-10-22T10:00:00Z",
         "verified": false,
         "sourceFileName": "results.xlsx",
         "sample": true
@@ -11639,7 +11639,7 @@
           "topics": []
         },
         "changedBy": "P-SOBRI",
-        "changedAt": "2026-07-01T10:00:00Z",
+        "changedAt": "2026-10-22T10:00:00Z",
         "reason": "Baseline preserved before revision."
       },
       {
@@ -11707,7 +11707,7 @@
         },
         "effectiveTerm": "2026/2027 semester 1",
         "changedBy": "P-SOBRI",
-        "changedAt": "2026-07-01T10:00:00Z",
+        "changedAt": "2026-10-22T10:00:00Z",
         "reason": "Adopted by the programme owner on the brief: add a dashboard exercise within the existing hours."
       }
     ],
@@ -11730,13 +11730,13 @@
             "resources": "",
             "status": "ready",
             "id": "TS-47",
-            "updatedAt": "2026-07-01T10:00:00Z",
+            "updatedAt": "2026-10-22T10:00:00Z",
             "updatedBy": "P-SOBRI",
             "courseVersionId": "CS310-workspace-45",
             "needsReview": false
           }
         ],
-        "updatedAt": "2026-07-01T10:00:00Z",
+        "updatedAt": "2026-10-22T10:00:00Z",
         "updatedBy": "P-SOBRI"
       }
     ],
@@ -11838,28 +11838,28 @@
         "checkedRevision": 2,
         "history": [
           {
-            "at": "2026-07-01T10:00:00Z",
+            "at": "2026-10-22T10:00:00Z",
             "byPersonId": "P-SOBRI",
             "action": "created",
             "note": "Revision started from CS310-v1",
             "revision": 1
           },
           {
-            "at": "2026-07-01T10:00:00Z",
+            "at": "2026-10-22T10:00:00Z",
             "byPersonId": "P-SOBRI",
             "action": "saved",
             "note": "Candidate edited; previous checks invalidated.",
             "revision": 2
           },
           {
-            "at": "2026-07-01T10:00:00Z",
+            "at": "2026-10-22T10:00:00Z",
             "byPersonId": "P-SOBRI",
             "action": "checked",
             "note": "Configured constraints checked. Academic judgement and institutional review remain required.",
             "revision": 2
           },
           {
-            "at": "2026-07-01T10:00:00Z",
+            "at": "2026-10-22T10:00:00Z",
             "byPersonId": "P-SOBRI",
             "action": "adopted",
             "note": "Used as local course version CS310-workspace-45. Adopted by the programme owner on the brief: add a dashboard exercise within the existing hours.",
@@ -11890,7 +11890,7 @@
         },
         "reviewed": true,
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "EV-CS310-3",
@@ -11913,7 +11913,7 @@
         },
         "reviewed": true,
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "EV-CS310-4",
@@ -11936,7 +11936,7 @@
         },
         "reviewed": true,
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "EV-CS310-5",
@@ -11959,7 +11959,7 @@
         },
         "reviewed": false,
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "EV-CS310-6",
@@ -11982,7 +11982,7 @@
         },
         "reviewed": true,
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "EV-CS310-7",
@@ -12005,7 +12005,7 @@
         },
         "reviewed": true,
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "EV-CS310-8",
@@ -12028,7 +12028,7 @@
         },
         "reviewed": true,
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "EV-CS310-9",
@@ -12051,7 +12051,7 @@
         },
         "reviewed": true,
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "EV-CS310-10",
@@ -12074,7 +12074,7 @@
         },
         "reviewed": true,
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "EV-CS310-11",
@@ -12097,7 +12097,7 @@
         },
         "reviewed": true,
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       }
     ],
     "skillMentions": [
@@ -12109,7 +12109,7 @@
         "excerpt": "- Proficiency in SQL",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-13",
@@ -12119,7 +12119,7 @@
         "excerpt": "You'll build metrics, scalable data pipelines, dashboards, and reports to inform and run the business.",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-14",
@@ -12129,7 +12129,7 @@
         "excerpt": "- Ability to design, implement, and maintain data pipelines and dashboards to generate actionable insights based on stakeholder requirements",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-15",
@@ -12139,7 +12139,7 @@
         "excerpt": "From building scalable dashboards to crafting compelling data narratives, your insights will directly shape how we run and grow the business.",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-16",
@@ -12149,7 +12149,7 @@
         "excerpt": "- Build and maintain the metric definitions, metadata, and business context that enable AI agents to help stakeholders explore trusted data and answer business questions independently",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-17",
@@ -12159,7 +12159,7 @@
         "excerpt": "We're looking for a data analyst with a passion for analyzing data, statistical models, and running experiments to drive impact.",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-18",
@@ -12169,7 +12169,7 @@
         "excerpt": "You'll build metrics, scalable data pipelines, dashboards, and reports to inform and run the business.",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-19",
@@ -12179,7 +12179,7 @@
         "excerpt": "- Proficiency in SQL, including complex query optimization and data modeling",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-20",
@@ -12189,7 +12189,7 @@
         "excerpt": "- Proficiency in Scala or Python for data pipeline development, not just scripting and SQL",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-21",
@@ -12199,7 +12199,7 @@
         "excerpt": "- Develop dashboards, automated reporting, and thoughtful analyses to surface actionable insights and proactively identify business opportunities",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-22",
@@ -12209,7 +12209,7 @@
         "excerpt": "- Build and maintain the metric definitions, metadata, and business context that enable AI agents to help stakeholders explore trusted data and answer business questions independently",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-23",
@@ -12219,7 +12219,7 @@
         "excerpt": "• Create fee explainability to internal and external stakeholders and host education sessions for internal teams to scale knowledge",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-24",
@@ -12229,7 +12229,7 @@
         "excerpt": "The team owns everything from hierarchical time series and agentic forecasting tools that predict payment volumes and revenue margins, to the governed metrics platform that feeds company-wide dashboards and executive reporting.",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-25",
@@ -12239,7 +12239,7 @@
         "excerpt": "We partner closely with Finance and Strategy, GTM, and Product stakeholders to directly inform financial decisions across Stripe's entire business.",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-26",
@@ -12249,7 +12249,7 @@
         "excerpt": "- A PhD, MS, or BS in a quantitative field (e.g., Statistics, Operations Research, Economics, Computer Science, Engineering)",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-27",
@@ -12259,7 +12259,7 @@
         "excerpt": "• Own roadmap prioritization, execution quality, and stakeholder alignment for both workstreams.",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-28",
@@ -12269,7 +12269,7 @@
         "excerpt": "- SQL;",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-29",
@@ -12279,7 +12279,7 @@
         "excerpt": "- Programming languages including Python or R;",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-30",
@@ -12289,7 +12289,7 @@
         "excerpt": "Master’s degree or foreign equivalent in Statistics, Data Analytics, Engineering or a related field, plus 5 years of related work experience in data science or quantitative modeling.",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-31",
@@ -12299,7 +12299,7 @@
         "excerpt": "- Proficiency in SQL and a computing language such as Python or R",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-32",
@@ -12309,7 +12309,7 @@
         "excerpt": "- Proficiency in SQL and a computing language such as Python or R",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       },
       {
         "id": "SM-CS310-33",
@@ -12319,7 +12319,7 @@
         "excerpt": "We're looking for data scientists with a passion for analyzing data, building machine learning and statistical models, and running experiments to drive impact.",
         "requirement": "unclear",
         "addedBy": "P-SOBRI",
-        "addedAt": "2026-07-01T10:00:00Z"
+        "addedAt": "2026-10-22T10:00:00Z"
       }
     ],
     "skillMappings": [
@@ -12333,7 +12333,7 @@
         "target": "practised",
         "evidence": "Week 6 lab touches this; no dedicated exercise yet.",
         "updatedBy": "P-SOBRI",
-        "updatedAt": "2026-07-01T10:00:00Z"
+        "updatedAt": "2026-10-22T10:00:00Z"
       }
     ],
     "evidenceBriefs": [
@@ -12341,14 +12341,14 @@
         "id": "BR-CS310-36",
         "subjectId": "CS310",
         "createdBy": "P-SOBRI",
-        "createdAt": "2026-07-01T10:00:00Z",
+        "createdAt": "2026-10-22T10:00:00Z",
         "recommendation": "refresh",
         "notes": "Add a dashboard exercise in week 6 within existing hours; keep the statistics foundation.",
-        "markdown": "# Meeting brief: CS310 Data Visualisation\n\nPrepared by Dr Sobri on 2026-07-01T10:00:00Z. Lecturer-controlled preparation; this brief does not attest institutional approval.\n\n## Decision requested\n\nSmall refresh within existing hours.\n\n## Evidence base\n\n- Reviewed job postings in the denominator: 9, from 1 employers.\n- Publication dates as supplied: 2023-11-01 to 2026-10-01.\n- Sources: 9 collected on request (Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo), 0 lecturer-supplied, 0 contextual documents.\n- Excluded from the denominator: 0 unreviewed postings and 1 duplicate copies.\n- No clear change between 2026 Semester 1 review (9 reviewed postings) and Current evidence (9): every compared skill's intervals overlap.\n\n## What employers ask for\n\n| Skill | Postings | Share | 95% interval | Coverage today | Target | Status |\n|---|---|---|---|---|---|---|\n| stakeholders | 6 of 9 | 66.7% | 35.4% to 87.9% | Unknown | Unknown | Not assessed |\n| dashboards | 5 of 9 | 55.6% | 26.7% to 81.1% | Introduced | Practised | Below target |\n| SQL | 4 of 9 | 44.4% | 18.9% to 73.3% | Unknown | Unknown | Not assessed |\n| statistics | 4 of 9 | 44.4% | 18.9% to 73.3% | Unknown | Unknown | Not assessed |\n| Python | 3 of 9 | 33.3% | 12.1% to 64.6% | Unknown | Unknown | Not assessed |\n\n## Changes since 2026 Semester 1 review\n\nEarlier: 2026 Semester 1 review, frozen 2026-07-01T10:00:00Z, 9 reviewed postings from 1 employers.\nLater: Current evidence, the evidence as it stands now, 9 reviewed postings from 1 employers.\n\nNo clear change between 2026 Semester 1 review (9 reviewed postings) and Current evidence (9): every compared skill's intervals overlap.\n\n| Skill | 2026 Semester 1 review | Current evidence | Change | Coverage |\n|---|---|---|---|---|\n| stakeholders | 6 of 9 (66.7%, 35.4% to 87.9%) | 6 of 9 (66.7%, 35.4% to 87.9%) | No clear change | Unchanged |\n| dashboards | 5 of 9 (55.6%, 26.7% to 81.1%) | 5 of 9 (55.6%, 26.7% to 81.1%) | No clear change | Unknown (target Unknown) to Introduced (target Practised) |\n| SQL | 4 of 9 (44.4%, 18.9% to 73.3%) | 4 of 9 (44.4%, 18.9% to 73.3%) | No clear change | Unchanged |\n| statistics | 4 of 9 (44.4%, 18.9% to 73.3%) | 4 of 9 (44.4%, 18.9% to 73.3%) | No clear change | Unchanged |\n| Python | 3 of 9 (33.3%, 12.1% to 64.6%) | 3 of 9 (33.3%, 12.1% to 64.6%) | No clear change | Unchanged |\n\nPostings: 9 carried over unchanged, 0 new, 0 no longer in the reviewed set, 0 with changed text.\n\nRule: a skill is rising or falling only when the two 95% Wilson intervals do not overlap. This is stricter than a formal test, so a real shift can read as no clear change. Both windows are convenience samples chosen by the lecturer; a change describes the recorded sets, not the labour market.\n\n## Coverage against targets\n\nTarget coverage index: 0% over 1 skills with a reviewed stage and target; 77.3% of the quoted demand weight has an unknown stage or target. Demand-weighted share of reviewed skills at or above their target stage. It is an index over quoted skills, not a share of jobs, students or employability.\n\n## Options considered\n\n- Keep the course unchanged this term: no change to outcomes, topics or hours; revisit next term with refreshed evidence.\n- Small refresh within existing hours (recommended): adjust activities, examples or one topic within the existing hours and outcomes; private preparation needs no formal approval.\n- Propose a formal revision: change outcomes or topics through the institution's review process, stating the hours and prerequisites it affects.\n\n## Lecturer's notes\n\nAdd a dashboard exercise in week 6 within existing hours; keep the statistics foundation.\n\n## Limitations\n\n- A convenience sample chosen by the lecturer; shares and intervals describe the recorded set, not the labour market.\n- Coverage stages are the lecturer's reviewed judgement with cited course evidence; they are ordinal review aids, not mastery.\n- No learning impact is estimated, and nothing in this brief changes the course by itself.\n\n## Appendix: evidence report with receipts\n\n# CS310 evidence report\n\nCourse: Data Visualisation\nGenerated: 2026-07-01T10:00:00Z\nScope: 10 postings collected on request from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, recorded in this workspace. Nothing is collected without a request.\n\n## Observed requirements\n\nReviewed job postings in the denominator: 9\nExcluded: 0 unreviewed postings, 1 duplicate copies, 0 contextual documents (standards and advisory notes are listed, never counted as postings).\nDistinct employers among reviewed postings: 1\nNo clear change between 2026 Semester 1 review (9 reviewed postings) and Current evidence (9): every compared skill's intervals overlap.\n\n| Skill | Postings | Share | 95% interval | Required | Preferred | Employers | Coverage stage | Target | Status |\n|---|---|---|---|---|---|---|---|---|---|\n| stakeholders | 6 of 9 | 66.7% | 35.4% to 87.9% | 0 | 0 | 1 | Unknown | Unknown | Not assessed |\n| dashboards | 5 of 9 | 55.6% | 26.7% to 81.1% | 0 | 0 | 1 | Introduced | Practised | Below target |\n| SQL | 4 of 9 | 44.4% | 18.9% to 73.3% | 0 | 0 | 1 | Unknown | Unknown | Not assessed |\n| statistics | 4 of 9 | 44.4% | 18.9% to 73.3% | 0 | 0 | 1 | Unknown | Unknown | Not assessed |\n| Python | 3 of 9 | 33.3% | 12.1% to 64.6% | 0 | 0 | 1 | Unknown | Unknown | Not assessed |\n\nTarget coverage index: 0% over 1 skills with a reviewed stage and target. 77.3% of the quoted demand weight has an unknown stage or target. Demand-weighted share of reviewed skills at or above their target stage. It is an index over quoted skills, not a share of jobs, students or employability.\n\n## Coverage mappings\n\n- dashboards: Introduced (target Practised). Outcomes: CLO5. Evidence: Week 6 lab touches this; no dedicated exercise yet..\n\n## Limitations\n\n- This is a convenience sample chosen by the lecturer; shares and intervals describe the recorded set, not the labour market.\n- A posting counts once however many sites repeat it; a skill counts once however often one posting repeats it.\n- Coverage stages are the lecturer's reviewed judgement with cited course evidence. They are ordinal review aids, not mastery.\n- No learning impact is estimated. Nothing in this report changes the course by itself.\n\n## Receipts\n\n### Data Analyst (Stripe)\n\nType: Job posting\nSource date: 2023-11-01\nLink: https://stripe.com/jobs/search?gh_jid=5416444\nRecorded: 2026-07-01T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-3eb3f878-975\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- SQL (unclear): \"- Proficiency in SQL\"\n- dashboards (unclear): \"You'll build metrics, scalable data pipelines, dashboards, and reports to inform and run the business.\"\n- stakeholders (unclear): \"- Ability to design, implement, and maintain data pipelines and dashboards to generate actionable insights based on stakeholder requirements\"\n\n### Data Analyst, Global Growth (Stripe)\n\nType: Job posting\nSource date: 2026-09-25\nLink: https://stripe.com/jobs/search?gh_jid=8230296\nRecorded: 2026-07-01T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-20adbaa1-98d\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- dashboards (unclear): \"From building scalable dashboards to crafting compelling data narratives, your insights will directly shape how we run and grow the business.\"\n- stakeholders (unclear): \"- Build and maintain the metric definitions, metadata, and business context that enable AI agents to help stakeholders explore trusted data and answer business questions independently\"\n- statistics (unclear): \"We're looking for a data analyst with a passion for analyzing data, statistical models, and running experiments to drive impact.\"\n\n### Data Analyst, Intern (Stripe)\n\nType: Job posting\nSource date: 2026-10-01\nLink: https://stripe.com/jobs/search?gh_jid=8194291\nRecorded: 2026-07-01T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-68604535-974\nExtraction: reviewed, counted\nDuplicate copies recorded: 1\n\nQuoted requirements:\n\n- dashboards (unclear): \"You'll build metrics, scalable data pipelines, dashboards, and reports to inform and run the business.\"\n\n### Data Analyst, NYC (Stripe)\n\nType: Job posting\nSource date: 2026-09-10\nLink: https://stripe.com/jobs/search?gh_jid=8189909\nRecorded: 2026-07-01T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-3cc606ef-97e\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- SQL (unclear): \"- Proficiency in SQL, including complex query optimization and data modeling\"\n- Python (unclear): \"- Proficiency in Scala or Python for data pipeline development, not just scripting and SQL\"\n- dashboards (unclear): \"- Develop dashboards, automated reporting, and thoughtful analyses to surface actionable insights and proactively identify business opportunities\"\n- stakeholders (unclear): \"- Build and maintain the metric definitions, metadata, and business context that enable AI agents to help stakeholders explore trusted data and answer business questions independently\"\n\n### Data Analyst, Payments (Stripe)\n\nType: Job posting\nSource date: 2026-07-13\nLink: https://stripe.com/jobs/search?gh_jid=8044924\nRecorded: 2026-07-01T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-0ff7901c-93a\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- stakeholders (unclear): \"• Create fee explainability to internal and external stakeholders and host education sessions for internal teams to scale knowledge\"\n\n### Data Science Manager, Finance and Strategy (Stripe)\n\nType: Job posting\nSource date: 2026-04-22\nLink: https://stripe.com/jobs/search?gh_jid=7440963\nRecorded: 2026-07-01T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-c7d40dd0-92f\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- dashboards (unclear): \"The team owns everything from hierarchical time series and agentic forecasting tools that predict payment volumes and revenue margins, to the governed metrics platform that feeds company-wide dashboards and executive reporting.\"\n- stakeholders (unclear): \"We partner closely with Finance and Strategy, GTM, and Product stakeholders to directly inform financial decisions across Stripe's entire business.\"\n- statistics (unclear): \"- A PhD, MS, or BS in a quantitative field (e.g., Statistics, Operations Research, Economics, Computer Science, Engineering)\"\n\n### Data Science Manager, Risk (Stripe)\n\nType: Job posting\nSource date: 2026-05-14\nLink: https://stripe.com/jobs/search?gh_jid=7923653\nRecorded: 2026-07-01T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-d9ba2002-93b\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- stakeholders (unclear): \"• Own roadmap prioritization, execution quality, and stakeholder alignment for both workstreams.\"\n\n### Data Scientist (Stripe)\n\nType: Job posting\nSource date: 2026-09-22\nLink: https://stripe.com/jobs/search?gh_jid=8222149\nRecorded: 2026-07-01T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-75233e42-946\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- SQL (unclear): \"- SQL;\"\n- Python (unclear): \"- Programming languages including Python or R;\"\n- statistics (unclear): \"Master’s degree or foreign equivalent in Statistics, Data Analytics, Engineering or a related field, plus 5 years of related work experience in data science or quantitative modeling.\"\n\n### Data Scientist (Stripe)\n\nType: Job posting\nSource date: 2024-04-30\nLink: https://stripe.com/jobs/search?gh_jid=5895430\nRecorded: 2026-07-01T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-e0de4004-976\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- SQL (unclear): \"- Proficiency in SQL and a computing language such as Python or R\"\n- Python (unclear): \"- Proficiency in SQL and a computing language such as Python or R\"\n- statistics (unclear): \"We're looking for data scientists with a passion for analyzing data, building machine learning and statistical models, and running experiments to drive impact.\"\n",
+        "markdown": "# Meeting brief: CS310 Data Visualisation\n\nPrepared by Dr Sobri on 2026-10-22T10:00:00Z. Lecturer-controlled preparation; this brief does not attest institutional approval.\n\n## Decision requested\n\nSmall refresh within existing hours.\n\n## Evidence base\n\n- Reviewed job postings in the denominator: 9, from 1 employers.\n- Publication dates as supplied: 2023-11-01 to 2026-10-01.\n- Sources: 9 collected on request (Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo), 0 lecturer-supplied, 0 contextual documents.\n- Excluded from the denominator: 0 unreviewed postings and 1 duplicate copies.\n- No clear change between 2026 Semester 1 review (9 reviewed postings) and Current evidence (9): every compared skill's intervals overlap.\n\n## What employers ask for\n\n| Skill | Postings | Share | 95% interval | Coverage today | Target | Status |\n|---|---|---|---|---|---|---|\n| stakeholders | 6 of 9 | 66.7% | 35.4% to 87.9% | Unknown | Unknown | Not assessed |\n| dashboards | 5 of 9 | 55.6% | 26.7% to 81.1% | Introduced | Practised | Below target |\n| SQL | 4 of 9 | 44.4% | 18.9% to 73.3% | Unknown | Unknown | Not assessed |\n| statistics | 4 of 9 | 44.4% | 18.9% to 73.3% | Unknown | Unknown | Not assessed |\n| Python | 3 of 9 | 33.3% | 12.1% to 64.6% | Unknown | Unknown | Not assessed |\n\n## Changes since 2026 Semester 1 review\n\nEarlier: 2026 Semester 1 review, frozen 2026-10-22T10:00:00Z, 9 reviewed postings from 1 employers.\nLater: Current evidence, the evidence as it stands now, 9 reviewed postings from 1 employers.\n\nNo clear change between 2026 Semester 1 review (9 reviewed postings) and Current evidence (9): every compared skill's intervals overlap.\n\n| Skill | 2026 Semester 1 review | Current evidence | Change | Coverage |\n|---|---|---|---|---|\n| stakeholders | 6 of 9 (66.7%, 35.4% to 87.9%) | 6 of 9 (66.7%, 35.4% to 87.9%) | No clear change | Unchanged |\n| dashboards | 5 of 9 (55.6%, 26.7% to 81.1%) | 5 of 9 (55.6%, 26.7% to 81.1%) | No clear change | Unknown (target Unknown) to Introduced (target Practised) |\n| SQL | 4 of 9 (44.4%, 18.9% to 73.3%) | 4 of 9 (44.4%, 18.9% to 73.3%) | No clear change | Unchanged |\n| statistics | 4 of 9 (44.4%, 18.9% to 73.3%) | 4 of 9 (44.4%, 18.9% to 73.3%) | No clear change | Unchanged |\n| Python | 3 of 9 (33.3%, 12.1% to 64.6%) | 3 of 9 (33.3%, 12.1% to 64.6%) | No clear change | Unchanged |\n\nPostings: 9 carried over unchanged, 0 new, 0 no longer in the reviewed set, 0 with changed text.\n\nRule: a skill is rising or falling only when the two 95% Wilson intervals do not overlap. This is stricter than a formal test, so a real shift can read as no clear change. Both windows are convenience samples chosen by the lecturer; a change describes the recorded sets, not the labour market.\n\n## Coverage against targets\n\nTarget coverage index: 0% over 1 skills with a reviewed stage and target; 77.3% of the quoted demand weight has an unknown stage or target. Demand-weighted share of reviewed skills at or above their target stage. It is an index over quoted skills, not a share of jobs, students or employability.\n\n## Options considered\n\n- Keep the course unchanged this term: no change to outcomes, topics or hours; revisit next term with refreshed evidence.\n- Small refresh within existing hours (recommended): adjust activities, examples or one topic within the existing hours and outcomes; private preparation needs no formal approval.\n- Propose a formal revision: change outcomes or topics through the institution's review process, stating the hours and prerequisites it affects.\n\n## Lecturer's notes\n\nAdd a dashboard exercise in week 6 within existing hours; keep the statistics foundation.\n\n## Limitations\n\n- A convenience sample chosen by the lecturer; shares and intervals describe the recorded set, not the labour market.\n- Coverage stages are the lecturer's reviewed judgement with cited course evidence; they are ordinal review aids, not mastery.\n- No learning impact is estimated, and nothing in this brief changes the course by itself.\n\n## Appendix: evidence report with receipts\n\n# CS310 evidence report\n\nCourse: Data Visualisation\nGenerated: 2026-10-22T10:00:00Z\nScope: 10 postings collected on request from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, recorded in this workspace. Nothing is collected without a request.\n\n## Observed requirements\n\nReviewed job postings in the denominator: 9\nExcluded: 0 unreviewed postings, 1 duplicate copies, 0 contextual documents (standards and advisory notes are listed, never counted as postings).\nDistinct employers among reviewed postings: 1\nNo clear change between 2026 Semester 1 review (9 reviewed postings) and Current evidence (9): every compared skill's intervals overlap.\n\n| Skill | Postings | Share | 95% interval | Required | Preferred | Employers | Coverage stage | Target | Status |\n|---|---|---|---|---|---|---|---|---|---|\n| stakeholders | 6 of 9 | 66.7% | 35.4% to 87.9% | 0 | 0 | 1 | Unknown | Unknown | Not assessed |\n| dashboards | 5 of 9 | 55.6% | 26.7% to 81.1% | 0 | 0 | 1 | Introduced | Practised | Below target |\n| SQL | 4 of 9 | 44.4% | 18.9% to 73.3% | 0 | 0 | 1 | Unknown | Unknown | Not assessed |\n| statistics | 4 of 9 | 44.4% | 18.9% to 73.3% | 0 | 0 | 1 | Unknown | Unknown | Not assessed |\n| Python | 3 of 9 | 33.3% | 12.1% to 64.6% | 0 | 0 | 1 | Unknown | Unknown | Not assessed |\n\nTarget coverage index: 0% over 1 skills with a reviewed stage and target. 77.3% of the quoted demand weight has an unknown stage or target. Demand-weighted share of reviewed skills at or above their target stage. It is an index over quoted skills, not a share of jobs, students or employability.\n\n## Coverage mappings\n\n- dashboards: Introduced (target Practised). Outcomes: CLO5. Evidence: Week 6 lab touches this; no dedicated exercise yet..\n\n## Limitations\n\n- This is a convenience sample chosen by the lecturer; shares and intervals describe the recorded set, not the labour market.\n- A posting counts once however many sites repeat it; a skill counts once however often one posting repeats it.\n- Coverage stages are the lecturer's reviewed judgement with cited course evidence. They are ordinal review aids, not mastery.\n- No learning impact is estimated. Nothing in this report changes the course by itself.\n\n## Receipts\n\n### Data Analyst (Stripe)\n\nType: Job posting\nSource date: 2023-11-01\nLink: https://stripe.com/jobs/search?gh_jid=5416444\nRecorded: 2026-10-22T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-3eb3f878-975\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- SQL (unclear): \"- Proficiency in SQL\"\n- dashboards (unclear): \"You'll build metrics, scalable data pipelines, dashboards, and reports to inform and run the business.\"\n- stakeholders (unclear): \"- Ability to design, implement, and maintain data pipelines and dashboards to generate actionable insights based on stakeholder requirements\"\n\n### Data Analyst, Global Growth (Stripe)\n\nType: Job posting\nSource date: 2026-09-25\nLink: https://stripe.com/jobs/search?gh_jid=8230296\nRecorded: 2026-10-22T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-20adbaa1-98d\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- dashboards (unclear): \"From building scalable dashboards to crafting compelling data narratives, your insights will directly shape how we run and grow the business.\"\n- stakeholders (unclear): \"- Build and maintain the metric definitions, metadata, and business context that enable AI agents to help stakeholders explore trusted data and answer business questions independently\"\n- statistics (unclear): \"We're looking for a data analyst with a passion for analyzing data, statistical models, and running experiments to drive impact.\"\n\n### Data Analyst, Intern (Stripe)\n\nType: Job posting\nSource date: 2026-10-01\nLink: https://stripe.com/jobs/search?gh_jid=8194291\nRecorded: 2026-10-22T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-68604535-974\nExtraction: reviewed, counted\nDuplicate copies recorded: 1\n\nQuoted requirements:\n\n- dashboards (unclear): \"You'll build metrics, scalable data pipelines, dashboards, and reports to inform and run the business.\"\n\n### Data Analyst, NYC (Stripe)\n\nType: Job posting\nSource date: 2026-09-10\nLink: https://stripe.com/jobs/search?gh_jid=8189909\nRecorded: 2026-10-22T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-3cc606ef-97e\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- SQL (unclear): \"- Proficiency in SQL, including complex query optimization and data modeling\"\n- Python (unclear): \"- Proficiency in Scala or Python for data pipeline development, not just scripting and SQL\"\n- dashboards (unclear): \"- Develop dashboards, automated reporting, and thoughtful analyses to surface actionable insights and proactively identify business opportunities\"\n- stakeholders (unclear): \"- Build and maintain the metric definitions, metadata, and business context that enable AI agents to help stakeholders explore trusted data and answer business questions independently\"\n\n### Data Analyst, Payments (Stripe)\n\nType: Job posting\nSource date: 2026-07-13\nLink: https://stripe.com/jobs/search?gh_jid=8044924\nRecorded: 2026-10-22T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-0ff7901c-93a\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- stakeholders (unclear): \"• Create fee explainability to internal and external stakeholders and host education sessions for internal teams to scale knowledge\"\n\n### Data Science Manager, Finance and Strategy (Stripe)\n\nType: Job posting\nSource date: 2026-04-22\nLink: https://stripe.com/jobs/search?gh_jid=7440963\nRecorded: 2026-10-22T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-c7d40dd0-92f\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- dashboards (unclear): \"The team owns everything from hierarchical time series and agentic forecasting tools that predict payment volumes and revenue margins, to the governed metrics platform that feeds company-wide dashboards and executive reporting.\"\n- stakeholders (unclear): \"We partner closely with Finance and Strategy, GTM, and Product stakeholders to directly inform financial decisions across Stripe's entire business.\"\n- statistics (unclear): \"- A PhD, MS, or BS in a quantitative field (e.g., Statistics, Operations Research, Economics, Computer Science, Engineering)\"\n\n### Data Science Manager, Risk (Stripe)\n\nType: Job posting\nSource date: 2026-05-14\nLink: https://stripe.com/jobs/search?gh_jid=7923653\nRecorded: 2026-10-22T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-d9ba2002-93b\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- stakeholders (unclear): \"• Own roadmap prioritization, execution quality, and stakeholder alignment for both workstreams.\"\n\n### Data Scientist (Stripe)\n\nType: Job posting\nSource date: 2026-09-22\nLink: https://stripe.com/jobs/search?gh_jid=8222149\nRecorded: 2026-10-22T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-75233e42-946\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- SQL (unclear): \"- SQL;\"\n- Python (unclear): \"- Programming languages including Python or R;\"\n- statistics (unclear): \"Master’s degree or foreign equivalent in Statistics, Data Analytics, Engineering or a related field, plus 5 years of related work experience in data science or quantitative modeling.\"\n\n### Data Scientist (Stripe)\n\nType: Job posting\nSource date: 2024-04-30\nLink: https://stripe.com/jobs/search?gh_jid=5895430\nRecorded: 2026-10-22T10:00:00Z by Dr Sobri, from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, retrieved 2026-10-09T03:00:00Z\nText fingerprint: fnv1a-e0de4004-976\nExtraction: reviewed, counted\nDuplicate copies recorded: 0\n\nQuoted requirements:\n\n- SQL (unclear): \"- Proficiency in SQL and a computing language such as Python or R\"\n- Python (unclear): \"- Proficiency in SQL and a computing language such as Python or R\"\n- statistics (unclear): \"We're looking for data scientists with a passion for analyzing data, building machine learning and statistical models, and running experiments to drive impact.\"\n",
         "recipients": [
           "P-RAHMAN"
         ],
-        "sentAt": "2026-07-01T10:00:00Z"
+        "sentAt": "2026-10-22T10:00:00Z"
       }
     ],
     "evidenceSnapshots": [
@@ -12357,7 +12357,7 @@
         "subjectId": "CS310",
         "label": "2026 Semester 1 review",
         "takenBy": "P-SOBRI",
-        "takenAt": "2026-07-01T10:00:00Z",
+        "takenAt": "2026-10-22T10:00:00Z",
         "eligible": 9,
         "organisations": 1,
         "unreviewed": 0,
@@ -12542,7 +12542,7 @@
         "courseVersionId": "CS310-v1",
         "term": "2026/2027 semester 1",
         "byPersonId": "P-RAHMAN",
-        "at": "2026-07-01T10:00:00Z",
+        "at": "2026-10-22T10:00:00Z",
         "outcome": "adopt",
         "note": "Adopt the dashboard exercise within the existing hours; review after one term."
       }
@@ -12550,7 +12550,7 @@
     "events": [
       {
         "id": "EVT-CS310-1",
-        "at": "2026-07-01T10:00:00Z",
+        "at": "2026-10-22T10:00:00Z",
         "byPersonId": "P-SOBRI",
         "kind": "term-set",
         "refs": {
@@ -12560,7 +12560,7 @@
       },
       {
         "id": "EVT-CS310-35",
-        "at": "2026-07-01T10:00:00Z",
+        "at": "2026-10-22T10:00:00Z",
         "byPersonId": "P-SOBRI",
         "kind": "snapshot-frozen",
         "refs": {
@@ -12570,7 +12570,7 @@
       },
       {
         "id": "EVT-CS310-37",
-        "at": "2026-07-01T10:00:00Z",
+        "at": "2026-10-22T10:00:00Z",
         "byPersonId": "P-SOBRI",
         "kind": "brief-prepared",
         "refs": {
@@ -12580,7 +12580,7 @@
       },
       {
         "id": "EVT-CS310-38",
-        "at": "2026-07-01T10:00:00Z",
+        "at": "2026-10-22T10:00:00Z",
         "byPersonId": "P-SOBRI",
         "kind": "brief-sent",
         "refs": {
@@ -12590,7 +12590,7 @@
       },
       {
         "id": "EVT-CS310-40",
-        "at": "2026-07-01T10:00:00Z",
+        "at": "2026-10-22T10:00:00Z",
         "byPersonId": "P-RAHMAN",
         "kind": "brief-read",
         "refs": {
@@ -12600,7 +12600,7 @@
       },
       {
         "id": "EVT-CS310-42",
-        "at": "2026-07-01T10:00:00Z",
+        "at": "2026-10-22T10:00:00Z",
         "byPersonId": "P-RAHMAN",
         "kind": "decision-recorded",
         "refs": {
@@ -12611,7 +12611,7 @@
       },
       {
         "id": "EVT-CS310-46",
-        "at": "2026-07-01T10:00:00Z",
+        "at": "2026-10-22T10:00:00Z",
         "byPersonId": "P-SOBRI",
         "kind": "version-adopted",
         "refs": {
@@ -12671,7 +12671,7 @@
           }
         ],
         "agreement": 0.5,
-        "ratedAt": "2026-07-01T10:00:00Z"
+        "ratedAt": "2026-10-22T10:00:00Z"
       },
       {
         "subjectId": "MA101",
@@ -12680,7 +12680,7 @@
         "perCLO": [],
         "evidence": [],
         "agreement": null,
-        "ratedAt": "2026-07-01T10:00:00Z"
+        "ratedAt": "2026-10-22T10:00:00Z"
       },
       {
         "subjectId": "ST201",
@@ -12722,7 +12722,7 @@
           }
         ],
         "agreement": 1,
-        "ratedAt": "2026-07-01T10:00:00Z"
+        "ratedAt": "2026-10-22T10:00:00Z"
       },
       {
         "subjectId": "CS220",
@@ -12764,7 +12764,7 @@
           }
         ],
         "agreement": 1,
-        "ratedAt": "2026-07-01T10:00:00Z"
+        "ratedAt": "2026-10-22T10:00:00Z"
       },
       {
         "subjectId": "MA201",
@@ -12806,7 +12806,7 @@
           }
         ],
         "agreement": 1,
-        "ratedAt": "2026-07-01T10:00:00Z"
+        "ratedAt": "2026-10-22T10:00:00Z"
       },
       {
         "subjectId": "CS230",
@@ -12848,7 +12848,7 @@
           }
         ],
         "agreement": 1,
-        "ratedAt": "2026-07-01T10:00:00Z"
+        "ratedAt": "2026-10-22T10:00:00Z"
       },
       {
         "subjectId": "CS310",
@@ -12890,7 +12890,7 @@
           }
         ],
         "agreement": 0.5,
-        "ratedAt": "2026-07-01T10:00:00Z"
+        "ratedAt": "2026-10-22T10:00:00Z"
       },
       {
         "subjectId": "CS340",
@@ -12932,7 +12932,7 @@
           }
         ],
         "agreement": 1,
-        "ratedAt": "2026-07-01T10:00:00Z"
+        "ratedAt": "2026-10-22T10:00:00Z"
       }
     ],
     "idSeq": 49

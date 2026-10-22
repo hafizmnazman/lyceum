@@ -12,7 +12,7 @@ import {
   adoptCurriculumRevision, checkCurriculumRevision, confirmProposals, createCourseWorkspace, getState, importCollectedPostings, login, openNotification,
   prepareEvidenceBrief, recordDecision, removeEvidenceSnapshot, resetDemoState, runCollection, saveCurriculumRevision, saveTeachingPlanDetails,
   saveTeachingSession, scanForRequirements, sendEvidenceBrief, setSkillLexicon, setSkillMapping, setSourcesReviewed, startCurriculumRevision,
-  takeEvidenceSnapshot, uploadResults, exportWorkspaceBackup, stagePendingIntake, confirmPendingIntake, type AppState, type CollectRun,
+  takeEvidenceSnapshot, uploadResults, exportWorkspaceBackup, stagePendingIntake, confirmPendingIntake, SEED_NOW, type AppState, type CollectRun,
 } from "./app/store.ts";
 import { attainment, LEARN_CLAIM } from "./lib/learn.ts";
 import { parseWorkspaceBackup } from "./lib/workspaceBackup.ts";
@@ -38,8 +38,10 @@ const step = (subjectId: string, id: CourseStep, state: AppState = getState()) =
 const doneSteps = (subjectId: string, state: AppState = getState()) => loopState(state, subjectId).steps.filter((s) => s.done).map((s) => s.id);
 const name = (id: string) => getState().people.find((p) => p.id === id)?.name ?? id;
 const sources = (subjectId: string) => getState().evidenceSources.filter((s) => s.subjectId === subjectId).map((s) => s.id);
-/** The proofs run on the pinned clock, so every record shares one time; a later moment is built by hand. */
-const LATER = "2026-07-02T00:00:00.000Z";
+/** The proofs run on the pinned clock, so every record shares one time; a moment a day either side is built by hand. */
+const DAY = 86_400_000;
+const LATER = new Date(Date.parse(SEED_NOW) + DAY).toISOString();
+const EARLIER = new Date(Date.parse(SEED_NOW) - DAY).toISOString();
 
 async function evidence(subjectId: string, outcomeId: string) {
   assert.equal((await runCollection(subjectId, { provider: "sample", board: "", query: "", inText: false }, loader)).ok, true);
@@ -112,7 +114,7 @@ test("the ring marks a step done only when its record exists, seeded data never 
   login(PEOPLE_IDS.sobri);
   assert.equal(recordDecision(briefId, "adopt", "   ").ok, false, "the reason is required");
   const early = adoptRevision("CS310", "2026-S2");
-  const beforeDecision = { ...getState(), curriculumDrafts: getState().curriculumDrafts.map((d) => (d.id === early.id ? { ...d, history: [...d.history, { at: "2026-06-30T00:00:00.000Z", byPersonId: PEOPLE_IDS.sobri, action: "adopted" as const, note: "Adopted before any decision.", revision: d.revision }] } : d)) };
+  const beforeDecision = { ...getState(), curriculumDrafts: getState().curriculumDrafts.map((d) => (d.id === early.id ? { ...d, history: [...d.history, { at: EARLIER, byPersonId: PEOPLE_IDS.sobri, action: "adopted" as const, note: "Adopted before any decision.", revision: d.revision }] } : d)) };
   assert.equal(recordDecision(briefId, "adopt", "Add the dashboard lab; it fits the hours.").ok, true);
   assert.equal(step("CS310", "decide").done, true);
   assert.equal(step("CS310", "update").done, false, "the decision is recorded, the change is not made yet");
@@ -210,7 +212,7 @@ test("a decision is a record: the author cannot decide alone, amendments are new
   const s = getState();
   const old = briefDecisionState(s.evidenceBriefs.find((b) => b.id === b1)!, s.evidenceBriefs, s.briefDecisions, false);
   assert.equal(old.supersededBy?.id, b2, "a newer brief for the course supersedes the older one, even at the same recorded time");
-  assert.match(decisionStatusText(old, name, false), /^Superseded by the newer brief of 2026-07-01; its decisions stay on record\.$/);
+  assert.match(decisionStatusText(old, name, false), new RegExp("^Superseded by the newer brief of " + SEED_NOW.slice(0, 10) + "; its decisions stay on record\\.$"));
   login(PEOPLE_IDS.rahman);
   assert.equal(recordDecision(b1, "adopt", "Go ahead.").ok, false, "decisions go on the latest brief");
   assert.equal(getState().briefDecisions.filter((d) => d.briefId === b1).length, 4, "the older brief's decisions stay on record");

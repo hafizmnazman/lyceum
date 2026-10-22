@@ -132,7 +132,10 @@ export const AGENT_LABELS: Record<AgentId, string> = {
 // The seed clock: every seeded timestamp, and every timestamp in demo/proof
 // mode, so those paths are identical every run. In the browser (outside the
 // demo) actions stamp real time, which is what makes the app feel live.
-const SEED_NOW = "2026-07-01T10:00:00Z";
+// The seed clock: every record made outside the browser (the proofs, the sample workspace, the screenshots
+// restored from it) carries this time. It sits after the saved sample's retrieval (9 October 2026), so a brief
+// is never dated before the postings it cites.
+export const SEED_NOW = "2026-10-22T10:00:00Z";
 let clockPinned = typeof window === "undefined";
 
 /** Pin (or unpin) the clock. The demo pins it on Play so a recording is
@@ -159,7 +162,7 @@ export interface AppState {
   selectedSubjectId: SubjectId | null;
   selectedProposalId: ProposalId | null;
   studioTab: "overview" | "curriculum" | "plan" | "history"; // the Studio's panels: Course, Update, Teach, History
-  courseStep: CourseStep | null; // the loop rail step in view (app/loop.ts); read through routes.effectiveStep
+  courseStep: CourseStep | null; // the loop step in view, the path's dark stop (app/loop.ts); read through routes.effectiveStep
   reportTab: ReportTab; // the Report step's sub-step, in the URL as #/course/:id/report/<tab>
 
   // mutable world
@@ -599,7 +602,7 @@ export function navigate(screen: Screen, course?: CourseRoute) {
   const tab = stepDef(course.step).tab;
   set({ screen: target, selectedSubjectId: course.subjectId, courseStep: course.step, ...(tab ? { studioTab: tab } : {}), ...(course.reportTab ? { reportTab: course.reportTab } : {}) });
 }
-/** One step of a course's loop: the rail, the handoff cards and the deep links all come through here. */
+/** One step of a course's loop: the path, the handoff cards and the deep links all come through here. */
 export function openStep(subjectId: SubjectId, step: CourseStep, reportTab?: ReportTab) {
   navigate(stepDef(step).screen, { subjectId, step, ...(reportTab ? { reportTab } : {}) });
 }

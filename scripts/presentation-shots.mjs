@@ -56,6 +56,19 @@ const shotUntil = async (selector, lastPart, file) => {
   await page.screenshot({ path: join(OUT, file), clip });
   console.log("wrote " + file);
 };
+/** Capture from the top of one element to the bottom of a later one, with a margin of the page around both. */
+const shotSpan = async (first, last, file) => {
+  await page.waitForSelector(last, { visible: true, timeout: 15000 });
+  await page.$eval(first, (el) => { el.scrollIntoView({ block: "start" }); document.querySelector('[data-demo-id="main-scroll"]').scrollBy(0, -16); });
+  await sleep(450);
+  const clip = await page.evaluate((a, b) => {
+    const top = document.querySelector(a).getBoundingClientRect(), end = document.querySelector(b).getBoundingClientRect();
+    const left = Math.min(top.left, end.left) - 12, right = Math.max(top.right, end.right) + 12;
+    return { x: left + window.scrollX, y: top.top + window.scrollY - 12, width: right - left, height: end.bottom - top.top + 32 }; // the bubble's shadow included
+  }, first, last);
+  await page.screenshot({ path: join(OUT, file), clip });
+  console.log("wrote " + file);
+};
 mkdirSync(OUT, { recursive: true });
 try {
   await page.goto(`http://localhost:${PORT}/#/login`, { waitUntil: "networkidle0" });
@@ -91,6 +104,10 @@ try {
   await shot(sel("journey-card"), "shot-home-ring.png");
   await click("nav-courses"); await click("course-open-CS310");
   await click("rail-report"); await click("subrail-count");
+  // The step's frame, at a laptop's width: the loop's path across the top and the helper asking the step's question.
+  await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 2 }); await sleep(400);
+  await shotSpan(".step-path", ".step-hero", "shot-step.png");
+  await page.setViewport({ width: 1180, height: 900, deviceScaleFactor: 2 }); await sleep(400);
   await shot(sel("observed-requirements"), "shot-report-count.png");
   await shot(sel("skill-card-dashboards"), "shot-report-card.png");
   await click("subrail-map");
@@ -118,7 +135,7 @@ try {
   if (errors.length) throw new Error("page errors: " + errors.slice(0, 3).join(" | "));
   // The README's pairs, copied where the house style keeps them (the pack slide comes from gen-sample-decks).
   mkdirSync(".github/readme/shots", { recursive: true });
-  for (const [from, to] of [["shot-home-ring.png", "home-ring.png"], ["shot-report-quote.png", "report-quote.png"], ["shot-report-card.png", "report-card.png"],
+  for (const [from, to] of [["shot-step.png", "step.png"], ["shot-report-quote.png", "report-quote.png"], ["shot-report-card.png", "report-card.png"],
     ["shot-decide.png", "decide.png"], ["shot-history.png", "history.png"], ["shot-learn.png", "learn.png"], ["pack/slide-03.png", "pack.png"]]) {
     if (existsSync(join(OUT, from))) copyFileSync(join(OUT, from), join(".github/readme/shots", to));
   }

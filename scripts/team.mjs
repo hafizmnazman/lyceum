@@ -29,7 +29,13 @@ const EXCLUDE = [
   (p) => p === "README.md", // this repo's README stays here
   (p) => p.startsWith(".github/"), // this repo's GitHub and README assets
   (p) => p === "scripts/team.mjs", // this tool
-  (p) => /^docs\/review\/.*\.log$/.test(p), // raw Codex run logs
+  // The owner's plans, records and reviews stay here too (the owner's word, 22 October 2026): the team gets
+  // the working code and what its checks read (docs/claims.md, docs/research/, the guide, the palette, the shots).
+  (p) => ["CLAUDE.md", "DECISIONS.md", "JUDGES.md"].includes(p),
+  (p) => /^docs\/(lyceum-upgrade-plan|lyceum-improvement-plan|run-log|decisions|as-built|demo-script)\.md$/.test(p),
+  (p) => /^docs\/(review|history|competition)\//.test(p),
+  // Screenshots from before the current shot script, which nothing reads.
+  (p) => /^docs\/presentation\/shot-(agents|evidence-table|home-with-brief|how-it-works|inbox-brief|meeting-brief|studio-journey|update-hours)\.png$/.test(p),
 ];
 const HOOK_MARK = "lyceum-team-guard";
 
@@ -104,7 +110,7 @@ function publish(args) {
     die("\nThe team's main has changes you have not taken yet:\n" + git(["log", "--format=  %h %an: %s", "-20", since]) +
       "\nReview them with `node scripts/team.mjs review main`, take what you want with `node scripts/team.mjs take main`, then publish again.\nOr publish with --force to replace them.");
   }
-  if (dry) { console.log("\nDry run: nothing was committed or pushed."); return; }
+  if (dry) { console.log("\nDry run: nothing was committed or pushed. The snapshot is tree " + tree + "; `git archive " + tree + "` unpacks it."); return; }
   const when = new Date();
   const title = parent ? "Sync from Hafiz's main, " + when.toISOString().slice(0, 10) : "Lyceum team repo: first snapshot";
   const message = title + "\n\n" + (note ? note + "\n\n" : "") + "Lyceum-Sync: " + when.toISOString() + "\n";
