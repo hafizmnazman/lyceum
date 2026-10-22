@@ -1,12 +1,15 @@
-// Before and after on screen (depth plan Section 6.2, the D5a core): the word-level redline, current against proposed in
-// two columns, the structural slide diff over the pack previews, and the change summary as static text. Everything comes
-// from lib/diff.ts, which reads records only. Colours are tokens (global.css); strikethrough and underline carry each change
-// as well as colour, hidden labels name it for a screen reader, and nothing animates.
+// Before and after on screen (depth plan Section 6.2). The D5a core: the word-level redline, current against proposed in two
+// columns, the structural slide diff over the pack previews, and the change summary as static text. D5b: the dumbbell of
+// hours per topic, the swipe and onion-skin slide compare, the version scrubber with named stops, the summary's counters and
+// the slopegraph of results between terms. Everything comes from lib/diff.ts, which reads records only. Colours are tokens;
+// strikethrough and underline carry each change as well as colour, and hidden labels name it for a screen reader. The D5a
+// views never move; the counters count once and stop under reduced motion; the compare moves only under the reader's hand;
+// nothing autoplays.
 
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Minus, Plus } from "lucide-react";
-import { deckDiff, hoursDelta, topicDeltas, wordDiff, type PartChange, type SlidePart, type TopicDelta, type TopicHours } from "../../lib/diff.ts";
-import { previewSlides } from "../../lib/deckLayout.ts";
+import { deckDiff, hoursDelta, topicDeltas, wordDiff, type PartChange, type ResultDelta, type SlidePart, type TopicDelta, type TopicHours } from "../../lib/diff.ts";
+import { previewSlides, type PreviewSlide } from "../../lib/deckLayout.ts";
 import type { DeckSpec } from "../../lib/slides.ts";
 import type { CourseDefinition } from "../../types.ts";
 import { SlideSvg, type SlideHighlight } from "./DeckPreview.tsx";
@@ -109,6 +112,8 @@ export function SlideDiffList({ before, after, beforeLabel, afterLabel, markSrc 
         {c.afterIndex !== null ? <figure><figcaption>{afterLabel}</figcaption><SlideSvg slide={now[c.afterIndex]} number={c.afterIndex + 1} markSrc={markSrc} highlight={marks} /></figure> : null}
       </div>
       {c.parts.map((p) => <PartLines key={p.part} change={p} />)}
+      {c.beforeIndex !== null && c.afterIndex !== null ? <details className="slide-compare-open" data-demo-id={"slide-compare-open-" + i}><summary>Swipe or fade between the two</summary>
+        <SlideCompare before={was[c.beforeIndex]} after={now[c.afterIndex]} number={c.afterIndex + 1} beforeLabel={beforeLabel} afterLabel={afterLabel} markSrc={markSrc} /></details> : null}
     </li>;
   })}</ol>;
 }
@@ -116,4 +121,177 @@ export function SlideDiffList({ before, after, beforeLabel, afterLabel, markSrc 
 /** The change in one line of words, from the diffs ("1 outcome reworded, 1 topic added, 3 h added, 1 slide changed"). */
 export function ChangeSummary({ text }: { text: string }) {
   return <p className="change-summary" data-demo-id="change-summary">{text === "no change" ? "Nothing changed between the two versions." : <><strong>What changed:</strong> {text}.</>}</p>;
+}
+
+// ---------- D5b (depth plan Section 6.2, Tier 3) ----------
+
+const reducedMotion = () => typeof window !== "undefined" && Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
+const pctText = (x: number | null) => (x === null ? "none" : Math.round(x * 100) + "%");
+// The slopegraph's table, to the tenth, so its change in points adds up from the two shares beside it.
+const pctOne = (x: number | null) => (x === null ? "none" : Math.round(x * 1000) / 10 + "%");
+
+/** The change summary counting up once (pattern 9): each number from zero to its value in under a second, the final sentence
+ *  at once under reduced motion, and the final sentence given to a screen reader once, in a live region. */
+export function CountUpSummary({ text }: { text: string }) {
+  const [k, setK] = useState(() => (reducedMotion() ? 1 : 0));
+  const [spoken, setSpoken] = useState("");
+  useEffect(() => {
+    if (text === "no change" || reducedMotion()) { setK(1); setSpoken(text); return; }
+    let frame = 0;
+    const start = performance.now();
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / 900);
+      setK(t);
+      if (t < 1) frame = requestAnimationFrame(step); else setSpoken(text);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [text]);
+  if (text === "no change") return <ChangeSummary text={text} />;
+  const eased = 1 - Math.pow(1 - k, 3);
+  return <p className="change-summary" data-demo-id="change-summary"><strong>What changed:</strong>{" "}
+    <span aria-hidden="true">{text.split(/(\d+)/).map((part, i) => (i % 2 ? <span key={i} className="tabular">{Math.round(Number(part) * eased)}</span> : part))}.</span>
+    <span className="sr-only" aria-live="polite">{spoken ? spoken + "." : ""}</span></p>;
+}
+
+/** Contact hours per topic, before and after (pattern 3): the open dot the earlier version, the filled dot the later, a bar
+ *  between them, the changed topics first by the size of change, unchanged ones as one grey dot; value labels on the dots,
+ *  and the two-column table below carries the same numbers. */
+export function Dumbbell({ before, after, beforeLabel, afterLabel }: { before: CourseDefinition; after: CourseDefinition; beforeLabel: string; afterLabel: string }) {
+  const rows = topicDeltas(before, after)
+    .map((d) => ({ d, was: d.before?.contact ?? null, now: d.after?.contact ?? null, week: d.week?.after ?? d.week?.before ?? 99 }))
+    .sort((x, y) => Math.abs(y.d.delta) - Math.abs(x.d.delta) || x.week - y.week);
+  if (!rows.some((r) => r.d.delta !== 0)) return null;
+  const max = Math.max(1, ...rows.flatMap((r) => [r.was ?? 0, r.now ?? 0]));
+  const W = 320, left = 14, right = 40, x = (h: number) => left + (h / max) * (W - left - right);
+  return <figure className="dumbbell" data-demo-id="hours-dumbbell">
+    <figcaption>Contact hours per topic: {beforeLabel} as an open dot, {afterLabel} as a filled dot, the largest change first. The table below holds the same numbers.</figcaption>
+    <ol className="dumbbell-rows">{rows.map(({ d, was, now }) => {
+      const label = (d.title || "Untitled topic") + ": " + (was === null ? "not in " + beforeLabel : was + " h") + " to " + (now === null ? "not in " + afterLabel : now + " h") + ", " + hoursDelta(d.delta);
+      const changed = d.delta !== 0;
+      return <li key={d.id} className={changed ? "is-changed" : undefined}>
+        <span className="dumbbell-label">{d.title || "Untitled topic"}</span>
+        <svg viewBox={"0 0 " + W + " 26"} className="dumbbell-svg" role="img" aria-label={label}>
+          <line x1={left} x2={W - right} y1={13} y2={13} stroke="var(--border)" strokeWidth={1} />
+          {changed ? <line x1={x(was ?? 0)} x2={x(now ?? 0)} y1={13} y2={13} stroke="var(--emerald)" strokeWidth={4} /> : null}
+          {was !== null ? <circle cx={x(was)} cy={13} r={6} fill="var(--white)" stroke={changed ? "var(--emerald)" : "var(--ink-2)"} strokeWidth={2.5} /> : null}
+          {now !== null ? <circle cx={x(now)} cy={13} r={6} fill={changed ? "var(--emerald)" : "var(--ink-2)"} /> : null}
+          {changed ? <text x={x(Math.max(was ?? 0, now ?? 0)) + 10} y={17} fontSize={12} fill="var(--ink)" className="tabular">{(was ?? 0) + " to " + (now ?? 0) + " h"}</text>
+            : <text x={x(now ?? was ?? 0) + 10} y={17} fontSize={12} fill="var(--ink-2)" className="tabular">{(now ?? was) + " h"}</text>}
+        </svg>
+      </li>;
+    })}</ol>
+  </figure>;
+}
+
+/** Two versions of one slide in one frame (pattern 5): a swipe, the earlier on the left of the divider and the later on the
+ *  right, or an onion skin, the later faded over the earlier. A slider moves it by keyboard (arrow keys, Home, End); a click
+ *  on the slide puts the divider there; Show before and Show after need no dragging (WCAG 2.5.7). Nothing animates. */
+export function SlideCompare({ before, after, number, beforeLabel, afterLabel, markSrc }: { before: PreviewSlide; after: PreviewSlide; number: number; beforeLabel: string; afterLabel: string; markSrc?: string }) {
+  const [mode, setMode] = useState<"swipe" | "fade">("swipe");
+  const [value, setValue] = useState(50); // how much of the earlier version shows, from 0 to 100
+  const stage = useRef<HTMLDivElement>(null);
+  const valueText = value === 100 ? "Showing " + beforeLabel : value === 0 ? "Showing " + afterLabel
+    : mode === "swipe" ? beforeLabel + " on the left " + value + "%, " + afterLabel + " on the right" : afterLabel + " faded in to " + (100 - value) + "%";
+  const place = (clientX: number) => { const r = stage.current?.getBoundingClientRect(); if (r && r.width) setValue(Math.max(0, Math.min(100, Math.round(((clientX - r.left) / r.width) * 100)))); };
+  // The slider sits under what it moves: in a swipe its thumb is the divider (the earlier version to its left), in an onion
+  // skin it is how far the later version has faded in, so moving right shows more of the later one.
+  const swipe = mode === "swipe";
+  return <div className="slide-compare" data-demo-id="slide-compare">
+    <div className="button-row" role="group" aria-label="How to compare the two">
+      <Button aria-pressed={mode === "swipe"} onClick={() => setMode("swipe")}>Swipe</Button>
+      <Button aria-pressed={mode === "fade"} onClick={() => setMode("fade")}>Onion skin</Button>
+      <Button variant="quiet" onClick={() => setValue(100)}>Show before</Button>
+      <Button variant="quiet" onClick={() => setValue(0)}>Show after</Button>
+    </div>
+    <div className="slide-compare-stage" ref={stage} onClick={(e) => (swipe ? place(e.clientX) : undefined)}
+      onPointerMove={(e) => { if (swipe && e.buttons === 1) place(e.clientX); }}>
+      <div className="slide-compare-layer"><SlideSvg slide={before} number={number} markSrc={markSrc} /></div>
+      <div className="slide-compare-layer" aria-hidden="true" style={swipe ? { clipPath: "inset(0 0 0 " + value + "%)" } : { opacity: (100 - value) / 100 }}>
+        <SlideSvg slide={after} number={number} markSrc={markSrc} /></div>
+      {swipe ? <>
+        <span className="slide-compare-divider" style={{ left: value + "%" }} aria-hidden="true" />
+        <span className="slide-compare-tag is-before" aria-hidden="true">{beforeLabel}</span>
+        <span className="slide-compare-tag is-after" aria-hidden="true">{afterLabel}</span>
+      </> : null}
+    </div>
+    {swipe ? null : <div className="slide-compare-label" aria-hidden="true"><span>{beforeLabel}</span><span>{afterLabel}</span></div>}
+    <input type="range" min={0} max={100} step={5} value={swipe ? value : 100 - value} onChange={(e) => setValue(swipe ? Number(e.target.value) : 100 - Number(e.target.value))}
+      aria-label={swipe ? "Where the divider sits on slide " + number + ": " + beforeLabel + " to its left, " + afterLabel + " to its right" : "How far " + afterLabel + " has faded in over " + beforeLabel + " on slide " + number}
+      aria-valuetext={valueText} className="slide-compare-range" />
+    <p className="muted" aria-live="polite">{valueText}.</p>
+  </div>;
+}
+
+/** One stop on the version scrubber: a named version, who saved it and when, and its change against the stop before it. */
+export interface VersionStop { id: string; name: string; who: string; when: string; summary: string | null }
+
+/** The course's versions as named stops on a scrubber (pattern 7): a slider role with keyboard steps, a button for each stop,
+ *  the stop's name, who and when announced, its change against the previous stop, and a link to its entry. No autoplay. */
+export function VersionScrubber({ stops, onOpen }: { stops: VersionStop[]; onOpen: (id: string) => void }) {
+  const [at, setAt] = useState(stops.length - 1);
+  const id = useId();
+  const stop = stops[Math.min(at, stops.length - 1)];
+  if (stops.length < 2 || !stop) return null;
+  return <div className="version-scrubber" data-demo-id="version-scrubber">
+    <label htmlFor={id} className="field-label">The versions, oldest to newest</label>
+    <input id={id} type="range" min={0} max={stops.length - 1} step={1} value={at} onChange={(e) => setAt(Number(e.target.value))}
+      aria-valuetext={stop.name + ", saved by " + stop.who + " on " + stop.when} className="version-range" />
+    <ol className="version-ticks">{stops.map((s, i) => <li key={s.id}>
+      <button type="button" className="version-tick" aria-pressed={i === at} title={s.who + ", " + s.when} onClick={() => setAt(i)}>{s.name}</button></li>)}</ol>
+    <div className="version-stop" aria-live="polite">
+      <p><strong>{stop.name}</strong> <span className="muted">saved by {stop.who} on {stop.when}</span></p>
+      <p>{stop.summary === null ? "The first version on record." : stop.summary === "no change" ? "Nothing changed against the version before it." : "Against the version before it: " + stop.summary + "."}</p>
+      <Button variant="quiet" onClick={() => onOpen(stop.id)}>Open {stop.name} below</Button>
+    </div>
+  </div>;
+}
+
+/** Each outcome's result from last term to this (pattern 4): one line an outcome, every end labelled in text, the lines grey
+ *  and the chosen one emphasised, and an outcome reworded between the terms drawn broken and labelled not comparable; the
+ *  table beneath carries the same numbers and the change in points. */
+export function Slopegraph({ rows, beforeLabel, afterLabel, caption }: { rows: ResultDelta[]; beforeLabel: string; afterLabel: string; caption: string }) {
+  const comparable = rows.filter((r) => r.comparable && r.points !== null);
+  const [chosen, setChosen] = useState<string | null>(() => comparable.sort((a, b) => Math.abs(b.points!) - Math.abs(a.points!))[0]?.cloId ?? null);
+  const W = 620, H = 300, top = 34, bottom = 18, x0 = 170, x1 = 380;
+  const y = (s: number) => top + (1 - s) * (H - top - bottom);
+  const placed = (side: "before" | "after") => {
+    const items = rows.filter((r) => r[side] !== null).map((r) => ({ id: r.cloId, y: y(r[side]!) })).sort((a, b) => a.y - b.y);
+    for (let i = 1; i < items.length; i++) if (items[i].y - items[i - 1].y < 16) items[i].y = items[i - 1].y + 16;
+    return new Map(items.map((i) => [i.id, i.y]));
+  };
+  const at0 = placed("before"), at1 = placed("after");
+  const drawn = rows.filter((r) => r.before !== null && r.after !== null);
+  return <figure className="slopegraph" data-demo-id="results-slopegraph">
+    <figcaption>{caption}</figcaption>
+    <svg viewBox={"0 0 " + W + " " + H} className="slopegraph-svg" role="img"
+      aria-label={caption + ". " + rows.map((r) => r.label + ": " + pctText(r.before) + " to " + pctText(r.after) + (r.comparable ? "" : ", " + r.reason)).join("; ") + "."}>
+      <text x={x0} y={16} textAnchor="middle" fontSize={13} fontWeight={700} fill="var(--ink)">{beforeLabel}</text>
+      <text x={x1} y={16} textAnchor="middle" fontSize={13} fontWeight={700} fill="var(--ink)">{afterLabel}</text>
+      <line x1={x0} x2={x0} y1={top - 6} y2={H - bottom} stroke="var(--border)" />
+      <line x1={x1} x2={x1} y1={top - 6} y2={H - bottom} stroke="var(--border)" />
+      {drawn.map((r) => {
+        const on = r.cloId === chosen, ya = y(r.before!), yb = y(r.after!);
+        const colour = on ? "var(--emerald)" : "var(--ink-2)";
+        // A reworded outcome is drawn broken: two stubs with a gap where the comparison would be.
+        const line = r.comparable
+          ? <line x1={x0} y1={ya} x2={x1} y2={yb} stroke={colour} strokeWidth={on ? 4 : 2} />
+          : <g stroke="var(--ink-2)" strokeWidth={2} strokeDasharray="5 5"><line x1={x0} y1={ya} x2={x0 + (x1 - x0) * 0.35} y2={ya + (yb - ya) * 0.35} /><line x1={x0 + (x1 - x0) * 0.65} y1={ya + (yb - ya) * 0.65} x2={x1} y2={yb} /></g>;
+        return <g key={r.cloId}>
+          {line}
+          <circle cx={x0} cy={ya} r={4.5} fill={colour} /><circle cx={x1} cy={yb} r={4.5} fill={colour} />
+          <text x={x0 - 10} y={(at0.get(r.cloId) ?? ya) + 4} textAnchor="end" fontSize={12.5} fill="var(--ink)" fontWeight={on ? 700 : 400} className="tabular">{r.label + " " + pctText(r.before)}</text>
+          <text x={x1 + 10} y={(at1.get(r.cloId) ?? yb) + 4} textAnchor="start" fontSize={12.5} fill="var(--ink)" fontWeight={on ? 700 : 400} className="tabular">{pctText(r.after) + " " + r.label + (r.comparable ? "" : ", not comparable")}</text>
+        </g>;
+      })}
+    </svg>
+    <table className="record-table slope-table">
+      <caption>The same numbers; choose an outcome to emphasise its line</caption>
+      <thead><tr><th scope="col">Outcome</th><th scope="col">{beforeLabel}</th><th scope="col">{afterLabel}</th><th scope="col">Change</th></tr></thead>
+      <tbody>{rows.map((r) => <tr key={r.cloId} className={r.cloId === chosen ? "is-chosen" : undefined}>
+        <th scope="row" data-label="Outcome">{r.comparable ? <button type="button" className="link-button" aria-pressed={r.cloId === chosen} onClick={() => setChosen(r.cloId)}>{r.label}</button> : r.label}</th>
+        <td data-label={beforeLabel} className="tabular">{pctOne(r.before)}</td><td data-label={afterLabel} className="tabular">{pctOne(r.after)}</td>
+        <td data-label="Change">{r.comparable && r.points !== null ? (r.points > 0 ? "+" : "") + r.points + " points" : r.reason}</td></tr>)}</tbody>
+    </table>
+  </figure>;
 }

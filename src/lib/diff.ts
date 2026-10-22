@@ -1,10 +1,12 @@
 // Before and after (depth plan Section 6.1): one deterministic library for every comparison the app shows. It reads
 // records only and never guesses: a word diff of two texts, the hours of each topic in two versions, what changed
-// between two teaching packs built from records, the change in an outcome's results between two terms, and a summary
-// in words. The views in ui/primitives/compare.tsx draw what these return.
+// between two teaching packs built from records, the change in an outcome's results between two terms, a summary
+// in words, and each version against the one it replaced. The views in ui/primitives/compare.tsx draw what these return.
 
-import type { CourseDefinition, CourseTopic } from "../types.ts";
+import type { CourseDefinition, CourseTopic, CurriculumDraft, LoopEvent, PersonId, SubjectVersion, TeachingSession } from "../types.ts";
+import { previousVersionOf } from "./decisions.ts";
 import type { DeckSlide, DeckSpec } from "./slides.ts";
+import { changedOutcomeWeek, sessionInWeek } from "./teachingPlan.ts";
 
 // ---------- words ----------
 
@@ -210,4 +212,24 @@ export function changeSummary(before: CourseDefinition, after: CourseDefinition,
   const changedSlides = slides.length;
   if (changedSlides) parts.push(count(changedSlides, "slide changed", "slides changed"));
   return parts.length ? parts.join(", ") : "no change";
+}
+
+// ---------- a version against the one it replaced ----------
+
+/** A version's change against the version it replaced: the two outlines, the pack of the first week that teaches a
+ *  reworded outcome built under both, and the summary in words; nulls where there is nothing to compare. */
+export function versionChange(version: SubjectVersion, versions: SubjectVersion[], events: LoopEvent[], drafts: CurriculumDraft[],
+  sessions: TeachingSession[], makePack: (session: TeachingSession, version: SubjectVersion) => DeckSpec) {
+  const prev = previousVersionOf(version, versions, events, drafts);
+  const compare = prev?.definition && version.definition ? { before: prev.definition, after: version.definition } : null;
+  const packSession = compare ? sessionInWeek(sessions, changedOutcomeWeek(compare.after, compare.before)) : null;
+  const packs = compare && packSession ? { before: makePack(packSession, prev!), after: makePack(packSession, version) } : null;
+  return { prev, compare, packSession, packs, summary: compare ? changeSummary(compare.before, compare.after, packs ? deckDiff(packs.before, packs.after) : []) : null };
+}
+
+/** The scrubber's named stops (depth plan Section 6.2, pattern 7): every version oldest first, each with the day it was
+ *  saved, who saved it and its change in words, null for the first on record. */
+export function versionStops(versions: SubjectVersion[], summaryOf: (v: SubjectVersion) => string | null): Array<{ id: string; by: PersonId; when: string; summary: string | null }> {
+  return [...versions].sort((a, b) => a.changedAt.localeCompare(b.changedAt))
+    .map((v) => ({ id: v.id, by: v.changedBy, when: v.changedAt.slice(0, 10), summary: summaryOf(v) }));
 }

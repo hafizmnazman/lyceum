@@ -1,6 +1,7 @@
-// Proof of the before and after library (depth plan Sections 6.1 and 12): the word diff, the topic deltas, the structural
-// deck diff on the tour's own end state (the sample workspace), the result deltas with the not-comparable mark, the change
-// summary, and the decision link read from the event log.
+// Proof of the before and after library (depth plan Sections 6.1, 6.2 and 12): the word diff, the topic deltas, the
+// structural deck diff on the tour's own end state (the sample workspace), the result deltas with the not-comparable mark,
+// the change summary, the decision link read from the event log, the slopegraph's data between two terms and the
+// version scrubber's stops.
 //   node --test src/prove-diff.ts
 
 import assert from "node:assert/strict";
@@ -8,9 +9,10 @@ import { test } from "node:test";
 import { loadWorkspace } from "../mcp/workspace.ts";
 import { SAMPLE_PATH } from "../mcp/sample.ts";
 import { CS310_BEFORE, cs310After } from "./data/sample-course/cs310.ts";
-import { PEOPLE } from "./data/seed.ts";
+import { PEOPLE, SEED_RESULT_UPLOADS } from "./data/seed.ts";
+import { termResults } from "./lib/attainment.ts";
 import { authorisingDecision } from "./lib/decisions.ts";
-import { changeSummary, deckDiff, hoursDelta, resultDeltas, topicDeltas, wordDiff, type DiffRun } from "./lib/diff.ts";
+import { changeSummary, deckDiff, hoursDelta, resultDeltas, topicDeltas, versionChange, versionStops, wordDiff, type DiffRun } from "./lib/diff.ts";
 import { withDerivedFields } from "./lib/curriculum.ts";
 import { previewSlides } from "./lib/deckLayout.ts";
 import { brandFor, packUnderVersion, type DeckSpec } from "./lib/slides.ts";
@@ -132,4 +134,32 @@ test("History's decision link: the tour's version names Dr Rahman's decision, re
   assert.equal(authorisingDecision("V2", [ev("decision-recorded", { decisionId: "D1" }), adopt], [dec("D1", "adopt", "V0")], drafts), null, "a decision on another version does not authorise this one");
   assert.equal(authorisingDecision("V2", [adopt, ev("decision-recorded", { decisionId: "D1" })], [dec("D1", "adopt")], drafts), null, "nor does one recorded after the adoption");
   assert.equal(authorisingDecision("V2", [ev("decision-recorded", { decisionId: "D1" }), adopt], [dec("D1", "adopt")], []), null, "nor one without the revision's record");
+});
+
+test("the slopegraph's data: each outcome's share at today's pass mark in both terms, in each term's own words, CLO5 not compared", () => {
+  const seeded = new Set(SEED_RESULT_UPLOADS.map((u) => u.id));
+  const prior = d.resultUploads.find((u) => u.subjectId === "CS310" && seeded.has(u.id))!;
+  const current = d.resultUploads.find((u) => u.subjectId === "CS310" && !seeded.has(u.id) && u.rows.some((r) => r.marks))!;
+  assert.deepEqual([prior.courseVersionId, current.courseVersionId], [v1.id, v2.id], "last term was taught on the first version, this term on the tour's");
+  const clos = d.clos.filter((c) => c.subjectId === "CS310");
+  const { passMark, studentShare } = d.institution.kpi;
+  const before = termResults(prior, clos, passMark, studentShare, d.subjectVersions);
+  const after = termResults(current, clos, passMark, studentShare, d.subjectVersions);
+  assert.deepEqual([before.find((r) => r.cloId === "CLO5")?.text, after.find((r) => r.cloId === "CLO5")?.text], [OLD, NEW], "each term's CLO5 in its own version's words");
+  const rows = new Map(resultDeltas(before, after).map((r) => [r.label, r]));
+  assert.deepEqual([rows.get("CLO5")?.comparable, rows.get("CLO5")?.points, rows.get("CLO5")?.reason], [false, null, "reworded between terms; not comparable"]);
+  // Counted by hand from the two sample files: CLO1 28 of 38 then 31 of 38, CLO2 27 then 29, CLO3 24 of 38 then 22 of the
+  // 35 with a mark, CLO4 15 then 17.
+  assert.deepEqual([rows.get("CLO1")?.before, rows.get("CLO1")?.after], [28 / 38, 31 / 38]);
+  assert.deepEqual(["CLO1", "CLO2", "CLO3", "CLO4"].map((l) => [l, rows.get(l)?.comparable, rows.get(l)?.points]),
+    [["CLO1", true, 7.9], ["CLO2", true, 5.3], ["CLO3", true, -0.3], ["CLO4", true, 5.3]]);
+});
+
+test("the scrubber's stops run oldest first: the first version on record with no change, the tour's with its change in words", () => {
+  const change = (v: typeof v1) => versionChange(v, d.subjectVersions, d.events, d.curriculumDrafts, sessions, pack);
+  const stops = versionStops([v2, v1], (v) => change(v).summary);
+  assert.deepEqual(stops.map((s) => [s.id, s.by, s.when, s.summary]),
+    [[v1.id, v1.changedBy, "2026-01-05", null], [v2.id, v2.changedBy, "2026-10-22", "1 outcome reworded, 1 topic added, 3 h added, 1 slide changed"]]);
+  const tour = change(v2);
+  assert.deepEqual([tour.prev?.id, tour.packSession?.week, tour.packSession?.sample], [v1.id, 6, undefined], "the version it replaced, and the lecturer's own week 6 pack built under both");
 });

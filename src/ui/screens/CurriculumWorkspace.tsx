@@ -8,9 +8,9 @@ import type { BloomLevel, CourseDefinition, CourseOutcome, CourseTopic, Curricul
 import { Button, Disclosure, Field, Input, Select, Tag, Textarea } from "../primitives/index.tsx";
 import { DecisionCard, Meter } from "../primitives/loop.tsx";
 import { authorisingDecision, briefDecisionState, OUTCOME_LABEL } from "../../lib/decisions.ts";
-import { changeSummary, deckDiff } from "../../lib/diff.ts";
+import { changeSummary, deckDiff, versionChange, versionStops } from "../../lib/diff.ts";
 import { changedOutcomeWeek, sessionInWeek } from "../../lib/teachingPlan.ts";
-import { ChangeSummary, OutcomeChanges, SlideDiffList, TwoColumn } from "../primitives/compare.tsx";
+import { ChangeSummary, CountUpSummary, Dumbbell, OutcomeChanges, SlideDiffList, TwoColumn, VersionScrubber, type VersionStop } from "../primitives/compare.tsx";
 import { useMarkData } from "../primitives/DeckPreview.tsx";
 import { packMaker, previousVersion } from "./packCompare.ts";
 import { useUnsavedEditor } from "../useUnsavedEditor.ts";
@@ -56,6 +56,7 @@ export function CurriculumPanel({ state, person, subject }: Props) {
       <h4>Outcomes</h4>
       <OutcomeChanges before={lastChange.before} after={lastChange.after} />
       <h4>Topics and hours</h4>
+      <Dumbbell before={lastChange.before} after={lastChange.after} beforeLabel={lastChange.from.id} afterLabel={lastChange.to.id} />
       <TwoColumn before={lastChange.before} after={lastChange.after} beforeLabel={lastChange.from.id} afterLabel={lastChange.to.id} />
       <p className="muted">History has the decision behind this version{lastPack ? " and the week " + lastPack.week + " pack under both versions" : ""}.</p>
     </section> : null}
@@ -258,6 +259,7 @@ function RevisionEditor({ state, subject, draft, baseline, mayEdit }: Props & {
       <h4>Outcomes</h4>
       <OutcomeChanges before={baseline} after={definition} />
       <h4>Topics and hours</h4>
+      <Dumbbell before={baseline} after={definition} beforeLabel={draft.baselineVersionId} afterLabel={"Candidate " + draft.revision} />
       <TwoColumn before={baseline} after={definition} beforeLabel={draft.baselineVersionId} afterLabel={"Candidate " + draft.revision} />
       {courseChanges.length ? <><h4>The rest of the course</h4><div className="revision-diff">{courseChanges.map((c,i) => <article key={i}><div className="button-row"><Tag>{c.kind}</Tag><strong>{c.label}</strong></div>
         <div className="session-content"><div><h4>Current version</h4><p className="preserve-lines">{c.before || "Not present"}</p></div><div><h4>Candidate</h4><p className="preserve-lines">{c.after || "Removed"}</p></div></div></article>)}</div></> : null}
@@ -298,17 +300,21 @@ export function CurriculumHistoryPanel({ state, subject }: { state: AppState; su
   const makePack = packMaker(state, subject, markData, nowIso());
   const sessions = state.teachingPlans.find(p => p.subjectId === subject.id)?.sessions ?? [];
   const openDecision = (id: string) => { const el = document.getElementById("decision-" + id); el?.scrollIntoView({ block: "center" }); el?.focus({ preventScroll: true }); };
+  // Each version's change against the one it replaced, built once per version: the pack under both, then the summary.
+  const changes = new Map(versions.map(v => [v.id, versionChange(v, state.subjectVersions, state.events, state.curriculumDrafts, sessions, makePack)]));
+  const changeOf = (v: (typeof versions)[number]) => changes.get(v.id)!;
+  // The scrubber's named stops, oldest first (depth plan Section 6.2, pattern 7).
+  const stops: VersionStop[] = versionStops(versions, v => changeOf(v).summary).map(s => ({ id: s.id, name: s.id, who: name(s.by), when: s.when, summary: s.summary }));
+  const openVersion = (id: string) => { const el = document.getElementById("version-" + id); el?.querySelector("details")?.setAttribute("open", ""); el?.scrollIntoView({ block: "start" }); el?.focus({ preventScroll: true }); };
   return <div>
     <section className="workspace-panel" aria-labelledby="history-title"><div className="section-heading"><h2 id="history-title">Versions and decisions</h2>
       <Button onClick={() => openRecap(subject.id)} data-demo-id="history-recap">The term recap</Button></div>
       <p className="muted">Newest first. A local version keeps the outline, the reason and the term; it does not attest university approval.</p>
+      <VersionScrubber stops={stops} onOpen={openVersion} />
       {entries.length ? <ol className="history-timeline" data-demo-id="history-timeline">{entries.map(e => { if (e.kind === "version") {
-        const prev = previousVersion(state, e.v);
+        const { prev, compare, packSession, packs, summary } = changeOf(e.v);
         const decision = prev ? authorisingDecision(e.v.id, state.events, state.briefDecisions, state.curriculumDrafts) : null;
-        const compare = prev?.definition && e.v.definition ? { before: prev.definition, after: e.v.definition } : null;
-        const packSession = compare ? sessionInWeek(sessions, changedOutcomeWeek(compare.after, compare.before)) : null;
-        const packs = compare && packSession ? { before: makePack(packSession, prev!), after: makePack(packSession, e.v) } : null;
-        return <li key={"v" + e.v.id} className="history-entry">
+        return <li key={"v" + e.v.id} id={"version-" + e.v.id} tabIndex={-1} className="history-entry">
           <span className="history-time mono">{e.at.slice(0, 16).replace("T", " ")}</span>
           <div className="history-body">
             <div className="button-row"><Tag tone="accent">Version</Tag><strong className="tabular">{e.v.id}</strong><span className="muted">{e.v.effectiveTerm || "Term not recorded"} · {name(e.v.changedBy)}</span><Tag>{e.v.id === subject.currentVersionId ? "Current" : "Previous"}</Tag></div>
@@ -316,11 +322,12 @@ export function CurriculumHistoryPanel({ state, subject }: { state: AppState; su
             {!prev ? <p className="muted">The first version on record.</p>
               : decision ? <p className="history-authorised">Authorised by <button type="button" className="link-button" data-demo-id={"history-decision-link-" + e.v.id} onClick={() => openDecision(decision.id)}>{name(decision.byPersonId)}'s decision of {decision.at.slice(0, 10)}: {OUTCOME_LABEL[decision.outcome].toLowerCase()}</button></p>
               : <p className="muted">No decision on record for this change.</p>}
-            {compare ? <ChangeSummary text={changeSummary(compare.before, compare.after, packs ? deckDiff(packs.before, packs.after) : [])} /> : null}
+            {compare && summary ? <CountUpSummary text={summary} /> : null}
             {compare ? <details className="history-open" open={e.v.id === subject.currentVersionId || undefined} data-demo-id={"history-compare-" + e.v.id}><summary>Compare with {prev!.id}</summary>
               <h4>Outcomes</h4>
               <OutcomeChanges before={compare.before} after={compare.after} />
               <h4>Topics and hours</h4>
+              <Dumbbell before={compare.before} after={compare.after} beforeLabel={prev!.id} afterLabel={e.v.id} />
               <TwoColumn before={compare.before} after={compare.after} beforeLabel={prev!.id} afterLabel={e.v.id} />
               <h4>{packSession ? "The week " + packSession.week + " pack" + (packSession.sample ? ", a sample session" : "") : "The teaching pack"}</h4>
               {packs ? <SlideDiffList before={packs.before} after={packs.after} beforeLabel={"Under " + prev!.id} afterLabel={"Under " + e.v.id} markSrc={state.institution.mark.wide ?? state.institution.mark.png} />

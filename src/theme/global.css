@@ -2082,6 +2082,37 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; }
 .survey-comments ul { margin: 6px 0; padding-left: 20px; }
 .forms-import { margin-top: 10px; }
 @media (max-width: 760px) { .booth-link { grid-template-columns: minmax(0, 1fr); } }
+/* D5b's views (depth plan Section 6.2): the dumbbell of hours, the swipe and onion-skin compare, the version scrubber and
+   the slopegraph. Tokens only; nothing here transitions, and the counters stop under reduced motion in code. */
+.dumbbell { margin: 10px 0; }
+.dumbbell figcaption, .slopegraph figcaption { font-size: 13px; color: var(--ink-2); margin-bottom: 6px; }
+.dumbbell-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.dumbbell-rows li { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); align-items: center; gap: 10px; font-size: 13px; color: var(--ink-2); }
+.dumbbell-rows li.is-changed { color: var(--ink); font-weight: 600; }
+.dumbbell-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dumbbell-svg { width: 100%; height: 26px; display: block; }
+@media (max-width: 760px) { .dumbbell-rows li { grid-template-columns: minmax(0, 1fr); gap: 0; } }
+.slide-compare-open summary { cursor: pointer; font-weight: 600; margin-top: 8px; }
+.slide-compare { display: grid; gap: 8px; margin-top: 8px; }
+.slide-compare-stage { position: relative; cursor: col-resize; touch-action: pan-y; user-select: none; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.slide-compare-layer + .slide-compare-layer { position: absolute; inset: 0; }
+.slide-compare-layer .slide-svg { display: block; width: 100%; height: auto; }
+.slide-compare-divider { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--emerald); transform: translateX(-50%); pointer-events: none; }
+.slide-compare-label { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--ink-2); }
+.slide-compare-tag { position: absolute; top: 8px; max-width: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 2px 8px; font-size: 12px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-chip); pointer-events: none; }
+.slide-compare-tag.is-before { left: 8px; }
+.slide-compare-tag.is-after { right: 8px; }
+.slide-compare-range, .version-range { width: 100%; accent-color: var(--emerald); }
+.version-scrubber { margin: 10px 0 14px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--white); display: grid; gap: 8px; }
+.version-ticks { list-style: none; margin: 0; padding: 0; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.version-tick { font: inherit; font-size: 13px; padding: 4px 12px; min-height: 36px; border: 1px solid var(--border); border-radius: 999px; background: var(--white); color: var(--ink); cursor: pointer; }
+.version-tick[aria-pressed="true"] { border-color: var(--emerald); background: var(--tint-1); font-weight: 700; }
+/* A pressed toggle reads as pressed: the redline's Hide changes, the compare's Swipe and Onion skin. */
+.slide-compare .button-row [aria-pressed="true"], .redline-controls [aria-pressed="true"] { border-color: var(--emerald); background: var(--tint-1); }
+.version-stop p { margin: 2px 0; }
+.slopegraph { margin: 10px 0; }
+.slopegraph-svg { width: 100%; max-width: 640px; height: auto; display: block; }
+.slope-table tr.is-chosen th, .slope-table tr.is-chosen td { background: var(--tint-1); }
 /* The check's items on a session card (depth plan Section 10): one card an item, the key in bold, the lint as chips with
    every rule named, and the editor's options in a row. */
 .session-items { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }

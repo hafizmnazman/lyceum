@@ -8,13 +8,15 @@
 
 import { useEffect, useState } from "react";
 import { SEED_RESULT_UPLOADS } from "../../data/seed.ts";
-import { loopState, taughtVersionId } from "../../app/loop.ts";
+import { loopState, taughtVersionId, termWindow } from "../../app/loop.ts";
 import { can } from "../../app/roles.ts";
-import { currentPerson, navigate, openStep, useStore, type AppState } from "../../app/store.ts";
+import { currentPerson, navigate, openStep, reportUpload, useStore, type AppState } from "../../app/store.ts";
 import { LEARN_CLAIM, attainment } from "../../lib/learn.ts";
-import { NON_RESPONSE_LABEL, NOT_FILED, directRows, methodLine, pctText } from "../../lib/attainment.ts";
+import { NON_RESPONSE_LABEL, NOT_FILED, directRows, methodLine, pctText, termResults } from "../../lib/attainment.ts";
+import { resultDeltas } from "../../lib/diff.ts";
 import type { CLO, ObeReport, ResultUpload, Subject } from "../../types.ts";
 import { Button, Disclosure, EmptyState, Tag } from "../primitives/index.tsx";
+import { Slopegraph } from "../primitives/compare.tsx";
 import { Handoff, Meter } from "../primitives/loop.tsx";
 import { Mascot } from "../mascots/index.tsx";
 import { IntakePanel } from "./Upload.tsx";
@@ -71,6 +73,7 @@ export function LearnScreen() {
     </section>
 
     <ObePanel state={state} person={person} subject={subject} onPrint={setPrinting} />
+    <ResultsBetweenTerms state={state} subject={subject} clos={clos} />
 
     <section className="workspace-panel" aria-labelledby="learn-file" id="learn-file-section">
       <div className="section-heading"><div><h2 id="learn-file">File results or a survey</h2>
@@ -115,6 +118,26 @@ export function LearnScreen() {
     {learn.note ? <p className="limitation">{learn.note}.</p> : null}
     {loop.closed ? <p className="muted">The loop is closed for this term. <Button variant="quiet" onClick={() => openStep(subject.id, "history")}>See it in History</Button></p> : null}
   </StepFrame>;
+}
+
+/** Each outcome's share at the pass mark from last term's file to this term's (depth plan Section 6.2, pattern 4), at today's
+ *  threshold for both, each outcome judged against the wording of the version its term was taught on: a reworded outcome is
+ *  drawn broken and said to be not comparable. Last term's file is the seeded sample, never counted as this term's. */
+function ResultsBetweenTerms({ state, subject, clos }: { state: AppState; subject: Subject; clos: CLO[] }) {
+  const term = termWindow(state, subject.id).term;
+  const prior = state.resultUploads.find((u) => SEEDED.has(u.id) && u.subjectId === subject.id && u.rows.some((r) => r.marks));
+  const current = term ? reportUpload(state, subject.id, term) : null;
+  if (!prior || !current || !current.rows.some((r) => r.marks)) return null;
+  const { passMark, studentShare } = state.institution.kpi;
+  const results = (u: ResultUpload) => termResults(u, clos, passMark, studentShare, state.subjectVersions);
+  const rows = resultDeltas(results(prior), results(current));
+  return <section className="workspace-panel" aria-labelledby="learn-between" data-demo-id="learn-between-terms">
+    <div className="section-heading"><div><h2 id="learn-between">Results between terms</h2>
+      <p className="muted">The share of students at or above {passMark}, today's pass mark, in both terms. Last term ({prior.term}) is the seeded sample file{prior.sample ? ", synthetic marks," : ""} on {prior.courseVersionId ?? "an unrecorded version"}, never counted as this term's; this term ({current.term}) is on {current.courseVersionId ?? "an unrecorded version"}.</p></div>
+      {prior.sample || current.sample ? <Tag tone="warn">Sample, synthetic</Tag> : null}</div>
+    <Slopegraph rows={rows} beforeLabel={"Last term"} afterLabel={"This term"} caption={"Each outcome's share at " + passMark + " or above, last term against this term"} />
+    <p className="muted">An outcome reworded between the terms was assessed against a different promise, so its two shares are not compared. No learning gain is claimed; the benchmark has not been run.</p>
+  </section>;
 }
 
 function AttainmentCard({ state, subject, upload, clos }: { state: AppState; subject: Subject; upload: ResultUpload; clos: CLO[] }) {

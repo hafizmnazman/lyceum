@@ -4,7 +4,8 @@
 // records and the institution profile. Booth responses never enter (Section 7.2), and the one method is the share of
 // students at or above the pass mark: a per-tool method needs per-tool scores the results file does not carry.
 
-import type { CLO, CourseOutcome, InstitutionProfile, LoopEvent, ObeDirectRow, ObeIndirectRow, ObePloRow, ObeReport, PersonId, ProgrammeOutcome, ResultUpload, SurveyDefinition, SurveyResponse } from "../types.ts";
+import type { CLO, CourseOutcome, InstitutionProfile, LoopEvent, ObeDirectRow, ObeIndirectRow, ObePloRow, ObeReport, PersonId, ProgrammeOutcome, ResultUpload, SubjectVersion, SurveyDefinition, SurveyResponse } from "../types.ts";
+import type { OutcomeResult } from "./diff.ts";
 import { surveyReleased, surveySummary } from "./surveys.ts";
 
 /** The label on an interval: it measures one thing only. */
@@ -68,6 +69,15 @@ export function directRow(row: ResultUpload["rows"][number], clo: CLO | undefine
 export function directRows(upload: ResultUpload, clos: CLO[], passMark: number, studentShare: number): ObeDirectRow[] {
   const N = listedStudents(upload);
   return upload.rows.map((r) => directRow(r, clos.find((c) => c.id === r.cloId), passMark, studentShare, N));
+}
+
+/** Each outcome's share at the pass mark in a results file, in the words of the version its term was taught on, so a
+ *  comparison between terms can tell a reworded outcome from a changed result (depth plan Section 6.2, pattern 4). */
+export function termResults(upload: ResultUpload, clos: CLO[], passMark: number, studentShare: number, versions: SubjectVersion[]): OutcomeResult[] {
+  const v = versions.find((x) => x.id === upload.courseVersionId);
+  const wording: Array<{ id: string; text: string }> = v?.definition?.outcomes ?? v?.cloSnapshot ?? [];
+  return directRows(upload, clos, passMark, studentShare)
+    .map((d) => ({ cloId: d.cloId, label: d.label, text: wording.find((o) => o.id === d.cloId)?.text ?? d.text, share: d.share }));
 }
 
 /** The direct line as one sentence, the plan's own shape: "CLO2: 29 of 38 students at 55 or above, 76%; KPI 50% met". */

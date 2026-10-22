@@ -1667,3 +1667,73 @@ Chosen: (b), because items can sit on any session, not only week 7, and a course
 Reverse it if: a campus wants only the quiz week's items in the course file.
 
 To reverse: `files`, `courseFileManifest` and `buildCourseFile` in `src/lib/courseFile.ts`.
+
+## 2026-10-22 23:52, D5b: the session prompt for D5b, written from Section 6.2
+
+Options: (a) the five pieces Section 6.2 lists for D5b, in full: the dumbbell, the swipe and onion-skin compare, the version scrubber, the counters and the slopegraph. (b) A subset, dropping the scrubber or the swipe to save time.
+
+Chosen: (a), because Tier 3 has until Monday and each piece rests on records D5a and D4a already keep; the object-constant animated transitions stay in Track B as the plan says. The prompt, with D5a's verification lines: "Read docs/lyceum-depth-plan.md Section 6.2 (D5b) and docs/research/before-and-after-patterns-2026-10-22.md patterns 3, 4, 5, 7 and 9, src/ui/primitives/compare.tsx, src/ui/primitives/DeckPreview.tsx, src/lib/diff.ts, src/lib/attainment.ts, src/ui/screens/CurriculumWorkspace.tsx, src/ui/screens/Learn.tsx and src/theme/tokens.ts. Add to compare.tsx: a Dumbbell of contact hours per topic, before and after, sorted by the size of change, value labels on both dots and the two-column table beneath; SlideCompare over the two DeckPreview slides, swipe and onion-skin, the divider or the fade moved by arrow keys, by a click on the position and by Show before and Show after buttons (WCAG 2.5.7), its value announced; a VersionScrubber in History over the course's versions with named stops (a slider role, keyboard steps, the stop's name, who and when announced, no autoplay), the change always against the previous stop; CountUp for the change summary's numbers, once, the final text at once under reduced motion and in a live region; and a Slopegraph on Learn of each outcome's share at the pass mark from last term's sample file to this term's, every line end labelled in text, grey lines at 3:1, CLO5 broken and labelled 'reworded between terms; not comparable' from resultDeltas, with a table beneath. Colours from tokens only; nothing autoplays; every motion stops under reduced motion. Extend src/prove-diff.ts for the slopegraph's data and the scrubber's stops. Verify with npm run typecheck, npm run prove:all, npm run build, npm run smoke:curriculum and the 320 px layout in npm run smoke:workspace."
+
+Reverse it if: Monday runs short; the scrubber and the swipe are the first to drop.
+
+To reverse: the D5b components in `src/ui/primitives/compare.tsx` and their places in `src/ui/screens/CurriculumWorkspace.tsx` and `src/ui/screens/Learn.tsx`.
+
+## 2026-10-22 23:51, D5b: which topics the dumbbell draws
+
+Options: (a) only the topics that changed, which is shorter but hides how big a change is against the course's other hours. (b) Every topic, the largest change first, the changed ones in emerald with a bar between the dots and the unchanged ones grey, each row's numbers in words for a screen reader.
+
+Chosen: (b), because the pattern's point is the change against the whole course, and the hours table beneath holds the same numbers for anyone who reads tables. Fifteen rows stay short enough at 320 px.
+
+Reverse it if: a course with many topics makes the figure too long; then draw the changed topics and a line saying how many stayed.
+
+To reverse: `Dumbbell` in `src/ui/primitives/compare.tsx`.
+
+## 2026-10-22 23:51, D5b: what a stop on the version scrubber is
+
+Options: (a) every saved revision, adopted or not, which shows more history but puts drafts that were never the course beside the versions. (b) The adopted versions only, oldest to newest, each stop naming who saved it and when and its change against the version before, with a button per stop and a link to its entry below.
+
+Chosen: (b), because History is the record of what the course was, and a revision that was never adopted was never taught. The revision log stays behind its disclosure for anyone who wants the drafts.
+
+Reverse it if: a coordinator asks to step through a revision's saves.
+
+To reverse: `VersionScrubber` in `src/ui/primitives/compare.tsx`, `versionStops` in `src/lib/diff.ts` and the History panel in `src/ui/screens/CurriculumWorkspace.tsx`.
+
+## 2026-10-22 23:53, D5b: where the summary counts up
+
+Options: (a) everywhere the change summary shows: Update, History and the term recap. (b) In History only, once when it opens, on a saved version; Update's working check and the recap, which prints, keep the static words; under reduced motion the numbers show at once, and a screen reader hears the final words once.
+
+Chosen: (b), because the project's rule is that nothing in the workspace animates without a real request or a saved record, and a version in History is a saved record while a revision in Update is still being worked on. The recap is a printed page, where a count has nothing to show.
+
+Reverse it if: the owner wants the count on Update's last change in use, which is also a saved version.
+
+To reverse: `CountUpSummary` and `ChangeSummary` in `src/ui/primitives/compare.tsx`, and their uses in `src/ui/screens/CurriculumWorkspace.tsx`.
+
+## 2026-10-22 23:53, D5b: the threshold and the words the slopegraph compares
+
+Options: (a) each term at the pass mark it was filed with, which keeps each term's own rule but compares two different thresholds if the mark ever changed. (b) Both terms at today's pass mark, said on the screen, with each outcome in the words of the version its term was taught on, so a reworded outcome is caught and drawn broken instead of as a change.
+
+Chosen: (b), because a slope means something only when both ends are measured the same way, and the version each term was taught on is on record. The screen says "today's pass mark" and that last term's file is the seeded sample, never counted as this term's.
+
+Reverse it if: the institution says a term's results may only be read at the mark they were filed with; then show the filed marks and say when they differ.
+
+To reverse: `ResultsBetweenTerms` in `src/ui/screens/Learn.tsx` and `termResults` in `src/lib/attainment.ts`.
+
+## 2026-10-23 00:02, D5b: the data behind the views, in the libraries
+
+Options: (a) keep the version change, the stops and the two terms' results inside the screens and rebuild them in the proof, which leaves the proof able to pass while a screen drifts. (b) Move them into the libraries the screens call (`versionChange` and `versionStops` in `src/lib/diff.ts`, `termResults` in `src/lib/attainment.ts`) and prove those.
+
+Chosen: (b), because the logged prompt asks the proof to check the slopegraph's data and the scrubber's stops, and only shared code makes that check mean the screen. History now builds each version's change once a render instead of twice.
+
+Reverse it if: the screens stop using the functions.
+
+To reverse: the three functions and their calls in `src/ui/screens/CurriculumWorkspace.tsx` and `src/ui/screens/Learn.tsx`.
+
+## 2026-10-23 00:07, D5b: what the compare slider moves
+
+Options: (a) one slider meaning the same in both modes, "how far toward the later version", which in a swipe runs against the divider (an arrow right moved the divider left, and a click at a quarter put the thumb at three quarters; found in the look at 00:05). (b) The slider sits under what it moves: in a swipe its thumb is the divider, with each version named in its corner; in an onion skin it is how far the later version has faded in, so right means more of the later one.
+
+Chosen: (b), because a control that moves against what the eye follows reads as broken, and each mode's slider now matches its picture. Both are native range inputs, so the keys, the slider role and the spoken value come from the browser.
+
+Reverse it if: people switching between the two modes find the change in meaning confusing in the pilot.
+
+To reverse: `SlideCompare` in `src/ui/primitives/compare.tsx` and `.slide-compare-tag` in `src/theme/global.css`.
