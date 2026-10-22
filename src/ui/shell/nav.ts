@@ -16,6 +16,7 @@ import {
   Inbox,
   Layers,
   ListChecks,
+  MonitorPlay,
   PenLine,
   PlusSquare,
   ScrollText,
@@ -52,6 +53,7 @@ export const NAV_META: Record<Exclude<Screen, "login">, { label: string; icon: L
   index: { label: "Relevance Index", icon: Globe },
   guide: { label: "Guide & progress", icon: BookMarked },
   judge: { label: "For judges", icon: Footprints },
+  kiosk: { label: "Kiosk", icon: MonitorPlay },
   recap: { label: "Term recap", icon: ScrollText },
 };
 

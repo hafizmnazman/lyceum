@@ -6,6 +6,7 @@ import { hatsOn, subjectsForPerson } from "../../app/roles.ts";
 import { currentPerson, navigate, selectSubject, useStore } from "../../app/store.ts";
 import { planSummary } from "../../lib/teachingPlan.ts";
 import { Button, Field, Input, Page, PageHead, Select, Tag } from "../primitives/index.tsx";
+import { ProgrammeWall } from "./ProgrammeWall.tsx";
 
 export function CoursesScreen() {
   const state = useStore();
@@ -49,5 +50,6 @@ export function CoursesScreen() {
       <Button data-demo-id={"course-open-" + subject.id} onClick={() => open(subject.id)}>Open course <ArrowRight size={15} /></Button>
     </article>)}</div>
     {!visible.length ? <section className="workspace-panel"><h2>{courses.length ? "No courses match" : "No courses assigned yet"}</h2><p>{courses.length ? "Try another code, title or preparation filter." : "Ask the department to assign a lecturer or coordinator responsibility. Your course workspace will appear here."}</p>{courses.length ? <Button onClick={() => { setQuery(""); setYear("all"); setFilter("all"); }}>Clear filters</Button> : <Button onClick={() => navigate("guide")}>Read the guide</Button>}</section> : null}
+    <ProgrammeWall state={state} person={person} />
   </Page>;
 }

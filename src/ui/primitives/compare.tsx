@@ -14,6 +14,7 @@ import type { DeckSpec } from "../../lib/slides.ts";
 import type { CourseDefinition } from "../../types.ts";
 import { SlideSvg, type SlideHighlight } from "./DeckPreview.tsx";
 import { Button, Tag } from "./index.tsx";
+import { reducedMotion } from "../motion.ts";
 
 /** One text before and after, in one run of prose: what went struck through in the danger token, what came underlined in
  *  the emerald text token, each with a hidden "deleted" or "inserted". With `hide`, the clean new text alone. */
@@ -125,7 +126,6 @@ export function ChangeSummary({ text }: { text: string }) {
 
 // ---------- D5b (depth plan Section 6.2, Tier 3) ----------
 
-const reducedMotion = () => typeof window !== "undefined" && Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
 const pctText = (x: number | null) => (x === null ? "none" : Math.round(x * 100) + "%");
 // The slopegraph's table, to the tenth, so its change in points adds up from the two shares beside it.
 const pctOne = (x: number | null) => (x === null ? "none" : Math.round(x * 1000) / 10 + "%");

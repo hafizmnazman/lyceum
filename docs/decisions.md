@@ -1737,3 +1737,75 @@ Chosen: (b), because a control that moves against what the eye follows reads as 
 Reverse it if: people switching between the two modes find the change in meaning confusing in the pilot.
 
 To reverse: `SlideCompare` in `src/ui/primitives/compare.tsx` and `.slide-compare-tag` in `src/theme/global.css`.
+
+## 2026-10-23 00:24, D6b: the session prompt for D6b, written from Section 9.1
+
+Options: (a) the three pieces Section 9.1 lists for D6b, in full: the programme wall on Courses, the kiosk at `#/kiosk` and the count-up on the judge page. (b) The wall and the count-up only, leaving the kiosk out, since the film it plays is a render git ignores on this laptop and a clean clone has none.
+
+Chosen: (a), because the kiosk plays the existing render without rendering anything, and where the file is missing it can say so instead of failing. Two differences from the plan, read from the code: the programme holds eight courses, not seven, so the wall shows eight and seven of them say "no outline recorded"; and the film reaches the page by a copy into `public/media/`, which git ignores, as it ignores the deck's copy.
+
+The prompt, with D6a's verification lines: "Read docs/lyceum-depth-plan.md Section 9.1 (D6b) and Section 9.2 rows 6, 9 and 10, docs/research/judge-experience-and-wow-2026-10-22.md Sections 1 and 4, src/ui/screens/Courses.tsx, Judge.tsx and Programme.tsx, src/ui/primitives/loop.tsx (the ring), src/app/loop.ts, src/app/routes.ts, src/app/roles.ts, src/App.tsx, src/demo/WalkOverlay.tsx, src/demo/DemoOverlay.tsx and src/ui/mascots/index.tsx. On Courses, build the programme wall: every course of the programme as a mini ring with its term, closed or open, and the programme's CLO to PLO heat table, a course a row and a PLO a column, the strongest link level written in every linked cell with the number of outcomes behind it, and every course without a recorded outline saying 'no outline recorded'; all of it from records. Build the kiosk at #/kiosk, public like the judge page: Tualang resting on the forest; the existing Loop90 render of 22 October (video/out/loop90-720p.mp4, copied into public/media by a script with its render date, never rendered) playing muted in a loop with a visible pause, and not playing by itself under reduced motion; 'Touch to walk the loop' starting the guided walk; a thirty-second idle return to the kiosk from anywhere in the app while kiosk mode is on, with a warning first, held while the tour plays; and a way out for the team. Count the register's four figures up once on the judge page when they come into view, static under reduced motion, the exact values for screen readers. Extend src/prove-judge.ts for the wall's table, the idle return's timing and the count's end values, and the workspace smoke for the kiosk, the wall and the count. Verify with npm run typecheck, npm run prove:all, npm run build, npm run smoke, npm run smoke:integrity and npm run smoke:workspace."
+
+Reverse it if: Monday runs short; the kiosk is the first to drop.
+
+To reverse: the wall on `src/ui/screens/Courses.tsx`, the kiosk in `src/ui/screens/Kiosk.tsx` with its route and `scripts/kiosk-film.mjs`, and the count on `src/ui/screens/Judge.tsx`.
+
+## 2026-10-23 00:27, D6b: who sees the whole programme on the wall
+
+Options: (a) every course of the programme for everyone who opens Courses, which shows a lecturer the loop of courses they do not hold, against the course list's role scoping. (b) The whole programme for those with a programme view, the same people who may see Trends (a coordinator anywhere, the programme owner, management), and for anyone else the courses they hold with a line saying how many others the programme has.
+
+Chosen: (b), because the wall is the same records at another zoom and should not open records the course list keeps closed. Dr Sobri, the walk's lecturer, coordinates CS310 and CS220, so he sees all eight.
+
+Reverse it if: the institution treats each course's loop status as open to every lecturer in the programme, or the programme owner should see the wall, whose navigation has no Courses; then place the wall on Programme as well.
+
+To reverse: `ProgrammeWall` in `src/ui/screens/ProgrammeWall.tsx` (the `wide` rule) and its place in `src/ui/screens/Courses.tsx`.
+
+## 2026-10-23 00:26, D6b: what a cell of the programme's heat table shows
+
+Options: (a) a count of linked outcomes as the colour scale, which hides how strong each link is. (b) The strongest recorded level as the fill and the letter (H emerald with white text, M and L in the two tints), the number of outcomes behind it small beside it, the outcomes and their levels in words for a screen reader; a link mapped without a strength shows as linked and is never given one; a course without a recorded outline says "no outline recorded" across its row, and nothing is inferred from its CLOs.
+
+Chosen: (b), because the course record's matrix already records a level in every linked cell, and the programme view should read the same levels rather than invent a scale. Colour is never the only cue: the letter is in every linked cell.
+
+Reverse it if: the programme asks for coverage instead, how many courses address each PLO; that is a column total, not a different cell.
+
+To reverse: `programmeHeat` and `heatCellText` in `src/lib/programme.ts`, the table in `src/ui/screens/ProgrammeWall.tsx` and the `.heat-*` rules in `src/theme/global.css`.
+
+## 2026-10-23 00:30, D6b: where the kiosk's film comes from
+
+Options: (a) commit the 2.8 MB 720p render into `public/`, so a clean clone has it, while every new render adds another copy to the history and the deck's copy of the film is already kept out of git. (b) `scripts/kiosk-film.mjs` copies the existing render from `video/out/` into `public/media/`, which git ignores, with its render date and fingerprint beside it; the kiosk shows the date and says when the film is not on the laptop; `--check` says when the copy is older than the render.
+
+Chosen: (b), because it renders nothing, follows the deck's rule for films, and keeps the kiosk's label true after the next render. D9 gains one step after the render: `node scripts/kiosk-film.mjs`.
+
+Reverse it if: the kiosk must work from a clean clone or a hosted copy without a render on the machine.
+
+To reverse: `scripts/kiosk-film.mjs`, `KIOSK_FILM_INFO` in `src/demo/kiosk.ts`, the film in `src/ui/screens/Kiosk.tsx` and the `public/media/` line in `.gitignore`.
+
+## 2026-10-23 00:28, D6b: what idle means at the booth, and what the return does
+
+Options: (a) the kiosk page alone, with no return, which leaves the app wherever the last visitor walked away from it. (b) While kiosk mode is on in that tab, thirty seconds without a touch, a key, a wheel or a scroll anywhere in the app end any walk, discard unsaved edits in the sample workspace and come back to the kiosk, after a ten-second warning that a touch dismisses; a playing tour holds the timer, since it moves by itself; kiosk mode lives in the tab's session storage, so a reload keeps it and another tab never has it; Leave kiosk mode turns it off.
+
+Chosen: (b), because the plan asks for a thirty-second idle return and a visitor who walks away should not leave the next one in the middle of a screen. The warning keeps a judge who is reading from losing the page without notice.
+
+Reverse it if: judges at the booth lose their place while reading; then lengthen the time in `KIOSK_IDLE_MS` rather than drop the warning.
+
+To reverse: `idlePhase` and the constants in `src/demo/kiosk.ts`, `KioskIdle` in `src/ui/screens/Kiosk.tsx`, `discardUnsavedEditors` in `src/app/unsaved.ts` and `endWalk` in `src/demo/WalkOverlay.tsx`.
+
+## 2026-10-23 00:28, D6b: the walk started from the kiosk does not ask
+
+Options: (a) keep the walk's question before it replaces the workspace, which every visitor after the first would meet, about a workspace that is only the sample the visitor before left. (b) In kiosk mode the walk starts without the question; the workspace it replaces is still kept as the recovery copy, as everywhere else.
+
+Chosen: (b), because "Touch to walk the loop" has to mean one touch, and nothing is lost: the recovery copy is kept. Outside kiosk mode the question stays.
+
+Reverse it if: the booth laptop is also someone's working browser; then use another browser profile for the kiosk rather than ask each visitor.
+
+To reverse: the `kioskOn()` condition in `src/demo/WalkOverlay.tsx`.
+
+## 2026-10-23 00:29, D6b: when the register's figures count, and how the kiosk's film plays
+
+Options: (a) the figures count on page load, which finishes before a judge scrolls to them, and the film plays by itself for everyone. (b) Each figure counts once when it comes into view, over 0.9 s, ending exactly on the register's value, with the exact value readable by a screen reader from the start and the figures still under reduced motion; only the judge's page counts, and the landing page keeps them still. The film plays muted in a loop with a visible Pause, and under reduced motion it waits for Play.
+
+Chosen: (b), because the count is honest only if it ends on the audited figure and is seen at all, and moving content needs a pause (WCAG 2.2.2) and must respect a person's setting. The count never passes its value, and the proof checks that.
+
+Reverse it if: a judge finds the count distracting; the figures then stay still as on the landing page.
+
+To reverse: `CountedValue` in `src/ui/screens/Judge.tsx`, `countedText` in `src/ui/motion.ts`, and the film's play state in `src/ui/screens/Kiosk.tsx`.

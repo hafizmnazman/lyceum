@@ -21,6 +21,7 @@ npm run booth       # the built app on this laptop's network beside the local AP
 5. **The term recap.** From Home once the ring closes, or History: **The term recap**, one A4 page from the records (what employers asked for, what was decided, what changed, what was taught, what came back), printable.
 6. **The survey on your phone.** On CS310's Learn step, **Prepare this term's two surveys**, then open the Course Outcome Survey for the booth collector: the QR carries a short link. Answer on your phone; a device answers once, and nothing you send identifies you. **Collect responses** shows "1 from 1 device", marked not course evidence: booth answers never count, and below the floor (5 responses and 25% of the class, the stricter) or before the coordinator records grades released, no result shows. Last term's two surveys, a sample, show what an open result looks like.
 7. **The OBE course report.** Below Learn's results: each outcome's students at or above the stated pass mark of 55 over n, with N beside it and an interval only where some have no mark, the KPI met or not, the Course Outcome Survey's share beside it and never averaged with it, the programme outcomes listed with no index, and the CQI note. **Last term's report, a sample** has both columns open. Save it as printed, or print it on one A4 page.
+8. **The programme wall and the kiosk.** On **Courses**, below the course cards: every course of the programme as a ring for this term, closed or open, and the CLO to PLO matrix across the programme, where seven of the eight courses say "no outline recorded" because none is recorded. At the booth between teams, `#/kiosk` plays the 90-second loop muted, with a pause; a touch walks the loop, and thirty seconds without one bring the kiosk back.
 
 ## The loop
 
@@ -66,7 +67,7 @@ Then open **How it works** for the record of the afternoon by role, and **Evalua
 
 ## Checks
 
-`npm run prove:all` runs 252 checks in twenty-four suites. After `npm run build`, `npm run smoke`, `smoke:integrity`, `smoke:workspace` and `smoke:curriculum` drive the built app in a headless browser: the first plays the whole tour, and the workspace smoke walks the judge's ten stops by keyboard at desktop and phone width and answers the survey from a 320 px phone through the booth collector. [docs/as-built.md](docs/as-built.md) records every run with its date. These are software checks, not learning validation.
+`npm run prove:all` runs 255 checks in twenty-four suites. After `npm run build`, `npm run smoke`, `smoke:integrity`, `smoke:workspace` and `smoke:curriculum` drive the built app in a headless browser: the first plays the whole tour, and the workspace smoke walks the judge's ten stops by keyboard at desktop and phone width and answers the survey from a 320 px phone through the booth collector. [docs/as-built.md](docs/as-built.md) records every run with its date. These are software checks, not learning validation.
 
 ## What is real and what is not
 

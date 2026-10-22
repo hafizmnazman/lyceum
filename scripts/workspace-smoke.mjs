@@ -7,6 +7,8 @@ import { tmpdir } from "node:os";
 import { preview } from "vite";
 import puppeteer from "puppeteer-core";
 import JSZip from "jszip";
+import { SECTION_GUIDES } from "../src/app/sectionGuides.ts";
+import { PROOF } from "../src/data/proof.ts";
 import { WALK } from "../src/demo/walk.ts";
 
 const executablePath = ["C:/Program Files/Google/Chrome/Application/chrome.exe", "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"].find(existsSync);
@@ -125,7 +127,7 @@ try {
   await click("nav-guide");
   await textIncludes("What has not been built yet");
   await clickText("All roles");
-  assert.equal(await page.$$(".guide-entry").then((entries) => entries.length), 23);
+  assert.equal(await page.$$(".guide-entry").then((entries) => entries.length), SECTION_GUIDES.length, "every section guide, the kiosk's included");
   await page.type('input[type="search"]', "slide");
   assert.ok(await page.$$(".guide-entry").then((entries) => entries.length) > 0);
   console.log("PASS resume path, session updates and all-role section guide");
@@ -290,6 +292,65 @@ try {
     api.kill();
     if (boothServer) await new Promise((resolve) => boothServer.httpServer.close(resolve));
   }
+
+  // D6b (depth plan Section 9.1): the kiosk signed out, its film playing muted and paused when the render is on this laptop,
+  // or its line saying it is not; a touch starts the walk without a question, and an idle visitor is back at the kiosk after
+  // thirty seconds with the warning first; leaving kiosk mode ends it. Then the register's figures counted to their values on
+  // the judge's page, and the programme wall on Courses at 1440 and 320 px.
+  const kiosk = await browser.newPage();
+  kiosk.on("pageerror", (e) => errors.push("kiosk: " + String(e)));
+  const asked = [];
+  kiosk.on("dialog", (dialog) => { asked.push(dialog.message()); void dialog.accept(); });
+  await kiosk.setRequestInterception(true);
+  kiosk.on("request", (request) => void (request.url().startsWith(origin + "/") ? request.continue() : request.abort()));
+  await kiosk.bringToFront();
+  await kiosk.setViewport({ width: 1440, height: 900 });
+  await kiosk.goto(origin + "/#/kiosk", { waitUntil: "networkidle0" });
+  await kiosk.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
+  await kiosk.reload({ waitUntil: "networkidle0" });
+  if (existsSync(join("dist", "media", "loop90.json"))) {
+    await kiosk.waitForFunction(() => { const v = document.querySelector('[data-demo-id="kiosk-film"]'); return v && !v.paused && v.muted && v.loop; }, { timeout: 10000 });
+    assert.match(await kiosk.$eval(".kiosk-film figcaption", (e) => e.textContent), /a capture of the real app in its demo mode, rendered \d{1,2} \w+ 20\d\d\. Silent here\./);
+    await kiosk.click(selector("kiosk-pause"));
+    assert.equal(await kiosk.$eval(selector("kiosk-film"), (v) => v.paused), true, "Pause stops the film");
+  } else {
+    await kiosk.waitForFunction(() => /The film is not on this laptop\./.test(document.querySelector('[data-demo-id="kiosk-film-missing"]')?.textContent ?? ""), { timeout: 10000 });
+  }
+  assert.equal(await kiosk.$(selector("play-demo")), null, "the kiosk offers the walk alone");
+  await kiosk.click(selector("kiosk-touch"));
+  await kiosk.waitForSelector(selector("walk-card"), { timeout: 15000 });
+  assert.deepEqual(asked, [], "a touch at the kiosk walks the loop without a question");
+  const idleFrom = Date.now();
+  await kiosk.waitForSelector(selector("kiosk-idle"), { timeout: 25000 });
+  assert.match(await kiosk.$eval(selector("kiosk-idle"), (e) => e.textContent), /^Back to the start in (10|9) s\. Touch anywhere to stay\.$/);
+  await kiosk.waitForFunction(() => location.hash === "#/kiosk" && document.querySelector('[data-demo-id="kiosk"]') && !document.querySelector('[data-demo-id="walk-card"]'), { timeout: 15000 });
+  const idleSeconds = (Date.now() - idleFrom) / 1000;
+  assert.ok(idleSeconds >= 29 && idleSeconds < 34, "back at the kiosk after thirty idle seconds, not " + idleSeconds);
+  await kiosk.click(selector("kiosk-leave"));
+  await kiosk.waitForSelector(selector("judge-hero"));
+  assert.equal(await kiosk.evaluate(() => sessionStorage.getItem("lyceum.kiosk")), null, "leaving kiosk mode ends the idle return");
+  await kiosk.$eval(selector("judge-proof-proof-checks"), (e) => e.scrollIntoView({ block: "center" }));
+  await kiosk.waitForFunction((values) => { const shown = [...document.querySelectorAll(".stat-tile .stat-value > [aria-hidden]")].map((e) => e.textContent); return shown.join("|") === values.join("|"); },
+    { timeout: 5000 }, PROOF.map((p) => p.value));
+  assert.deepEqual(await kiosk.$$eval(".stat-tile .stat-value > .sr-only", (els) => els.map((e) => e.textContent)), PROOF.map((p) => p.value), "a screen reader reads the exact values");
+  for (const [width, height] of [[1440, 1000], [320, 800]]) {
+    await kiosk.setViewport({ width, height });
+    await kiosk.evaluate(() => { location.hash = "#/courses"; });
+    await kiosk.waitForSelector(selector("programme-heat"), { timeout: 10000 });
+    const wall = await kiosk.evaluate(() => ({
+      rings: [...document.querySelectorAll('[data-demo-id="wall-rings"] > li')].map((li) => li.getAttribute("data-demo-id") + (li.classList.contains("is-closed") ? " closed" : "")),
+      none: [...document.querySelectorAll('[data-demo-id="programme-heat"] td.heat-none')].map((td) => td.textContent),
+      cs310: [...document.querySelectorAll('[data-demo-id="programme-heat"] tbody tr')].find((tr) => tr.querySelector("th")?.textContent.startsWith("CS310"))?.querySelectorAll("td.heat-cell.is-h").length,
+      overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth }));
+    assert.equal(wall.rings.length, 8, "every course of the programme as a ring at " + width);
+    assert.ok(wall.rings.includes("wall-ring-CS310 closed"), "CS310's loop closed on the sample workspace");
+    assert.deepEqual(wall.none, Array(7).fill("no outline recorded"), "seven courses without a recorded outline say so");
+    assert.equal(wall.cs310, 4, "CS310 links four PLOs at H");
+    assert.ok(wall.overflow <= 1, "the wall fits " + width + " px");
+    await kiosk.screenshot({ path: join(output, "programme-wall-" + width + ".png") });
+  }
+  await kiosk.close();
+  console.log("PASS the kiosk signed out, its film paused or its missing line, a touch walking the loop without a question, back at the kiosk after thirty idle seconds with the warning first, the register's figures counted to their values, and the programme wall at 1440 and 320 px");
 
   assert.deepEqual(errors, []);
   console.log("PASS zero page errors");

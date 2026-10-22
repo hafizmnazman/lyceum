@@ -1,8 +1,9 @@
 // The judge's page (depth plan Section 9.1 item 1), public like the landing page: Tualang greets once, three ways in (the
-// guided walk, the before and after, the local door), the register's four figures as static text, and the card of what is
-// not built, Tualang beside it and silent, listing REMAINING_WORK word for word. The host speaks only the greeting.
+// guided walk, the before and after, the local door), the register's four figures, counted up once as they come into view
+// and static under reduced motion (D6b), and the card of what is not built, Tualang beside it and silent, listing
+// REMAINING_WORK word for word. The host speaks only the greeting.
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Footprints, GitCompare, Play, Plug } from "lucide-react";
 import { REMAINING_WORK } from "../../app/sectionGuides.ts";
 import { currentPerson, navigate } from "../../app/store.ts";
@@ -11,9 +12,32 @@ import { tourMinutes } from "../../demo/script.ts";
 import { startWalk } from "../../demo/WalkOverlay.tsx";
 import { WALK } from "../../demo/walk.ts";
 import { HOST_NAME, Mark, Mascot } from "../mascots/index.tsx";
+import { countedText, easeOut, reducedMotion } from "../motion.ts";
 import { Button, Tag } from "../primitives/index.tsx";
 
 export const JUDGE_GREETING = "Six steps, one course, one term. Walk with me, or watch.";
+
+/** A register figure that counts up once, over 0.9 s, when it comes into view, and ends on the register's exact value; it
+ *  stays still under reduced motion, and a screen reader reads the exact value from the start. */
+function CountedValue({ value }: { value: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [k, setK] = useState(() => (reducedMotion() ? 1 : 0));
+  useEffect(() => {
+    if (reducedMotion()) { setK(1); return; }
+    let frame = 0;
+    const run = () => {
+      const start = performance.now();
+      const step = (now: number) => { const t = Math.min(1, (now - start) / 900); setK(easeOut(t)); if (t < 1) frame = requestAnimationFrame(step); };
+      frame = requestAnimationFrame(step);
+    };
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") { run(); return () => cancelAnimationFrame(frame); }
+    const seen = new IntersectionObserver((entries) => { if (entries.some((e) => e.isIntersecting)) { seen.disconnect(); run(); } }, { threshold: 0.6 });
+    seen.observe(el);
+    return () => { seen.disconnect(); cancelAnimationFrame(frame); };
+  }, [value]);
+  return <span className="stat-value" ref={ref}><span aria-hidden="true">{countedText(value, k)}</span><span className="sr-only">{value}</span></span>;
+}
 
 export function JudgeScreen() {
   const [door, setDoor] = useState(false);
@@ -54,7 +78,7 @@ export function JudgeScreen() {
 
     <section className="landing-section" aria-labelledby="judge-proof-title">
       <h2 id="judge-proof-title">What is proven today</h2>
-      <div className="stat-grid">{PROOF.map((p) => <div className="stat-tile" key={p.claim} data-demo-id={"judge-proof-" + p.claim}><span className="stat-value">{p.value}</span><span className="stat-label">{p.label}</span></div>)}</div>
+      <div className="stat-grid">{PROOF.map((p) => <div className="stat-tile" key={p.claim} data-demo-id={"judge-proof-" + p.claim}><CountedValue value={p.value} /><span className="stat-label">{p.label}</span></div>)}</div>
       <p className="landing-note">Each figure is a row in the project's claims register, measured by this project.</p>
     </section>
 

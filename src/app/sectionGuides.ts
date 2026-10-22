@@ -22,7 +22,7 @@ export const SECTION_GUIDES: SectionGuide[] = [
   {
     screen: "courses", title: "Courses", audience: "Lecturers and coordinators",
     purpose: "Find your courses and see what preparation each one needs.", status: "Working locally",
-    steps: ["Search by course code or title; filter by year or preparation status.", "Choose Create course workspace to prepare your own course with a unique code, title and optional programme; this does not create an official university course.", "Open Outcomes & topics to build or revise the outline, or Teaching plan to prepare classes.", "Use Backups to download or restore a validated JSON copy of this browser workspace."],
+    steps: ["Search by course code or title; filter by year or preparation status.", "Choose Create course workspace to prepare your own course with a unique code, title and optional programme; this does not create an official university course.", "Open Outcomes & topics to build or revise the outline, or Teaching plan to prepare classes.", "Use Backups to download or restore a validated JSON copy of this browser workspace.", "Read the programme wall below your courses: each course of the programme as a ring for this term, closed or open, and the CLO to PLO matrix across the programme from the recorded outlines, where a course without one says so. A lecturer sees the courses they hold; coordinators and the programme owner see them all."],
     output: "A course workspace with the selected course carried into Studio.",
     limitation: "The initial catalogue is illustrative. Personal courses use your entered content and have no calibrated market or learning score. Counts describe saved work, not academic quality.",
   },
@@ -163,9 +163,16 @@ export const SECTION_GUIDES: SectionGuide[] = [
   {
     screen: "judge", title: "For judges", audience: "Everyone, signed in or not",
     purpose: "Meet the loop in a few minutes: walk it stop by stop on the sample workspace, see one change before and after, or read how the local door answers.", status: "Working locally",
-    steps: ["Open the judge's page from the landing page or from this Guide.", "Choose Walk the loop: ten stops over the real app on the sample workspace, the tour's end state. Next, Back and Esc move it, and each stop's caption says what is real and what is synthetic.", "Choose Before and after for one change three ways, or Ask the door for the question to put to the local door.", "Read what is proven today and what is not built, word for word from this Guide."],
+    steps: ["Open the judge's page from the landing page or from this Guide.", "Choose Walk the loop: ten stops over the real app on the sample workspace, the tour's end state. Next, Back and Esc move it, and each stop's caption says what is real and what is synthetic.", "Choose Before and after for one change three ways, or Ask the door for the question to put to the local door.", "Read what is proven today, the register's four figures counted up once as they come into view, and what is not built, word for word from this Guide."],
     output: "A guided look at every step's record on one course, with the honesty label at every stop.",
     limitation: "The walk replaces this browser's workspace with the sample workspace and keeps the current one as a recovery copy under Backups. The door runs only on a laptop with Claude Desktop configured; the page cannot reach it.",
+  },
+  {
+    screen: "kiosk", title: "The booth's kiosk", audience: "The team at the booth",
+    purpose: "Between judge teams: the 90-second loop playing by itself, Tualang resting, and a touch to walk the loop.", status: "Working locally",
+    steps: ["Copy the film beside the app once: node scripts/kiosk-film.mjs copies the existing Loop90 render with its date. Without it the kiosk says the film is not on this laptop.", "Open #/kiosk on the booth laptop. Kiosk mode stays on in that tab until Leave kiosk mode.", "The loop plays muted on repeat and Pause stops it; under reduced motion it waits for Play.", "A touch anywhere walks the loop on the sample workspace, without asking.", "Thirty seconds without a touch, a key or a scroll anywhere in the app bring the next visitor back to the kiosk, after a ten-second warning; a playing tour holds it."],
+    output: "A booth screen that resets itself between visitors.",
+    limitation: "The film is the render of 22 October, a capture of the app as it was that afternoon; screens added since are not in it until it is rendered again. Chrome's kiosk flag and a browser-only account on the laptop are set up by hand.",
   },
   {
     screen: "recap", title: "Term recap", audience: "Everyone who may open the course",

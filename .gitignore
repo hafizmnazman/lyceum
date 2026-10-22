@@ -15,3 +15,5 @@ video/install.log
 
 # The owner's UTP mark, supplied on 22 October 2026: scripts/gen-partner-marks.mjs copies it into public/brand/partners/, the tracked copy the build uses.
 /utp.svg
+# The kiosk's copy of the Loop90 render and its date (scripts/kiosk-film.mjs), like the deck's copy
+public/media/

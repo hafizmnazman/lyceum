@@ -5,7 +5,7 @@ Reviewed 22 October 2026. Generated from the same section catalogue used by the 
 ## Start a useful lecturer session
 
 1. Start the app (`npm run dev`; use `npm.cmd` in Windows PowerShell). Choose Dr Sobri or Ms Tan on the demo sign-in page. These are local personas, not authenticated accounts.
-2. Open **Courses**. Choose an assigned course or **Create course workspace** to enter a unique code, title and optional programme. A personal workspace is private preparation, not an official university course.
+2. Open **Courses**. Choose an assigned course or **Create course workspace** to enter a unique code, title and optional programme. A personal workspace is private preparation, not an official university course. Below your courses, **the programme wall** shows each course of the programme as a ring for this term and the CLO to PLO matrix across the programme from the recorded outlines; a lecturer sees the courses they hold, and coordinators and the programme owner see them all.
 3. The course opens on **Course**, the setup step: what the course promises today. Set the term this loop runs for first, so the brief, the decision, the version and the results all carry it. The path across the top of every step lists the six steps that follow, **Watch**, **Report**, **Decide**, **Update**, **Teach** and **Learn**, with **History** as the record beside it; the step's helper asks its question just below. A step says Done only when its record exists this term; a new term starts a new loop and keeps the last one on the record. A course with a course record (the demo's CS310, a labelled sample) shows it in the order of a course file: synopsis and learning time, outcomes and the CLO to PLO matrix, the assessment plan and rubrics, the fourteen-week schedule with each week's material, and references; **Export the course file (.zip)** writes it with a manifest that marks each item present, sample, not yet built or not included.
 4. **Watch**. Run a research run against a permitted employer board (Greenhouse or Lever, through the local API) or the dated saved sample, keep the postings worth reading, or paste a document you are permitted to keep. Freeze a snapshot of the reviewed evidence at each review and compare the next window with it. Collection happens only when you ask, and nothing changes the course by itself.
 5. **Report** has its own five steps. **Quote**: name the skills, scan, and confirm each proposed sentence beside its source (a paraphrase is rejected). **Review**: mark the postings you have read so they count. **Count**: each skill's share with its numerator, denominator and 95% Wilson interval. **Map**: place each skill on an outcome's coverage ladder against a target. **Brief**: prepare the meeting brief with its receipts, download it as a document or editable slides, or send it to the people who decide; with a snapshot, the brief reports what changed since it.
@@ -23,7 +23,7 @@ Reviewed 22 October 2026. Generated from the same section catalogue used by the 
 - A visible storage warning means changes cannot survive closing the page. Download a JSON backup or Markdown export while the page is open. A restore that cannot be written to storage leaves the current workspace unchanged.
 - Reset workspace removes local saved work and restores seed examples. Download a JSON backup first. A Markdown outline/plan cannot be restored; only the validated JSON workspace format can.
 - Play demo is available on sign-in/public screens and Guide & progress. It resets the local workspace; existing saved work triggers a confirmation first. Download a workspace backup before continuing.
-- **For judges: walk with Tualang** (the landing page and Guide & progress) opens the judge's page. **Walk the loop** restores the sample workspace, the tour's end state, keeping the current workspace as the recovery copy under Backups, and moves stop by stop with Next, Back and Esc. **The term recap** (Home once the ring closes, or History) prints one A4 page from the records.
+- **For judges: walk with Tualang** (the landing page and Guide & progress) opens the judge's page. **Walk the loop** restores the sample workspace, the tour's end state, keeping the current workspace as the recovery copy under Backups, and moves stop by stop with Next, Back and Esc. **The term recap** (Home once the ring closes, or History) prints one A4 page from the records. At the booth, **#/kiosk** plays the 90-second loop muted with a pause, a touch walks the loop, and thirty seconds without a touch return to it; copy the film beside the app first with `node scripts/kiosk-film.mjs`.
 - The path across a course's steps and the receipts ring on Home read your saved work: a step is done only when its record exists this term. **How it works** shows the seven roles and the record of each step on your course, with derived lines labelled; **Evaluation** shows the live checks and benchmarks.
 - Use **How to use [section]** above each signed-in page for contextual instructions. **Guide & progress** includes every section, a role filter, search and unfinished development work.
 - Ctrl+K opens navigation search. The Report sub-rail supports Left and Right Arrow, Home and End. Small screens use the Navigation button and a step strip above each step. Keyboard focus is visible and a skip link leads to main content.
@@ -60,6 +60,7 @@ Find your courses and see what preparation each one needs.
 2. Choose Create course workspace to prepare your own course with a unique code, title and optional programme; this does not create an official university course.
 3. Open Outcomes & topics to build or revise the outline, or Teaching plan to prepare classes.
 4. Use Backups to download or restore a validated JSON copy of this browser workspace.
+5. Read the programme wall below your courses: each course of the programme as a ring for this term, closed or open, and the CLO to PLO matrix across the programme from the recorded outlines, where a course without one says so. A lecturer sees the courses they hold; coordinators and the programme owner see them all.
 
 **Output:** A course workspace with the selected course carried into Studio.
 
@@ -348,11 +349,27 @@ Meet the loop in a few minutes: walk it stop by stop on the sample workspace, se
 1. Open the judge's page from the landing page or from this Guide.
 2. Choose Walk the loop: ten stops over the real app on the sample workspace, the tour's end state. Next, Back and Esc move it, and each stop's caption says what is real and what is synthetic.
 3. Choose Before and after for one change three ways, or Ask the door for the question to put to the local door.
-4. Read what is proven today and what is not built, word for word from this Guide.
+4. Read what is proven today, the register's four figures counted up once as they come into view, and what is not built, word for word from this Guide.
 
 **Output:** A guided look at every step's record on one course, with the honesty label at every stop.
 
 **Current limit:** The walk replaces this browser's workspace with the sample workspace and keeps the current one as a recovery copy under Backups. The door runs only on a laptop with Claude Desktop configured; the page cannot reach it.
+
+## The booth's kiosk
+
+**For:** The team at the booth · **Status:** Working locally
+
+Between judge teams: the 90-second loop playing by itself, Tualang resting, and a touch to walk the loop.
+
+1. Copy the film beside the app once: node scripts/kiosk-film.mjs copies the existing Loop90 render with its date. Without it the kiosk says the film is not on this laptop.
+2. Open #/kiosk on the booth laptop. Kiosk mode stays on in that tab until Leave kiosk mode.
+3. The loop plays muted on repeat and Pause stops it; under reduced motion it waits for Play.
+4. A touch anywhere walks the loop on the sample workspace, without asking.
+5. Thirty seconds without a touch, a key or a scroll anywhere in the app bring the next visitor back to the kiosk, after a ten-second warning; a playing tour holds it.
+
+**Output:** A booth screen that resets itself between visitors.
+
+**Current limit:** The film is the render of 22 October, a capture of the app as it was that afternoon; screens added since are not in it until it is rendered again. Chrome's kiosk flag and a browser-only account on the laptop are set up by hand.
 
 ## Term recap
 

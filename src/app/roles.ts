@@ -44,6 +44,7 @@ export type Screen =
   | "evaluation" // how it is tested: live checks, benchmarks, protocol
   | "guide"
   | "judge" // the judge's page, public like the landing page (depth plan Section 9.1)
+  | "kiosk" // the booth's screen between judge teams, public like the judge's page (Section 9.1, D6b)
   | "recap"; // a course's term recap, at #/course/:id/recap
 
 export type Capability =
@@ -166,5 +167,5 @@ export function landingScreen(person: Person, assignments: RoleAssignment[]): Sc
 
 /** Does this person's nav include the screen? */
 export function navAllows(person: Person, assignments: RoleAssignment[], screen: Screen): boolean {
-  return screen === "login" || screen === "index" || screen === "judge" || navFor(person, assignments).includes(screen);
+  return screen === "login" || screen === "index" || screen === "judge" || screen === "kiosk" || navFor(person, assignments).includes(screen);
 }

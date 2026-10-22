@@ -10,15 +10,21 @@ import { getState, restoreSampleWorkspace, setClockPinned } from "../app/store.t
 import { Mascot } from "../ui/mascots/index.tsx";
 import { Button, Tag } from "../ui/primitives/index.tsx";
 import { runWalk } from "./runner.ts";
+import { kioskOn } from "./kiosk.ts";
 import { hasSavedWork } from "./savedWork.ts";
 import { BEFORE_AFTER, SAMPLE_WORKSPACE_URL, WALK, WALK_PERSON, type WalkStop } from "./walk.ts";
 
 export const WALKS = { loop: WALK, change: BEFORE_AFTER } as const;
 export type WalkName = keyof typeof WALKS;
 
-/** Start a walk from anywhere: the judge's page and the Guide page call this. */
+/** Start a walk from anywhere: the judge's page, the Guide page and the kiosk call this. */
 export function startWalk(which: WalkName) {
   window.dispatchEvent(new CustomEvent<WalkName>("lyceum:walk", { detail: which }));
+}
+
+/** End a running walk as Esc would: the kiosk's idle return calls this. */
+export function endWalk() {
+  window.dispatchEvent(new Event("lyceum:walk-end"));
 }
 
 type Phase = { kind: "idle" } | { kind: "loading" } | { kind: "error"; message: string }
@@ -43,7 +49,8 @@ export function WalkOverlay() {
     async function onWalk(e: Event) {
       if (running.current) return;
       const which = (e as CustomEvent<WalkName>).detail ?? "loop";
-      if (hasSavedWork(getState()) && !window.confirm("The walk opens the sample workspace, the tour's end state. Your current workspace is kept as a recovery copy under Guide & progress, Backups. Continue?")) return;
+      // At the booth's kiosk the workspace is the sample from the visitor before, so the walk does not ask; the recovery copy is still kept.
+      if (!kioskOn() && hasSavedWork(getState()) && !window.confirm("The walk opens the sample workspace, the tour's end state. Your current workspace is kept as a recovery copy under Guide & progress, Backups. Continue?")) return;
       running.current = true;
       setPhase({ kind: "loading" });
       try {
@@ -69,8 +76,10 @@ export function WalkOverlay() {
       setRect(null);
       setPhase({ kind: "idle" });
     }
+    const onEnd = () => choose("end");
     window.addEventListener("lyceum:walk", onWalk);
-    return () => window.removeEventListener("lyceum:walk", onWalk);
+    window.addEventListener("lyceum:walk-end", onEnd);
+    return () => { window.removeEventListener("lyceum:walk", onWalk); window.removeEventListener("lyceum:walk-end", onEnd); };
   }, []);
 
   // The spotlight follows its element through scrolling, resizing and late renders.

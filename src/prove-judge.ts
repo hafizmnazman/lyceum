@@ -1,7 +1,9 @@
 // Proof of the judge's way through (depth plan Sections 9.1 and 12): every walk stop's target exists on the screen that renders
 // it and its route opens that screen, the captions keep to twenty words with their honesty labels, the host speaks at a walk's
 // first and last stop only, the judge's page shows the not-built list word for word, the walk starts from the sample workspace
-// with the current one kept, and the recap's numbers equal the records they cite.
+// with the current one kept, the recap's numbers equal the records they cite, and D6b's three: the programme wall's heat
+// table read from the recorded outlines, the kiosk's idle return on time, and the register's figures counting up to exactly
+// their values.
 //   node --test src/prove-judge.ts
 
 import assert from "node:assert/strict";
@@ -10,13 +12,19 @@ import { readFileSync } from "node:fs";
 import { SAMPLE_PATH } from "../mcp/sample.ts";
 import { recapFor } from "./app/recap.ts";
 import { parseRoute } from "./app/routes.ts";
+import { navAllows } from "./app/roles.ts";
 import { REMAINING_WORK, SECTION_GUIDES } from "./app/sectionGuides.ts";
 import { stepDef } from "./app/loop.ts";
 import { getRecoveryBackup, getState, login, resetDemoState, restoreSampleWorkspace, saveTeachingSession } from "./app/store.ts";
-import { PEOPLE_IDS } from "./data/seed.ts";
+import { PROOF } from "./data/proof.ts";
+import { PEOPLE, PEOPLE_IDS } from "./data/seed.ts";
+import { idlePhase, isKioskFilm, KIOSK_IDLE_MS, kioskOn } from "./demo/kiosk.ts";
 import { hasSavedWork } from "./demo/savedWork.ts";
 import { BEFORE_AFTER, SAMPLE_WORKSPACE_URL, WALK, WALK_PERSON, words, type WalkStop } from "./demo/walk.ts";
 import { evidenceReport } from "./lib/evidence.ts";
+import { NO_LINKS, NO_OUTLINE, programmeHeat } from "./lib/programme.ts";
+import { countedText } from "./ui/motion.ts";
+import type { CourseDefinition } from "./types.ts";
 
 const RAW = readFileSync(SAMPLE_PATH, "utf8");
 const LABELS = new Set(["Real", "Prototype", "Sample, synthetic", "Synthetic marks", "Planned", "Illustrative"]);
@@ -116,4 +124,54 @@ test("the recap's numbers equal the records they cite", () => {
   assert.deepEqual(recap.results?.rows.map((r) => [r.mean, r.n]), upload.rows.map((r) => [r.meanScore, r.n]));
   assert.equal(recap.term, "2026/2027 semester 1");
   assert.ok(recap.demoLine?.startsWith("A demo course at UTP"), "the sample course says so on the page");
+});
+
+test("the programme wall's heat table reads each course's recorded outline: CS310's links with their strength, seven others with none", () => {
+  const d = JSON.parse(RAW).data;
+  const rows = programmeHeat(d.programme.plos, d.programme.subjectIds, d.subjects, d.courseDefinitions);
+  assert.deepEqual(rows.map((r) => r.subjectId), ["CS101", "MA101", "ST201", "CS220", "MA201", "CS230", "CS310", "CS340"], "the programme's eight courses, in its own order");
+  assert.deepEqual(rows.filter((r) => r.subjectId !== "CS310").map((r) => [r.cells, r.note]), Array(7).fill([null, NO_OUTLINE]),
+    "a course without a recorded outline says so, and nothing is inferred from its CLOs");
+  const cs310 = rows.find((r) => r.subjectId === "CS310")!;
+  assert.equal(cs310.note, null);
+  assert.deepEqual(cs310.cells!.map((c) => [c.ploId, c.level, c.linked.length]),
+    [["PLO1", "H", 1], ["PLO2", "H", 3], ["PLO3", null, 0], ["PLO4", "H", 2], ["PLO5", "H", 2], ["PLO6", "M", 1], ["PLO7", "M", 1], ["PLO8", null, 0]]);
+  // Counted by hand from the course record's matrix: PLO2 takes CLO1 at M, CLO3 at H and CLO4 at H, so its strongest is H.
+  assert.deepEqual(cs310.cells![1].linked, [{ label: "CLO1", level: "M" }, { label: "CLO3", level: "H" }, { label: "CLO4", level: "H" }]);
+  // Links mapped without a strength are shown as linked and never given one; an outline without links says that instead.
+  const def: CourseDefinition = structuredClone(d.courseDefinitions.CS310);
+  def.outcomes = def.outcomes.map((o) => ({ ...o, ploLinks: undefined }));
+  const unrated = programmeHeat(d.programme.plos, ["CS310"], d.subjects, { CS310: def })[0];
+  assert.deepEqual([unrated.cells![1].level, unrated.cells![1].linked.length, unrated.note], [null, 3, null]);
+  def.outcomes = def.outcomes.map((o) => ({ ...o, ploIds: [] }));
+  assert.equal(programmeHeat(d.programme.plos, ["CS310"], d.subjects, { CS310: def })[0].note, NO_LINKS);
+});
+
+test("the kiosk is public like the judge's page, Tualang rests on it in silence, and an idle visitor is back at thirty seconds after ten of warning", () => {
+  assert.deepEqual(parseRoute("#/kiosk"), { screen: "kiosk" });
+  for (const p of PEOPLE) assert.ok(navAllows(p, [], "kiosk"), p.id + " may open the kiosk");
+  const kiosk = source("src/ui/screens/Kiosk.tsx");
+  assert.ok(kiosk.includes('mood="resting"') && !/mood="(greeting|celebrating|reflecting)"/.test(kiosk), "Tualang rests and says nothing");
+  assert.equal(KIOSK_IDLE_MS, 30_000);
+  assert.deepEqual([0, 19_999].map((ms) => idlePhase(ms).kind), ["active", "active"]);
+  assert.deepEqual([idlePhase(20_000), idlePhase(29_001)], [{ kind: "warning", secondsLeft: 10 }, { kind: "warning", secondsLeft: 1 }]);
+  assert.deepEqual([30_000, 45_000].map((ms) => idlePhase(ms).kind), ["return", "return"]);
+  assert.equal(kioskOn(), false, "kiosk mode is off until the kiosk opens in a tab");
+  assert.ok(SECTION_GUIDES.some((g) => g.screen === "kiosk"), "the kiosk has its section guide");
+  const film = { file: "loop90-720p.mp4", renderedAt: "2026-10-22T06:33:50.039Z", sha256: "a".repeat(64), bytes: 2823642 };
+  assert.equal(isKioskFilm(film), true, "the record scripts/kiosk-film.mjs writes beside the render");
+  for (const bad of [null, { ...film, file: "../secret.mp4" }, { ...film, file: "loop90.webm" }, { ...film, renderedAt: "yesterday" }, { ...film, bytes: "2" }])
+    assert.equal(isKioskFilm(bad), false, JSON.stringify(bad));
+});
+
+test("the register's figures count up to exactly their values and never past them, separators and decimals kept", () => {
+  for (const p of PROOF) {
+    assert.equal(countedText(p.value, 1), p.value, p.claim + " ends on the register's value");
+    assert.match(countedText(p.value, 0), /^[^1-9]*$/, p.claim + " starts from zero");
+    const final = Number(p.value.replace(/,/g, ""));
+    for (let k = 0; k <= 1; k += 0.05) assert.ok(Number(countedText(p.value, k).replace(/,/g, "")) <= final, p.claim + " never passes " + p.value);
+  }
+  assert.equal(countedText("1,034 postings", 0.5), "517 postings");
+  assert.equal(countedText("2,000 of 9,000", 0.75), "1,500 of 6,750");
+  assert.deepEqual([countedText("7.9 points", 0), countedText("7.9 points", 1)], ["0.0 points", "7.9 points"]);
 });

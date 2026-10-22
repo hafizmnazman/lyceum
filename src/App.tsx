@@ -13,6 +13,7 @@ import { SCREENS } from "./ui/screens/index.ts";
 import { DemoOverlay } from "./demo/DemoOverlay.tsx";
 import { LandingScreen } from "./ui/screens/Landing.tsx";
 import { JudgeScreen } from "./ui/screens/Judge.tsx";
+import { KioskIdle, KioskScreen } from "./ui/screens/Kiosk.tsx";
 import { WalkOverlay } from "./demo/WalkOverlay.tsx";
 import { SurveyPage } from "./ui/screens/SurveyPage.tsx";
 
@@ -49,7 +50,7 @@ export default function App() {
       const s = getState();
       const person = currentPerson();
       if (!person) {
-        if ("screen" in route && (route.screen === "index" || route.screen === "login" || route.screen === "judge")) navigate(route.screen);
+        if ("screen" in route && (route.screen === "index" || route.screen === "login" || route.screen === "judge" || route.screen === "kiosk")) navigate(route.screen);
         else window.history.replaceState(null, "", hashFor(s)); // a private link, signed out: keep the URL honest
         return;
       }
@@ -92,7 +93,7 @@ export default function App() {
   if (!state.currentPersonId) {
     // Signed out, the index route is the public landing page. The Relevance
     // Index sandbox itself stays behind sign-in, labelled as illustrative.
-    const Public = state.screen === "index" ? LandingScreen : state.screen === "judge" ? JudgeScreen : SCREENS.login;
+    const Public = state.screen === "index" ? LandingScreen : state.screen === "judge" ? JudgeScreen : state.screen === "kiosk" ? KioskScreen : SCREENS.login;
     content = <Public />;
   } else if (state.screen === "login") {
     const Login = SCREENS.login;
@@ -100,6 +101,9 @@ export default function App() {
   } else if (state.screen === "judge") {
     // The judge's page is the same bare page signed in or out (depth plan Section 9.1).
     content = <JudgeScreen />;
+  } else if (state.screen === "kiosk") {
+    // So is the booth's kiosk (Section 9.1, D6b).
+    content = <KioskScreen />;
   } else {
     content = (
       <Shell>
@@ -113,6 +117,7 @@ export default function App() {
       {content}
       <DemoOverlay />
       <WalkOverlay />
+      <KioskIdle />
     </div>
   );
 }

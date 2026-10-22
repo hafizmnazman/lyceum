@@ -111,8 +111,8 @@ export function DemoOverlay() {
 
   if (phase === "idle") {
     // Keep the signed-in workspace free of a floating control that could cover content or a
-    // focused element (WCAG 2.4.11); signed in, the Guide page offers the tour inline.
-    if (state.currentPersonId) return null;
+    // focused element (WCAG 2.4.11); signed in, the Guide page offers the tour inline. The kiosk offers the walk alone.
+    if (state.currentPersonId || state.screen === "kiosk") return null;
     return (
       <button
         data-demo-id="play-demo"
