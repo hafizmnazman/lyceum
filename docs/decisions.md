@@ -1809,3 +1809,65 @@ Chosen: (b), because the count is honest only if it ends on the audited figure a
 Reverse it if: a judge finds the count distracting; the figures then stay still as on the landing page.
 
 To reverse: `CountedValue` in `src/ui/screens/Judge.tsx`, `countedText` in `src/ui/motion.ts`, and the film's play state in `src/ui/screens/Kiosk.tsx`.
+
+## 2026-10-23 00:52, D3b: the session prompt for D3b, written from Section 7.2
+
+Options: (a) the three pieces Section 7.2 gives D3b, in full: the document for Microsoft Forms Quick Import, the Google Forms and Moodle Feedback importers, and the paste code. (b) The two importers only, leaving out the document, which cannot be tried against Forms from this machine, and the paste code.
+
+Chosen: (a), because each piece is a campus's way in when the booth collector is not there, and the document can be labelled as not yet imported into Forms, as D7 labels its Moodle XML. The Moodle Feedback columns are not in the research note, so its importer matches on the question ids alone, drops identity columns by name, and says it has not been tried on a Moodle export.
+
+The prompt, with D3a's verification lines: "Read docs/lyceum-depth-plan.md Sections 7.2, 7.3 and 7.4, docs/research/slides-items-and-surveys-tech-2026-10-22.md Sections 4 and 5, src/lib/surveys.ts, src/ui/screens/SurveysPanel.tsx and SurveyPage.tsx, the survey functions in src/app/store.ts, src/prove-surveys.ts and scripts/gen-demo-files.mjs. Write the document for Microsoft Forms Quick Import with jszip, loaded on demand: the title, the course, the term and the consent line, each question numbered with its id at the start of its text and the scale's points as its options, labelled not yet imported into Forms. Generalise the importer to the Google Forms CSV (Timestamp first, Email Address dropped) and the Moodle Feedback CSV (identity columns dropped) through SheetJS, matched on the question id, a repeated row (the same time and the same answers) dropped and counted, and nothing dropped as a repeat in a file without a time column; the format read from the header and said on screen. Add the paste way: a link that carries the form with a paste flag, a code on the student page holding the answers and a random device id only, labelled 'not anonymous: the channel you paste it into identifies you', and a box on Learn that reads pasted codes into the survey as pasted responses, a code repeated from one device dropped and counted and a code for another survey refused. Write a Google Forms style CSV of last term's sample responses in scripts/gen-demo-files.mjs. Extend src/prove-surveys.ts. Verify with npm run typecheck, npm run prove:all, npm run build, npm run smoke:workspace and a curl round trip against the local API recorded in the run log."
+
+Reverse it if: Monday runs short; the paste code is the first to drop.
+
+To reverse: the document and the paste code in `src/lib/surveys.ts`, the importer's formats in the same file, `src/ui/screens/SurveysPanel.tsx`, `src/ui/screens/SurveyPage.tsx` and the CSV in `scripts/gen-demo-files.mjs`.
+
+## 2026-10-23 00:56, D3b: how the importer knows which export it reads
+
+Options: (a) the lecturer picks the format from a list before the file, which asks for something the file's header already says. (b) The header decides: Start time and Completion time are Microsoft Forms, Timestamp first is Google Forms, a Response number, User picture, Time modified, Full name or Surname column is Moodle Feedback, and anything else is read as a table with the question ids in its headers; the result says what the file was read as.
+
+Chosen: (b), because the three exports are told apart by their own first columns, and saying what was read lets the lecturer catch a wrong guess. The questions are matched on their ids either way, so a wrong guess can only drop the wrong bookkeeping column, never move an answer.
+
+Reverse it if: a campus's export carries none of these columns and keeps its identity columns under other names; then add the list.
+
+To reverse: `importFormat` and `FORMATS` in `src/lib/surveys.ts`, and `ResultsImport` in `src/ui/screens/SurveysPanel.tsx`.
+
+## 2026-10-23 00:56, D3b: what a repeated row is
+
+Options: (a) the same answers alone, which drops the second of two students who answered alike. (b) The same time and the same answers, as the plan says; in a file without a time column nothing is taken for a repeat, and the result says so.
+
+Chosen: (b), because a repeat is a double submission, which only a time can show, and losing a real response is worse than keeping a doubtful one. This also closes a gap in D3a's Forms importer, which would have taken alike answers for repeats in a file without its Completion time column.
+
+Reverse it if: a campus's tool exports a response id; then the id becomes the repeat key, as Moodle's response number already is.
+
+To reverse: the repeat rule in `importResponseRows` in `src/lib/surveys.ts`.
+
+## 2026-10-23 00:56, D3b: what the Moodle Feedback importer can claim
+
+Options: (a) a column layout from memory, presented as Moodle's. (b) The questions matched on their ids alone, the identity and bookkeeping columns dropped by the names Moodle's response tables use, the response number or the date as the repeat key, numbers, "(4) Agree" and labels read alike, and a line on screen that it has not been tried on a Moodle export.
+
+Chosen: (b), because the research note names Moodle Feedback's export formats but not its columns, and the plan's rule is to label what has not been checked. UTP runs Moodle, so a real export is the first thing to try at the pilot.
+
+Reverse it if: a Moodle Feedback export is tried; then fix its column names and drop the line.
+
+To reverse: the `moodle-feedback` entry in `FORMATS` in `src/lib/surveys.ts` and the hint in `ResultsImport`.
+
+## 2026-10-23 00:56, D3b: how the document for Microsoft Forms Quick Import is laid out
+
+Options: (a) the questions as Word's own numbered list, with the list number outside the text, so the id "Q1." would be the only number Quick Import sees and might strip as numbering. (b) The number typed into the text ("1. Q1. I can ..."), each scale question's labels and Cannot say under it lettered A to F, and the open comments with no options; whether Quick Import strips the number or keeps it, the id stays at the start of the question the results come back under, and the importer reads an id after a list number. Labelled not yet imported into Forms.
+
+Chosen: (b), because the round trip depends on the id surviving, and it survives either way. Quick Import cannot be tried from this machine without sending the file to Microsoft, so the label says the test is planned, as D7 labels its Moodle XML.
+
+Reverse it if: a trial in Forms shows Quick Import reads a numbered list better; keep the id first in the text either way.
+
+To reverse: `formsDocumentLines` and `formsDocumentParts` in `src/lib/surveys.ts`.
+
+## 2026-10-23 00:56, D3b: what the paste code holds
+
+Options: (a) the answers alone, which cannot tell one student's code pasted twice from two students who answered alike. (b) The survey's binding (the first eight characters of its token), a random id drawn on the device (the first twelve characters of the one the booth uses) and the answers in question order, compressed; read back in any text, a device counted once across pastes, a code for another survey refused, the responses stored as pasted with the device id as their client id and counted like an import.
+
+Chosen: (b), because a device id is what lets the count stay one per student without naming anyone, as at the booth. The code itself identifies no one; the channel it is pasted into does, and both the student's page and the lecturer's view say "Not anonymous: the channel you paste it into identifies you."
+
+Reverse it if: a campus wants pasted codes to stay out of the counts; then exclude source pasted as the booth is excluded.
+
+To reverse: `pasteCode` and `readPasteCodes` in `src/lib/surveys.ts`, `readPastedSurveyCodes` in `src/app/store.ts`, the paste mode in `src/ui/screens/SurveyPage.tsx` and `PasteWay` in `src/ui/screens/SurveysPanel.tsx`.

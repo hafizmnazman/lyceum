@@ -15,7 +15,7 @@
 </div>
 
 <p align="center">
-  <a href="#hafizlyceum-npm-run-proveall"><img src="https://img.shields.io/badge/checks-255_passing-8BC34A?style=for-the-badge&labelColor=161b22" alt="checks: 255 passing"></a>
+  <a href="#hafizlyceum-npm-run-proveall"><img src="https://img.shields.io/badge/checks-259_passing-8BC34A?style=for-the-badge&labelColor=161b22" alt="checks: 259 passing"></a>
   <a href="#hafizlyceum-open-report"><img src="https://img.shields.io/badge/evidence-real_postings_with_receipts-B8F23A?style=for-the-badge&labelColor=161b22" alt="evidence: real postings with receipts"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/licence-proprietary-B9CDBF?style=for-the-badge&labelColor=161b22" alt="licence: proprietary"></a>
 </p>
@@ -138,10 +138,10 @@ The core needs no AI key and no account: work is saved in this browser. Live boa
 | Teaching material | 8 | the fourteen sample sessions and their packs read back slide by slide, 18 pt body text, the mark and the demo line in every master, the repair of the parts pptxgenjs declares but does not write, the preview against the file, and samples kept out of the term's teaching |
 | Before and after | 10 | the word diff, topic hours before and after, the week 6 pack under each version, a region for every changed part, renamed and added slides, results marked not comparable when an outcome is reworded, the summary in words, the decision behind each version, the two terms' shares in each version's words, and the version scrubber's stops |
 | The judge's way through | 8 | every walk stop rendered by its screen, captions within twenty words with their labels, the host at the two ends only, the not-built list word for word, the sample workspace restored with the current one kept, the recap's numbers against their records, the programme wall's heat table, the kiosk's idle return, and the figures counting up to their exact values |
-| The two student surveys | 8 | the instruments from the record and the profile, the link under 2,000 characters with no secret in it, the collector's token against its own hash, the floor and the release showing nothing early, one response per device and booth responses never as evidence, the Microsoft Forms importer on its fixture, backups, and the sample's counts |
+| The two student surveys | 12 | the instruments from the record and the profile, the link under 2,000 characters with no secret in it, the collector's token against its own hash, the floor and the release showing nothing early, one response per device and booth responses never as evidence, the Microsoft Forms and Google Forms importers on their fixtures, the Moodle Feedback importer, the document for Forms Quick Import, the paste code, backups, and the sample's counts |
 | Attainment against a stated threshold | 10 | the direct line against a hand-computed fixture with missing marks, no interval at a census and the finite-population interval below it, the recomputation after a change to the pass mark with the saved report keeping its own, the survey beside the marks never averaged and never from the booth, the programme outcomes listed with no index, marks without identifiers, the CQI note, Lens's moods, and backups |
 | Assessment items and exports | 9 | every Bloom level's Arkansas verbs, templates that leave each key to the lecturer, each lint rule failing alone on its fixture, the week 7 sample quiz passing with its distractors from the record, Moodle XML and QTI 2.1 well-formed with their documented elements and labels, the rubric read back as a spreadsheet, reviews as a person's record cleared on a change, and backups |
-| **total** | **255** | twenty-four suites |
+| **total** | **259** | twenty-four suites |
 
 After `npm run build`, four headless browser runs drive the built app: `npm run smoke` (the whole tour, the decision record, both downloads, the closed ring), `smoke:integrity` (the landing page carries no synthetic figure; the judge's page shows the register's figures and the not-built list word for word), `smoke:workspace` (save, reload, export, keyboard and 320 px layouts; the judge's walk by keyboard and the course file with its manifest; the survey's booth round trip from a 320 px phone) and `smoke:curriculum` (Watch to Update with real downloads and a restore; the before and after at 320 px). `npm run deck` checks every figure in the pitch against the claims register; `node scripts/generate-guide.mjs --check`, `node scripts/contrast-check.mjs` and `node scripts/dash-scan.mjs` keep the guide, the palette and the prose honest. These are software checks, not learning validation. Results with dates: [docs/as-built.md](docs/as-built.md).
 
@@ -207,11 +207,11 @@ Built for the Grand Final, package by package, each with its checks in [docs/as-
 - **Teaching material.** Fourteen labelled sample sessions, four with full slides, branded packs with a preview on screen, lab sheets and the project brief.
 - **Before and after.** The change as a redline, each topic's hours as current against proposed and as a dumbbell, the week's pack under both versions with a changed slide to swipe or fade, the versions on a scrubber, each outcome's share from last term to this one with a reworded outcome not compared, and the decision behind each version.
 - **The judge's way through.** The judge's page with Tualang and the register's figures counting up once, a ten-stop walk on the sample workspace, a printable term recap, the programme wall on Courses, and the booth's kiosk with the 90-second loop and a thirty-second idle return.
-- **The two student surveys.** The Course Outcome Survey and a demo SSRT from the course record, answered on a phone through a QR at the booth, with a response floor, a release rule and a Microsoft Forms importer; booth answers never count.
+- **The two student surveys.** The Course Outcome Survey and a demo SSRT from the course record, answered on a phone through a QR at the booth, with a response floor and a release rule; booth answers never count. For a campus: a document for Microsoft Forms Quick Import, importers for Microsoft Forms, Google Forms and Moodle Feedback, and a paste code labelled not anonymous.
 - **Attainment against a stated threshold.** Each outcome's share at the institution's pass mark with n of N, an interval only when some students have no mark, and the OBE course report saved as printed, with the survey beside the marks, the programme outcomes listed and the CQI note.
 - **Assessment items.** Items on a session's check from templates that leave each key to the lecturer, a lint that names each rule an item fails, a person's review on record, the week 7 sample quiz, and exports for Moodle (XML) and as QTI 2.1, unvalidated.
 
-In progress for the final, as the days allow: the remaining survey importers, the survey document for Microsoft Forms and the paste code.
+Still to come before the final: the screenshots and the film captured again from this build, once the team says go.
 
 Next, in the order a pilot needs it (plan Section 17.2):
 

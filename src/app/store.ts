@@ -109,7 +109,7 @@ import { hashFor, type CourseRoute } from "./routes.ts";
 import { ITEMS, itemsForCLOs } from "../data/items.ts";
 import { DEMO_INSTITUTION } from "../data/institution.ts";
 import { institutionError } from "../lib/institution.ts";
-import { boothAnswers, courseOutcomeSurvey, formTokenFor, gradesReleased, importFormsRows, newReaderSecret, ssrtSurvey, studentForm, type ImportResult } from "../lib/surveys.ts";
+import { boothAnswers, courseOutcomeSurvey, formTokenFor, gradesReleased, importResponseRows, newReaderSecret, readPasteCodes, ssrtSurvey, studentForm, type ImportResult, type PasteResult } from "../lib/surveys.ts";
 import { DEMO_LINE } from "../data/sample-course/index.ts";
 import { listedStudents, obeReport } from "../lib/attainment.ts";
 import { templateItems } from "../lib/items.ts";
@@ -2190,15 +2190,33 @@ export async function collectBoothResponses(formId: string): Promise<SaveResult 
   return { ok: true, added: fresh.length };
 }
 
-/** Import a Microsoft Forms export (its rows, the header first), matched on the question ids. */
+/** Import a Microsoft Forms, Google Forms or Moodle Feedback export (its rows, the header first, the format read from the
+ *  header), matched on the question ids (depth plan Section 7.2). */
 export function importSurveyRows(formId: string, rows: unknown[][]): SaveResult & { result?: ImportResult } {
   const form = state.surveys.find((x) => x.id === formId);
   if (!form || form.sample) return { ok: false, error: "Choose one of this term's surveys to import into." };
   if (!mayPlan(form.subjectId)) return { ok: false, error: "Only an assigned lecturer or coordinator can import into this survey." };
-  const result = importFormsRows(rows, form, nowIso(), () => nextId("SR-" + form.subjectId));
+  const result = importResponseRows(rows, form, nowIso(), () => nextId("SR-" + form.subjectId));
   if (!result.responses.length) return { ok: false, error: "No response in the file matched this survey's question ids (Q1., Q2., ...).", result };
   set((s) => ({ surveyResponses: [...s.surveyResponses, ...result.responses] }));
   logEvent("survey-collected", { subjectId: form.subjectId, formId, term: form.term, count: result.responses.length, source: "imported" });
+  return { ok: true, result };
+}
+
+/** Read the codes students pasted into a course page or an email (the paste way, Section 7.2): each checked against the
+ *  survey, a device already read counted once, a code for another survey refused. */
+export function readPastedSurveyCodes(formId: string, text: string): SaveResult & { result?: PasteResult } {
+  const form = state.surveys.find((x) => x.id === formId);
+  if (!form || form.sample) return { ok: false, error: "Choose one of this term's surveys to read codes into." };
+  if (!mayPlan(form.subjectId)) return { ok: false, error: "Only an assigned lecturer or coordinator can read codes into this survey." };
+  if (!form.formToken) return { ok: false, error: "Open the survey first; its codes are bound to it." };
+  const known = state.surveyResponses.filter((r) => r.formId === formId && r.clientId).map((r) => r.clientId!);
+  const result = readPasteCodes(text, form, nowIso(), () => nextId("SR-" + form.subjectId), known);
+  if (!result.codes) return { ok: false, error: "No code in the text: each one starts LYC1-.", result };
+  if (result.responses.length) {
+    set((s) => ({ surveyResponses: [...s.surveyResponses, ...result.responses] }));
+    logEvent("survey-collected", { subjectId: form.subjectId, formId, term: form.term, count: result.responses.length, source: "pasted" });
+  }
   return { ok: true, result };
 }
 

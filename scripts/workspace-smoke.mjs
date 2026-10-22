@@ -286,8 +286,46 @@ try {
     assert.match(await lecturer.$eval(selector("booth-" + cosId), (e) => e.textContent), /Booth responses: 1 from 1 device\./);
     const status = await lecturer.$eval(selector("survey-status-" + cosId), (e) => e.textContent);
     assert.ok(status.startsWith("0 responses (0 of 38, 0%)") && status.includes("the floor is 10") && status.includes("results open when grades are released"), "the booth answer never counts: " + status);
-    await lecturer.close();
     console.log("PASS the survey's booth round trip: opened on Learn, answered from a 320 px phone through the short link, one answer per device, collected as 1 from 1 device and never counted");
+
+    // D3b (depth plan Section 7.2): a campus's other ways in on the same survey. The document for Microsoft Forms downloads;
+    // a Google Forms CSV imports with its repeat dropped; a phone on the paste way's link makes a code, and the code pasted
+    // twice is read once.
+    const lecturerCdp = await lecturer.createCDPSession();
+    await lecturerCdp.send("Browser.setDownloadBehavior", { behavior: "allow", downloadPath: output });
+    await lecturer.click(selector("survey-docx-" + cosId));
+    const docxPath = join(output, cosId + "-for-microsoft-forms.docx");
+    for (let tries = 0; tries < 100 && !existsSync(docxPath); tries++) await new Promise((r) => setTimeout(r, 200));
+    await new Promise((r) => setTimeout(r, 300));
+    const docx = await JSZip.loadAsync(readFileSync(docxPath));
+    assert.match(await docx.file("word/document.xml").async("string"), />1\. Q1\. I can /, "the document numbers the questions with their ids");
+    const csvInput = await lecturer.$(selector("survey-import-" + cosId));
+    await csvInput.uploadFile(join("public", "demo", "course-outcome-survey-google.csv"));
+    await lecturer.waitForSelector(selector("survey-import-result-" + cosId), { timeout: 10000 });
+    assert.equal(await lecturer.$eval(selector("survey-import-result-" + cosId), (e) => e.textContent),
+      "Read as a Google Forms export: 31 responses imported from 32 rows; 1 repeated row dropped; dropped at import: Timestamp.");
+    await lecturer.$eval(selector("paste-way-" + cosId), (d) => { d.open = true; });
+    const pasteLink = await lecturer.$eval(selector("paste-link-" + cosId), (e) => e.value);
+    const pastePhone = await open(320, 700, true);
+    await pastePhone.goto(boothOrigin + "/" + pasteLink.split("/").slice(3).join("/"), { waitUntil: "networkidle0" });
+    await pastePhone.waitForSelector(selector("survey-paste-warning"), { visible: true });
+    assert.equal(await pastePhone.$eval(selector("survey-paste-warning"), (e) => e.textContent), "Not anonymous: the channel you paste it into identifies you.");
+    await pastePhone.click(selector("survey-Q1-4"));
+    await pastePhone.click(selector("survey-Q2-5"));
+    await pastePhone.click(selector("survey-submit"));
+    await pastePhone.waitForSelector(selector("survey-code"), { timeout: 10000 });
+    const pasted = await pastePhone.$eval(selector("survey-code"), (e) => e.value);
+    assert.match(pasted, /^LYC1-[A-Za-z0-9+$-]+$/, "the phone made a code and sent nothing");
+    assert.ok(await pastePhone.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "the code fits a 320 px phone");
+    await pastePhone.close();
+    await lecturer.bringToFront();
+    await lecturer.type(selector("paste-codes-" + cosId), "From the course page: " + pasted + "\nand again by email: " + pasted);
+    await lecturer.click(selector("paste-read-" + cosId));
+    await lecturer.waitForSelector(selector("paste-result-" + cosId), { timeout: 10000 });
+    assert.equal(await lecturer.$eval(selector("paste-result-" + cosId), (e) => e.textContent), "2 codes read: 1 added, 1 repeated from a device already read.");
+    assert.ok((await lecturer.$eval(selector("survey-status-" + cosId), (e) => e.textContent)).startsWith("32 responses (32 of 38, 84%)"), "the import and the paste count; the booth answer still does not");
+    await lecturer.close();
+    console.log("PASS a campus's other ways in: the Forms document downloaded, a Google Forms CSV imported with its repeat dropped, and a paste code made on a 320 px phone and read once from two pastes");
   } finally {
     api.kill();
     if (boothServer) await new Promise((resolve) => boothServer.httpServer.close(resolve));

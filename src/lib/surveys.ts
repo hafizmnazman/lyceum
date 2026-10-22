@@ -1,8 +1,9 @@
 // The two student surveys (depth plan Section 7), as pure functions over records: the instruments built from the course
-// record and the institution profile, the form carried in the student's link, the booth collector's token, the Microsoft
-// Forms importer, and the rules on screen: the floor (a count and a share of the class, the stricter applied) and the
-// release (nothing for the term, aggregates and comments alike, until grades are released). Nothing here identifies a
-// student; the store and the screens call these.
+// record and the institution profile, the form carried in the student's link, the booth collector's token, the importers
+// for Microsoft Forms, Google Forms and Moodle Feedback exports, the document for Microsoft Forms Quick Import, the paste
+// code, and the rules on screen: the floor (a count and a share of the class, the stricter applied) and the release
+// (nothing for the term, aggregates and comments alike, until grades are released). Nothing here identifies a student;
+// the store and the screens call these.
 
 import LZString from "lz-string";
 import type { CLO, InstitutionProfile, LoopEvent, Subject, SurveyAnswer, SurveyDefinition, SurveyKind, SurveyQuestion, SurveyResponse } from "../types.ts";
@@ -13,6 +14,8 @@ export const SSRT_NOTE = "A demo instrument written for this prototype, unvalida
 export const STUDENT_COMMENT_WARNING = "Comments stay confidential unless you identify yourself in them: write nothing that names you or anyone else.";
 export const LECTURER_COMMENT_WARNING = "A comment may identify a student who named themselves in it. Read comments for what they say, never to find who wrote them.";
 export const CONSENT_LINE = "Answering is voluntary, and nothing you submit identifies you. Skip any question you prefer not to answer.";
+/** The paste way's consent line: the code holds nothing that identifies the student, but where it is pasted does. */
+export const PASTE_CONSENT_LINE = "Answering is voluntary; skip any question you prefer not to answer. Your code holds only your answers and a random id from this device.";
 export const MAX_COMMENT = 2000;
 
 const lowerFirst = (text: string) => /^[A-Z]{2,}\b/.test(text) ? text : text.charAt(0).toLowerCase() + text.slice(1);
@@ -59,18 +62,19 @@ export function ssrtSurvey(input: { id: string; subject: Pick<Subject, "id" | "t
 
 // ---------- the form in the link, and the collector's token ----------
 
-/** What the student's page needs, and nothing more: no reader secret, no responses, no lecturer. */
+/** What the student's page needs, and nothing more: no reader secret, no responses, no lecturer. `m: "paste"` marks the
+ *  paste way's link, where the page gives the student a code instead of sending the answers (Section 7.2). */
 export interface StudentForm {
   v: 1; id: string; f: string; k: SurveyKind; t: string; c: string; term: string;
   q: Array<[string, string, "scale" | "comment"]>; s: [number, number]; note: string | null;
-  inst: string; mark: string | null; alt: string | null; ctl: string; priv: string; demo: string | null;
+  inst: string; mark: string | null; alt: string | null; ctl: string; priv: string; demo: string | null; m?: "paste";
 }
-export function studentForm(def: SurveyDefinition, subject: Pick<Subject, "id" | "title">, institution: InstitutionProfile, demoLine: string | null): StudentForm {
+export function studentForm(def: SurveyDefinition, subject: Pick<Subject, "id" | "title">, institution: InstitutionProfile, demoLine: string | null, way?: "paste"): StudentForm {
   if (!def.formToken) throw new Error("Open the survey for collection first.");
   return { v: 1, id: def.id, f: def.formToken, k: def.kind, t: def.title, c: subject.id + " " + subject.title, term: def.term,
     q: def.questions.map((q) => [q.id, q.text, q.kind]), s: [def.scale.min, def.scale.max], note: def.instrumentNote,
     inst: institution.name, mark: institution.showMark && demoLine ? institution.mark.pngSmall : null, alt: institution.showMark && demoLine ? institution.mark.alt : null,
-    ctl: institution.controller, priv: institution.privacyNoticeUrl, demo: demoLine };
+    ctl: institution.controller, priv: institution.privacyNoticeUrl, demo: demoLine, ...(way ? { m: way } : {}) };
 }
 export const encodeForm = (form: StudentForm) => LZString.compressToEncodedURIComponent(JSON.stringify(form));
 export const surveyLink = (origin: string, form: StudentForm) => origin.replace(/\/+$/, "") + "/#/survey/" + encodeForm(form);
@@ -89,7 +93,7 @@ export function validForm(x: unknown): StudentForm | null {
   const ok = !!f && typeof f === "object" && f.v === 1 && typeof f.f === "string" && /^[A-Za-z0-9_-]{22}$/.test(f.f) && typeof f.t === "string" && typeof f.c === "string" &&
     Array.isArray(f.q) && f.q.length > 0 && f.q.length <= 60 &&
     f.q.every((q) => Array.isArray(q) && typeof q[0] === "string" && /^Q\d{1,2}$/.test(q[0]) && typeof q[1] === "string" && (q[2] === "scale" || q[2] === "comment")) &&
-    Array.isArray(f.s) && Number.isInteger(f.s[0]) && Number.isInteger(f.s[1]) && f.s[0] < f.s[1] && f.s[1] - f.s[0] <= 10;
+    Array.isArray(f.s) && Number.isInteger(f.s[0]) && Number.isInteger(f.s[1]) && f.s[0] < f.s[1] && f.s[1] - f.s[0] <= 10 && (f.m === undefined || f.m === "paste");
   return ok ? f : null;
 }
 /** The short link the QR carries: the token only; the page fetches the form from the collector that holds it. */
@@ -181,21 +185,63 @@ export function surveySummary(def: SurveyDefinition, responses: SurveyResponse[]
 /** The response rate's context, as the research note reports it, never as a standard. */
 export const RATE_CONTEXT = "Nulty's figures, reported by Ahmad (2018), are about 58% for a class under 20 and 35% for one over 50; online surveys at Monash drew 31% (Nair et al. 2008).";
 
-// ---------- the Microsoft Forms importer (depth plan Section 7.2) ----------
+// ---------- the importers (depth plan Section 7.2): Microsoft Forms, Google Forms and Moodle Feedback ----------
 
-/** The export's identity and timing columns: dropped at import, so nothing of them is kept. */
-const IDENTITY = /^(id|start time|completion time|email|name|last modified time|total points|quiz feedback)$/i;
-export interface ImportResult { responses: SurveyResponse[]; rows: number; duplicates: number; dropped: string[]; unmatched: string[]; skippedAnswers: number }
+export type ImportFormat = "microsoft-forms" | "google-forms" | "moodle-feedback" | "spreadsheet";
+export const FORMAT_LABEL: Record<ImportFormat, string> = {
+  "microsoft-forms": "a Microsoft Forms export", "google-forms": "a Google Forms export", "moodle-feedback": "a Moodle Feedback export",
+  spreadsheet: "a table with the question ids in its headers",
+};
+/** Each format's identity and bookkeeping columns, dropped at import so nothing of them is kept, and the column that times a
+ *  response, which the repeat rule reads. Moodle Feedback's columns are not in the research note, so they are the names
+ *  Moodle's response tables use, and that importer has not been tried on a Moodle export. */
+const FORMATS: Record<ImportFormat, { drop: RegExp; time: RegExp | null }> = {
+  "microsoft-forms": { drop: /^(id|start time|completion time|email|name|last modified time|total points|quiz feedback)$/i, time: /^completion time$/i },
+  "google-forms": { drop: /^(timestamp|email address|score)$/i, time: /^timestamp$/i },
+  "moodle-feedback": { drop: /^(response number|user picture|full name|first name|surname|last name|username|user|email address|id number|groups?|course|date|time modified|completed)$/i,
+    time: /^(response number|date|time modified|completed)$/i },
+  spreadsheet: { drop: /^(id|timestamp|email|email address|name|full name|username)$/i, time: null },
+};
+/** A column's question id: "Q3." at the start of its header, after a list number or a bracketed label if a tool added one. */
+const QUESTION_ID = /^(?:\d+[.)]\s*)?(?:\([^)]*\)\s*)?(Q\d{1,2})\.\s/;
 
-/** Rows of a Microsoft Forms export (the header row first), matched to the survey on the question id at the start of each
- *  column's text ("Q3."), not the wording. Name and Email are dropped, a repeated row (the same completion time and the same
- *  answers) is counted and dropped, and an answer that fits no scale point is counted and left out. */
-export function importFormsRows(rows: unknown[][], def: SurveyDefinition, at: string, nextId: () => string): ImportResult {
+/** Which export a header row comes from. */
+export function importFormat(header: string[]): ImportFormat {
+  const h = header.map((x) => x.trim().toLowerCase());
+  if (h.includes("start time") && h.includes("completion time")) return "microsoft-forms";
+  if (h[0] === "timestamp") return "google-forms";
+  if (h.some((x) => /^(response number|user picture|time modified|full name|surname)$/.test(x))) return "moodle-feedback";
+  return "spreadsheet";
+}
+
+/** A scale answer from an export's cell: the point's number alone or before its label, the label itself, either after an
+ *  option letter a tool kept ("D. Agree"), or Cannot say; null when it fits no point. */
+export function scalePoint(cell: unknown, def: Pick<SurveyDefinition, "scale">): SurveyAnswer | null {
+  if (typeof cell === "number") return Number.isInteger(cell) && cell >= def.scale.min && cell <= def.scale.max ? cell : null;
+  const text = String(cell).trim().replace(/^[A-Z][.)]\s+/, "");
+  if (text.toLowerCase() === CANNOT_SAY.toLowerCase()) return "cannot-say";
+  const lead = /^\(?(\d+)\)?(?:\s|$)/.exec(text);
+  const n = lead ? Number(lead[1]) : def.scale.min + def.scale.labels.findIndex((l) => l.toLowerCase() === text.toLowerCase());
+  return Number.isInteger(n) && n >= def.scale.min && n <= def.scale.max ? n : null;
+}
+
+export interface ImportResult {
+  format: ImportFormat; responses: SurveyResponse[]; rows: number; duplicates: number;
+  timed: boolean; // whether the file has a time column, without which no row is taken for a repeat
+  dropped: string[]; unmatched: string[]; skippedAnswers: number;
+}
+
+/** Rows of an export (the header row first), matched to the survey on the question id at the start of each column's text,
+ *  not the wording. The format's identity columns are dropped; a repeated row (the same time and the same answers) is
+ *  counted and dropped, and in a file without a time column nothing is dropped as a repeat, since two students may answer
+ *  alike; an answer that fits no scale point is counted and left out. */
+export function importResponseRows(rows: unknown[][], def: SurveyDefinition, at: string, nextId: () => string, format?: ImportFormat): ImportResult {
   const header = (rows[0] ?? []).map((h) => String(h ?? "").trim());
-  const dropped = header.filter((h) => IDENTITY.test(h));
-  const completion = header.findIndex((h) => /^completion time$/i.test(h));
-  const columns = header.map((h) => { const m = /^(Q\d+)\.\s/.exec(h); return m && def.questions.some((q) => q.id === m[1]) ? m[1] : null; });
-  const unmatched = header.filter((h, i) => h && !IDENTITY.test(h) && !columns[i]);
+  const kind = format ?? importFormat(header), rule = FORMATS[kind];
+  const columns = header.map((h) => { const m = QUESTION_ID.exec(h); return m && def.questions.some((q) => q.id === m[1]) ? m[1] : null; });
+  const dropped = header.filter((h, i) => !columns[i] && rule.drop.test(h));
+  const unmatched = header.filter((h, i) => h && !columns[i] && !rule.drop.test(h));
+  const time = rule.time ? header.findIndex((h) => rule.time!.test(h)) : -1;
   const seen = new Set<string>();
   const responses: SurveyResponse[] = [];
   let duplicates = 0, skippedAnswers = 0, rowCount = 0;
@@ -209,16 +255,112 @@ export function importFormsRows(rows: unknown[][], def: SurveyDefinition, at: st
       const cell = row[i];
       if (cell === null || cell === undefined || String(cell).trim() === "") return;
       if (q.kind === "comment") { answers[id] = String(cell).trim().slice(0, MAX_COMMENT); return; }
-      const text = String(cell).trim();
-      if (text.toLowerCase() === CANNOT_SAY.toLowerCase()) { answers[id] = "cannot-say"; return; }
-      const number = typeof cell === "number" ? cell : /^\d+$/.test(text) ? Number(text) : def.scale.min + def.scale.labels.findIndex((l) => l.toLowerCase() === text.toLowerCase());
-      if (Number.isInteger(number) && number >= def.scale.min && number <= def.scale.max) answers[id] = number;
-      else skippedAnswers++;
+      const point = scalePoint(cell, def);
+      if (point === null) skippedAnswers++;
+      else answers[id] = point;
     });
-    const key = (completion >= 0 ? String(row[completion] ?? "") : "") + "|" + JSON.stringify(answers);
-    if (seen.has(key)) { duplicates++; continue; }
-    seen.add(key);
+    if (time >= 0) {
+      const key = String(row[time] ?? "") + "|" + JSON.stringify(answers);
+      if (seen.has(key)) { duplicates++; continue; }
+      seen.add(key);
+    }
     responses.push({ id: nextId(), formId: def.id, term: def.term, answers, collectedAt: at, clientId: null, source: "imported" });
   }
-  return { responses, rows: rowCount, duplicates, dropped, unmatched, skippedAnswers };
+  return { format: kind, responses, rows: rowCount, duplicates, timed: time >= 0, dropped, unmatched, skippedAnswers };
+}
+/** D3a's Microsoft Forms importer, by its name. */
+export const importFormsRows = (rows: unknown[][], def: SurveyDefinition, at: string, nextId: () => string) => importResponseRows(rows, def, at, nextId, "microsoft-forms");
+
+// ---------- the paste way (Section 7.2) ----------
+
+export const PASTE_WARNING = "Not anonymous: the channel you paste it into identifies you.";
+const PASTE_PREFIX = "LYC1-";
+const PASTE_CODE = /LYC1-[A-Za-z0-9+$-]+/g;
+
+/** The student's code: the survey's binding (its token's first eight characters), a random id drawn on the device, and the
+ *  answers in the form's question order, compressed. Nothing else is in it. */
+export function pasteCode(form: Pick<StudentForm, "f" | "q">, device: string, answers: Record<string, SurveyAnswer>): string {
+  const values = form.q.map(([id]) => { const a = answers[id]; return a === undefined ? 0 : a === "cannot-say" ? "c" : a; });
+  return PASTE_PREFIX + LZString.compressToEncodedURIComponent(JSON.stringify([form.f.slice(0, 8), device.slice(0, 12), values]));
+}
+
+export interface PasteResult { responses: SurveyResponse[]; codes: number; repeated: number; otherSurvey: number; unreadable: number }
+
+/** Codes pasted from a course page or an email, read into the survey: each checked against its questions, a code from a
+ *  device already read (in this paste or an earlier one) counted and dropped, a code for another survey refused, one that
+ *  does not read counted. The device's random id is kept as the response's client id, so a device counts once, as at the
+ *  booth; the code never says who pasted it. */
+export function readPasteCodes(text: string, def: SurveyDefinition, at: string, nextId: () => string, knownDevices: Iterable<string> = []): PasteResult {
+  const codes = text.match(PASTE_CODE) ?? [];
+  const devices = new Set(knownDevices);
+  const responses: SurveyResponse[] = [];
+  let repeated = 0, otherSurvey = 0, unreadable = 0;
+  for (const code of codes) {
+    let parsed: unknown = null;
+    try { parsed = JSON.parse(LZString.decompressFromEncodedURIComponent(code.slice(PASTE_PREFIX.length)) || "null"); } catch { parsed = null; }
+    if (!Array.isArray(parsed) || parsed.length !== 3 || typeof parsed[0] !== "string" || typeof parsed[1] !== "string" || !Array.isArray(parsed[2])) { unreadable++; continue; }
+    const [binding, device, values] = parsed as [string, string, unknown[]];
+    if (!def.formToken || binding !== def.formToken.slice(0, 8)) { otherSurvey++; continue; }
+    if (!/^[A-Za-z0-9-]{8,12}$/.test(device) || values.length !== def.questions.length) { unreadable++; continue; }
+    const answers = boothAnswers(def, Object.fromEntries(def.questions.flatMap((q, i) => (values[i] === 0 ? [] : [[q.id, values[i] === "c" ? "cannot-say" : values[i]]]))));
+    if (!answers) { unreadable++; continue; }
+    if (devices.has(device)) { repeated++; continue; }
+    devices.add(device);
+    responses.push({ id: nextId(), formId: def.id, term: def.term, answers, collectedAt: at, clientId: device, source: "pasted" });
+  }
+  return { responses, codes: codes.length, repeated, otherSurvey, unreadable };
+}
+
+// ---------- the document for Microsoft Forms Quick Import (Section 7.2) ----------
+
+export const FORMS_DOCX_LABEL = "Shaped for Microsoft Forms Quick Import, which builds a form from a Word file; not yet imported into Forms, so that test is planned.";
+const LETTERS = "ABCDEFGHIJKLMNOP";
+export type DocLine = { text: string; style: "Title" | "Normal" | "Question" | "Option" };
+
+/** The survey as the document's lines: the title, the course and the term, the consent line, the comment warning and any
+ *  instrument note, then each question numbered with its id kept at the start of its text, and under a scale question its
+ *  points (the labels when the scale has one for each point) and Cannot say, lettered. */
+export function formsDocumentLines(def: SurveyDefinition, courseLine: string): DocLine[] {
+  const span = def.scale.max - def.scale.min + 1;
+  const points = def.scale.labels.length === span ? def.scale.labels : Array.from({ length: span }, (_, i) => String(def.scale.min + i));
+  const lines: DocLine[] = [{ text: def.title, style: "Title" }, { text: courseLine + " · " + def.term, style: "Normal" },
+    { text: CONSENT_LINE, style: "Normal" }, { text: STUDENT_COMMENT_WARNING, style: "Normal" }];
+  if (def.instrumentNote) lines.push({ text: def.instrumentNote, style: "Normal" });
+  def.questions.forEach((q, i) => {
+    lines.push({ text: i + 1 + ". " + q.text, style: "Question" });
+    if (q.kind === "scale") [...points, CANNOT_SAY].forEach((p, k) => lines.push({ text: LETTERS[k] + ". " + p, style: "Option" }));
+  });
+  return lines;
+}
+
+const xmlText = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const W = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"';
+const DECLARATION = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+/** The four parts of a minimal Word document: the package's content types and relationships, the styles and the body. */
+export function formsDocumentParts(lines: DocLine[]): Record<string, string> {
+  const style = (id: string, name: string, run: string, para = "") => '<w:style w:type="paragraph" w:styleId="' + id + '"><w:name w:val="' + name + '"/><w:basedOn w:val="Normal"/><w:qFormat/>'
+    + (para ? "<w:pPr>" + para + "</w:pPr>" : "") + "<w:rPr>" + run + "</w:rPr></w:style>";
+  return {
+    "[Content_Types].xml": DECLARATION + "\n" + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>'
+      + '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>',
+    "_rels/.rels": DECLARATION + "\n" + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>',
+    "word/_rels/document.xml.rels": DECLARATION + "\n" + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>',
+    "word/styles.xml": DECLARATION + "\n" + "<w:styles " + W + '><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:pPr><w:spacing w:after="120"/></w:pPr><w:rPr><w:sz w:val="22"/></w:rPr></w:style>'
+      + style("Title", "Title", '<w:b/><w:sz w:val="36"/>') + style("Question", "Question", '<w:b/>', '<w:spacing w:before="240" w:after="80"/>') + style("Option", "Option", "", '<w:ind w:left="360"/><w:spacing w:after="40"/>') + "</w:styles>",
+    "word/document.xml": DECLARATION + "\n" + "<w:document " + W + "><w:body>"
+      + lines.map((l) => '<w:p><w:pPr><w:pStyle w:val="' + l.style + '"/></w:pPr><w:r><w:t xml:space="preserve">' + xmlText(l.text) + "</w:t></w:r></w:p>").join("")
+      + '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="567" w:footer="567" w:gutter="0"/></w:sectPr></w:body></w:document>',
+  };
+}
+
+interface ZipInstance { file: (path: string, content: string, options?: { date?: Date }) => void; generateAsync: (options: { type: "uint8array"; compression?: string }) => Promise<Uint8Array> }
+type ZipCtor = new () => ZipInstance;
+/** The .docx itself, written with jszip loaded on demand, every entry at the survey's own date so the same survey makes the same file. */
+export async function formsDocx(def: SurveyDefinition, courseLine: string): Promise<Uint8Array> {
+  const mod = (await import("jszip")) as unknown as { default?: ZipCtor } & ZipCtor;
+  const JSZip = (mod.default ?? mod) as ZipCtor;
+  const zip = new JSZip();
+  const date = new Date(Date.parse(def.createdAt) || 0);
+  for (const [path, content] of Object.entries(formsDocumentParts(formsDocumentLines(def, courseLine)))) zip.file(path, content, { date });
+  return zip.generateAsync({ type: "uint8array", compression: "DEFLATE" });
 }

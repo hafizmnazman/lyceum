@@ -7,6 +7,7 @@
 //   lecture-slides.pptx   five slides of CS220 lecture content
 //   course-outcome-survey-forms.xlsx  CS310's prior-term Course Outcome Survey as
 //                         a Microsoft Forms export: sample, synthetic (depth plan 7.4)
+//   course-outcome-survey-google.csv  the same survey as Google Forms downloads it
 //
 // All four are real files built with Node built-ins only: the OOXML zips are
 // STORED archives with genuine CRC32s (zlib.crc32, Node 22.2+); the pdf is
@@ -165,6 +166,23 @@ for (const file of [RESULTS_NOW, RESULTS_PRIOR]) {
   ]);
   writeFileSync(`${OUT}/course-outcome-survey-forms.xlsx`, zip);
   console.log(`Wrote ${OUT}/course-outcome-survey-forms.xlsx (${zip.length} bytes, ${rows.length} rows, one of them repeated)`);
+}
+
+// ---------------------------------------------------------------- course-outcome-survey-google.csv
+// The same prior-term survey as Google Forms downloads its responses (depth plan Section 7.4, D3b): Timestamp first, no
+// Email Address column since the form collected none, each header the question's text with its id, a linear scale's number
+// as the answer, and one row repeated, as a double submission would be.
+{
+  const questions = PRIOR_COS.questions;
+  const responses = PRIOR_SURVEY_RESPONSES.filter((r) => r.formId === PRIOR_COS.id);
+  const csvCell = (v) => { const s = String(v); return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  const stamp = (k) => String(1 + (k % 5)).padStart(2, "0") + "/06/2026 " + String(9 + (k % 8)).padStart(2, "0") + ":" + String((k * 7) % 60).padStart(2, "0") + ":41";
+  const answer = (v) => v === undefined ? "" : v === "cannot-say" ? "Cannot say" : v;
+  const rows = responses.map((r, k) => [stamp(k), ...questions.map((q) => answer(r.answers[q.id]))]);
+  rows.push(rows[7].slice()); // a double submission: the same timestamp and answers
+  const csv = [["Timestamp", ...questions.map((q) => q.text)], ...rows].map((row) => row.map(csvCell).join(",")).join("\r\n") + "\r\n";
+  writeFileSync(`${OUT}/course-outcome-survey-google.csv`, csv);
+  console.log(`Wrote ${OUT}/course-outcome-survey-google.csv (${csv.length} bytes, ${rows.length} rows, one of them repeated)`);
 }
 
 // ---------------------------------------------------------------- clo-survey.csv

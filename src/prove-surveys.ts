@@ -1,13 +1,16 @@
 // Proof of the two student surveys (depth plan Sections 7 and 12): the instruments built from the record and the profile,
 // the link that carries the form (under 2,000 characters), the collector's token against the server's own hash, the floor
 // and the release rule, the booth's rules through the store (one response per device, never course evidence), the Microsoft
-// Forms importer on its fixture, backups that carry the surveys, and the sample's counts.
+// Forms importer on its fixture, backups that carry the surveys, the sample's counts, and D3b's four: the Google Forms
+// importer on its CSV fixture, the Moodle Feedback importer, the document for Microsoft Forms Quick Import, and the paste way.
 //   node --test src/prove-surveys.ts
 
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
+import JSZip from "jszip";
+import LZString from "lz-string";
 import * as XLSX from "xlsx";
 import { recapFor } from "./app/recap.ts";
 import { collectBoothResponses, createCourseSurveys, exportWorkspaceBackup, getState, login, openSurveyForCollection, recordGradesReleased, resetDemoState,
@@ -17,8 +20,9 @@ import { DEMO_LINE } from "./data/sample-course/index.ts";
 import { CS310_BEFORE } from "./data/sample-course/cs310.ts";
 import { PRIOR_COS, PRIOR_SSRT, PRIOR_SURVEY_RESPONSES } from "./data/sample-course/surveys.ts";
 import { PEOPLE, PEOPLE_IDS } from "./data/seed.ts";
-import { decodeForm, encodeForm, formTokenFor, gradesReleased, importFormsRows, newReaderSecret, respondents, studentForm, surveyFloor, surveyLink, surveyReleased,
-  surveySummary } from "./lib/surveys.ts";
+import { FORMS_DOCX_LABEL, PASTE_WARNING, decodeForm, encodeForm, formTokenFor, formsDocumentLines, formsDocx, gradesReleased, importFormat, importFormsRows, importResponseRows, newReaderSecret,
+  pasteCode, readPasteCodes, respondents, studentForm, surveyFloor, surveyLink, surveyReleased, surveySummary } from "./lib/surveys.ts";
+import { wellFormed } from "./lib/xmlCheck.ts";
 import { parseWorkspaceBackup } from "./lib/workspaceBackup.ts";
 import type { SurveyResponse } from "./types.ts";
 
@@ -173,4 +177,75 @@ test("the sample: last term's two surveys, 31 and 29 of 38, released with the sa
   const comments = PRIOR_SURVEY_RESPONSES.flatMap((r) => Object.entries(r.answers).filter(([, v]) => typeof v === "string" && v !== "cannot-say"));
   assert.equal(comments.length, 12, "a dozen short comments, written for the prototype");
   assert.ok(!s.events.some((e) => e.kind === "grades-released"), "a fresh workspace has no release on its event log");
+});
+
+test("the Google Forms importer on its CSV fixture: 31 responses, the Timestamp read for repeats and dropped, an email column dropped and nothing of it kept", () => {
+  const book = XLSX.read(readFileSync(new URL("../public/demo/course-outcome-survey-google.csv", import.meta.url), "utf8"), { type: "string", raw: true });
+  const rows = XLSX.utils.sheet_to_json(book.Sheets[book.SheetNames[0]], { header: 1, raw: true, defval: null }) as unknown[][];
+  assert.equal(importFormat(rows[0].map(String)), "google-forms");
+  let n = 0;
+  const r = importResponseRows(rows, PRIOR_COS, "2026-10-23T01:00:00Z", () => "G-" + ++n);
+  assert.deepEqual([r.format, r.rows, r.responses.length, r.duplicates, r.timed, r.skippedAnswers, r.dropped, r.unmatched], ["google-forms", 32, 31, 1, true, 0, ["Timestamp"], []]);
+  const sample = PRIOR_SURVEY_RESPONSES.filter((x) => x.formId === PRIOR_COS.id);
+  assert.deepEqual(r.responses.map((x) => x.answers), sample.map((x) => x.answers), "every answer as the sample holds it");
+  const withEmail = rows.map((row, i) => [row[0], i === 0 ? "Email Address" : "s" + i + "@example.edu", ...row.slice(1)]);
+  const e = importResponseRows(withEmail, PRIOR_COS, "x", () => "E");
+  assert.deepEqual([e.responses.length, e.duplicates, e.dropped], [31, 1, ["Timestamp", "Email Address"]], "a repeat is the same time and answers, whatever else the row holds");
+  assert.ok(!JSON.stringify(e.responses).includes("@example.edu"), "nothing of the email column is kept");
+});
+
+test("the Moodle Feedback importer: identity columns dropped, numbers and labels both read, the response number for repeats; without a time column nothing is a repeat", () => {
+  const head = ["Response number", "Course", "Date", ...PRIOR_COS.questions.map((q) => "(" + q.id.toLowerCase() + ") " + q.text)];
+  const rows = [head,
+    [1, "CS310", "1 June 2026, 9:07 AM", "(4) Agree", "Agree", "5", "Cannot say", "Strongly disagree", "Clearer rubrics, please."],
+    [2, "CS310", "1 June 2026, 9:20 AM", "(2) Disagree", "3", "", "4", "4", ""],
+    [2, "CS310", "1 June 2026, 9:20 AM", "(2) Disagree", "3", "", "4", "4", ""],
+    [3, "CS310", "1 June 2026, 9:31 AM", "Agree", "Agree", "Agree", "Agree", "Maybe", ""]];
+  const r = importResponseRows(rows, PRIOR_COS, "x", () => "M");
+  assert.deepEqual([r.format, r.rows, r.responses.length, r.duplicates, r.skippedAnswers, r.dropped, r.unmatched], ["moodle-feedback", 4, 3, 1, 1, ["Response number", "Course", "Date"], []]);
+  assert.deepEqual(r.responses.map((x) => x.answers), [{ Q1: 4, Q2: 4, Q3: 5, Q4: "cannot-say", Q5: 1, Q6: "Clearer rubrics, please." }, { Q1: 2, Q2: 3, Q4: 4, Q5: 4 }, { Q1: 4, Q2: 4, Q3: 4, Q4: 4 }]);
+  const untimed = [PRIOR_COS.questions.map((q) => q.text), ["4", "4", "4", "4", "4", ""], ["4", "4", "4", "4", "4", ""]];
+  const u = importResponseRows(untimed, PRIOR_COS, "x", () => "U");
+  assert.deepEqual([u.format, u.timed, u.responses.length, u.duplicates], ["spreadsheet", false, 2, 0], "two students who answered alike both count");
+});
+
+test("the document for Microsoft Forms Quick Import: well-formed parts, each question numbered with its id kept first, the scale lettered under it, labelled untried", async () => {
+  const lines = formsDocumentLines(PRIOR_COS, "CS310 Data Visualisation");
+  const questions = lines.filter((l) => l.style === "Question").map((l) => l.text);
+  assert.deepEqual(questions, PRIOR_COS.questions.map((q, i) => i + 1 + ". " + q.text));
+  const q1 = lines.findIndex((l) => l.text.startsWith("1. Q1. "));
+  assert.deepEqual(lines.slice(q1 + 1, q1 + 7).map((l) => l.text), ["A. Strongly disagree", "B. Disagree", "C. Neither agree nor disagree", "D. Agree", "E. Strongly agree", "F. Cannot say"]);
+  assert.equal(lines.at(-1)!.style, "Question", "the open comment has no options");
+  const zip = await JSZip.loadAsync(await formsDocx(PRIOR_COS, "CS310 Data Visualisation"));
+  const names = Object.keys(zip.files).filter((n) => !zip.files[n].dir).sort();
+  assert.deepEqual(names, ["[Content_Types].xml", "_rels/.rels", "word/_rels/document.xml.rels", "word/document.xml", "word/styles.xml"]);
+  for (const name of names) assert.equal(wellFormed(await zip.file(name)!.async("string"), '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'), null, name);
+  const doc = await zip.file("word/document.xml")!.async("string");
+  assert.ok(PRIOR_COS.questions.every((q, i) => doc.includes(">" + (i + 1) + ". " + q.id + ". ")), "every question in the body with its id");
+  assert.match(FORMS_DOCX_LABEL, /not yet imported into Forms/);
+  // The way back: a Forms export headed by the questions as the document numbers them, an option letter kept or not.
+  const back = importResponseRows([["ID", "Start time", "Completion time", "Email", "Name", ...questions], [1, "a", "t1", "", "", "D. Agree", "Agree", "4", "(4) Agree", "E. Strongly agree", ""]], PRIOR_COS, "x", () => "D");
+  assert.deepEqual([back.format, back.responses[0].answers], ["microsoft-forms", { Q1: 4, Q2: 4, Q3: 4, Q4: 4, Q5: 5 }]);
+});
+
+test("the paste way: a code holds the survey's binding, a device id and the answers, nothing else; read back once per device, another survey's code refused", () => {
+  const def = { ...PRIOR_COS, formToken: "AbCdEfGhIjKlMnOpQrStUv" };
+  const form = studentForm(def, CS310, DEMO_INSTITUTION, DEMO_LINE, "paste");
+  const link = surveyLink("http://192.168.137.1:4173", form);
+  assert.ok(link.length < 2000, "the paste link stays under 2,000 characters: " + link.length);
+  assert.equal(decodeForm(link.split("#/survey/")[1])?.m, "paste", "and opens the student page in paste mode");
+  assert.equal(PASTE_WARNING, "Not anonymous: the channel you paste it into identifies you.");
+  assert.ok(readFileSync(new URL("./ui/screens/SurveyPage.tsx", import.meta.url), "utf8").includes("{PASTE_WARNING}"), "the student page says so");
+  const code = pasteCode(form, "1a2b3c4d-5e6", { Q1: 4, Q2: "cannot-say", Q3: 5, Q6: "More examples, please." });
+  assert.match(code, /^LYC1-[A-Za-z0-9+$-]+$/);
+  assert.deepEqual(JSON.parse(LZString.decompressFromEncodedURIComponent(code.slice(5))!), ["AbCdEfGh", "1a2b3c4d-5e6", [4, "c", 5, 0, 0, "More examples, please."]],
+    "the binding, the device id and the answers in question order, and nothing that names anyone");
+  const other = pasteCode({ ...form, f: "ZZZZZZZZIjKlMnOpQrStUv" }, "9f8e7d6c-5b4", { Q1: 4 });
+  let n = 0;
+  const r = readPasteCodes("From the forum:\n" + code + "\nagain " + code + "\n" + pasteCode(form, "0a0b0c0d-0e0", { Q1: 2 }) + "\n" + other + "\nLYC1-garbage", def, "2026-10-23T01:00:00Z", () => "P-" + ++n);
+  assert.deepEqual([r.codes, r.responses.length, r.repeated, r.otherSurvey, r.unreadable], [5, 2, 1, 1, 1]);
+  assert.deepEqual(r.responses.map((x) => x.answers), [{ Q1: 4, Q2: "cannot-say", Q3: 5, Q6: "More examples, please." }, { Q1: 2 }]);
+  assert.ok(r.responses.every((x) => x.source === "pasted" && x.formId === def.id && x.clientId !== null));
+  assert.equal(readPasteCodes(code, def, "x", () => "Q", ["1a2b3c4d-5e6"]).repeated, 1, "a device read in an earlier paste counts once");
+  assert.equal(readPasteCodes(pasteCode(form, "1a2b3c4d-5e7", { Q1: 9 }), def, "x", () => "T").unreadable, 1, "an answer that fits no point reads as nothing");
 });

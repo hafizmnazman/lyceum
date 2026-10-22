@@ -1,17 +1,20 @@
 // The two student surveys on Learn (depth plan Section 7): the term's Course Outcome Survey and SSRT, opened for the booth
-// collector with a link and a QR for phones on the laptop's network, collected, or imported from a Microsoft Forms export;
-// and last term's sample surveys. The rules are on screen: no result for a term until its grades are recorded as released,
+// collector with a link and a QR for phones on the laptop's network and collected; for a campus, a document for Microsoft
+// Forms Quick Import, the results imported from Microsoft Forms, Google Forms or Moodle Feedback, or codes pasted back by
+// students; and last term's sample surveys. The rules are on screen: no result for a term until its grades are recorded as released,
 // none below the floor, and booth responses never as course evidence.
 
 import { useState } from "react";
 import { can } from "../../app/roles.ts";
-import { collectBoothResponses, createCourseSurveys, getState, importSurveyRows, mayAdopt, openSurveyForCollection, publishSurveyForm, recordGradesReleased, type AppState } from "../../app/store.ts";
+import { collectBoothResponses, createCourseSurveys, getState, importSurveyRows, mayAdopt, openSurveyForCollection, publishSurveyForm, readPastedSurveyCodes, recordGradesReleased, type AppState } from "../../app/store.ts";
 import { termWindow } from "../../app/loop.ts";
 import { DEMO_LINE } from "../../data/sample-course/index.ts";
-import { LECTURER_COMMENT_WARNING, RATE_CONTEXT, gradesReleased, respondents, shortSurveyLink, studentForm, surveyLink, surveyReleased, surveySummary, type ImportResult, type SurveySummary } from "../../lib/surveys.ts";
+import { downloadBytes } from "../../lib/download.ts";
+import { FORMAT_LABEL, FORMS_DOCX_LABEL, LECTURER_COMMENT_WARNING, PASTE_WARNING, RATE_CONTEXT, formsDocx, gradesReleased, respondents, shortSurveyLink, studentForm, surveyLink, surveyReleased, surveySummary,
+  type ImportResult, type PasteResult, type SurveySummary } from "../../lib/surveys.ts";
 import { color } from "../../theme/tokens.ts";
 import type { Person, Subject, SurveyDefinition } from "../../types.ts";
-import { Button, Field, Input, Select, Tag } from "../primitives/index.tsx";
+import { Button, Field, Input, Select, Tag, Textarea } from "../primitives/index.tsx";
 
 const pct = (x: number | null) => (x === null ? "none" : Math.round(x * 100) + "%");
 interface BoothAddress { name: string; address: string; virtual: boolean }
@@ -60,7 +63,7 @@ function SurveyCard({ state, subject, def, mayPrepare }: { state: AppState; subj
     {!def.sample && mayPrepare ? <BoothCollector state={state} subject={subject} def={def} /> : null}
     {booth.length ? <p className="booth-responses" data-demo-id={"booth-" + def.id}><Tag tone="warn">Not course evidence</Tag> <strong>Booth responses: {respondents(booth)} from {respondents(booth)} {respondents(booth) === 1 ? "device" : "devices"}.</strong> A demonstration of the collector, not course evidence: they never count in the OBE report or the recap, and their answers are not shown.</p> : null}
     {summary.open ? <SurveyResults def={def} summary={summary} /> : null}
-    {!def.sample && mayPrepare ? <FormsImport def={def} /> : null}
+    {!def.sample && mayPrepare ? <CampusWays state={state} subject={subject} def={def} /> : null}
   </article>;
 }
 
@@ -155,15 +158,47 @@ function BoothCollector({ state, subject, def }: { state: AppState; subject: Sub
   </div>;
 }
 
-/** Import a Microsoft Forms export, matched on the question ids. */
-function FormsImport({ def }: { def: SurveyDefinition }) {
+/** A campus's ways in when the booth collector is not there (Section 7.2): the survey as a document for Microsoft Forms Quick
+ *  Import, the results imported from Microsoft Forms, Google Forms or Moodle Feedback, and the paste way. */
+function CampusWays({ state, subject, def }: { state: AppState; subject: Subject; def: SurveyDefinition }) {
+  return <div className="campus-ways" data-demo-id={"campus-ways-" + def.id}>
+    <h5>For a campus: other ways in</h5>
+    <FormsDocument subject={subject} def={def} />
+    <ResultsImport def={def} />
+    <PasteWay state={state} subject={subject} def={def} />
+  </div>;
+}
+
+/** The survey as a Word file shaped for Microsoft Forms Quick Import, each question's id kept at the start of its text. */
+function FormsDocument({ subject, def }: { subject: Subject; def: SurveyDefinition }) {
   const [message, setMessage] = useState("");
-  const said = (r: ImportResult) => r.responses.length + " responses imported from " + r.rows + " rows" + (r.duplicates ? "; " + r.duplicates + " repeated " + (r.duplicates === 1 ? "row" : "rows") + " dropped" : "") +
-    (r.dropped.length ? "; dropped at import: " + r.dropped.join(", ") : "") + (r.unmatched.length ? "; columns with no matching question id: " + r.unmatched.length : "") + (r.skippedAnswers ? "; " + r.skippedAnswers + " answers fit no scale point" : "") + ".";
+  async function download() {
+    try {
+      downloadBytes(def.id + "-for-microsoft-forms.docx", await formsDocx(def, subject.id + " " + subject.title), "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+      setMessage("");
+    } catch {
+      setMessage("The document could not be written in this browser.");
+    }
+  }
+  return <div className="forms-document">
+    <Button onClick={() => void download()} data-demo-id={"survey-docx-" + def.id}>Download for Microsoft Forms (.docx)</Button>
+    <p className="muted">{FORMS_DOCX_LABEL} Keep each question's id (Q1., Q2., ...) at the start of its text, so the results import matches on it.</p>
+    {message ? <p role="status" className="save-status">{message}</p> : null}
+  </div>;
+}
+
+/** Import an export from Microsoft Forms (.xlsx), Google Forms or Moodle Feedback (.csv), the format read from its header. */
+function ResultsImport({ def }: { def: SurveyDefinition }) {
+  const [message, setMessage] = useState("");
+  const said = (r: ImportResult) => "Read as " + FORMAT_LABEL[r.format] + ": " + r.responses.length + " responses imported from " + r.rows + " rows"
+    + (r.timed ? (r.duplicates ? "; " + r.duplicates + " repeated " + (r.duplicates === 1 ? "row" : "rows") + " dropped" : "") : "; the file has no time column, so no row was taken for a repeat")
+    + (r.dropped.length ? "; dropped at import: " + r.dropped.join(", ") : "") + (r.unmatched.length ? "; columns with no matching question id: " + r.unmatched.length : "")
+    + (r.skippedAnswers ? "; " + r.skippedAnswers + " answers fit no scale point" : "") + ".";
   async function read(file: File) {
     try {
       const XLSX = await import("xlsx");
-      const book = XLSX.read(new Uint8Array(await file.arrayBuffer()), { type: "array" });
+      // A CSV is read as text, cell for cell, so a date or a number stays as the export wrote it.
+      const book = /\.csv$/i.test(file.name) ? XLSX.read(await file.text(), { type: "string", raw: true }) : XLSX.read(new Uint8Array(await file.arrayBuffer()), { type: "array" });
       const rows = XLSX.utils.sheet_to_json(book.Sheets[book.SheetNames[0]], { header: 1, raw: true, defval: null }) as unknown[][];
       const r = importSurveyRows(def.id, rows);
       setMessage(r.ok && r.result ? said(r.result) : "error" in r ? r.error : "Nothing was imported.");
@@ -172,9 +207,40 @@ function FormsImport({ def }: { def: SurveyDefinition }) {
     }
   }
   return <div className="forms-import">
-    <Field label="Import Microsoft Forms results (.xlsx)" hint="Matched on the id at the start of each question (Q1., Q2., ...). Name and Email are dropped at import; a repeated row is counted and dropped.">
-      <Input type="file" accept=".xlsx" onChange={(e) => { const file = e.target.files?.[0]; if (file) void read(file); e.target.value = ""; }} data-demo-id={"survey-import-" + def.id} />
+    <Field label="Import results: Microsoft Forms (.xlsx), Google Forms or Moodle Feedback (.csv)" hint="Matched on the id at the start of each question (Q1., Q2., ...). Names, emails and the like are dropped at import; a row repeated with the same time and answers is counted and dropped. The Moodle Feedback importer has not been tried on a Moodle export yet.">
+      <Input type="file" accept=".xlsx,.csv" onChange={(e) => { const file = e.target.files?.[0]; if (file) void read(file); e.target.value = ""; }} data-demo-id={"survey-import-" + def.id} />
     </Field>
-    {message ? <p role="status" className="save-status">{message}</p> : null}
+    {message ? <p role="status" className="save-status" data-demo-id={"survey-import-result-" + def.id}>{message}</p> : null}
   </div>;
+}
+
+/** The paste way, for a campus with neither the collector nor Forms: a link that gives each student a code to paste into the
+ *  course page or an email, and a box that reads the codes back. */
+function PasteWay({ state, subject, def }: { state: AppState; subject: Subject; def: SurveyDefinition }) {
+  const [codes, setCodes] = useState("");
+  const [message, setMessage] = useState("");
+  const said = (r: PasteResult) => r.codes + (r.codes === 1 ? " code" : " codes") + " read: " + r.responses.length + " added"
+    + (r.repeated ? ", " + r.repeated + " repeated from a device already read" : "") + (r.otherSurvey ? ", " + r.otherSurvey + " for another survey, refused" : "")
+    + (r.unreadable ? ", " + r.unreadable + " that do not read" : "") + ".";
+  const link = def.formToken ? surveyLink(window.location.origin, studentForm(def, subject, state.institution, state.courseDefinitions[subject.id]?.sample ? DEMO_LINE : null, "paste")) : null;
+  function read() {
+    const r = readPastedSurveyCodes(def.id, codes);
+    setMessage(r.ok && r.result ? said(r.result) : "error" in r ? r.error : "Nothing was read.");
+    if (r.ok && r.result?.responses.length) setCodes("");
+  }
+  return <details className="paste-way" data-demo-id={"paste-way-" + def.id}>
+    <summary>The paste way, for a campus with neither the collector nor Forms</summary>
+    {!link ? <p className="muted">Open the survey above first; its link and its codes are bound to it.</p> : <>
+      <p className="muted">Share this link on the course page. Each student answers and gets a code to paste into the course page or an email, and the page tells them: "{PASTE_WARNING}" The app keeps the answers and a random id from each device, never who pasted a code.</p>
+      <Field label="The paste way's link" hint="It carries the whole form, so no collector is needed, and the student's page sends nothing.">
+        <Input readOnly value={link} onFocus={(e) => e.currentTarget.select()} data-demo-id={"paste-link-" + def.id} />
+      </Field>
+      <div className="button-row"><Button onClick={() => { void navigator.clipboard?.writeText(link); setMessage("Link copied."); }}>Copy the link</Button></div>
+      <Field label="Paste the codes" hint="As many as you like, in any text around them: each starts LYC1-. A device counts once; a code for another survey is refused.">
+        <Textarea value={codes} onChange={(e) => setCodes(e.target.value)} rows={4} data-demo-id={"paste-codes-" + def.id} />
+      </Field>
+      <Button onClick={read} disabled={!codes.trim()} data-demo-id={"paste-read-" + def.id}>Read the codes</Button>
+    </>}
+    {message ? <p role="status" className="save-status" data-demo-id={"paste-result-" + def.id}>{message}</p> : null}
+  </details>;
 }

@@ -4,8 +4,8 @@
 
 **Stamp.**
 
-- Last updated: 23 October 2026, 00:49 Kuala Lumpur time, after Track C's D6b.
-- Reflects: `main` after Track C's D0, D1, D2, D5a, D6a, D8a, D3a and D4a (`87d585d`, `81072d1`, `5715efc`, `02f5c73`, `963b0f2`, `54d400f`, `78aed88`, `6c0b262`), D8b (`b7597b1`), D7 (`4dc0650`), D5b (`4ddefd6`) and D6b's wall, kiosk and count; Track A ended at `b4bfdc4`, with the owner's follow-ups committed as `ba980e7`; the base is `f5b26a4`, tagged `pre-overhaul`. Nothing is pushed; `amsterdam-2026` is the owner's tag at the freeze. Sections 1 to 5 describe Track A's build and its run of 22 October, afternoon; Track C's additions and their verification are in Section 8.
+- Last updated: 23 October 2026, 01:16 Kuala Lumpur time, after Track C's D3b.
+- Reflects: `main` after Track C's D0, D1, D2, D5a, D6a, D8a, D3a and D4a (`87d585d`, `81072d1`, `5715efc`, `02f5c73`, `963b0f2`, `54d400f`, `78aed88`, `6c0b262`), D8b (`b7597b1`), D7 (`4dc0650`), D5b (`4ddefd6`), D6b (`e79fd18`) and D3b's ways in to the surveys; Track A ended at `b4bfdc4`, with the owner's follow-ups committed as `ba980e7`; the base is `f5b26a4`, tagged `pre-overhaul`. Nothing is pushed; `amsterdam-2026` is the owner's tag at the freeze. Sections 1 to 5 describe Track A's build and its run of 22 October, afternoon; Track C's additions and their verification are in Section 8.
 - Project: Lyceum, Universiti Teknologi PETRONAS, for the Grand Final on 29 October 2026 in Amsterdam ([docs/competition/grand-final-2026.md](competition/grand-final-2026.md)).
 
 **Rollback.** `git checkout pre-overhaul` returns the tree as it stood before the overhaul: the whole October workspace, committed on 22 October 2026 at 03:25 as "Checkpoint before the overhaul".
@@ -618,3 +618,12 @@ The full run after D3a and D4a, on the build machine between 23:16 and 23:19 Kua
 - D9 gains one step after the render: `node scripts/kiosk-film.mjs`, so the kiosk plays the new film with its date.
 - Not built in D6b: the wall on the department's Programme screen, the browser's kiosk flag and a browser-only account on the booth laptop (set up by hand), and a film newer than 22 October's.
 - Checks: typecheck; prove:all 255 passed, twenty-four suites (`prove-judge` 8, three new); the build, main chunk 993.09 kB (294.86 kB gzipped); `smoke` 19 of 19; `smoke:integrity` 3 of 3; `smoke:workspace` 10 of 10, the kiosk's idle return waited out; `smoke:curriculum` 6 of 6; the walk; the contrast, dash, guide, migration, sample, partner-mark and kiosk-film checks; the kiosk, the wall and the count in the built app at 1440, 390 and 320 px.
+
+### D3b, a campus's ways in to the surveys: 23 October 2026
+
+- The survey card on Learn gains three ways in for a campus without the booth. The first is a Word document shaped for Microsoft Forms Quick Import: each question numbered with its id kept at the start of its text, the scale's labels and Cannot say lettered under each scale question, written with jszip loaded on demand, and labelled not yet imported into Forms. The second is one importer for Microsoft Forms (.xlsx), Google Forms and Moodle Feedback (.csv) exports. It reads the format from the header and says it in the result, matches on the question ids, drops identity columns, and drops and counts a row repeated with the same time and answers; in a file without a time column nothing is taken for a repeat. The third is the paste way.
+- The paste way: a link that carries the form with a paste flag. The student's page sends nothing; it gives a code holding the survey's binding, a random id from the device and the answers, under "Not anonymous: the channel you paste it into identifies you." The lecturer pastes the codes back in any text; a device counts once across pastes, a code for another survey is refused, and the responses count like an import.
+- The Moodle Feedback importer matches on the question ids and the column names Moodle's response tables use; it has not been tried on a Moodle export, and the screen says so.
+- `scripts/gen-demo-files.mjs` writes `public/demo/course-outcome-survey-google.csv`, last term's sample responses as Google Forms downloads them, synthetic, with one row repeated.
+- Not built in D3b: Google Forms through its API, Qualtrics and EvaSys, a Quick Import tried in Forms, and a Moodle export to try the importer on.
+- Checks: typecheck; prove:all 259 passed, twenty-four suites (`prove-surveys` 12, four new); the build, main chunk 1,005.35 kB (298.84 kB gzipped); `smoke` 19 of 19; `smoke:integrity` 3 of 3; `smoke:workspace` 11 of 11, the campus ways from a 320 px phone; `smoke:curriculum` 6 of 6; the walk; the curl round trip against the local API; the contrast, dash, guide, migration, sample, partner-mark and kiosk-film checks.

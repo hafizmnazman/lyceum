@@ -101,7 +101,7 @@ const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
     outcome: one("adopt", "retain", "defer", "return"), note: str }), 100000),
   events: array(shape({ id, at: str, byPersonId: id,
     kind: one("brief-prepared", "brief-sent", "brief-read", "decision-recorded", "snapshot-frozen", "version-adopted", "term-set", "grades-released", "survey-opened", "survey-collected", "cqi-noted"),
-    refs: shape({ subjectId: id, briefId: opt(id), decisionId: opt(id), snapshotId: opt(id), versionId: opt(id), draftId: opt(id), term: opt(str), previousTerm: opt(str), formId: opt(id), count: opt(integer), noteId: opt(id), source: opt(one("booth", "imported")) }) }), 100000),
+    refs: shape({ subjectId: id, briefId: opt(id), decisionId: opt(id), snapshotId: opt(id), versionId: opt(id), draftId: opt(id), term: opt(str), previousTerm: opt(str), formId: opt(id), count: opt(integer), noteId: opt(id), source: opt(one("booth", "imported", "pasted")) }) }), 100000),
   // The two student surveys (depth plan Section 7): every answer fits its question, and nothing identifies a student.
   surveys: array(shape({ id, subjectId: id, kind: one("course-outcome", "ssrt"), title: str, term: str, versionId: x => x === null || id(x),
     scale: shape({ min: integer, max: integer, target: integer, labels: array(str, 20) }),

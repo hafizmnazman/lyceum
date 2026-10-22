@@ -673,7 +673,7 @@ export type LoopEventKind = "brief-prepared" | "brief-sent" | "brief-read" | "de
 /** An append-only record of what happened and when. The How it works timeline reads these first. */
 export interface LoopEvent {
   id: string; at: string; byPersonId: PersonId; kind: LoopEventKind;
-  refs: { subjectId: SubjectId; briefId?: string; decisionId?: string; snapshotId?: string; versionId?: string; draftId?: string; term?: string; previousTerm?: string; formId?: string; count?: number; noteId?: string; source?: "booth" | "imported" };
+  refs: { subjectId: SubjectId; briefId?: string; decisionId?: string; snapshotId?: string; versionId?: string; draftId?: string; term?: string; previousTerm?: string; formId?: string; count?: number; noteId?: string; source?: "booth" | "imported" | "pasted" };
 }
 
 // ---------- attainment against a stated threshold (depth plan Section 8) ----------

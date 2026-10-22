@@ -1,10 +1,12 @@
 // The student's survey page (depth plan Section 7.2), a route of the built app that needs no sign-in. The form comes from
 // the link: the whole form in the fragment, or a short link whose form the booth collector holds. The answers go to the
-// collector on the laptop that showed the link, and a random id drawn on this device lets it answer once. Nothing on the
-// page asks for, keeps or sends a name, an email or an address.
+// collector on the laptop that showed the link, and a random id drawn on this device lets it answer once. On the paste
+// way's link the page sends nothing: it gives the student a code to paste into the course page or an email, and says that
+// the channel identifies them. Nothing on the page asks for, keeps or sends a name, an email or an address.
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { CANNOT_SAY, CONSENT_LINE, SCALE_LABELS, STUDENT_COMMENT_WARNING, decodeForm, validForm, type StudentForm } from "../../lib/surveys.ts";
+import { AlertTriangle } from "lucide-react";
+import { CANNOT_SAY, CONSENT_LINE, PASTE_CONSENT_LINE, PASTE_WARNING, SCALE_LABELS, STUDENT_COMMENT_WARNING, decodeForm, pasteCode, validForm, type StudentForm } from "../../lib/surveys.ts";
 import type { SurveyAnswer } from "../../types.ts";
 import { Button, Tag } from "../primitives/index.tsx";
 
@@ -42,7 +44,9 @@ export function SurveyPage({ reference }: { reference: string }) {
   const [answers, setAnswers] = useState<Record<string, SurveyAnswer>>({});
   const [phase, setPhase] = useState<"idle" | "sending" | "sent" | "already" | "error">("idle");
   const [error, setError] = useState("");
-  useEffect(() => { if (form && sentBefore(form.f)) setPhase("sent"); }, [form]);
+  const [code, setCode] = useState("");
+  const paste = form?.m === "paste";
+  useEffect(() => { if (form && form.m !== "paste" && sentBefore(form.f)) setPhase("sent"); }, [form]);
 
   if (!form) return <main className="survey-page" data-demo-id="survey-page">
     {short && !loadError ? <p role="status">Loading the survey.</p>
@@ -51,6 +55,8 @@ export function SurveyPage({ reference }: { reference: string }) {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    // The paste way sends nothing: the code is made here, from the answers and this device's random id.
+    if (paste) { setCode(pasteCode(form!, deviceId(form!.f), answers)); setPhase("sent"); return; }
     setPhase("sending"); setError("");
     try {
       const res = await fetch("/api/survey/" + form!.f, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ clientId: deviceId(form!.f), answers }) });
@@ -74,9 +80,17 @@ export function SurveyPage({ reference }: { reference: string }) {
     </header>
     {form.demo ? <p className="sample-line"><Tag tone="warn">Sample, synthetic</Tag> {form.demo}</p> : null}
     {form.note ? <p className="limitation">{form.note}</p> : null}
-    <p>{CONSENT_LINE}</p>
+    <p>{paste ? PASTE_CONSENT_LINE : CONSENT_LINE}</p>
+    {paste ? <p className="paste-warning" data-demo-id="survey-paste-warning"><AlertTriangle size={16} aria-hidden="true" /><strong>{PASTE_WARNING}</strong></p> : null}
     <p className="muted">{form.ctl} <a href={form.priv} target="_blank" rel="noreferrer">The university's general privacy notice</a>, linked as this demo's example.</p>
-    {phase === "sent" || phase === "already" ? <section className="survey-done" role="status" data-demo-id="survey-done">
+    {phase === "sent" && paste ? <section className="survey-done" role="status" data-demo-id="survey-done">
+      <h2>Your code</h2>
+      <p>Copy it and paste it where your lecturer asked, on the course page or in an email.</p>
+      <p className="paste-warning"><AlertTriangle size={16} aria-hidden="true" /><span><strong>{PASTE_WARNING}</strong> The code holds only your answers and a random id from this device.</span></p>
+      <textarea className="paste-code" readOnly value={code} aria-label="Your code" onFocus={(e) => e.currentTarget.select()} data-demo-id="survey-code" />
+      <div className="button-row"><Button onClick={() => void navigator.clipboard?.writeText(code)}>Copy the code</Button><Button variant="quiet" onClick={() => setPhase("idle")}>Change my answers</Button></div>
+    </section>
+      : phase === "sent" || phase === "already" ? <section className="survey-done" role="status" data-demo-id="survey-done">
       <h2>Thank you</h2>
       <p>{phase === "sent" ? "Your answers were sent. Nothing you submitted identifies you." : "This device has already answered this survey."} A device answers once.</p>
     </section>
@@ -97,7 +111,7 @@ export function SurveyPage({ reference }: { reference: string }) {
               onChange={(e) => setAnswer(id, e.target.value.trim() ? e.target.value : null)} />
           </div>)}
         {phase === "error" ? <p role="alert" className="form-error">The answers could not be sent: {error}. They are still here; try again.</p> : null}
-        <Button type="submit" variant="primary" disabled={phase === "sending"} data-demo-id="survey-submit">{phase === "sending" ? "Sending" : "Send my answers"}</Button>
+        <Button type="submit" variant="primary" disabled={phase === "sending"} data-demo-id="survey-submit">{paste ? "Make my code" : phase === "sending" ? "Sending" : "Send my answers"}</Button>
       </form>}
   </main>;
 }
