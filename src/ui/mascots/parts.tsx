@@ -84,8 +84,10 @@ export function Eyes({ x1, x2, y, look }: { x1: number; x2: number; y: number; l
   return <g data-part="eyes">{eye(x1)}{eye(x2)}</g>;
 }
 
-/** No mouth beyond a line: a small curve that widens a little when the record is saved. */
-export function Mouth({ x, y, pose }: { x: number; y: number; pose: HelperPose | HostPose }) {
+/** No mouth beyond a line: a small curve that widens a little when the record is saved. In the film a
+ *  speaking character opens it with the loudness of its voice (open, 0 to 1); the app never passes it. */
+export function Mouth({ x, y, pose, open = 0 }: { x: number; y: number; pose: HelperPose | HostPose; open?: number }) {
+  if (open > 0.04) return <ellipse cx={x} cy={y + 2} rx={6 + open * 2} ry={1.6 + open * 6.5} fill={INK} />;
   const wide = pose === "done" || pose === "greeting" || pose === "celebrating";
   const flat = pose === "working";
   const d = flat ? "M" + (x - 6) + " " + y + " L" + (x + 6) + " " + y

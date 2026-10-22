@@ -671,3 +671,113 @@ Chosen: (b), because the plan asks for the landing page, and deploying it sends 
 Reverse it if: the owner deploys the landing page and gives its address.
 
 To reverse: run `node scripts/gen-poster.mjs --qr <file>`.
+
+## 2026-10-22 07:50, A7: the third-party skills
+
+Options: (a) install remotion-dev/skills and brag after a SkillSpector scan of each, as the A7 prompt allows. (b) Build the Remotion project and the cold open directly, from the Dataworks project and Remotion's own packages, and install no third-party skill. (c) Skip Remotion.
+
+Chosen: (b), because the Dataworks project already shows every technique the film needs, and a skill that is not installed needs no scan and cannot run anything; Section 16 allows the cold open as a Remotion scene instead of brag.
+
+Reverse it if: a later pass wants the Remotion agent skills or the brag intro; scan each first and stop on anything but SAFE.
+
+To reverse: nothing to undo; scan and install per the global CLAUDE.md.
+
+## 2026-10-22 07:52, A7: how the app is captured
+
+Options: (a) Playwright's `recordVideo`, as Section 16 names it, which needs Playwright's own browser and ffmpeg builds downloaded. (b) Puppeteer's screencast, already a dependency, which uses the ffmpeg on the PATH and the installed Chrome, recording the self-driving tour once and logging the time of each tour caption, so scenes cut excerpts by caption. (c) A hand recording.
+
+Chosen: (b), because it records the same real app by script with nothing new to download, and one recording of the tour keeps every scene consistent with the demo the judges see.
+
+Reverse it if: the team prefers Playwright's per-scene files, or the screencast drops frames on another machine (the script fails when the video's length and the tour's wall time differ by more than two seconds).
+
+To reverse: `video/capture/capture.mjs` and the `Clips` lines in `video/script.md`.
+
+## 2026-10-22 07:58, A7: the tour on the saved sample for the film
+
+Options: (a) record the tour as it plays for the judges, which fetches Stripe's board live through the local API and needs the network. (b) A `?demoSample` flag that makes the same tour pick the dated saved sample of the same board from the start, offline and identical on every run, with the film's chip saying "saved sample". (c) Run the local API and fetch live during the capture.
+
+Chosen: (b), because this run sends nothing off the machine, and Section 16.1 asks for sample footage labelled as the sample.
+
+Reverse it if: the team wants live footage, captured with the local API running and the network up.
+
+To reverse: `isSampleTour` in `src/demo/timing.ts`, `tourSteps` in `src/demo/runner.ts`, the `?demoSample` address in `video/capture/capture.mjs`.
+
+## 2026-10-22 08:04, A7: the captured footage keeping time
+
+Options: (a) Puppeteer's screencast as it is, which writes frames at a fixed rate, so every slow frame shortens the clock: the first recording ran 11 seconds short of the tour (373.7 s against 384.6 s) and the Decide scene showed the Teach page. (b) The same with a two-pixel heartbeat repainting in a corner; tried, still 13 seconds short (368.1 s against 381.2 s). (c) The browser's own screencast frames piped straight into ffmpeg, which stamps each frame with its arrival time and fills the gaps at 30 fps, with the heartbeat kept, and the capture failing when the video's length and the tour's wall time differ by more than two seconds.
+
+Chosen: (c), because the excerpts are cut by the captions' wall-clock times, so the video must keep the same clock.
+
+Reverse it if: a recorder that timestamps frames itself replaces the pipe.
+
+To reverse: the recorder in `video/capture/capture.mjs`.
+
+## 2026-10-22 08:05, A7: the lecturer's caption bar
+
+Options: (a) emerald, as Section 16.1 first names it. (b) ray3, because the audit says emerald on forest is 2.96 to 1, under the 3 to 1 a graphic needs, and on forest data uses ray2, ray3 and lime; the host keeps lime. (c) White.
+
+Chosen: (b), because the bar tells the two voices apart and must stay visible on the caption box; it changes no token, only which one the bar uses.
+
+Reverse it if: the audit is revised for emerald on the dark field.
+
+To reverse: `SPEAKER_BAR` in `video/remotion/src/theme.ts` and the Captions line in `video/style.md`.
+
+## 2026-10-22 08:06, A7: the characters in the film
+
+Options: (a) draw the host and the helpers again for the film. (b) Import the app's own components (`src/ui/mascots`), with one optional `mouth` opening added to the host for speech (the app never passes it, and the generated mascot files are unchanged), and draw only the faceless lecturer figure in the film. (c) Use the PNG exports.
+
+Chosen: (b), because the film's characters then are the app's characters by construction, and the mouth can follow the voice's loudness.
+
+Reverse it if: the film needs poses the app does not have.
+
+To reverse: `video/remotion/src/components/Cast.tsx`, and the `open` prop in `src/ui/mascots/parts.tsx` and `mouth` in `host.tsx`.
+
+## 2026-10-22 08:07, A7: the film without voices
+
+Options: (a) wait for the team's recordings before building anything. (b) Build both cuts now with every line timed from its words at 2.6 a second, mouths closed and no sound, so the pictures, cues, captions and numbers can be reviewed; the recordings, once named as `video/README.md` says, replace the estimates by a sync. (c) Use text to speech.
+
+Chosen: (b), because A7 in this run covers the parts that need no human voice, and Section 16 allows text to speech only as the documented fallback.
+
+Reverse it if: the team records the voices; nothing to undo, run the sync.
+
+To reverse: nothing.
+
+## 2026-10-22 08:08, A7: rendering without a browser download
+
+Options: (a) let Remotion download its headless browser on the first render. (b) Point the render at the Chrome or Edge already installed (`--browser-executable`), which rendered correctly here. (c) Render in the cloud.
+
+Chosen: (b), because it needs nothing from the network and the stills matched the studio.
+
+Reverse it if: a Chrome update breaks the render; then `npx remotion browser ensure` downloads the headless shell.
+
+To reverse: `BROWSER` in `video/remotion/scripts/render.mjs`.
+
+## 2026-10-22 09:15, A7: a render that reproduces
+
+Options: (a) Remotion's own H.264 render, as first set up: two renders of Loop90 differed in 1,447 of 2,603 decoded frames, from the first app scene on. (b) Remotion's PNG frames encoded by the system ffmpeg, tried next (an 08:45 entry here chose it, blaming Remotion's encoder and Chrome's JPEG frames): still 1,456 differing frames, and decoded side by side the pixels differed only in the 60 px blurred shadow under the app's frame, 1 to 10 levels apart along the browser's raster tiles, while the footage, the drawn scenes and the text matched. (c) A flat offset shadow, as the style guide's flat shapes ask, so the film has no blur anywhere, with the frames still drawn as PNG and encoded by the system ffmpeg, the master and the 720p copy from one render.
+
+Chosen: (c), because the blur was the cause, and with it gone the first app scene rendered twice differs in 1 of 412 frames, by one level in one pixel. The PNG path stays because its frames are lossless and the encoder's settings and colour tags are the project's, at the cost of temporary frames of about 1.2 MB each, deleted after the encode.
+
+Reverse it if: the film wants a soft shadow again; run `scripts/determinism.mjs` before keeping it.
+
+To reverse: the frame's `boxShadow` in `video/remotion/src/scenes/Real.tsx`, the Illustration rules in `video/style.md`, and `render` in `video/remotion/scripts/render.mjs`.
+
+## 2026-10-22 09:15, A7: what the determinism check accepts
+
+Options: (a) the two encoded files byte for byte, which one pixel one level apart fails, and which H.264 spreads over dozens of frames, so the report cannot say how large a difference is. (b) Chrome's software renderer (`--gl=swangle`) to make the frames byte-identical; tried on the first app scene, also 1 of 412 frames one level apart, and 2.5 times slower. (c) The rendered frames diffed before encoding, each differing frame measured in pixels and levels, failing on a missing frame or on any pixel more than 2 levels apart, with one set of frames encoded twice to show the encoder adds nothing.
+
+Chosen: (c), because what the check is for (a clock, a random number, a late font or a blur in the film) moves pixels by tens of levels, while the rasteriser's own rounding moves one level in a pixel now and then; the report counts both, so nothing is hidden.
+
+Reverse it if: a Chrome or Remotion release draws the frames byte for byte the same, which the report will show as no differing frames; then the tolerance can go to 0.
+
+To reverse: `TOLERANCE` and the comparison in `video/remotion/scripts/determinism.mjs`.
+
+## 2026-10-22 09:18, A7: which Codex reviews run, and what they see
+
+Options: (a) none, as this run planned while the limit was spent and the owner had not said to send files. (b) The jobs plan Section 15 gives Codex, once the owner reported the limit reset (the owner's earlier message asked for the queued steps to run then): the pitch and the claims audit at once on what A6 committed, and the question bank once A8 has written the booth script and JUDGES.md, each `codex exec --sandbox read-only` with only the named files on stdin. (c) One review of the whole repository.
+
+Chosen: (b), because each review sees exactly the files its question needs, nothing else leaves the machine, and its report is kept as written in `docs/review/` with every claim checked against the notes and the code before anything changes.
+
+Reverse it if: the owner wants no project files sent to OpenAI; the three reports and their logs are the whole footprint.
+
+To reverse: delete `docs/review/astra-*-2026-10-22.md` and their run logs; nothing else depends on them.

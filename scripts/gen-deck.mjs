@@ -97,6 +97,21 @@ try {
     };
   });
   if (errors.length) problems.push(...errors.map((e) => "Deck page: " + e));
+  // The film on slide 5, once rendered: Chrome must load it from deck/media, as the presenting laptop will.
+  if (existsSync(FILM)) {
+    const film = await page.evaluate(async () => {
+      const v = document.querySelector(".film video");
+      v.preload = "metadata";
+      v.load();
+      try {
+        await new Promise((res, rej) => { v.onloadedmetadata = res; v.onerror = () => rej(new Error("the browser could not decode it")); setTimeout(() => rej(new Error("it did not load in 15 s")), 15000); });
+        return { seconds: v.duration, width: v.videoWidth, height: v.videoHeight };
+      } catch (e) { return { error: String(e.message ?? e) }; }
+    });
+    if (film.error) problems.push("The film on slide 5 does not play in Chrome: " + film.error);
+    else if (film.width !== 1920 || film.height !== 1080 || film.seconds < 60) problems.push("The film on slide 5 is " + film.width + " by " + film.height + " and " + film.seconds.toFixed(1) + " s; expected the 1920 by 1080 Loop90 cut.");
+    else console.log("The film loads on slide 5: " + film.seconds.toFixed(1) + " s at " + film.width + " by " + film.height + ".");
+  }
 
   // ---------- 4. the checks ----------
   read.slides.forEach((s, i) => {

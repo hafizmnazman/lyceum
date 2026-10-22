@@ -1,0 +1,800 @@
+Reading additional input from stdin...
+OpenAI Codex v0.156.1
+--------
+workdir: C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: max
+reasoning summaries: none
+session id: 01a16130-6b13-7350-8ac9-a7b2b20e956f
+--------
+user
+Review Lyceum exactly as instructed in the text that follows on stdin; all files are embedded there.
+
+<stdin>
+You are a sceptical judge at the HACKaSTONE 2026 Grand Final (29 October 2026, Amsterdam; 8 minutes of pitch plus 2 of questions; the criteria and their weights are in docs/competition/grand-final-2026.md), reading the pitch deck of Lyceum, a university lecturer's course workspace, seven days before the final. The deck is deck/index.html: eleven slides, each with its speaker notes in an aside with class "notes", which hold the spoken words and the minute marks. Read it with the claims register (docs/claims.md, the only allowed source of any number), the competition facts, and the plan's story and pitch sections (excerpts of docs/lyceum-upgrade-plan.md: Sections 2.3 and 2.4, 4.1 and 14).
+
+Write a Markdown review with exactly these sections:
+1. Scored as a sceptical judge on Innovation 30%, Technology Readiness 20%, Commercial Viability 15%, Education Significance 15%, Presentation 10%, Demo 10%: per criterion, where the deck over-claims, under-claims, or leaves a question a judge will ask unanswered. Cite the slide number each time.
+2. The copy, slide by slide: any line that is unclear, longer than the slide craft rules allow (plan Section 14.2: about seven words a slide, titles as full sentences, four lines of text at most), inconsistent with another slide or with its notes, or stated more strongly than its claims row allows. Quote the line and give a replacement in the same plain voice.
+3. Every number on the slides and in the notes, checked against docs/claims.md: list any figure that is not registered, differs from its row, or is used without the caveat its row carries. Dates, ids and quoted clauses are references, not figures.
+4. The story: does each slide end on the question the next one answers (plan Section 4.1, the eight beats); name every place where the spine breaks or a beat is missing.
+5. The timing: using the minute marks in the notes and about 140 spoken words a minute, which slides overrun, and by how much.
+6. The ten highest-value changes, ranked, one or two sentences each.
+
+Rules: no en or em dashes anywhere in your output (use commas, colons or "to"); quote the deck exactly when you cite a line; be specific and brief; do not invent facts or sources; mark anything you could not verify as unverified. Do not propose changing the main idea, the six steps (Watch, Report, Decide, Update, Teach, Learn), the palette, the honesty labels (real, prototype, illustrative, planned) or the dates.
+
+Your file tools may be unavailable. Everything you need is embedded below; do not call tools, review from this text only.
+
+===== FILE: deck/index.html =====
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lyceum: a course decision with receipts</title>
+<link rel="icon" href="../public/brand/favicon.svg">
+<link rel="stylesheet" href="theme.generated.css">
+<link rel="stylesheet" href="deck.css">
+</head>
+<body>
+<!--
+  The pitch (plan Section 14): eleven slides, one presenter, eight minutes plus two.
+  Present: open this file in Chrome or Edge, press F for full screen; arrows,
+  space, Page Up and Page Down move; V plays the film on slide 5; N shows the notes.
+  Every figure carries data-claim with its id in docs/claims.md; dates, ids and
+  clause numbers carry data-ref. scripts/gen-deck.mjs checks both, then exports
+  the PDF and the PPTX (one 2x image per slide, these notes as speaker notes).
+-->
+<main class="stage">
+
+<!-- 1. A receipt (beat 3) -->
+<section class="slide forest s-receipt" data-title="A receipt">
+  <div class="brand"><img src="../public/brand/mark-white.svg" alt=""><span>Lyceum</span></div>
+  <h1 class="big hero">This is a receipt.</h1>
+  <div class="host-badge"><img src="../public/brand/mascots/host-greeting.svg" alt="Tualang, Lyceum's host, greeting"></div>
+  <div class="receipt-wrap">
+    <span class="chip lime">Real posting</span>
+    <article class="receipt" data-receipt data-source-hash="fnv1a-68604535-974">
+      <p class="receipt-meta" data-ref>Stripe · Data Analyst, Intern · published 2026-10-01</p>
+      <blockquote data-quote>“You'll build metrics, scalable data pipelines, dashboards, and reports to inform and run the business.”</blockquote>
+      <div class="receipt-count" data-claim="deck-receipt"><span class="big">1 of 9</span><span>reviewed postings</span></div>
+      <p class="receipt-link" data-ref>stripe.com/jobs/search?gh_jid=8194291 · retrieved 2026-10-09 · fingerprint fnv1a-68604535-974</p>
+    </article>
+  </div>
+  <footer class="foot"><span>A real posting, from the dated saved sample of Stripe's public job board.</span><span class="slide-number"></span></footer>
+  <aside class="notes">0:00 to 0:30. Open on the receipt, never on the team. Point at the sentence.
+"This is a receipt. One sentence from a real Stripe posting, published on the first of October, with its link and its fingerprint. It is one of nine postings a lecturer reviewed. By the end of this talk you will have seen a course decision made of them."
+Then the sentence: "Lyceum turns real job postings into a course decision with receipts, every semester, inside the tools lecturers already use."
+Transition: "But one receipt is not a decision, and the course it should change was approved long ago."</aside>
+</section>
+
+<!-- 2. The latency (beat 2) -->
+<section class="slide forest s-latency" data-title="The latency">
+  <p class="eyebrow">Why now</p>
+  <h2 class="title">Courses are approved slower than skills change.</h2>
+  <div class="latency-grid">
+    <figure class="panel" data-claim="world-skills-and-approval">
+      <figcaption class="panel-label">Approving a new degree programme generally takes</figcaption>
+      <p class="big num">12 to 18 <span class="unit">months</span></p>
+      <div class="calendar" data-months="18" data-certain="12" aria-hidden="true"></div>
+      <div class="calendar-key"><span><i class="on"></i>12 months</span><span><i></i>up to 18</span></div>
+    </figure>
+    <figure class="panel" data-claim="world-skills-and-approval">
+      <figcaption class="panel-label">Workers' skills transformed or outdated, 2025 to 2030</figcaption>
+      <p class="big num">39%</p>
+      <div class="waffle" data-cells="100" data-on="39" aria-hidden="true"></div>
+    </figure>
+  </div>
+  <p class="caveat">Different measures of different populations, so never one chart.</p>
+  <footer class="foot"><span data-ref>Sources: World Economic Forum, Future of Jobs Report 2025; Wayne State and Texas Tech approval pages.</span><span class="slide-number"></span></footer>
+  <aside class="notes">0:30 to 1:15. One figure, one caveat.
+"Approving a new degree programme generally takes twelve to eighteen months. Over the same years, the World Economic Forum expects 39% of workers' skills to be transformed or outdated by 2030."
+Slower, the caveat: "These describe different populations, so they are two pictures, never one chart."
+"The accreditors already ask universities for this evidence, and the AI assistants are already on campus."
+Transition: "So who does the review land on?"</aside>
+</section>
+
+<!-- 3. Who it lands on (beat 1) -->
+<section class="slide dots s-desk" data-title="Who it lands on">
+  <p class="eyebrow">Who it lands on</p>
+  <h2 class="title">She can suggest a change. She cannot show why.</h2>
+  <p class="lede">Dr Aisyah is fictional. Her workflow is real.</p>
+  <svg class="desk-scene" viewBox="0 0 1110 760" role="img" aria-label="A lecturer at her desk: a laptop with job posting tabs, the course outline on paper, and a message from her coordinator asking what to change before the review.">
+    <g transform="translate(560 8)">
+      <rect class="sc-card" x="0" y="0" width="540" height="176" rx="24"/>
+      <path class="sc-card" d="M70 170 L112 170 L84 206 Z"/>
+      <circle class="sc-dot" cx="42" cy="46" r="10"/>
+      <text class="sc-card-meta" x="66" y="52">PROGRAMME COORDINATOR</text>
+      <text class="sc-card-text" x="40" y="104">Before the review: what should</text>
+      <text class="sc-card-text" x="40" y="142">we change, and why?</text>
+    </g>
+    <rect class="sc-screen" x="330" y="236" width="620" height="374" rx="22"/>
+    <rect class="sc-tab-on" x="350" y="254" width="90" height="38" rx="10"/><text class="sc-label" x="364" y="279">Posting</text>
+    <rect class="sc-tab" x="446" y="254" width="90" height="38" rx="10"/><text class="sc-label" x="460" y="279">Posting</text>
+    <rect class="sc-tab" x="542" y="254" width="90" height="38" rx="10"/><text class="sc-label" x="556" y="279">Posting</text>
+    <rect class="sc-tab" x="638" y="254" width="90" height="38" rx="10"/><text class="sc-label" x="652" y="279">Posting</text>
+    <rect class="sc-tab" x="734" y="254" width="96" height="38" rx="10"/><text class="sc-label" x="746" y="279">Syllabus</text>
+    <rect class="sc-tab" x="836" y="254" width="96" height="38" rx="10"/><text class="sc-label" x="852" y="279">Survey</text>
+    <rect class="sc-line-strong" x="362" y="320" width="300" height="18" rx="9"/>
+    <rect class="sc-line" x="362" y="360" width="550" height="12" rx="6"/>
+    <rect class="sc-line" x="362" y="388" width="510" height="12" rx="6"/>
+    <rect class="sc-line" x="362" y="416" width="540" height="12" rx="6"/>
+    <rect class="sc-line" x="362" y="444" width="420" height="12" rx="6"/>
+    <rect class="sc-line" x="362" y="486" width="530" height="12" rx="6"/>
+    <rect class="sc-line" x="362" y="514" width="480" height="12" rx="6"/>
+    <rect class="sc-line" x="362" y="542" width="350" height="12" rx="6"/>
+    <path class="sc-base" d="M292 610 L988 610 L1030 652 L250 652 Z"/>
+    <g transform="rotate(-7 160 500)">
+      <rect class="sc-paper" x="40" y="352" width="232" height="300" rx="10"/>
+      <text class="sc-title" x="62" y="394">Course outline</text>
+      <rect class="sc-line" x="62" y="418" width="182" height="10" rx="5"/>
+      <rect class="sc-line" x="62" y="442" width="160" height="10" rx="5"/>
+      <rect class="sc-line" x="62" y="466" width="176" height="10" rx="5"/>
+      <rect class="sc-line" x="62" y="500" width="150" height="10" rx="5"/>
+      <rect class="sc-line" x="62" y="524" width="180" height="10" rx="5"/>
+      <rect class="sc-line" x="62" y="548" width="120" height="10" rx="5"/>
+      <rect class="sc-line" x="62" y="582" width="170" height="10" rx="5"/>
+    </g>
+    <path class="sc-person" d="M962 662 C962 566 998 524 1040 524 C1082 524 1108 566 1108 662 Z"/>
+    <circle class="sc-head" cx="1036" cy="456" r="58"/>
+    <circle class="sc-eye" cx="1008" cy="452" r="6"/>
+    <circle class="sc-eye" cx="1030" cy="454" r="6"/>
+    <rect class="sc-desk" x="0" y="652" width="1110" height="30" rx="15"/>
+  </svg>
+  <footer class="foot"><span>An illustrative scene. Dr Aisyah is a fictional lecturer.</span><span class="slide-number"></span></footer>
+  <aside class="notes">1:15 to 1:45. Fictional lecturer, real workflow.
+"Meet Dr Aisyah. She is fictional; her afternoon is not. After class, her coordinator asks what the course should change before the review. She has the outline, a row of tabs of job postings and a survey export."
+"She can suggest a change. She cannot show why: no exact sentences, no denominator, no record of who decided."
+Transition: "So we gave her a loop."</aside>
+</section>
+
+<!-- 4. The loop (beat 4) -->
+<section class="slide dots s-loop" data-title="The loop">
+  <div class="loop-copy">
+    <p class="eyebrow">The plan</p>
+    <h2 class="title">One loop, six steps, every semester.</h2>
+    <p class="lede">Seven helpers do the work. People decide.</p>
+  </div>
+  <div class="ring">
+    <svg class="ring-track" viewBox="0 0 900 900" aria-hidden="true"><circle class="t" cx="450" cy="450" r="352"/><circle class="p" cx="450" cy="450" r="352"/></svg>
+    <div class="ring-host"><img src="../public/brand/mascots/host-greeting.svg" alt="Tualang, the host, at the centre of the loop"><span>Tualang, the host</span></div>
+    <ol class="stations" aria-label="The loop, station by station">
+      <li class="station" style="--i:0"><div class="pop"><img src="../public/brand/mascots/folio-resting.svg" alt=""><strong>Course</strong><span>Folio reads the outline</span></div></li>
+      <li class="station" style="--i:1"><div class="pop"><img src="../public/brand/mascots/scout-resting.svg" alt=""><strong>Watch</strong><span>Scout fetches, on request</span></div></li>
+      <li class="station" style="--i:2"><div class="pop"><img src="../public/brand/mascots/atlas-resting.svg" alt=""><strong>Report</strong><span>Atlas quotes and maps</span></div></li>
+      <li class="station" style="--i:3"><div class="pop"><img src="../public/brand/mascots/lens-resting.svg" alt=""><strong>Report, Learn</strong><span>Lens counts, with n</span></div></li>
+      <li class="station" style="--i:4"><div class="pop"><img src="../public/brand/mascots/steward-resting.svg" alt=""><strong>Report</strong><span>Steward prepares the brief</span></div></li>
+      <li class="station" style="--i:5"><div class="pop"><span class="people-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span><strong>Decide</strong><span>People decide</span></div></li>
+      <li class="station" style="--i:6"><div class="pop"><img src="../public/brand/mascots/quill-resting.svg" alt=""><strong>Update</strong><span>Quill checks the revision</span></div></li>
+      <li class="station" style="--i:7"><div class="pop"><img src="../public/brand/mascots/prism-resting.svg" alt=""><strong>Teach</strong><span>Prism builds the pack</span></div></li>
+    </ol>
+  </div>
+  <footer class="foot"><span>The same names in the app, the demo, the film and this deck.</span><span class="slide-number"></span></footer>
+  <aside class="notes">1:45 to 2:15. The host introduces the cast; the helpers arrive one by one.
+"Six steps, with the same names you will see in the app: Watch, Report, Decide, Update, Teach, Learn. Tualang hosts. Seven helpers each do one job, and you will meet them at their steps. At Decide there is no helper: people decide."
+Transition: "Let us run it on a real board."</aside>
+</section>
+
+<!-- 5. Live: Watch and Report (beat 5) -->
+<section class="slide s-live" data-title="Watch and Report">
+  <div class="slide-head">
+    <div class="head-row"><span class="chip live">Live · Watch and Report</span><span class="by"><img class="helper" src="../public/brand/mascots/scout-resting.svg" alt="">Scout fetched Stripe's board, on request.</span></div>
+    <h2 class="title">A quotation is exact, or it is rejected.</h2>
+  </div>
+  <div class="screens">
+    <div class="side">
+      <figure class="shot"><div class="region" style="--x: 0; --y: 0; --w: 1604; --h: 530; --iw: 1604"><img src="../docs/presentation/shot-report-quote.png" alt="A proposed quotation about dashboards beside the Stripe posting it came from, the matched words marked in the posting."></div><figcaption><img class="helper" src="../public/brand/mascots/atlas-resting.svg" alt="">Atlas proposes each quotation beside its source.</figcaption></figure>
+      <figure class="shot"><div class="region" style="--x: 0; --y: 336; --w: 1604; --h: 372; --iw: 1604"><img src="../docs/presentation/shot-report-paraphrase.png" alt="A quotation typed by hand, experience with Python, refused because the words are not in the saved source text."></div><figcaption>A paraphrase, refused before it is stored.</figcaption></figure>
+    </div>
+    <figure class="shot"><img src="../docs/presentation/shot-report-card.png" alt="The dashboards card: postings that quote it over the reviewed postings, with its interval and a waffle of the postings."><figcaption><img class="helper" src="../public/brand/mascots/lens-resting.svg" alt="">Lens counts reviewed postings only, with an interval.</figcaption></figure>
+  </div>
+  <div class="film"><video src="media/loop90.mp4" preload="none" playsinline></video></div>
+  <footer class="foot"><span>Real screens from the demo, on the saved sample of a real board.</span><span class="slide-number"></span></footer>
+  <aside class="notes">2:15 to 4:15. Switch to the app; the operator drives and the presenter never touches the keyboard.
+Watch: fetch Stripe's board live, or the dated saved sample if the network is down, and say which.
+Report: scan, confirm a quotation beside its source, then type a paraphrase and let it fail. Pause after the rejection.
+"Nothing invented, nothing pasted. A paraphrase is rejected."
+Review the postings, then the count over reviewed postings with its interval, then one mapping and the brief.
+If the room is hostile, press V for the film instead.
+Transition: "But a count is not a decision."</aside>
+</section>
+
+<!-- 6. Decide and Update (beat 5) -->
+<section class="slide s-decide" data-title="Decide and Update">
+  <div class="slide-head">
+    <span class="chip live">Decide and Update</span>
+    <h2 class="title">People decide, and the decision leaves a record.</h2>
+  </div>
+  <div class="screens">
+    <figure class="shot"><img src="../docs/presentation/shot-decide.png" alt="The brief, its recipient Dr Rahman, and his decision to adopt the change with his reason, the term and the course version."><figcaption><img class="helper" src="../public/brand/mascots/steward-resting.svg" alt="">The brief, and the decision with its reason, its term and its version.</figcaption></figure>
+    <figure class="shot"><img src="../docs/presentation/shot-history.png" alt="The course history: the adopted version with its reason above the earlier version and the decision."><figcaption><img class="helper" src="../public/brand/mascots/quill-resting.svg" alt="">Update: the checked revision, adopted with its reason.</figcaption></figure>
+    <p class="aside-note">Formal approval stays in the university's own process. Lyceum records it; it never performs it.</p>
+  </div>
+  <footer class="foot"><span>Real screens from the demo.</span><span class="slide-number"></span></footer>
+  <aside class="notes">4:15 to 5:00.
+"The brief goes to Dr Rahman, the programme owner. He records adopt, with his reason. The record names the brief, the term and the course version, and it never changes; an amendment is a new record. A decision by the brief's own author is labelled self-recorded and stays open until a second person confirms."
+Update: "Quill checks the revision against the hours and the protected topics, and the adopted version keeps its reason."
+"The decision stays with people, and it leaves a record."
+Transition: "But a course is not a class."</aside>
+</section>
+
+<!-- 7. Teach and Learn (beat 5) -->
+<section class="slide s-teach" data-title="Teach and Learn">
+  <div class="slide-head">
+    <span class="chip live">Teach and Learn</span>
+    <h2 class="title">Teach from the pack. Learn from the results.</h2>
+  </div>
+  <div class="screens">
+    <figure class="pack-frame">
+      <div class="bar"><span>Opened in PowerPoint</span><span data-ref>sample-CS310-week-6-teaching-pack.pptx</span></div>
+      <img src="../docs/presentation/pack/slide-03.png" alt="A slide of the teaching pack as PowerPoint renders it: what employers ask for, with the dashboards count and an exact quotation from the Stripe posting.">
+      <figcaption><img class="helper" src="../public/brand/mascots/prism-resting.svg" alt="">The downloaded file as PowerPoint draws it. Editable; no model text.</figcaption>
+    </figure>
+    <div class="side">
+      <figure class="shot"><img src="../docs/presentation/shot-learn.png" alt="Learn: the results file filed for the course version taught, with the mean mark for the outcome and n of N."><figcaption><img class="helper" src="../public/brand/mascots/lens-resting.svg" alt="">Results filed for the version taught, with n of N.</figcaption></figure>
+      <p class="track-a">No learning gain is claimed; the benchmark has not been run.</p>
+      <div class="planned-card">
+        <h3><span class="chip planned">Planned</span>Learn, after Amsterdam</h3>
+        <ul><li>Intervals and small-cohort pooling</li><li>Perception beside attainment</li><li>The benchmark against the CLO survey</li></ul>
+      </div>
+    </div>
+  </div>
+  <footer class="foot"><span>Real screens; the pack as PowerPoint renders the downloaded file. Learn is descriptive only.</span><span class="slide-number"></span></footer>
+  <aside class="notes">5:00 to 5:45.
+Teach: "Prism builds the teaching pack from the saved session and the evidence linked to its outcomes. This is the downloaded file as PowerPoint opens it. It is editable, and no model wrote a word of it."
+Learn: "The term's results come back, matched to the course version taught, with n of N. We claim no learning gain; the benchmark has not been run. Intervals, pooling and perception are planned, in amber."
+Transition: "Next semester the loop runs again. So what here is real?"</aside>
+</section>
+
+<!-- 8. What is real (beat 6) -->
+<section class="slide forest s-real" data-title="What is real">
+  <p class="eyebrow">The proof</p>
+  <h2 class="title">What is real, and what is not yet.</h2>
+  <div class="real-grid">
+    <div class="real-card" data-claim="deck-trl">
+      <p class="eyebrow">Readiness, self-assessed</p>
+      <p class="big lime">TRL 6</p>
+      <p>“Prototype implementations of the software demonstrated on full-scale realistic problems.”</p>
+      <p class="quiet">NASA ESTO, software. Our relevant environment: real postings from a real public board, a sample course outline, a lecturer persona.</p>
+    </div>
+    <div class="real-card" data-claim="proof-checks">
+      <p class="eyebrow">Checks</p>
+      <p class="big">185</p>
+      <p>automated checks passed on 22 October 2026, plus four headless browser runs.</p>
+      <p class="quiet">One dataset for everything: the dated sample of a real board, restored before every run.</p>
+    </div>
+    <div class="planned-card">
+      <h3><span class="chip planned">Planned</span>Not built yet</h3>
+      <ul>
+        <li>Remote doors for ChatGPT, Copilot, Gemini</li>
+        <li>The LMS door for Canvas and Moodle</li>
+        <li>Learn's statistics and the benchmark run</li>
+        <li>Watching on a schedule</li>
+        <li>A shared workspace with sign-in</li>
+      </ul>
+    </div>
+  </div>
+  <p class="next-level"><span>Next level:</span> one department, one term, inside its LMS.</p>
+  <footer class="foot"><span>Self-assessed against NASA ESTO's software readiness levels.</span><span class="slide-number"></span></footer>
+  <aside class="notes">5:45 to 6:15. Say the limits slower than the claims.
+"Against NASA's software readiness levels we place Lyceum at TRL 6: prototype implementations demonstrated on full-scale realistic problems, in an environment we can name: real postings from a real public board, a sample course outline and a lecturer persona. 185 automated checks pass, plus four browser runs. In amber, what is not built."
+"TRL 7 is one department running it for one term inside its LMS. That is the step we are asking for."
+Transition: "But no lecturer wants another platform."</aside>
+</section>
+
+<!-- 9. The doors (beat 7) -->
+<section class="slide s-doors" data-title="The doors">
+  <img class="full" src="../docs/presentation/architecture.png" alt="Lyceum's architecture: people work through doors into one deterministic core. The web workspace is built and the local Claude door is built and read-only; the remote assistant doors, the LMS door and the office suite are planned. The core reads permitted job boards, taxonomies and references, and files results from institution systems.">
+  <footer class="foot"><span class="slide-number"></span></footer>
+  <aside class="notes">6:15 to 6:50.
+"One core, many doors. The web workspace is built. The local door is built: Claude reads an exported workspace through MCP, read-only. The remote doors for ChatGPT Edu, Copilot and Gemini, the LMS door for Canvas and Moodle, and the office suite are planned, and drawn dashed. No door confirms a quotation, adopts a revision or decides."
+Transition: "So why would a department pay for it?"</aside>
+</section>
+
+<!-- 10. Why a department pays (beat 7) -->
+<section class="slide dots s-pays" data-title="Why a department pays">
+  <p class="eyebrow">Why a department pays</p>
+  <h2 class="title">The review happens anyway; the evidence is kept.</h2>
+  <div class="pays-grid">
+    <div class="ladder" aria-label="The ladder: free, department, institution">
+      <div class="tier inst"><h3>Institution <span class="chip planned">Planned</span></h3><p>Tenancy, audit, the office suite doors</p><p>Data agreements with the institution</p></div>
+      <div class="tier dept"><h3>Department <span class="chip planned">Planned</span></h3><p>Shared workspace, sign-in, the LMS door</p><p>The term's review pack, and support</p><div class="chips"><span class="chip local">Local assistant door built</span></div></div>
+      <div class="tier free"><h3>Free <span class="chip built">Built</span></h3><p>One course, on one laptop, no account</p><p>The whole loop, with every export</p></div>
+    </div>
+    <div>
+      <p class="clauses-head">Each step answers a clause reviewers already use</p>
+      <ol class="clauses">
+        <li><strong>Watch</strong><span class="body" data-ref>AUN-QA Guide v4.0, 1.4</span><q data-clause="AUN-QA Guide v4.0, 1.4">the requirements of the stakeholders, especially the external stakeholders, are gathered</q></li>
+        <li><strong>Report</strong><span class="body" data-ref>MQA COPPA, 6.1.6</span><q data-clause="MQA COPPA, 2nd edition, 6.1.6">market needs and graduate employability analyses</q></li>
+        <li><strong>Decide</strong><span class="body" data-ref>ABET, Criterion 2</span><q data-clause="ABET, Criterion 2">for the periodic review of these program educational objectives</q></li>
+        <li><strong>Update</strong><span class="body" data-ref>ESG 2015, 1.9</span><q data-clause="ESG 2015, 1.9">monitor and periodically review their programmes</q></li>
+        <li><strong>Teach</strong><span class="body">Biggs, constructive alignment</span><q data-clause="Biggs, constructive alignment">the assessment tasks, are aligned to each other</q></li>
+        <li><strong>Learn</strong><span class="body" data-ref>ABET, Criterion 4</span><q data-clause="ABET, Criterion 4">systematically utilized as input for the program's continuous improvement actions</q></li>
+      </ol>
+    </div>
+  </div>
+  <footer class="foot"><span>Free: a local prototype today. The other tiers: planned. Clauses quoted from dated notes.</span><span class="slide-number"></span></footer>
+  <aside class="notes">6:50 to 7:20.
+"Every university already runs a periodic review, and each step of the loop is the working form of a clause reviewers already use: the stakeholder scan, the needs analysis, the documented decision, the reviewed programme, aligned teaching and results used for improvement."
+"The review happens anyway; with Lyceum the evidence is already kept. One course is free and local. A department pays for the shared workspace and the doors; the price is the hypothesis our pilot tests."
+If asked what the free tier costs: "Nothing to try: one course, one laptop, no account."
+Transition: "So here is what we ask."</aside>
+</section>
+
+<!-- 11. The ask and the close (beat 8) -->
+<section class="slide forest s-ask" data-title="The ask">
+  <div class="host-badge"><img src="../public/brand/mascots/host-celebrating.svg" alt="Tualang celebrating a closed loop"></div>
+  <svg class="closed-ring" viewBox="0 0 320 320" role="img" aria-label="The ring, closed for the term"><circle cx="160" cy="160" r="130"/><text x="160" y="152">closed for</text><text x="160" y="184">the term</text></svg>
+  <div class="ask-copy">
+    <p class="eyebrow">The ask</p>
+    <h2 class="title">One department, one term, inside its LMS.</h2>
+    <p class="measures-label">What the pilot measures</p>
+    <ul class="measures"><li>Task completion</li><li>Citation fidelity</li><li>Time to a brief</li><li>Repeat use</li></ul>
+    <p class="sentence">Lyceum turns real job postings into a course decision with receipts, every semester, inside the tools lecturers already use.</p>
+    <p class="big closing">Every semester adds a ring.</p>
+  </div>
+  <footer class="foot"><span>Pilot measures, not results. Lyceum, Universiti Teknologi PETRONAS.</span><span class="slide-number"></span></footer>
+  <aside class="notes">7:20 to 8:00. Restate the three points: receipts, people decide, the tools they already use.
+"We ask for one department, for one term, inside its LMS. We will measure task completion, citation fidelity, time to a brief and repeat use."
+"Lyceum turns real job postings into a course decision with receipts, every semester, inside the tools lecturers already use. Every semester adds a ring."
+Rehearsed word for word. Where is the AI: "The numbers come from deterministic code on purpose. AI sits at the doors, where the university's own assistant asks Lyceum for the evidence report, and in drafting, where a model may propose and a lecturer confirms; it never confirms a quotation, never moves a count and never decides."
+Why not ChatGPT with search: "A chat can draft text. It cannot refuse a quotation that is not in the source, keep the denominator honest, record who decided, or keep the version history. Lyceum does those four things, and it can be used from inside ChatGPT."</aside>
+</section>
+
+</main>
+<div class="deck-notes" hidden></div>
+<div class="deck-toast" hidden></div>
+<script src="deck.js"></script>
+</body>
+</html>
+
+===== FILE: docs/claims.md =====
+# Lyceum: claims register
+
+Every figure shown on a Lyceum surface appears here once: the words it is shown in, its source and link, the research note or record that checked it, and the date. A figure that is not here does not ship. The landing page is registered now; the deck, the brief, the poster and the film add their rows as they are built (packages A6 and A7). `src/prove-journey.ts` fails if a landing figure is missing from this file or a quoted clause is missing from its note.
+
+Keys, as in the research notes: **P** a primary document fetched and quoted; **S** a reputable secondary source; **V** vendor material, said so beside the figure; **M** measured by this project, with the record that holds the measurement.
+
+## The landing page: the problem at three levels
+
+One figure per level (plan Section 2.4). The landing page calls them desk research until the lecturer interviews (R1) add a quotation per level.
+
+| Claim | Figure | Shown as | Source | Checked in | Key | Checked on |
+|:--|:--|:--|:--|:--|:--|:--|
+| `world-skills-and-approval` | 39%; 12 to 18 months | 39% of workers' existing skills will be transformed or become outdated between 2025 and 2030, while approving a new degree programme generally takes 12 to 18 months | World Economic Forum, Future of Jobs Report 2025 (<https://www3.weforum.org/docs/WEF_Future_of_Jobs_Report_2025.pdf>); Wayne State University, programme approval (<https://provost.wayne.edu/programs/approval-process>); Texas Tech University, new programme timelines (<https://www.depts.ttu.edu/provost/curriculum/new-programs/timelines.php>) | [curriculum-latency-global-2026-10-22.md](research/curriculum-latency-global-2026-10-22.md), Sections 1 and 2 | P | 22 October 2026 |
+| `asia-talent-shortage` | 77% of 10,095; 45% in 2014 | 77% of 10,095 Asia Pacific employers could not find the skills they needed in 2025, up from 45% in 2014 (a vendor survey) | ManpowerGroup, Talent Shortage 2025 (<https://www.manpowerthailand.com/apac-talent-shortage>) | [pain-and-market-2026-10-11.md](research/pain-and-market-2026-10-11.md), Section 1.2 | V | 11 October 2026 |
+| `malaysia-underemployment` | 32.2%; 1.60 million; 3.2% | 32.2% of employed Malaysian graduates, 1.60 million people, worked below their qualification in 2024, while graduate unemployment was 3.2% | DOSM, Graduates Statistics 2024 (<https://www.dosm.gov.my/uploads/release-content/file_20260401145140.pdf>) | [pain-and-market-2026-10-11.md](research/pain-and-market-2026-10-11.md), Section 1.1 | P | 11 October 2026 |
+
+"Of employed graduates" follows from the release: 1.60 million is 32.2% of the 4.97 million employed graduates (5.14 million in the labour force less 165,900 unemployed), so the rate is skill-related underemployment among the employed, not among all graduates.
+
+## The landing page: what is proven today
+
+| Claim | Figure | Shown as | Record | Key | Checked on |
+|:--|:--|:--|:--|:--|:--|
+| `proof-checks` | 185 | 185 automated checks passed on 22 October 2026, plus four headless browser runs | `npm run prove:all` (seventeen suites, listed with their counts in `src/data/suites.ts` and on the Evaluation page) and the four smokes, the A6 verification table in [as-built.md](as-built.md) | M | 22 October 2026 |
+| `proof-live-board` | 727 | 727 real postings fetched live from one employer's public board on request, 9 October 2026 | The Stripe board on Greenhouse through the local API: [lyceum-v3-as-built-2026-10-09.md](lyceum-v3-as-built-2026-10-09.md) and the execution record in [lyceum-improvement-plan.md](lyceum-improvement-plan.md), Section 30 | M | 9 October 2026 |
+| `proof-no-keys` | 0 | 0 AI keys needed; the core is deterministic, and file parsing and live collection use the local API | Every proof and smoke runs with no key set; the agents default to fixture mode (`src/agents/mode.ts`) | M | 22 October 2026 |
+| `tour-length` | about 7 minutes | Watch the tour, about 7 minutes | `tourMinutes()` in `src/demo/script.ts`, computed from the tour's own pacing: 393 seconds at full speed after A6 set the term at the Course step and on the results file (382 after the A4 rewrite); a live fetch can add a little | M | 22 October 2026 |
+| `proof-no-paraphrase` | 0 | 0 paraphrases accepted as evidence; a quotation must match its source text or it is rejected | `src/prove-evidence.ts`, `src/prove-research.ts` and the curriculum smoke's rejected misquote | M | 22 October 2026 |
+
+## The deck, the brief and the poster
+
+Package A6. The deck carries five figures in all (plan Section 14): the receipt's denominator, the two latency figures (`world-skills-and-approval` above), the readiness level and the check total (`proof-checks` above). `scripts/gen-deck.mjs` fails if a figure on a slide or in the notes is not in its row here, and reads the exported PDF back to check it again; the brief and the poster use the same rows.
+
+| Claim | Figure | Shown as | Source | Checked in | Key | Checked on |
+|:--|:--|:--|:--|:--|:--|:--|
+| `deck-receipt` | 1 of 9 | 1 of 9 reviewed postings, beside one exact sentence from Stripe's Data Analyst, Intern posting (published 2026-10-01, retrieved 2026-10-09) | The tour's end state, `mcp/sample-workspace.json`: the saved sample of Stripe's public Greenhouse board, 10 postings kept for CS310, 1 a duplicate, 9 reviewed | `scripts/gen-deck.mjs` checks the sentence against its source text and its confirmed quotation, the employer, the title, both dates, the link, the fingerprint and the denominator | M | 22 October 2026 |
+| `deck-trl` | TRL 6; TRL 7 next | Software TRL 6, "Prototype implementations of the software demonstrated on full-scale realistic problems", self-assessed, in a relevant environment of real postings from a real public board, a sample course outline and a lecturer persona; TRL 7 needs one department running it for a term inside its LMS | NASA ESTO, technology readiness levels, the software column (<https://esto.nasa.gov/trl/>) | [hackastone-and-competitors-2026-10-22.md](research/hackastone-and-competitors-2026-10-22.md), Section 2 | P | 22 October 2026 |
+
+The relevant environment says a sample course outline, not a real syllabus: the outline in `public/demo` is generated by `scripts/gen-demo-files.mjs` (docs/decisions.md).
+
+## The landing page: clauses quoted beside the loop
+
+Each quotation is word for word from the note named, which quotes the document at the link; NAAC 1.4.1 is shown as a paraphrase because the note gives no quotable wording. ESG 1.2 and AACSB Standard 5, which plan Section 4 also names, are not shown until a note checks their wording (docs/decisions.md).
+
+| Step | Clause | Link | Checked in | Key |
+|:--|:--|:--|:--|:--|
+| Watch | AUN-QA Guide v4.0, 1.4 | <https://fet.iuh.edu.vn/upload/files/web_SAR_2023.pdf> | [curriculum-latency-global-2026-10-22.md](research/curriculum-latency-global-2026-10-22.md), Section 3 | S |
+| Watch | UK QAA, External Expertise | <https://www.qaa.ac.uk/docs/qaa/quality-code/advice-and-guidance-external-expertise.pdf> | the same note, Section 3 | P |
+| Report | MQA COPPA, 2nd edition, 6.1.6 | <https://office.iium.edu.my/kca/wp-content/uploads/2024/09/COPPA-2nd-Edition-Nov-2017.pdf> | [pain-and-market-2026-10-11.md](research/pain-and-market-2026-10-11.md), Section 1.1 | P |
+| Report | NAAC 1.4.1 (paraphrase) | <https://old.ncet.co.in/iqac/important-criteria> | [curriculum-latency-global-2026-10-22.md](research/curriculum-latency-global-2026-10-22.md), Section 3 | S |
+| Decide | ABET, Criterion 2 | <https://www.abet.org/accreditation/accreditation-criteria/criteria-for-accrediting-engineering-programs-2025-2026/> | the same note, Section 3 | P |
+| Update | ESG 2015, 1.9 | <https://www.enqa.eu/wp-content/uploads/2015/11/ESG_2015.pdf> | the same note, Section 3 | P |
+| Teach | Biggs, constructive alignment | <https://www.biologie.uzh.ch/dam/jcr:94dbcc23-1c4d-4892-bab8-ba16abc4ef66/ConstructiveAlignment_Biggs.pdf> | [hackastone-and-competitors-2026-10-22.md](research/hackastone-and-competitors-2026-10-22.md), Section 6 | P (that note marks only vendor and secondary sources; this one is unmarked) |
+| Learn | ABET, Criterion 4 | <https://www.abet.org/accreditation/accreditation-criteria/criteria-for-accrediting-engineering-programs-2025-2026/> | [curriculum-latency-global-2026-10-22.md](research/curriculum-latency-global-2026-10-22.md), Section 3 | P |
+
+===== FILE: docs/competition/grand-final-2026.md =====
+# HACKaSTONE 2026 Grand Final: the facts to check against
+
+Written 22 October 2026 from the organiser's Grand Final page, the briefing slides shown on Zoom on 22 October (photographed, transcribed here, the photographs not kept in the repository), the team letter of 13 October and the research note `docs/research/hackastone-and-competitors-2026-10-22.md`. Update this file when the finalist pack or the ticket says otherwise; every other document cites it rather than restating the facts.
+
+| Fact | Value | Source | Status |
+|:--|:--|:--|:--|
+| Date | 29 October 2026 (a Thursday) | Grand Final page | Confirm against the ticket and the finalist pack |
+| Place | Amsterdam, inside "AI for Education The Netherlands 2026" (VU Amsterdam day one; UvA and HvA day two) | Grand Final page | Confirm the room and the booth slot |
+| Pitch | At most 8 minutes of presentation plus 2 minutes of questions, one judge team | Briefing slide "Pitch Presentation": total no more than 10 minutes; recommendation 8 plus 2; warning at 7 minutes; media PPT and video; at least three judges | Confirmed by the briefing |
+| Booth demonstration | At most 10 minutes including questions, another judge team; a real demonstration recommended, a video demonstration allowed | Briefing slide "Pitch Demo": no more than 10 minutes; real demo recommended and/or video demo; recommendation 8 plus 2 | Confirmed by the briefing |
+| Criteria and weights | Innovation 30%, Technology Readiness 20%, Commercial Viability 15%, Education Significance 15%, Presentation 10%, Demo 10% | Briefing slide "Judge Criteria (To be firmed)" | Provisional; the site publishes four descriptors without weights |
+| Published descriptors | Innovation and Novelty; Technical Readiness Level; Commercial Viability; Educational Significance and Applicability | hackastone.varteledu.com/spotlight | Published |
+| Media | PowerPoint and video | Briefing slide | Confirmed |
+| Prizes | First S$1000 (up to 5), second S$600 (up to 10), third S$350 (up to 15), merit S$200 (up to 20) | Grand Final page | Published |
+| Travel fellowship | Up to S$200 (European students) or S$400 (non-European), case by case, first come first served; applied for on the team's behalf after the 14 October review | Grand Final page; DECISIONS.md | In progress |
+| Team | Lyceum, Universiti Teknologi PETRONAS, eight members, Abdul Hafiz as head of contingent | Team letter of 13 October (personal details stay out of the repository) | Confirmed |
+| What the organisers ask teams to bring | University T-shirts and banners | Grand Final page | Booth lane |
+| Organiser | The Association of Global AI Technomics, Education and Exchange (GATEE); general chairs include Yiyu Cai (NTU) | Steering committee page | Published |
+
+Things not known on 22 October: the flight times (which set the freeze), the booth equipment (power, screen, wifi), whether the pitch laptop is ours or theirs, the finalist pack's final weights and descriptors. Record each answer here with its date.
+
+===== FILE: docs/lyceum-upgrade-plan.md (Sections 2.3 and 2.4) =====
+### 2.3 The sentence a judge should repeat an hour later
+
+"Lyceum turns real job postings into a course decision with receipts, every semester, inside the tools lecturers already use."
+
+### 2.4 The problem at three levels, one figure each
+
+| Level | Figure | Source |
+|:--|:--|:--|
+| World | 39% of workers' skills change by 2030, while programme approval takes 12 to 18 months | WEF Future of Jobs 2025; Wayne State and Texas Tech policy pages |
+| Asia | 77% of 10,095 Asia Pacific employers cannot find the skills they need, up from 45% in 2014 | ManpowerGroup Talent Shortage 2025 (vendor survey, say so; in the 11 October note) |
+| Malaysia | 32.2% of graduates worked below their qualification in 2024, while graduate unemployment was 3.2% | DOSM Graduates Statistics 2024, in the 11 October note |
+
+R1 (interviews with lecturers in at least three Asian countries) adds one quotation per level when it is done. Until then the landing page says the figures are desk research.
+
+---
+
+===== FILE: docs/lyceum-upgrade-plan.md (Section 4.1) =====
+### 4.1 One story, no gaps
+
+Everything is one story. The app, the demo, the deck, the film, the brief, the poster and the README tell the same story in the same order, and none of them leaves a question hanging. "Convincing" has one meaning here: every claim arrives with the thing that proves it already on screen.
+
+**The spine.** Eight beats, in this order, on every surface.
+
+| Beat | What the audience must know or feel | The proof on screen |
+|:--|:--|:--|
+| 1. A person and a question | Dr Aisyah, after class, is asked what to change before the next review. She can suggest; she cannot show. | Her desk: the outline, the browser tabs, the message |
+| 2. Why now | Approval takes 12 to 18 months while 39% of skills turn over by 2030; the accreditor already asks for the evidence; the assistants are already on campus | Two bars, one quoted clause, one monochrome logo strip; sources in the notes |
+| 3. The gift | A receipt: an exact sentence from a real posting with its employer, date and link, counted over a known denominator | One receipt card, before the word "receipt" is spoken |
+| 4. The plan | The loop: six steps, seven helpers, the same names everywhere | The loop graphic with the mascots |
+| 5. The journey | Watch, Report, Decide, Update, Teach, Learn, each step ending in a thing she can hold | The real app or its film: the sources, the brief, the decision record, the adopted version, the opened pack, the results with n of N |
+| 6. The proof | What is real, what is illustrative, what is planned; the checks; software TRL 6 in NASA's words | The verification table; the amber list of what is not built |
+| 7. The wider world | Any university can run the loop; the doors reach the tools they already use; a department pays because the review happens anyway | The architecture diagram; the ladder; the accreditor mapping |
+| 8. The return | The ask, the pilot measures, and the sentence a judge repeats an hour later | The closing card with the ring closed |
+
+**The transition rule.** Beats connect with "but" or "therefore", never with "and then". Every slide, scene and screen ends on the question the next one answers: the receipt ends with "one receipt is not a decision", and the loop answers it; Watch ends with "postings are not evidence until someone reads them", and Report answers it; Report ends with "a count is not a decision", and Decide answers it; Decide ends with "a decision is not a course", and Update answers it; Update ends with "a course is not a class", and Teach answers it; Teach ends with "a class is not proof", and Learn answers it; Learn ends with "next semester the loop runs again", and the ring closes.
+
+**The gap check.** No surface may leave these questions unanswered, and they are answered in this order, before they are asked:
+
+1. Who is this for, exactly?
+2. Why now, and why was this not done two years ago?
+3. Why not just ask ChatGPT?
+4. Where did that number come from, and over what denominator?
+5. Who decided, and where is it written?
+6. What changed in the course, and what was protected?
+7. What happened in the classroom?
+8. Did it work, as far as we can honestly say?
+9. Why would a university adopt it, and what does it cost them to try?
+10. What is not built, and what comes next?
+
+**Show, then say.** The artefact appears before the sentence that describes it: the quotation before "exact quotations", the denominator before "honest counts", the decision record before "people decide", the opened PowerPoint before "no model wrote this", the dated check before "verified". Never the reverse.
+
+**The same story on every surface.**
+
+| Surface | Beats it carries | Where its artefacts come from |
+|:--|:--|:--|
+| Landing page | 1 to 4, then 6 to 8 in short | The ring, the mascots, the sourced figures, the doors strip |
+| Home and the loop rail | 4 and 5 as the lecturer lives them: each step screen opens with the question it answers and closes with the handoff to the next step | The ring and the saved records |
+| How it works | 4, 5 and 6: the loop, the roles, the derived record of a real course | The timeline built from saved records |
+| The demo tour | 1 to 8 in one afternoon, the captions carrying the "but" and the "therefore" | The real app on the dated sample |
+| The deck | All eight, one beat per slide group (Section 14) | Real screenshots, the film, the diagram |
+| The film, 90 seconds | 1, 3, 4, 5 and 8 | Scripted capture of the real app |
+| The film, about three minutes | All eight | The same capture plus the proof and the doors |
+| The brief PDF and the poster | 1 to 4, then 6 to 8 | The same artwork and figures |
+| README and JUDGES.md | 4 to 8 for a reader at a keyboard | The commands and the checks |
+
+**The story review.** On Saturday and again on Sunday, one teammate plays the sceptical judge: reads the deck, watches the film, follows the demo path, and writes down every question they were left with next to the beat that should have answered it. The Story lane closes the gaps before the freeze. Nothing ships with an open question on the list.
+
+===== FILE: docs/lyceum-upgrade-plan.md (Section 14) =====
+## 14. The pitch: 8 minutes plus 2
+
+One presenter speaks; a second person drives the screen. At most five numbers in the whole talk. Slides carry about seven words each; the graphics carry the rest. The deck is HTML in the theme (Section 14.3), presented from the laptop, with the PPTX and PDF handed to the organiser.
+
+| Minute | Slide | On screen | Spoken line (the gist) |
+|:--|:--|:--|:--|
+| 0:00 | 1. A receipt | The host holding one real posting sentence, its employer, its date, and "1 of N reviewed postings" with N the real denominator of the frozen demo state; the wordmark beside it | "This is a receipt. By the end of this talk you will have seen a course decision made of them." The sentence from Section 2.3. |
+| 0:30 | 2. The latency | A calendar strip (approval, 12 to 18 months) beside a churn figure (39% by 2030): two different measures as two different graphics, never one chart | The world problem, one figure, one caveat ("they describe different populations") |
+| 1:15 | 3. Who it lands on | Dr Aisyah's desk: tabs, a syllabus, a message asking what to change | Fictional lecturer, real workflow |
+| 1:45 | 4. The loop | The six steps with the host introducing the seven helpers | Watch, Report, Decide, Update, Teach, Learn: the same names in the app you are about to see |
+| 2:15 | 5. Live: Watch and Report | The app (or the 90-second film if the room is hostile): fetch, confirm a quotation, watch a paraphrase fail, the count with its denominator | "Nothing invented, nothing pasted. A paraphrase is rejected." |
+| 4:15 | 6. Decide and Update | The brief with receipts, the decision record, the checked revision | "The decision stays with people, and it leaves a record" |
+| 5:00 | 7. Teach and Learn | The teaching pack opened in PowerPoint; the Learn screen with n of N and the gap | "No model wrote a word of this pack" |
+| 5:45 | 8. What is real | Our assessment against NASA's software column, TRL 6, with the relevant environment named (real postings from a real board, a real syllabus, a lecturer persona); the checks; the sample; what is not built, in amber | Honest limits; the TRL 7 step named: one department, one term, inside its LMS |
+| 6:15 | 9. The doors | The architecture diagram | "One core; the assistants, the LMS and the office suite they already run; local read-only door built, remote planned" |
+| 6:50 | 10. Why a department pays | The ladder and the accreditor clauses | "The review happens anyway; the pack writes itself" |
+| 7:20 | 11. The ask and the close | The host with the ring closed; the pilot measures; the three points restated; the sentence | "Task completion, citation fidelity, time to a brief, repeat use. Evidence that arrives with a decision. Every semester adds a ring." |
+
+Questions bank for the two minutes: is this scraping; where is the AI; why not ChatGPT alone; how do we know the postings are representative; what breaks first at scale; does it decide the syllabus; why another tool; what does the free tier cost us; what is the benchmark; is lime readable. Each answer is one breath and ends with what is on screen. Two are rehearsed word for word. Where is the AI: "The numbers come from deterministic code on purpose. AI sits at the doors, where the university's own assistant asks Lyceum for the evidence report, and in drafting, where a model may propose and a lecturer confirms; it never confirms a quotation, never moves a count and never decides." Why not ChatGPT with search: "A chat can draft text. It cannot refuse a quotation that is not in the source, keep the denominator honest, record who decided, or keep the version history. Lyceum does those four things, and it can be used from inside ChatGPT."
+
+### 14.1 Delivery
+
+Open with the receipt, not with "hi, we are team". Pause after the paraphrase is rejected. Say the limits slower than the claims. Never read a slide. Restate three points at the end: receipts, people decide, the tools they already use. Every slide ends on the question the next one answers (Section 4.1), and the artefact is on screen before the word for it is spoken. The talk is rehearsed against the gap check until a listener who hears it once can retell the eight beats in order.
+
+### 14.2 Slide craft
+
+One message per slide; titles as full sentences; four lines of text at most; big numbers in Bricolage; real screenshots with a hairline border; mascots where they serve a purpose; the amber token for everything not built; no stock imagery, no gradients; third-party marks as their official versions at one consistent size, never recoloured.
+
+### 14.3 Production
+
+`deck/` in the repo: an HTML deck at 1920 by 1080 using the tokens, the bundled fonts, the mascots and real screenshots from `scripts/presentation-shots.mjs`, with keyboard navigation and the film embedded as a local file. `scripts/gen-deck.mjs` exports a PDF and a PPTX (one image per slide at 2x plus the speaker notes as real notes, built with the pptxgenjs dependency already in the project). The organiser asks for PowerPoint, so the PPTX embeds the film as a media object on its slide and is tested on the presenting laptop with the venue's player; present from the PPTX if the film plays there, otherwise from the HTML deck, and hand over the PPTX and the PDF either way. The brief PDF is regenerated from the same tokens.
+
+---
+</stdin>
+codex
+I’ll review only the embedded text, checking the claims, story, copy and timing. I’ll mark unseen screenshots and other missing evidence as unverified.
+codex
+The main gaps are the unreconciled story order, claims about planned integrations that sound current, and the lack of a concrete course change shown in the text. The scripted speech also exceeds the allotted time on slides 1, 8 and 10, before pauses or demo actions.
+codex
+The headline figures mostly match the register. The extra counts, such as six steps, seven helpers and one core, have no claims rows, while the four browser runs are registered. Numbers inside the linked images and film remain unverified. The two Q&A answers belong outside slide 11’s pitch time.
+codex
+## 1. Scored as a sceptical judge
+
+**Provisional score from the supplied text: 54/100.** The competition file marks these weights provisional. Screenshots, the architecture image, film, exports and execution records are unverified because their contents are not embedded.
+
+| Criterion | Score | Weighted points | Judgement |
+|---|---:|---:|---|
+| Innovation, 30% | 6/10 | 18/30 | The strongest distinction is the chain from checked quotation to recorded decision and version, underplayed beneath the helpers on slides 4 to 6. Slide 11 overclaims what chat cannot do. Which demonstrated action actually invokes AI, and which uses fixtures or deterministic code? Slides 5, 9 and 11 do not settle this. |
+| Technology Readiness, 20% | 5/10 | 10/20 | Slide 8 correctly labels TRL 6 self-assessed and names the sample outline and persona. Whether this constitutes a full-scale realistic problem remains unverified. Checks establish tested behaviour, not departmental readiness. How are the author and confirmer identified on slide 6 when sign-in is planned on slide 8? |
+| Commercial Viability, 15% | 4/10 | 6/15 | Slide 10 offers a plausible reason to pay, but the paid capabilities are planned and no willingness-to-pay evidence is supplied. Its notes say the pilot tests price; slide 11 lists no commercial measure. Who buys, what purchasing decision will the pilot test, and what support burden follows? |
+| Education Significance, 15% | 6/10 | 9/15 | Slide 7 appropriately disclaims learning gains. Slides 6 and 7 do not name the actual course change, protected content or classroom consequence. Slide 2 overextends degree-approval timings into a claim about course updates; slide 10 overstates what its clause mapping establishes. |
+| Presentation, 10% | 5/10 | 5/10 | The receipt is memorable, but slides 1 to 8, 10 and 11 exceed the copy target. Slides 1 to 3 follow Section 14 while contradicting Section 4.1’s opening order. Slides 1, 8 and 10 exceed their speech allocations before pauses. |
+| Demo, 10% | 6/10 | 6/10 | The rejected paraphrase, decision record and opened pack make a strong demonstration design on slides 5 to 7. Actual execution, editability, displayed numerical values and PowerPoint video playback remain unverified. Slide 5 must visibly distinguish a live fetch from the dated saved sample. |
+
+## 2. The copy, slide by slide
+
+The seven-word target concerns the whole slide, not each sentence. Shorter titles alone will not fix these slides. Required quotations and source metadata themselves exceed that target, so the plan needs an explicit exception for evidence artefacts. Cut surrounding narration and duplication. Exact rendered line counts remain unverified.
+
+- **Slide 1:** “A real posting, from the dated saved sample of Stripe's public job board.” → “Real posting from the saved sample.” The existing metadata supplies the dates. In the notes, “It is one of nine postings a lecturer reviewed.” → “It is one of nine reviewed postings in this demo.” The register establishes the saved demo state, not participation by an actual lecturer.
+
+- **Slide 2:** “Courses are approved slower than skills change.” → “Course reviews need current evidence.” The sources concern new degree programmes, and the measures cannot establish the comparative speed claimed. “Over the same years, the World Economic Forum expects 39% of workers' skills to be transformed or outdated by 2030.” → “WEF expects 39% of workers' existing skills to be transformed or outdated between 2025 and 2030.” The approval duration is not that same period. The cue “One figure, one caveat.” → “Explain both measures, then their limits.”
+
+- **Slide 3:** “She can suggest a change. She cannot show why.” → “She needs evidence for the review.” “Dr Aisyah is fictional. Her workflow is real.” → “Dr Aisyah is fictional. This scene is illustrative.” Likewise, “She is fictional; her afternoon is not.” → “This scene illustrates the review task.” Evidence that this represents an observed lecturer workflow is unverified.
+
+- **Slide 4:** “One loop, six steps, every semester.” → “The course follows the loop each semester.” This supplies a full sentence. “Seven helpers do the work. People decide.” → “Helpers prepare; people decide.” Move that explanation into the notes. The graphic presents eight stations, repeats Report and combines “Report, Learn”; give Watch, Report, Decide, Update, Teach and Learn their own ordered positions, with Course as preparation and helpers attached to their roles.
+
+- **Slide 5:** “A quotation is exact, or it is rejected.” → “Quotes must match the saved source.” “Nothing invented, nothing pasted. A paraphrase is rejected.” → “A quotation must match its saved source.” The register supports quotation matching, not a blanket guarantee about everything invented or pasted. “Live · Watch and Report” should become “Watch and Report” when showing the saved material, with the actual source mode stated visibly.
+
+- **Slide 6:** “People decide, and the decision leaves a record.” → “People decide. Lyceum keeps the record.” “Formal approval stays in the university's own process. Lyceum records it; it never performs it.” → “Formal approval stays with the university.” The original conflates recording a workspace decision with recording formal approval. “The record names the brief, the term and the course version, and it never changes; an amendment is a new record.” → “The record names the brief, term and version. Lyceum adds amendments as new records.” Absolute immutability is unverified.
+
+- **Slide 7:** “Teach from the pack. Learn from the results.” → “Teach, then review the results.” “The downloaded file as PowerPoint draws it. Editable; no model text.” → “The exported pack is editable.” In the notes, “It is editable, and no model wrote a word of it.” → “Lyceum assembles this pack from saved material.” The stronger claim about the origin of every word is unverified. Define “n of N” aloud and identify whether the results are real or illustrative. Preserve the explicit no-learning-gain and unrun-benchmark caveats.
+
+- **Slide 8:** “What is real, and what is not yet.” → “Here is what works today.” “TRL 7 is one department running it for one term inside its LMS.” → “That departmental pilot is our next readiness test.” A pilot is not automatically a readiness certification. “But no lecturer wants another platform.” → “The next step must fit lecturers' existing tools.” The universal assertion about lecturers is unverified. Keep the self-assessment and sample-environment qualifications beside TRL 6.
+
+- **Slide 9:** Copy, title, line count and status labels inside the architecture image are **unverified**. In the notes, “No door confirms a quotation, adopts a revision or decides.” → “Only people confirm quotations, adopt revisions and decide.” The original is confusing when the web workspace is itself a door through which people perform those actions.
+
+- **Slide 10:** “The review happens anyway; the evidence is kept.” → “Lyceum keeps evidence for the review.” “Each step answers a clause reviewers already use” → “The loop supports review evidence.” The mapping does not establish compliance, and Biggs is pedagogical guidance rather than an accreditor clause. “A department pays for the shared workspace and the doors; the price is the hypothesis our pilot tests.” → “We plan to charge departments for shared workspaces, integrations and support. The pilot will test willingness to pay.” Placing “Local assistant door built” within the planned Department tier also leaves its availability unclear.
+
+- **Slide 11:** “One department, one term, inside its LMS.” → “Host our pilot for one term.” Keep the department and LMS scope in the spoken ask. Move the long sentence beginning “Lyceum turns real job postings” into the notes, preserving its exact wording, and use “Every semester adds a ring.” as the closing slide copy. Introduce the sentence as the intended destination and immediately distinguish the working web/local door from planned remote doors. Add “People decide.” to the spoken close: the cue requests it, but the script omits it.
+
+  In the Q&A, “It cannot refuse a quotation that is not in the source, keep the denominator honest, record who decided, or keep the version history.” → “Lyceum keeps source checks, reviewed counts, decisions and versions together.” The categorical competitor claim is unverified. “Lyceum does those four things, and it can be used from inside ChatGPT.” → “The local Claude door works. The ChatGPT door is planned.” The original directly conflicts with slides 8 and 9.
+
+## 3. Every number on the slides and in the notes
+
+**No visible headline value differs numerically from its registered value.** The problems are qualification, additional counts and unavailable image contents.
+
+| Figure or count | Check |
+|---|---|
+| Slide 1: “1 of 9”; notes’ “one of nine” | Matches `deck-receipt`. “One sentence” also matches that row’s description. The claim that a lecturer performed the review is unverified; the row documents the saved demo state. |
+| Slide 2: “12 to 18” months, repeated “12 months” and “up to 18” | Matches `world-skills-and-approval`. The title improperly broadens new degree programme approval to courses and asserts a speed comparison the row does not establish. |
+| Slide 2: “39%” | Matches the row. Restore “existing skills,” the forecast framing and the complete period. “Over the same years” incorrectly connects the forecast period to the approval duration. |
+| Slide 4: “One loop,” “six steps,” “Seven helpers,” “one job” | Unregistered structural counts. The six named steps and seven named helpers are internally countable, but neither has a claims row. |
+| Slide 6: “a second person” | Unregistered process requirement. This is not evidence of independently authenticated confirmation. |
+| Slide 8: “TRL 6”; notes’ “TRL 7” | Registered under `deck-trl`. The self-assessment and sample environment are disclosed. Calling the pilot TRL 7 outright is stronger than presenting it as the required next validation step. |
+| Slide 8: “185” and “four headless browser runs” | Both registered under `proof-checks`, including the browser runs even though the Figure cell lists only 185. The date matches. Actual execution is unverified. |
+| Slide 8: “One dataset for everything” | This universal dataset count is not stated in the claims row. Its scope across all checks is unverified. |
+| Slides 8 and 11: “one department,” “one term” | Covered by `deck-trl` as the proposed next environment. These are pilot scope, not completed deployment results. |
+| Slide 9 notes: “One core” | Unregistered architectural count. |
+| Slide 10: “One course,” “one laptop,” “no account,” “Free,” “Nothing to try” | The capacity, access and zero-price offer are unregistered. `proof-no-keys` establishes zero AI keys, not zero price or zero operating cost. |
+| Slide 11 Q&A: “those four things” | Unregistered enumeration of capabilities. The count is internally consistent with the preceding list, but the comparison with chat remains unverified. |
+
+The remaining literal counts are editorial: slide 2’s “One figure, one caveat” and “two pictures, never one chart”; slide 4’s “one by one”; slide 5’s “one mapping”; slide 11’s “three points”; and all minute marks listed in Section 5. They have no claims rows and should be explicitly distinguished from evidential figures.
+
+Even using the register’s grouped definition of a figure, the four browser runs add an evidence figure beyond its stated five. Structural counts add further numbers.
+
+Numbers inside the screenshots, teaching-pack image, architecture image and film are **unverified**. This includes skill counts, intervals, marks, coverage and anything a live fetch displays. The generator’s claimed checks are also unverified because its code and outputs are absent.
+
+Dates, posting IDs, fingerprints, filenames, clause references and slide indices are references. HTML drawing coordinates are not displayed empirical claims.
+
+## 4. The story
+
+All eight beats are represented, but their opening order is **3, 2, 1, 4, 5, 6, 7, 8**.
+
+- **The plan contradicts itself.** Section 4.1 requires person, urgency, receipt; Section 14 requires receipt, urgency, person. Slides 1 to 3 follow Section 14. Resolve that conflict explicitly rather than claiming compliance with both.
+- **Slide 1 to slide 2:** “But one receipt is not a decision” opens the question the loop should answer. Slide 2 answers the added approval-latency clause instead, leaving the principal question suspended until slide 4.
+- **Slide 2, Why now:** The required quoted clause and campus-assistant evidence are absent from the supplied slide text. The clause mapping arrives on slide 10; slide 9 describes integrations, not evidence of campus adoption. Why this became possible or necessary now remains unanswered.
+- **Slide 4 to slide 5:** “Let us run it on a real board.” announces an activity rather than expressing the unresolved evidence problem. The loop graphic also obscures Learn’s position after Teach.
+- **Within slide 5:** Watch moves directly to Report without explaining why fetched postings still require review. Its final count-to-decision handoff works.
+- **Within slide 6:** Decide moves directly to Update without answering why a decision still needs a checked course revision. The exact change and protected material remain unnamed. Its course-to-class ending works.
+- **Within slide 7:** Teach moves directly to Learn without establishing why producing a pack is not evidence of classroom benefit. The no-gain caveat answers the limit honestly, but the provenance and meaning of the displayed results remain unverified.
+- **Slide 7 to the close:** The next-semester return is announced, then deferred through proof, architecture and business. Slide 11 closes the ring verbally without returning to the specific course decision promised on slide 1.
+- **Gap-check omissions:** The main pitch never gives the calibrated answer to “why not ChatGPT”; it is reserved for Q&A and overclaimed there. What changed in the course, what happened in a classroom, and what a department would pay remain unresolved.
+
+The handoffs from slides 2 to 3, 3 to 4, 8 to 9, 9 to 10 and 10 to 11 are intelligible. The regional figures in Section 2.4 need not be added: Section 14 deliberately gives this deck the world pair and a restricted figure budget.
+
+## 5. The timing
+
+These estimates count quoted pitch speech and transitions, excluding stage directions and conditional Q&A. Counts treat words as written; spoken numerals, pauses and actions add time.
+
+| Slide | Note window | Words | Speech at 140 words/minute | Overrun |
+|---|---|---:|---:|---:|
+| 1 | 0:00 to 0:30 | 84 | 36 seconds | **6 seconds** |
+| 2 | 0:30 to 1:15 | 66 | 28 seconds | 0 |
+| 3 | 1:15 to 1:45 | 63 | 27 seconds | 0 |
+| 4 | 1:45 to 2:15 | 50 | 21 seconds | 0 |
+| 5 | 2:15 to 4:15 | 15 | 6 seconds, plus demo | **Unverified** |
+| 6 | 4:15 to 5:00 | 89 | 38 seconds | 0 before actions |
+| 7 | 5:00 to 5:45 | 80 | 34 seconds | 0 before actions |
+| 8 | 5:45 to 6:15 | 80 | 34 seconds | **4 seconds minimum** |
+| 9 | 6:15 to 6:50 | 65 | 28 seconds | 0 |
+| 10 | 6:50 to 7:20 | 82 | 35 seconds | **5 seconds** |
+| 11 | 7:20 to 8:00 | 49 | 21 seconds | 0 |
+
+Reading 185 aloud pushes slide 8 toward **36 seconds, about 6 seconds over**, before the instructed slower delivery.
+
+Slide 10’s conditional free-tier answer adds roughly four seconds, taking its overrun to about nine seconds. Slide 11’s two Q&A answers add 89 words: including them in the pitch would make that slide about **59 seconds, 19 seconds over**.
+
+These are local overruns, not proof that the whole presentation exceeds eight minutes. Other slides have spare time, but the demo, screen changes, rejection pause and playback remain untimed.
+
+## 6. The ten highest-value changes, ranked
+
+1. **State the innovation during the pitch.** On slides 5 and 6, explain the connected source checks, reviewed counts, decisions and versions; replace slide 11’s categorical ChatGPT comparison with those specific capabilities.
+
+2. **Make current capability consistent everywhere.** Qualify the opening, closing and Q&A with the working web workspace and local Claude export reader, while preserving the planned labels for remote doors. Keep TRL 6 explicitly self-assessed.
+
+3. **Complete the educational example.** On slides 6 and 7, name the actual revision, protected content and resulting teaching material. Identify the results’ provenance and preserve the no-learning-gain caveat.
+
+4. **Make the commercial pilot testable.** Connect slide 10’s price hypothesis to slide 11’s pilot measures, identifying the buyer and the purchasing decision being tested without inventing a price.
+
+5. **Correct the problem comparison and sample scope.** Remove slide 2’s unsupported claim about relative speed. On slide 5, explain that the counts describe reviewed Stripe postings and do not establish wider labour-market prevalence.
+
+6. **Make the six steps visually unmistakable.** On slide 4, show Watch, Report, Decide, Update, Teach and Learn in order, with helpers attached to their roles and Course shown as preparation.
+
+7. **Cut narration from the slides.** Use short, complete titles; remove duplicate captions and move explanations into notes. Preserve exact evidence, sources and honesty labels.
+
+8. **Repair the causal handoffs.** Resolve the conflicting opening orders, restore the missing transitions within slides 5 to 7, and close slide 11 by returning to the decision promised by the receipt.
+
+9. **Finish the numerical audit against the actual assets.** Register retained structural and offer counts, reconcile the five-figure budget, and inspect every screenshot, film frame and live output containing a figure.
+
+10. **Rehearse the complete presentation in its delivery format.** Cut slides 1, 8 and 10, separate Q&A clearly, and time the real demo and fallback. Verify PowerPoint playback and the pack’s editability on the presenting setup.
+tokens used
+59,084
+## 1. Scored as a sceptical judge
+
+**Provisional score from the supplied text: 54/100.** The competition file marks these weights provisional. Screenshots, the architecture image, film, exports and execution records are unverified because their contents are not embedded.
+
+| Criterion | Score | Weighted points | Judgement |
+|---|---:|---:|---|
+| Innovation, 30% | 6/10 | 18/30 | The strongest distinction is the chain from checked quotation to recorded decision and version, underplayed beneath the helpers on slides 4 to 6. Slide 11 overclaims what chat cannot do. Which demonstrated action actually invokes AI, and which uses fixtures or deterministic code? Slides 5, 9 and 11 do not settle this. |
+| Technology Readiness, 20% | 5/10 | 10/20 | Slide 8 correctly labels TRL 6 self-assessed and names the sample outline and persona. Whether this constitutes a full-scale realistic problem remains unverified. Checks establish tested behaviour, not departmental readiness. How are the author and confirmer identified on slide 6 when sign-in is planned on slide 8? |
+| Commercial Viability, 15% | 4/10 | 6/15 | Slide 10 offers a plausible reason to pay, but the paid capabilities are planned and no willingness-to-pay evidence is supplied. Its notes say the pilot tests price; slide 11 lists no commercial measure. Who buys, what purchasing decision will the pilot test, and what support burden follows? |
+| Education Significance, 15% | 6/10 | 9/15 | Slide 7 appropriately disclaims learning gains. Slides 6 and 7 do not name the actual course change, protected content or classroom consequence. Slide 2 overextends degree-approval timings into a claim about course updates; slide 10 overstates what its clause mapping establishes. |
+| Presentation, 10% | 5/10 | 5/10 | The receipt is memorable, but slides 1 to 8, 10 and 11 exceed the copy target. Slides 1 to 3 follow Section 14 while contradicting Section 4.1’s opening order. Slides 1, 8 and 10 exceed their speech allocations before pauses. |
+| Demo, 10% | 6/10 | 6/10 | The rejected paraphrase, decision record and opened pack make a strong demonstration design on slides 5 to 7. Actual execution, editability, displayed numerical values and PowerPoint video playback remain unverified. Slide 5 must visibly distinguish a live fetch from the dated saved sample. |
+
+## 2. The copy, slide by slide
+
+The seven-word target concerns the whole slide, not each sentence. Shorter titles alone will not fix these slides. Required quotations and source metadata themselves exceed that target, so the plan needs an explicit exception for evidence artefacts. Cut surrounding narration and duplication. Exact rendered line counts remain unverified.
+
+- **Slide 1:** “A real posting, from the dated saved sample of Stripe's public job board.” → “Real posting from the saved sample.” The existing metadata supplies the dates. In the notes, “It is one of nine postings a lecturer reviewed.” → “It is one of nine reviewed postings in this demo.” The register establishes the saved demo state, not participation by an actual lecturer.
+
+- **Slide 2:** “Courses are approved slower than skills change.” → “Course reviews need current evidence.” The sources concern new degree programmes, and the measures cannot establish the comparative speed claimed. “Over the same years, the World Economic Forum expects 39% of workers' skills to be transformed or outdated by 2030.” → “WEF expects 39% of workers' existing skills to be transformed or outdated between 2025 and 2030.” The approval duration is not that same period. The cue “One figure, one caveat.” → “Explain both measures, then their limits.”
+
+- **Slide 3:** “She can suggest a change. She cannot show why.” → “She needs evidence for the review.” “Dr Aisyah is fictional. Her workflow is real.” → “Dr Aisyah is fictional. This scene is illustrative.” Likewise, “She is fictional; her afternoon is not.” → “This scene illustrates the review task.” Evidence that this represents an observed lecturer workflow is unverified.
+
+- **Slide 4:** “One loop, six steps, every semester.” → “The course follows the loop each semester.” This supplies a full sentence. “Seven helpers do the work. People decide.” → “Helpers prepare; people decide.” Move that explanation into the notes. The graphic presents eight stations, repeats Report and combines “Report, Learn”; give Watch, Report, Decide, Update, Teach and Learn their own ordered positions, with Course as preparation and helpers attached to their roles.
+
+- **Slide 5:** “A quotation is exact, or it is rejected.” → “Quotes must match the saved source.” “Nothing invented, nothing pasted. A paraphrase is rejected.” → “A quotation must match its saved source.” The register supports quotation matching, not a blanket guarantee about everything invented or pasted. “Live · Watch and Report” should become “Watch and Report” when showing the saved material, with the actual source mode stated visibly.
+
+- **Slide 6:** “People decide, and the decision leaves a record.” → “People decide. Lyceum keeps the record.” “Formal approval stays in the university's own process. Lyceum records it; it never performs it.” → “Formal approval stays with the university.” The original conflates recording a workspace decision with recording formal approval. “The record names the brief, the term and the course version, and it never changes; an amendment is a new record.” → “The record names the brief, term and version. Lyceum adds amendments as new records.” Absolute immutability is unverified.
+
+- **Slide 7:** “Teach from the pack. Learn from the results.” → “Teach, then review the results.” “The downloaded file as PowerPoint draws it. Editable; no model text.” → “The exported pack is editable.” In the notes, “It is editable, and no model wrote a word of it.” → “Lyceum assembles this pack from saved material.” The stronger claim about the origin of every word is unverified. Define “n of N” aloud and identify whether the results are real or illustrative. Preserve the explicit no-learning-gain and unrun-benchmark caveats.
+
+- **Slide 8:** “What is real, and what is not yet.” → “Here is what works today.” “TRL 7 is one department running it for one term inside its LMS.” → “That departmental pilot is our next readiness test.” A pilot is not automatically a readiness certification. “But no lecturer wants another platform.” → “The next step must fit lecturers' existing tools.” The universal assertion about lecturers is unverified. Keep the self-assessment and sample-environment qualifications beside TRL 6.
+
+- **Slide 9:** Copy, title, line count and status labels inside the architecture image are **unverified**. In the notes, “No door confirms a quotation, adopts a revision or decides.” → “Only people confirm quotations, adopt revisions and decide.” The original is confusing when the web workspace is itself a door through which people perform those actions.
+
+- **Slide 10:** “The review happens anyway; the evidence is kept.” → “Lyceum keeps evidence for the review.” “Each step answers a clause reviewers already use” → “The loop supports review evidence.” The mapping does not establish compliance, and Biggs is pedagogical guidance rather than an accreditor clause. “A department pays for the shared workspace and the doors; the price is the hypothesis our pilot tests.” → “We plan to charge departments for shared workspaces, integrations and support. The pilot will test willingness to pay.” Placing “Local assistant door built” within the planned Department tier also leaves its availability unclear.
+
+- **Slide 11:** “One department, one term, inside its LMS.” → “Host our pilot for one term.” Keep the department and LMS scope in the spoken ask. Move the long sentence beginning “Lyceum turns real job postings” into the notes, preserving its exact wording, and use “Every semester adds a ring.” as the closing slide copy. Introduce the sentence as the intended destination and immediately distinguish the working web/local door from planned remote doors. Add “People decide.” to the spoken close: the cue requests it, but the script omits it.
+
+  In the Q&A, “It cannot refuse a quotation that is not in the source, keep the denominator honest, record who decided, or keep the version history.” → “Lyceum keeps source checks, reviewed counts, decisions and versions together.” The categorical competitor claim is unverified. “Lyceum does those four things, and it can be used from inside ChatGPT.” → “The local Claude door works. The ChatGPT door is planned.” The original directly conflicts with slides 8 and 9.
+
+## 3. Every number on the slides and in the notes
+
+**No visible headline value differs numerically from its registered value.** The problems are qualification, additional counts and unavailable image contents.
+
+| Figure or count | Check |
+|---|---|
+| Slide 1: “1 of 9”; notes’ “one of nine” | Matches `deck-receipt`. “One sentence” also matches that row’s description. The claim that a lecturer performed the review is unverified; the row documents the saved demo state. |
+| Slide 2: “12 to 18” months, repeated “12 months” and “up to 18” | Matches `world-skills-and-approval`. The title improperly broadens new degree programme approval to courses and asserts a speed comparison the row does not establish. |
+| Slide 2: “39%” | Matches the row. Restore “existing skills,” the forecast framing and the complete period. “Over the same years” incorrectly connects the forecast period to the approval duration. |
+| Slide 4: “One loop,” “six steps,” “Seven helpers,” “one job” | Unregistered structural counts. The six named steps and seven named helpers are internally countable, but neither has a claims row. |
+| Slide 6: “a second person” | Unregistered process requirement. This is not evidence of independently authenticated confirmation. |
+| Slide 8: “TRL 6”; notes’ “TRL 7” | Registered under `deck-trl`. The self-assessment and sample environment are disclosed. Calling the pilot TRL 7 outright is stronger than presenting it as the required next validation step. |
+| Slide 8: “185” and “four headless browser runs” | Both registered under `proof-checks`, including the browser runs even though the Figure cell lists only 185. The date matches. Actual execution is unverified. |
+| Slide 8: “One dataset for everything” | This universal dataset count is not stated in the claims row. Its scope across all checks is unverified. |
+| Slides 8 and 11: “one department,” “one term” | Covered by `deck-trl` as the proposed next environment. These are pilot scope, not completed deployment results. |
+| Slide 9 notes: “One core” | Unregistered architectural count. |
+| Slide 10: “One course,” “one laptop,” “no account,” “Free,” “Nothing to try” | The capacity, access and zero-price offer are unregistered. `proof-no-keys` establishes zero AI keys, not zero price or zero operating cost. |
+| Slide 11 Q&A: “those four things” | Unregistered enumeration of capabilities. The count is internally consistent with the preceding list, but the comparison with chat remains unverified. |
+
+The remaining literal counts are editorial: slide 2’s “One figure, one caveat” and “two pictures, never one chart”; slide 4’s “one by one”; slide 5’s “one mapping”; slide 11’s “three points”; and all minute marks listed in Section 5. They have no claims rows and should be explicitly distinguished from evidential figures.
+
+Even using the register’s grouped definition of a figure, the four browser runs add an evidence figure beyond its stated five. Structural counts add further numbers.
+
+Numbers inside the screenshots, teaching-pack image, architecture image and film are **unverified**. This includes skill counts, intervals, marks, coverage and anything a live fetch displays. The generator’s claimed checks are also unverified because its code and outputs are absent.
+
+Dates, posting IDs, fingerprints, filenames, clause references and slide indices are references. HTML drawing coordinates are not displayed empirical claims.
+
+## 4. The story
+
+All eight beats are represented, but their opening order is **3, 2, 1, 4, 5, 6, 7, 8**.
+
+- **The plan contradicts itself.** Section 4.1 requires person, urgency, receipt; Section 14 requires receipt, urgency, person. Slides 1 to 3 follow Section 14. Resolve that conflict explicitly rather than claiming compliance with both.
+- **Slide 1 to slide 2:** “But one receipt is not a decision” opens the question the loop should answer. Slide 2 answers the added approval-latency clause instead, leaving the principal question suspended until slide 4.
+- **Slide 2, Why now:** The required quoted clause and campus-assistant evidence are absent from the supplied slide text. The clause mapping arrives on slide 10; slide 9 describes integrations, not evidence of campus adoption. Why this became possible or necessary now remains unanswered.
+- **Slide 4 to slide 5:** “Let us run it on a real board.” announces an activity rather than expressing the unresolved evidence problem. The loop graphic also obscures Learn’s position after Teach.
+- **Within slide 5:** Watch moves directly to Report without explaining why fetched postings still require review. Its final count-to-decision handoff works.
+- **Within slide 6:** Decide moves directly to Update without answering why a decision still needs a checked course revision. The exact change and protected material remain unnamed. Its course-to-class ending works.
+- **Within slide 7:** Teach moves directly to Learn without establishing why producing a pack is not evidence of classroom benefit. The no-gain caveat answers the limit honestly, but the provenance and meaning of the displayed results remain unverified.
+- **Slide 7 to the close:** The next-semester return is announced, then deferred through proof, architecture and business. Slide 11 closes the ring verbally without returning to the specific course decision promised on slide 1.
+- **Gap-check omissions:** The main pitch never gives the calibrated answer to “why not ChatGPT”; it is reserved for Q&A and overclaimed there. What changed in the course, what happened in a classroom, and what a department would pay remain unresolved.
+
+The handoffs from slides 2 to 3, 3 to 4, 8 to 9, 9 to 10 and 10 to 11 are intelligible. The regional figures in Section 2.4 need not be added: Section 14 deliberately gives this deck the world pair and a restricted figure budget.
+
+## 5. The timing
+
+These estimates count quoted pitch speech and transitions, excluding stage directions and conditional Q&A. Counts treat words as written; spoken numerals, pauses and actions add time.
+
+| Slide | Note window | Words | Speech at 140 words/minute | Overrun |
+|---|---|---:|---:|---:|
+| 1 | 0:00 to 0:30 | 84 | 36 seconds | **6 seconds** |
+| 2 | 0:30 to 1:15 | 66 | 28 seconds | 0 |
+| 3 | 1:15 to 1:45 | 63 | 27 seconds | 0 |
+| 4 | 1:45 to 2:15 | 50 | 21 seconds | 0 |
+| 5 | 2:15 to 4:15 | 15 | 6 seconds, plus demo | **Unverified** |
+| 6 | 4:15 to 5:00 | 89 | 38 seconds | 0 before actions |
+| 7 | 5:00 to 5:45 | 80 | 34 seconds | 0 before actions |
+| 8 | 5:45 to 6:15 | 80 | 34 seconds | **4 seconds minimum** |
+| 9 | 6:15 to 6:50 | 65 | 28 seconds | 0 |
+| 10 | 6:50 to 7:20 | 82 | 35 seconds | **5 seconds** |
+| 11 | 7:20 to 8:00 | 49 | 21 seconds | 0 |
+
+Reading 185 aloud pushes slide 8 toward **36 seconds, about 6 seconds over**, before the instructed slower delivery.
+
+Slide 10’s conditional free-tier answer adds roughly four seconds, taking its overrun to about nine seconds. Slide 11’s two Q&A answers add 89 words: including them in the pitch would make that slide about **59 seconds, 19 seconds over**.
+
+These are local overruns, not proof that the whole presentation exceeds eight minutes. Other slides have spare time, but the demo, screen changes, rejection pause and playback remain untimed.
+
+## 6. The ten highest-value changes, ranked
+
+1. **State the innovation during the pitch.** On slides 5 and 6, explain the connected source checks, reviewed counts, decisions and versions; replace slide 11’s categorical ChatGPT comparison with those specific capabilities.
+
+2. **Make current capability consistent everywhere.** Qualify the opening, closing and Q&A with the working web workspace and local Claude export reader, while preserving the planned labels for remote doors. Keep TRL 6 explicitly self-assessed.
+
+3. **Complete the educational example.** On slides 6 and 7, name the actual revision, protected content and resulting teaching material. Identify the results’ provenance and preserve the no-learning-gain caveat.
+
+4. **Make the commercial pilot testable.** Connect slide 10’s price hypothesis to slide 11’s pilot measures, identifying the buyer and the purchasing decision being tested without inventing a price.
+
+5. **Correct the problem comparison and sample scope.** Remove slide 2’s unsupported claim about relative speed. On slide 5, explain that the counts describe reviewed Stripe postings and do not establish wider labour-market prevalence.
+
+6. **Make the six steps visually unmistakable.** On slide 4, show Watch, Report, Decide, Update, Teach and Learn in order, with helpers attached to their roles and Course shown as preparation.
+
+7. **Cut narration from the slides.** Use short, complete titles; remove duplicate captions and move explanations into notes. Preserve exact evidence, sources and honesty labels.
+
+8. **Repair the causal handoffs.** Resolve the conflicting opening orders, restore the missing transitions within slides 5 to 7, and close slide 11 by returning to the decision promised by the receipt.
+
+9. **Finish the numerical audit against the actual assets.** Register retained structural and offer counts, reconcile the five-figure budget, and inspect every screenshot, film frame and live output containing a figure.
+
+10. **Rehearse the complete presentation in its delivery format.** Cut slides 1, 8 and 10, separate Q&A clearly, and time the real demo and fallback. Verify PowerPoint playback and the pack’s editability on the presenting setup.

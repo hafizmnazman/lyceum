@@ -14,7 +14,7 @@ export function claimsRegister() {
   const rows = new Map();
   for (const line of readFileSync(join(ROOT, "docs/claims.md"), "utf8").split(/\r?\n/)) {
     const m = line.match(/^\|\s*`([a-z0-9-]+)`\s*\|([^|]*)\|([^|]*)\|/);
-    if (m) rows.set(m[1], (m[2] + " " + m[3]).trim());
+    if (m && !rows.has(m[1])) rows.set(m[1], (m[2] + " " + m[3]).trim()); // the first row is the registered one; later tables only point to it
   }
   return rows;
 }

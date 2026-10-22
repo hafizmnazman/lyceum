@@ -33,7 +33,7 @@ const LEAF_TURN: Record<HostPose, string | undefined> = {
 
 const tip = (d: string) => { const n = d.split(" ").slice(-2).map(Number); return { x: n[0], y: n[1] }; };
 
-export function Host({ pose = "resting", size = 96, surface = "light", detail }: CharacterProps & { pose?: HostPose }) {
+export function Host({ pose = "resting", size = 96, surface = "light", detail, mouth }: CharacterProps & { pose?: HostPose; mouth?: number }) {
   const level = detail ?? detailFor(size);
   const crownId = useSvgId("host-crown"), trunkId = useSvgId("host-trunk");
   const arms = ARMS[pose];
@@ -62,7 +62,7 @@ export function Host({ pose = "resting", size = 96, surface = "light", detail }:
       <Highlight cx={72} cy={62} rx={18} ry={9} rotate={-28} />
       {level === "poster" ? <g fill="none" stroke={color.ray2} strokeWidth={3} strokeLinecap="round"><path d="M58 106 q6 -6 12 0" /><path d="M128 66 q6 -6 12 0" /><path d="M136 110 q6 -6 12 0" /></g> : null}
       <Eyes x1={80} x2={120} y={98} look={eyesFor(pose)} />
-      <Mouth x={100} y={120} pose={pose} />
+      <Mouth x={100} y={120} pose={pose} open={mouth} />
       {/* the single lime leaf: the brand at any size */}
       <g data-part="leaf" transform={LEAF_TURN[pose]}>
         <path d={HOST_LEAF} fill={color.lime} stroke={INK} strokeWidth={4.5} strokeLinejoin="round" />

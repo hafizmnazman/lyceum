@@ -14,7 +14,11 @@ The autonomous run of Track A (docs/lyceum-upgrade-plan.md Section 17.5). Times 
 
 The owner's Codex limit was reached on 22 October and resets within hours. A Codex run also sends the embedded files to OpenAI, which this run's rules forbid without the owner's go-ahead, so no package here waits on Codex. Reviews worth running once the limit resets and the owner approves are listed here with their files and question; each is `codex exec --sandbox read-only` with the files on stdin and the report saved under `docs/review/`.
 
-None queued yet.
+At 09:18 the owner reported the limit reset; the owner's earlier message asked for the queued Codex steps to run once it did. The jobs are the ones plan Section 15's tool table gives Codex, run with `gpt-6-astra` at max reasoning, read-only, every claim verified before any is kept:
+
+1. **The pitch** (09:18, returned 09:34): an adversarial judge's read of `deck/index.html` and its notes, with `docs/claims.md`, the competition facts and plan Sections 2.3, 2.4, 4.1 and 14. Report: `docs/review/astra-pitch-review-2026-10-22.md`.
+2. **The claims audit** (09:18, returned 09:28): `docs/claims.md` row by row against the six research notes, with the landing page. Report: `docs/review/astra-claims-audit-2026-10-22.md`.
+3. **The question bank** (queued for A8): a sceptical judge's rehearsal of plan Section 14's ten questions against `JUDGES.md`, the booth script and the as-built record, once A8 has written them.
 
 ## Packages
 
@@ -148,7 +152,43 @@ None queued yet.
 - 07:41 check: `npm run typecheck` passed; `npm run prove:all` 185 passed, 0 failed, seventeen suites; `npm run build` passed.
 - 07:41 check: guide check matches; contrast check OK (61 ratios, 176 files, 37 generated outputs); dash scan clean (250 files); backup migration OK; the theme, mascot, architecture and sample checks match.
 - 07:44 check: `npm run smoke` 19 of 19, `smoke:integrity` 2 of 2, `smoke:workspace` 7 of 7, `smoke:curriculum` 6 of 6; `node scripts/walk.mjs` WALK OK (21 checks).
+- 07:45 ended; committed `34203fb` "A6: the HTML deck with every figure checked against the claims register and its PDF and PPTX, the architecture diagram, the brief on the tokens and the six steps, the A1 poster, and one term across the demo's records".
+
+### A7, the video (the parts that need no human voice)
+
+- 2026-10-22 07:46 started, right after the A6 commit; re-read Section 17.5 and this log, then Section 16 and the Dataworks pipeline.
+- 07:47 read the Dataworks pipeline (README.md, style.md, avatars.json, remotion/scripts/sync.mjs, Captions.tsx, anim.ts, Badge.tsx, Root.tsx, timeline.ts) as reference; no third-party skill installed, so none needed a scan (docs/decisions.md).
+- 07:48 installed Remotion 4.0.537 (`remotion`, `@remotion/cli`, pinned) in its own project, `video/remotion/`, ignored by git with its footage, generated timeline and renders.
+- 07:55 `video/style.md`, `video/script.md` (both cuts, two voices, stressed words) and `video/storyboard.md` (scenes and cue words) written.
+- 07:58 the tour gained a `?demoSample` flag (the saved sample from the start, offline) and the overlay's caption, progress and controls gained data attributes a recording can hide.
+- 08:03 `video/capture/capture.mjs` recorded the tour at 1920 by 1080 with 75 captions marked; the video ran 11 s short of the tour, because the screencast drops still moments, and the first stills showed the drift. A two-pixel heartbeat now keeps the frames coming, and the capture fails if the lengths differ by more than 2 s; recording again.
+- 08:05 `video/remotion/scripts/sync.mjs` builds the timeline from the script, the storyboard, the claims register (the receipt checked against the sample workspace) and the capture; Loop90 1:30 and Afternoon 3:26 estimated from the words. The film's components drawn: the field, the chip, the speakers (the app's host with a mouth for speech, the faceless lecturer), the captions, the desk, the latency, the receipt, the loop, the app in its frame, what is real, the doors and the close.
+- 08:07 check: `npx tsc --noEmit` in `video/remotion` passed; stills of the desk, the receipt, the loop, the app and the close rendered with the installed Chrome; a stray space before stressed punctuation in captions was fixed.
+- 08:08 eight decisions logged (docs/decisions.md).
+- 08:11 the heartbeat alone did not fix the drift (368.1 s of video for a 381.2 s tour): Puppeteer's recorder writes frames at a fixed rate. The capture now pipes the browser's own screencast frames into ffmpeg, which stamps each with its arrival time.
+- 08:18 the capture kept time: 380.97 s of video for 380.9 s of tour, 17,610 frames, 75 captions marked. Synced: Loop90 1:27 and Afternoon 3:26; stills of the app scenes show the step each line narrates (the proposals under Report, the decision on Dr Rahman's Home, Learn with n of N).
+- 08:20 rendering Loop90 (master and 720p copy), a second Loop90 render for the determinism check, and the Afternoon master.
+- 08:20 the first render call failed before starting: the Windows shell split the browser path at its space. `render.mjs` now runs Remotion's CLI script with node directly.
+- 08:25 Loop90 rendered: 86.8 s, 1920 by 1080, 30 fps, H.264, 16,465,573 bytes, silent, with a 720p copy (2,955,517 bytes), 33 captions in `loop90.srt` and 6 chapters, by 08:30; frames pulled from the file show the receipt counting to 1 of 9 and the ring closing on the end card.
+- 08:27 the film copied to `deck/media/loop90.mp4` (ignored) and the deck exported again: Chrome loads the film on slide 5 (86.8 s at 1920 by 1080); the PPTX (21,943 KB) opened in PowerPoint with 11 slides, every note and 1 media object.
+- 08:28 check: `npm run typecheck` passed; `npm run prove:all` 185 passed; guide check, contrast check, dash scan (274 files), backup migration, theme, mascot, architecture and sample checks passed; `npx tsc --noEmit` in `video/remotion` passed.
+- 08:35 check: `node scripts/determinism.mjs Loop90` failed: the second render differed in 1,447 of 2,603 frames, from the first app scene on. Single stills and PNG frame sequences were identical run to run, Chrome's JPEG frames were not, Remotion's own H.264 path was not (with or without parallel encoding), and the system ffmpeg encoded identical frames byte for byte the same. `render.mjs` now renders PNG frames and encodes them with the system ffmpeg (docs/decisions.md); rendering Loop90 again, the determinism check, then Afternoon.
+- 08:45 check: `npm run build` passed; `npm run smoke` 19 of 19, `smoke:integrity` 2 of 2, `smoke:workspace` 7 of 7, `smoke:curriculum` 6 of 6; `node scripts/walk.mjs` WALK OK (21 checks).
+- 08:57 check: `node scripts/determinism.mjs Loop90` failed again on the PNG path: 1,456 of 2,603 frames differ, all from the first app scene on. The Afternoon render that followed was stopped, since it would need redoing.
+- 09:03 the cause: decoded side by side, the differing frames differ only in the 60 px blurred shadow under the app's frame, by 1 to 10 levels along the browser's raster tiles; the footage, the drawn scenes and the text match. So neither the encoder nor the JPEG frames were the cause the 08:45 decision named. The frame's shadow is now a flat offset, and `video/style.md` says no blur anywhere.
+- 09:06 check: the first app scene rendered twice as PNG frames: 1 of 412 frames differs, by one level in one background pixel. 09:12, with Chrome's software renderer (`--gl=swangle`): also 1 of 412, and 2.5 times slower, so not adopted. Three attempts at a byte-identical render; what is left is the rasteriser's own rounding.
+- 09:15 `scripts/determinism.mjs` now diffs the rendered frames before encoding, measures any differing frame in pixels and levels, and encodes one set of frames twice; it fails on a missing frame, on any pixel more than 2 levels apart, or on two different encodes. `scripts/render.mjs` encodes the master and the 720p copy from one render of the frames (docs/decisions.md).
+- 09:16 rendering Loop90 (master and 720p), the determinism check (two more renders), then the Afternoon master.
+- 09:18 the owner reported Codex's limit reset, the go-ahead the Codex queue waited for; two reviews started (below).
+- 09:20 Loop90 rendered: 1:27 (86.8 s), 13,802,507 bytes, with the 720p copy (2,781,341 bytes) encoded from the same frames, 33 captions and 6 chapters.
+- 09:28 the Codex claims audit returned (633 s): no figure unsupported; the 39% stated as a fact where WEF gives an employer forecast, the approval time general where its sources are two US universities, the Malaysian denominators, Biggs filed as an accreditor's clause, and the landing's "the asks change within a year" without a source. Kept as written in `docs/review/`; the changes, each checked against its note, are A8's.
+- 09:31 check: `node scripts/determinism.mjs Loop90` passed: 2,603 frames rendered twice, 2,445 identical byte for byte and 158 differing by at most 1 level in 1 to 12 pixels (275 pixels in all, in drawn and app scenes alike); one set of frames encoded twice gave the same file byte for byte.
+- 09:33 the new master copied to `deck/media/loop90.mp4`; check: `npm run deck` passed: the film loads on slide 5 (86.8 s at 1920 by 1080), the PDF read back with 11 pages, the PPTX (19,342 KB) opened in PowerPoint with 11 slides, every note and 1 media object.
+- 09:34 the Codex pitch review returned (944 s): no figure differs from its row; the verified accuracy and timing fixes (the ChatGPT door in a rehearsed answer, formal approval, "over the same years", "TRL 7 is", three slides over their minutes) and the loop graphic reading Learn before Decide are A8's; the opening order and the commercial framing go to the owner.
+- 09:35 check: dash scan (274 files), contrast check (193 files, 37 generated SVGs) and the guide check passed; `npx tsc --noEmit` in `video/remotion` passed.
+- 09:35 the experiment files of the determinism hunt could not be deleted: the Blast Radius hook held both deletes, which were not retried. They are outside git: in the ignored `video/out/` (`seq-a`, `seq-b`, `jseq-a`, `jseq-b`, `enc-*.mp4`, `vid-*.mp4`, `stills`, about 370 MB) and in the system temp folder (`lyceum-pngtwice-*`, `lyceum-frames-ONT8r7`, about 1.4 GB, from a stopped render).
+- 09:43 Afternoon rendered: 3:26 (206.2 s), 30,147,578 bytes, 64 captions and 12 chapters; four frames pulled from it show the latency pair, Report's helpers beside the footage, the proof scene counting up to 185 and the ring at the close.
 
 ## What is left
 
-A7 (the parts that need no human voice), A8, in that order.
+A8.

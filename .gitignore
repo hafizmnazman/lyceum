@@ -6,3 +6,9 @@ dist/
 # Deck exports and the film are regenerated, not committed: npm run deck, and the video/ render (package A7).
 deck/export/
 deck/media/*.mp4
+# The film: its node_modules, the captured footage, the generated timeline and the renders (video/README.md).
+video/remotion/node_modules/
+video/remotion/public/
+video/remotion/src/generated/
+video/out/
+video/install.log

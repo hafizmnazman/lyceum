@@ -151,7 +151,7 @@ export function DemoOverlay() {
   return (
     <>
       {/* progress bar */}
-      <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: 3, zIndex: 130, background: "transparent" }}>
+      <div data-demo-part="progress" style={{ position: "fixed", top: 0, left: 0, right: 0, height: 3, zIndex: 130, background: "transparent" }}>
         <div
           style={{
             width: `${Math.max(0, Math.min(100, (elapsed / total) * 100))}%`,
@@ -163,7 +163,7 @@ export function DemoOverlay() {
       </div>
 
       {/* stop + mute controls */}
-      <div style={{ position: "fixed", bottom: 20, right: 20, zIndex: 130, display: "flex", gap: 8 }}>
+      <div data-demo-part="controls" style={{ position: "fixed", bottom: 20, right: 20, zIndex: 130, display: "flex", gap: 8 }}>
         <button
           onClick={() => {
             const next = !muted;
@@ -287,6 +287,7 @@ export function DemoOverlay() {
       {/* caption bar */}
       {phase === "walkthrough" && caption ? (
         <div
+          data-demo-part="caption"
           style={{
             position: "fixed",
             bottom: 24,

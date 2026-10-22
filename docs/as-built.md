@@ -238,3 +238,31 @@ The C4 checklist for the diagram: title and scope, yes; legend, yes; every line 
 Not done in A6: the film inside the deck and the PPTX (A7 renders it); the playback test and the visual review on two screens, which need the presenting laptop and the Deck and poster lane; the poster's QR code (Needs the owner, item 3); marks beyond Claude, MCP and Greenhouse (Needs the owner, item 1).
 
 Accepted by: the Deck and poster lane (owner to sign).
+
+## A7, the film (the parts that need no human voice): 22 October 2026
+
+What was built:
+
+- **`video/script.md`, `video/storyboard.md` and `video/style.md`**: both cuts in the order of the story spine, Loop90 (beats 1, 3, 4, 5 and 8) and Afternoon (all eight), two voices (the host for Lyceum, Dr Aisyah for the sceptic) with the stressed words marked; every scene's picture and the cue word each move waits for; and the Dataworks style guide rewritten for the tokens as Section 16.1 specifies, with no blur anywhere.
+- **`video/capture/capture.mjs`** records the real app once: the self-driving tour with `?demoSample` (the dated saved sample of Stripe's board from the start, offline), at 1920 by 1080, its caption bar hidden and its cursor kept, with the time of every tour caption. The browser's own screencast frames go straight into ffmpeg, which stamps each with its arrival time, so the video keeps the tour's clock; a two-pixel heartbeat keeps the page painting, and the capture fails if the video and the tour differ by more than 2 s. Each app scene plays excerpts of that one recording, named in the script by the tour caption they start at.
+- **`video/remotion/`**, a Remotion 4.0.537 project with the compositions **Loop90** and **Afternoon**: the forest field with the drifting dot grid; chapter chips with the acting helper and "saved sample" on footage; the host (the app's own drawing, with a mouth that opens with the voice's loudness) and the faceless lecturer figure as the two speaking avatars; the seven helpers at their stations; captions with the speaker's colour bar and stressed words in lime; numbers counting up to the exact claims-register values (1 of 9, 12 to 18 months, 39%, TRL 6, 185); soft circle wipes between scenes. `scripts/sync.mjs` builds the timeline from the script, the storyboard, the claims register (the receipt checked against the sample workspace), the capture and the recordings once they exist; `scripts/render.mjs` draws the frames once as PNG and encodes the master and the 720p copy from them, with the captions and the chapters; `scripts/determinism.mjs` renders the frames twice, diffs them before encoding and measures any difference.
+- **App changes for the film:** the `?demoSample` flag for the tour, data attributes on the tour overlay's caption, progress and controls, and an optional `mouth` on the host's drawing (unchanged in the app and in the generated mascot files).
+
+| Command | Result |
+|:--|:--|
+| `node video/capture/capture.mjs` | The tour recorded at 1920 by 1080: 380.97 s of video for 380.9 s of tour, 17,610 frames, 75 captions marked (the third attempt; the first two drifted 11 and 13 s, docs/decisions.md) |
+| `node scripts/sync.mjs` (in `video/remotion`) | Loop90 1:27, 7 scenes, 33 captions; Afternoon 3:26, 13 scenes, 64 captions; every cue word found, every clip anchor found, every number in a caption registered, no dash; 0 of 41 lines recorded |
+| `node scripts/render.mjs Loop90` | 1:27 (86.8 s), 1920 by 1080, 30 fps, H.264, silent: 13,802,507 bytes, and the 720p copy, 2,781,341 bytes, encoded from the same frames; 33 captions in `loop90.srt`, 6 chapters |
+| `node scripts/determinism.mjs Loop90` | Passed: 2,603 frames rendered twice; 2,445 identical byte for byte, and 158 differ by at most 1 level in 1 to 12 pixels (275 pixels in all, in drawn and app scenes alike: the rasteriser's rounding); one set of frames encoded twice gave the same file byte for byte. Three attempts at a byte-identical render came first (Remotion's own H.264 path, PNG frames with the system ffmpeg, Chrome's software renderer); they found a blurred shadow that rasterised differently on every render, now a flat one (docs/decisions.md, the run log) |
+| `node scripts/render.mjs Afternoon --master-only` | 3:26 (206.2 s), 1920 by 1080, 30 fps, H.264, silent: 30,147,578 bytes; 64 captions in `afternoon.srt`, 12 chapters; four frames pulled from it show the latency pair, Report's helpers beside the footage, the proof scene counting up to 185 and the ring at the close |
+| `npm run deck` with the film in `deck/media` | Chrome loads the film on slide 5 (86.8 s at 1920 by 1080); the PDF read back, 11 pages; the PPTX, 19,342 KB, opened in PowerPoint with 11 slides, every note and 1 media object |
+| `npx tsc --noEmit` (in `video/remotion`) | Passed |
+| `npm run typecheck`, `npm run prove:all` | Passed; 185 passed, 0 failed |
+| `npm run build`, `smoke`, `smoke:integrity`, `smoke:workspace`, `smoke:curriculum`, `node scripts/walk.mjs` | Passed; 19 of 19, 2 of 2, 7 of 7 and 6 of 6; WALK OK, 21 checks (the tour now sets the term at the Course step and files the results under it) |
+| Guide check, contrast check, dash scan, backup migration, theme, mascot, architecture and sample checks | Matches; CONTRAST CHECK OK (193 files, 37 generated SVGs); no en or em dash in 274 text files; BACKUP MIGRATION OK; all generated outputs current |
+
+The review checklist of Section 16, as far as it can run without a person: every number on screen is one of the four registered film figures, and the sync refuses any other in a caption; app footage carries "saved sample" in its chip; no dash in any caption; it reads with the sound off, because it has no sound yet and the captions are always on; Loop90 is under its 90 seconds, and Afternoon, at 3:26 from the script's words at 2.6 a second, lands near three minutes only at a quicker reading pace, so the recorded voices decide; the phone watch needs a person.
+
+Not done in A7, by design: the voices (the team's), the transcription that follows them, the music bed and its licence, the phone watch, and the Remotion licence question (all in `video/README.md`).
+
+Accepted by: the Video lane (owner to sign).

@@ -6,7 +6,7 @@
 
 import { getState } from "../app/store.ts";
 import { SCRIPT, type DemoStep } from "./script.ts";
-import { PRE_ACT_MS, SWITCH_PAD_MS, TWEEN_MS, TYPE_CHAR_MS, scaleMs } from "./timing.ts";
+import { PRE_ACT_MS, SWITCH_PAD_MS, TWEEN_MS, TYPE_CHAR_MS, isSampleTour, scaleMs } from "./timing.ts";
 
 export interface DemoCtx {
   setCaption: (c: string) => void;
@@ -261,11 +261,18 @@ async function execStep(step: DemoStep, ctx: DemoCtx) {
   }
 }
 
+/** The tour's steps; with ?demoSample the provider is the dated saved sample and the live board's fields are skipped. */
+export function tourSteps(): DemoStep[] {
+  if (!isSampleTour()) return SCRIPT;
+  return SCRIPT.filter((s) => s.target !== "collect-board" && s.target !== "collect-query")
+    .map((s) => (s.target === "collect-provider" && s.action === "select" ? { ...s, value: "sample" } : s));
+}
+
 export async function runDemo(ctx: DemoCtx): Promise<void> {
   cur = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
   ctx.setCursor(cur.x, cur.y);
   let prevScreen = getState().screen;
-  for (const step of SCRIPT) {
+  for (const step of tourSteps()) {
     if (ctx.shouldAbort()) return;
     ctx.setCaption(step.caption);
     const screen = getState().screen;

@@ -1,0 +1,947 @@
+Reading additional input from stdin...
+OpenAI Codex v0.156.1
+--------
+workdir: C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: max
+reasoning summaries: none
+session id: 01a16130-6b13-7bc3-befd-70c237787308
+--------
+user
+Review Lyceum exactly as instructed in the text that follows on stdin; all files are embedded there.
+
+<stdin>
+You are auditing the claims register of Lyceum, a university lecturer's course workspace, seven days before the HACKaSTONE 2026 Grand Final (29 October 2026, Amsterdam). docs/claims.md lists every figure shown on a Lyceum surface (the landing page, the pitch deck, the brief, the poster, the film): the words it is shown in, its source and link, the research note or record that checked it, and the date. The research notes in docs/research/ are dated and carry the sources, the quoted passages and the caveats. src/ui/screens/Landing.tsx is the landing page that shows the landing figures. Some rows are records of the software itself (the number of checks, the tour's length, the receipt's count of reviewed postings) rather than research figures; for those, say only whether the row states what it is and where it is checked.
+
+Write a Markdown review with exactly these sections:
+1. Row by row, as a table with the columns: claim id; verdict (supported, needs a caveat, mislabelled, unsupported, wrong); the evidence, quoted from the note in at most 25 words, or "no passage found"; the fix, in the register's plain voice.
+2. Source labels: any row whose source is primary but presented as secondary or the reverse, a vendor or survey figure presented as neutral, or a self-assessment presented as independent.
+3. Caveats: every caveat a note attaches to a figure the register uses, and whether the register and the landing page carry it.
+4. Wording: any surface wording that is stronger than its source allows (a correlation as a cause, a projection as a measurement, a regional figure as a global one, a population mismatch between two figures shown together), with a replacement.
+5. Anything you could not verify from the embedded text, marked unverified.
+
+Rules: no en or em dashes anywhere in your output (use commas, colons or "to"); quote exactly; be specific and brief; do not invent facts, sources or links; a figure is supported only if the embedded note holds it.
+
+Your file tools may be unavailable. Everything you need is embedded below; do not call tools, review from this text only.
+
+===== FILE: docs/claims.md =====
+# Lyceum: claims register
+
+Every figure shown on a Lyceum surface appears here once: the words it is shown in, its source and link, the research note or record that checked it, and the date. A figure that is not here does not ship. The landing page is registered now; the deck, the brief, the poster and the film add their rows as they are built (packages A6 and A7). `src/prove-journey.ts` fails if a landing figure is missing from this file or a quoted clause is missing from its note.
+
+Keys, as in the research notes: **P** a primary document fetched and quoted; **S** a reputable secondary source; **V** vendor material, said so beside the figure; **M** measured by this project, with the record that holds the measurement.
+
+## The landing page: the problem at three levels
+
+One figure per level (plan Section 2.4). The landing page calls them desk research until the lecturer interviews (R1) add a quotation per level.
+
+| Claim | Figure | Shown as | Source | Checked in | Key | Checked on |
+|:--|:--|:--|:--|:--|:--|:--|
+| `world-skills-and-approval` | 39%; 12 to 18 months | 39% of workers' existing skills will be transformed or become outdated between 2025 and 2030, while approving a new degree programme generally takes 12 to 18 months | World Economic Forum, Future of Jobs Report 2025 (<https://www3.weforum.org/docs/WEF_Future_of_Jobs_Report_2025.pdf>); Wayne State University, programme approval (<https://provost.wayne.edu/programs/approval-process>); Texas Tech University, new programme timelines (<https://www.depts.ttu.edu/provost/curriculum/new-programs/timelines.php>) | [curriculum-latency-global-2026-10-22.md](research/curriculum-latency-global-2026-10-22.md), Sections 1 and 2 | P | 22 October 2026 |
+| `asia-talent-shortage` | 77% of 10,095; 45% in 2014 | 77% of 10,095 Asia Pacific employers could not find the skills they needed in 2025, up from 45% in 2014 (a vendor survey) | ManpowerGroup, Talent Shortage 2025 (<https://www.manpowerthailand.com/apac-talent-shortage>) | [pain-and-market-2026-10-11.md](research/pain-and-market-2026-10-11.md), Section 1.2 | V | 11 October 2026 |
+| `malaysia-underemployment` | 32.2%; 1.60 million; 3.2% | 32.2% of employed Malaysian graduates, 1.60 million people, worked below their qualification in 2024, while graduate unemployment was 3.2% | DOSM, Graduates Statistics 2024 (<https://www.dosm.gov.my/uploads/release-content/file_20260401145140.pdf>) | [pain-and-market-2026-10-11.md](research/pain-and-market-2026-10-11.md), Section 1.1 | P | 11 October 2026 |
+
+"Of employed graduates" follows from the release: 1.60 million is 32.2% of the 4.97 million employed graduates (5.14 million in the labour force less 165,900 unemployed), so the rate is skill-related underemployment among the employed, not among all graduates.
+
+## The landing page: what is proven today
+
+| Claim | Figure | Shown as | Record | Key | Checked on |
+|:--|:--|:--|:--|:--|:--|
+| `proof-checks` | 185 | 185 automated checks passed on 22 October 2026, plus four headless browser runs | `npm run prove:all` (seventeen suites, listed with their counts in `src/data/suites.ts` and on the Evaluation page) and the four smokes, the A6 verification table in [as-built.md](as-built.md) | M | 22 October 2026 |
+| `proof-live-board` | 727 | 727 real postings fetched live from one employer's public board on request, 9 October 2026 | The Stripe board on Greenhouse through the local API: [lyceum-v3-as-built-2026-10-09.md](lyceum-v3-as-built-2026-10-09.md) and the execution record in [lyceum-improvement-plan.md](lyceum-improvement-plan.md), Section 30 | M | 9 October 2026 |
+| `proof-no-keys` | 0 | 0 AI keys needed; the core is deterministic, and file parsing and live collection use the local API | Every proof and smoke runs with no key set; the agents default to fixture mode (`src/agents/mode.ts`) | M | 22 October 2026 |
+| `tour-length` | about 7 minutes | Watch the tour, about 7 minutes | `tourMinutes()` in `src/demo/script.ts`, computed from the tour's own pacing: 393 seconds at full speed after A6 set the term at the Course step and on the results file (382 after the A4 rewrite); a live fetch can add a little | M | 22 October 2026 |
+| `proof-no-paraphrase` | 0 | 0 paraphrases accepted as evidence; a quotation must match its source text or it is rejected | `src/prove-evidence.ts`, `src/prove-research.ts` and the curriculum smoke's rejected misquote | M | 22 October 2026 |
+
+## The deck, the brief and the poster
+
+Package A6. The deck carries five figures in all (plan Section 14): the receipt's denominator, the two latency figures (`world-skills-and-approval` above), the readiness level and the check total (`proof-checks` above). `scripts/gen-deck.mjs` fails if a figure on a slide or in the notes is not in its row here, and reads the exported PDF back to check it again; the brief and the poster use the same rows.
+
+| Claim | Figure | Shown as | Source | Checked in | Key | Checked on |
+|:--|:--|:--|:--|:--|:--|:--|
+| `deck-receipt` | 1 of 9 | 1 of 9 reviewed postings, beside one exact sentence from Stripe's Data Analyst, Intern posting (published 2026-10-01, retrieved 2026-10-09) | The tour's end state, `mcp/sample-workspace.json`: the saved sample of Stripe's public Greenhouse board, 10 postings kept for CS310, 1 a duplicate, 9 reviewed | `scripts/gen-deck.mjs` checks the sentence against its source text and its confirmed quotation, the employer, the title, both dates, the link, the fingerprint and the denominator | M | 22 October 2026 |
+| `deck-trl` | TRL 6; TRL 7 next | Software TRL 6, "Prototype implementations of the software demonstrated on full-scale realistic problems", self-assessed, in a relevant environment of real postings from a real public board, a sample course outline and a lecturer persona; TRL 7 needs one department running it for a term inside its LMS | NASA ESTO, technology readiness levels, the software column (<https://esto.nasa.gov/trl/>) | [hackastone-and-competitors-2026-10-22.md](research/hackastone-and-competitors-2026-10-22.md), Section 2 | P | 22 October 2026 |
+
+The relevant environment says a sample course outline, not a real syllabus: the outline in `public/demo` is generated by `scripts/gen-demo-files.mjs` (docs/decisions.md).
+
+## The landing page: clauses quoted beside the loop
+
+Each quotation is word for word from the note named, which quotes the document at the link; NAAC 1.4.1 is shown as a paraphrase because the note gives no quotable wording. ESG 1.2 and AACSB Standard 5, which plan Section 4 also names, are not shown until a note checks their wording (docs/decisions.md).
+
+| Step | Clause | Link | Checked in | Key |
+|:--|:--|:--|:--|:--|
+| Watch | AUN-QA Guide v4.0, 1.4 | <https://fet.iuh.edu.vn/upload/files/web_SAR_2023.pdf> | [curriculum-latency-global-2026-10-22.md](research/curriculum-latency-global-2026-10-22.md), Section 3 | S |
+| Watch | UK QAA, External Expertise | <https://www.qaa.ac.uk/docs/qaa/quality-code/advice-and-guidance-external-expertise.pdf> | the same note, Section 3 | P |
+| Report | MQA COPPA, 2nd edition, 6.1.6 | <https://office.iium.edu.my/kca/wp-content/uploads/2024/09/COPPA-2nd-Edition-Nov-2017.pdf> | [pain-and-market-2026-10-11.md](research/pain-and-market-2026-10-11.md), Section 1.1 | P |
+| Report | NAAC 1.4.1 (paraphrase) | <https://old.ncet.co.in/iqac/important-criteria> | [curriculum-latency-global-2026-10-22.md](research/curriculum-latency-global-2026-10-22.md), Section 3 | S |
+| Decide | ABET, Criterion 2 | <https://www.abet.org/accreditation/accreditation-criteria/criteria-for-accrediting-engineering-programs-2025-2026/> | the same note, Section 3 | P |
+| Update | ESG 2015, 1.9 | <https://www.enqa.eu/wp-content/uploads/2015/11/ESG_2015.pdf> | the same note, Section 3 | P |
+| Teach | Biggs, constructive alignment | <https://www.biologie.uzh.ch/dam/jcr:94dbcc23-1c4d-4892-bab8-ba16abc4ef66/ConstructiveAlignment_Biggs.pdf> | [hackastone-and-competitors-2026-10-22.md](research/hackastone-and-competitors-2026-10-22.md), Section 6 | P (that note marks only vendor and secondary sources; this one is unmarked) |
+| Learn | ABET, Criterion 4 | <https://www.abet.org/accreditation/accreditation-criteria/criteria-for-accrediting-engineering-programs-2025-2026/> | [curriculum-latency-global-2026-10-22.md](research/curriculum-latency-global-2026-10-22.md), Section 3 | P |
+
+===== FILE: docs/research/curriculum-latency-global-2026-10-22.md =====
+# Research note: curriculum latency as a global problem
+
+Date: 22 October 2026. Written for the pitch and the landing page: the problem restated at world level, so that Lyceum is not read as a Malaysian fix. Every item was checked in a research session on 22 October 2026 against the page named; the key says how far.
+
+Key: **P** primary document fetched and quoted; **S** reputable secondary; **V** vendor material; **U** seen only in a search snippet, page blocked, treat as unverified.
+
+## 1. How long curriculum change takes
+
+- "It generally requires twelve to eighteen months for new degree programs to complete the internal review and approval process" (Board of Governors, state endorsement, HLC may also be needed). Wayne State University, provost policy page. https://provost.wayne.edu/programs/approval-process **P**
+- "From start to finish, the full approval process can take up to 18 months", including Board of Regents, THECB and SACSCOC. Texas Tech University, New Programs Timelines. https://www.depts.ttu.edu/provost/curriculum/new-programs/timelines.php **P**
+- Program approvals "6 months to 2 years"; course changes quicker because no external approval. University of South Carolina. https://www.sc.edu/about/offices_and_divisions/advising/curriculum_services/approval_process/index.php **U**
+- Course level, US: "the minimum time needed is approximately three months. It is not uncommon for the process to take four to six months." Indiana University College of Arts and Sciences. https://curriculum.college.indiana.edu/courses/courses-faq.html **P**
+- Annual catalogue cycle: core-course changes approved at college level by 1 September pass the college committee in November and the university committee in December, then the state board, and take effect "the following academic year". University of North Texas. https://vpaa.unt.edu/ccg/timeline.html **P**
+- UK: "a new programme must be approved by the Senate Portfolio Scrutiny Panel (SPSP) at least 12 months before it is implemented." Regent's University London, Academic Regulations 2018/19. https://www.regents.ac.uk/sites/default/files/2019-01/B-Regents-Quality%20Assurance%20&%20Enhancement%20Processes_18-19.pdf **P**
+- UK: "a validation event should normally take place no later than 12 months prior to the new course commencing." University of Northampton. https://www.northampton.ac.uk/about-us/governance-and-management/management/quality-and-standards/validation/ **P**
+- UK: planning "up to two years in advance of validation" for UCAS listing (Queen Margaret University); 24 months at Bangor; UCL deadlines 12 to 22 months before a September start. **U**
+- Australia: the TEQSA Act gives nine months for initial course accreditation decisions and sets no limit for renewals; "renewal applications sometimes took longer because there was no legal minimum time limit". Government News, 2015, updated 2024. https://www.governmentnews.com.au/?p=21677 **S**
+- Singapore: autonomous universities review curricula through academic advisory boards "every two to five years"; polytechnics and ITE annually at course level and institutionally "around every three years". MOE parliamentary reply, 12 September 2022. https://www.moe.gov.sg/news/parliamentary-replies/20220912-review-of-institutes-of-higher-learnings-curricula **P**
+- The term "curriculum lag" is used in a peer-reviewed article: Ihrig, Peate and Wolla, "Curriculum lag challenges and strategies", Journal of Economic Education 55(2), 2024. https://doi.org/10.1080/00220485.2024.2304896 (metadata verified, text paywalled).
+- Not found: a global measured study of approval-to-delivery lag; EU and India timeline figures.
+
+## 2. Skill half-life and churn
+
+- "On average, workers can expect that two-fifths (39%) of their existing skill sets will be transformed or become outdated over the 2025-2030 period" (44% in 2023, 57% in 2020); "63% of employers identifying [skill gaps] as a major barrier"; "AI and big data top the list of fastest-growing skills"; survey of over 1,000 employers, 14 million workers, 55 economies. WEF, Future of Jobs Report 2025. https://www3.weforum.org/docs/WEF_Future_of_Jobs_Report_2025.pdf **P**
+- "By 2030, 70% of the skills used in most jobs will change, with AI emerging as a catalyst". LinkedIn, Work Change Report, January 2025. https://economicgraph.linkedin.com/content/dam/me/economicgraph/en-us/PDF/Work-Change-Report.pdf **V** (the method behind 70% is not explained)
+- "the half-life of a learned skill is estimated to be five years and even shorter for technical skills"; time to close a skills gap by training rose "from 3 days to 36 days" (2014 to 2018). IBM Institute for Business Value, 2019. https://ibm.com/downloads/cas/EPYMNBJA **V**
+- "32% of the skills required for the average job are different in 2024 than they were in 2021"; the top quarter of occupations saw 75% of skills change; generative-AI postings up 15,625% in three years. Lightcast, The Speed of Skill Change, 22 January 2025. https://lightcast.io/resources/blog/skills-change-us-press-release **V**
+- 37% of the top 20 skills for the average US job changed between 2016 and 2021 (15 million postings). Lightcast, Burning Glass Institute and BCG, May 2022. https://lightcast.io/resources/blog/new-report-measures-blazing-pace-of-skill-change **V**
+- "Skills requirements are evolving 66% faster in AI-exposed jobs than in other roles"; AI wage premium 56% in 2024. PwC, 2025 Global AI Jobs Barometer. https://press.pwc.be/ai-drives-productivity-and-wage-growth-pwc-global-study-reveals **V**
+- AI wage premium 62%; AI-skill jobs growing about eight times as fast as the overall market; over one billion job advertisements in 27 countries. PwC, 2026 Global AI Jobs Barometer, 15 June 2026. https://kyodonewsprwire.jp/release/202606150856 **V**
+
+## 3. Accreditation clauses that demand employer or market evidence
+
+- ABET EAC 2025-2026, Criterion 2: objectives "consistent with the mission of the institution, the needs of the program's various constituencies" plus a documented process "involving program constituencies, for the periodic review of these program educational objectives"; Criterion 4: "The results of these evaluations must be systematically utilized as input for the program's continuous improvement actions." https://www.abet.org/accreditation/accreditation-criteria/criteria-for-accrediting-engineering-programs-2025-2026/ **P**
+- AACSB 2026 Global Standards (continuous improvement visits from 2027/28): 4.1 "Curricula are continuously renewed to reflect current and emerging business theories and practices, industry evolution, and societal trends"; 4.2 "Curricula are reviewed on a planned and consistent review cycle"; 7.2 curriculum "current, relevant, forward-looking, globally oriented". https://www.aacsb.edu/educators/accreditation/business-accreditation/aacsb-business-accreditation-standards **P**
+- AUN-QA Guide v4.0 (ASEAN), 1.4: "the requirements of the stakeholders, especially the external stakeholders, are gathered, and that these are reflected in the expected learning outcomes"; 2.7: curriculum "reviewed periodically and that it remains up-to-date and relevant to industry." Wording verified in two 2023 self-assessment reports reproducing v4.0. https://fet.iuh.edu.vn/upload/files/web_SAR_2023.pdf **S**
+- UK QAA, External Expertise (November 2018): "Providers are encouraged to engage with employers and other external stakeholders at all stages of course design, approval and review in order to ensure that their courses continue to be relevant and fit for purpose in line with employer needs". https://www.qaa.ac.uk/docs/qaa/quality-code/advice-and-guidance-external-expertise.pdf **P**
+- Australia HESF 2021, 3.1.2: content must engage with "emerging concepts that are informed by recent scholarship, current research findings and, where applicable, advances in practice" (verified in a provider policy reproducing the standard). https://aih.edu.au/wp-content/uploads/2025/10/ACA-HE-08-Course-Design-Policy-and-Procedure-2025.2.pdf **S**
+- EU ESG 2015, 1.9: "Institutions should monitor and periodically review their programmes to ensure that they achieve the objectives set for them and respond to the needs of students and society"; the guideline lists "The changing needs of society" and "Programmes are reviewed and revised regularly involving students and other stakeholders." ENQA. https://www.enqa.eu/wp-content/uploads/2015/11/ESG_2015.pdf **P**
+- India NAAC 1.1.1: curricula "have relevance to the local, national, regional and global developmental needs"; 1.4.1: structured feedback on the syllabus from students, teachers, employers and alumni. https://old.ncet.co.in/iqac/important-criteria **S**. NEP 2020: "greater industry-academic linkages", "Increase employability potential of higher education programmes". https://www.ugc.gov.in/pdfnews/5294663_Salient-Featuresofnep-Eng-merged.pdf **P**
+- Singapore MOE, 8 April 2026: SkillsFuture Skills Frameworks ("38 sectors", "continually refreshed") are built from "labour market surveillance data, such as job posting data" with employers, associations, unions and agencies. https://www.moe.gov.sg/news/parliamentary-replies/20260408-industry-skills-councils-involvement-in-development-of-current-skills-framework-and-practitioner-engagement-to-ensure-alignment-with-operational-skills **P** (a government already treats job postings as evidence)
+- Malaysia MQA COPPA 2nd edition, 6.1.6 and 7.1.4: see docs/research/pain-and-market-2026-10-11.md.
+
+## 4. Mismatch and underemployment outside Malaysia
+
+- US: 52% of bachelor's graduates underemployed one year after graduating; 45% still underemployed ten years out. Strada Institute and Burning Glass Institute, Talent Disrupted, 21 February 2024. https://www.strada.org/report/talent-disrupted **P**
+- EU: "The over-qualification rate in the EU was 21.4% in 2024" (ages 20 to 64); Spain 35.0%, Greece 33.0%, Luxembourg 4.7%. Eurostat, Employment annual statistics, 2025. https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Employment_-_annual_statistics **P**
+- UK (England): graduate high-skilled employment rate 67.9% against a graduate employment rate of 87.6%, so roughly one in five employed graduates are in medium or low-skilled work. DfE Graduate labour market statistics 2024, 5 June 2025. https://explore-education-statistics.service.gov.uk/find-statistics/graduate-labour-market-statistics/2024 **P**
+- OECD: 23% of workers overqualified across OECD countries, 37% in England. OECD Survey of Adult Skills 2023, as reported by LBC. https://www.lbc.co.uk/article/1765b7c16a974705b8e0da7212f5c4eb-5HjcwcQ_2/ **S**
+- Australia: undergraduate full-time employment 75.4% in 2025; "notable decline in the proportion of undergraduates working full-time in managerial and professional occupations since 2022"; perceived overqualification among full-time employed undergraduates around one in five. QILT 2025 Graduate Outcomes Survey. https://www.qilt.edu.au/docs/default-source/default-document-library/2025-gos-national-report.pdf **P**
+- India: "42.6% of Indian graduates who apply for jobs are overall employable". Mercer Mettl, India's Graduate Skill Index 2025. https://resources.mettl.com/research/india-graduate-skill-index-2025/ **V**
+- China: youth (16 to 24, excluding students) unemployment 18.0% in September 2026, 18.9% in August 2026 with a record 12.7 million graduates. NBS via Trading Economics. https://tradingeconomics.com/china/youth-unemployment-rate **S**
+- Malaysia: 32.2% skill-related underemployment, 1.60 million graduates, DOSM 2024: see docs/research/pain-and-market-2026-10-11.md.
+
+## 5. Institution-wide AI assistants
+
+- CSU: ChatGPT Edu to "more than 460,000 students and over 63,000 staff and faculty" across 23 campuses, 4 February 2025. https://news.csun.edu/uncategorized/california-state-university-to-become-first-ai-powered-university-system-in-us-with-openai/ **P**
+- Oxford: all staff and students have ChatGPT Edu from 2025/26 after a 750-person pilot, 22 September 2025. https://oerc.ox.ac.uk/ai-centre/ai-centre-news/all-staff-and-students-to-have-chatgpt-edu-access-from-this-academic-year **P**
+- Anthropic Claude for Education: campus agreements with Northeastern (50,000 people, 13 campuses), LSE and Champlain; Canvas and Internet2 integrations, 2 April 2025. https://www.anthropic.com/news/introducing-claude-for-education **V**
+- Microsoft 365 Copilot: Manchester, "65,000 colleagues and students will benefit from the full Microsoft 365 Copilot suite". https://www.itservices.manchester.ac.uk/ourservices/microsoft365/copilot/ **P**. Western Sydney University, every staff member from 16 July 2026. https://news.microsoft.com/source/asia/2026/07/22/wsu-embraces-copilot-for-all-staff/ **V**
+- Google Gemini for Education reaches over one million university students in Italy, over half of Italian universities, 9 December 2025. https://www.gend.co/blog/gemini-ai-transforms-education-italian-students **S/V**
+
+## 6. Labour-market data in curriculum review, and the criticism
+
+- WGU and Lightcast pilot (2019): competencies mapped against "millions of job postings"; "almost 20,000 was whittled down to about 1,000 in-demand, marketable skills for each program". https://lightcast.io/resources/blog/western-governors-university-maps-curriculum-to-in-demand-skills **V** (no outcome metrics)
+- Lightcast Skillabi, 3 June 2025: "Quantifies program relevance with a clear, objective score (0-100)"; "used by over 1,000 educational institutions". https://lightcast.io/resources/blog/skillabi-press-release-june-3-2025 **V** (the opaque score that Lyceum replaces with quotations and counts)
+- Representativeness: postings over-represent business, finance, administration and management occupations by 2 to 6 points in Canada; findings "are sensitive to variation in the data gathering and information extraction of online job postings"; weight to correct. OECD, March 2024. https://www.oecd.org/content/dam/oecd/en/publications/reports/2024/03/how-well-do-online-job-postings-match-national-sources-in-large-english-speaking-countries_e67205a2/c17cae09-en.pdf **P**
+- Burning Glass postings over-represent management, computing and healthcare practitioners and under-represent food service, administrative support, construction and production; roughly 85% of JOLTS jobs captured in 2016. Washington State ESD. https://esd.wa.gov/media/pdf/2046/market20representation20new20uspdf/download?inline= **P**
+- "only 14% of posts contain any wage information"; posted wages run 40% above administrative data in low-wage occupations. Batra, Michaud and Mongey, NBER WP 31984, December 2023. https://www.nber.org/papers/w31984 **P**
+- "finds little support for a skills shortage. The evidence instead points to overeducation as a persistent, and possibly growing, feature of the U.S. labor force." Cappelli, ILR Review 68(2), 2015. https://doi.org/10.1177/0019793914564961 **P**
+- Not found: a published critique aimed at curriculum alignment scores as black boxes. The representativeness and wage papers are the closest evidence, and they support "show the quotation, count honestly".
+
+## Pitch-ready framing
+
+Approval cycles run 12 to 18 months in the US and validation sits 12 months before delivery in the UK, reviews come every two to five years in Singapore, while a third of the skills in an average job turned over between 2021 and 2024 (Lightcast) and 39% of workers' skills change by 2030 (WEF). Every major accreditor (ABET, AACSB, AUN-QA, QAA, HESF, ESG, NAAC, MQA) already requires documented external-stakeholder evidence, and Singapore's government builds its skills frameworks from job-posting data. The gap is not the rule; it is the latency between the evidence and the classroom.
+
+===== FILE: docs/research/statistics-2026-10-22.md =====
+# Research note: statistics for Lyceum
+
+Date: 22 October 2026. The owner's question: can a survey of a few students stand for the whole cohort, and can the CLO survey and the marks together predict acceptance and expected mastery, quantitative and qualitative at once? This note names the standard method for each part, what it needs, and when Lyceum must say "unknown". References were checked in a research session on 22 October 2026 against publisher or DOI records; class-size figures are computed from the cited formulas.
+
+## 1. Sample size to represent a finite population
+
+- **Cochran with the finite population correction.** n0 = z²p(1 - p)/e², then n = n0 / (1 + (n0 - 1)/N). With p = 0.5, 95% confidence, ±5 points: n0 = 385. Krejcie and Morgan (1970) tabulate the same arithmetic. The rule bounds sampling error only; it needs random sampling, or a census with random non-response. Cochran, Sampling Techniques, 3rd ed., Wiley. Krejcie and Morgan, EPM 30(3), 607-610. https://doi.org/10.1177/001316447003000308
+- **What a class needs at ±5 points, 95%:** N = 40 needs 36 or 37 responses (90% of the class); N = 120 needs 92 (77%); N = 300 needs 169 (56%). With 20 of 40 responding, the corrected margin on a proportion is about ±16 points; 60 of 120 gives ±9; 100 of 300 gives ±8.
+- **A census beats a sample for small classes.** Israel (University of Florida IFAS) calls a census attractive below roughly 200. https://ask.ifas.ufl.edu/publication/PD006. Nulty (2008) says the same for course evaluations, with a liberal standard (80%, ±10) and a stringent one (95%, ±3). Assessment and Evaluation in Higher Education 33(3), 301-314. https://doi.org/10.1080/02602930701293231
+- **Non-response bias (Groves).** Bias = non-response rate × (responders minus non-responders on the measured thing): a low rate only hurts when the two groups differ, and a high rate is no guarantee. Groves 2006, POQ 70(5). https://doi.org/10.1093/poq/nfl033. Groves and Peytcheva 2008, 59 studies, POQ 72(2). https://doi.org/10.1093/poq/nfn011. Practice: compare responders with the full class on marks and show the difference.
+
+## 2. Interval estimates for small samples
+
+- **Wilson score** for proportions. Centre (p̂ + z²/2n)/(1 + z²/n), half-width z/(1 + z²/n) × sqrt(p̂(1 - p̂)/n + z²/4n²). Wilson 1927, JASA 22(158). https://doi.org/10.1080/01621459.1927.10502953
+- **Agresti-Coull.** Add two successes and two failures, then the plain interval. The American Statistician 52(2). https://doi.org/10.1080/00031305.1998.10480550
+- **Which one.** Brown, Cai and DasGupta: never Wald; Wilson or Jeffreys (Beta(x + ½, n - x + ½) quantiles) for n ≤ 40, Agresti-Coull above. Statistical Science 16(2), 101-133. https://doi.org/10.1214/ss/1009213286. Keep Lyceum's Wilson, times sqrt((N - n)/(N - 1)) for a census with non-response.
+- **t-interval for means** (1 to 10 ratings, SSRT): mean ± t(n - 1) × s/√n. Student 1908, Biometrika 6(1). https://www.jstor.org/stable/2331554
+- **Bootstrap** (percentile or BCa) for medians and CLO-weighted marks: resample the n students, B ≥ 1,000; unreliable near n = 10. Efron 1979, Annals of Statistics 7(1). https://doi.org/10.1214/aos/1176344552
+
+## 3. Borrowing strength for small cohorts
+
+- **Multilevel model, partial pooling.** A cohort's per-CLO estimate is a precision-weighted blend of its own mean and the programme or past-cohort mean: θ̂_j ≈ (n_j ȳ_j/σ² + μ/τ²)/(n_j/σ² + 1/τ²). Needs several comparable groups (sections, past semesters) to estimate the between-group variance. Gelman and Hill 2007, ch. 12. http://www.stat.columbia.edu/~gelman/arm/. Empirical Bayes: Efron and Morris 1975, JASA 70(350). Small-area estimation adds covariates: Rao and Molina 2015, Wiley.
+- **What it buys a 25-student cohort.** A raw CLO proportion at n = 25 has a Wilson half-width near ±19 points; pooled with three earlier cohorts it typically lands near ±10. Caveat: shrinkage hides a real break unless the redesign is a covariate, so always show raw beside pooled.
+
+## 4. Measuring mastery
+
+- **Rasch (1PL) and 2PL IRT.** P(correct) = logistic(θ - b) or logistic(a(θ - b)). Minimum calibration samples (Linacre 1994, Rasch Measurement Transactions 7(4), 328, https://www.rasch.org/rmt/rmt74m.htm): 30 persons for item difficulty within ±1 logit at 95%; 100 for ±0.5 logit; 250 or more for high-stakes use; polytomous items need 10 observations per category. 2PL needs 150 to 750 depending on test length (Şahin and Anil 2017, https://open.metu.edu.tr/handle/11511/65131); 3PL needs thousands. A 40-student semester cannot calibrate items: the Rasch spine stays illustrative until items are pooled across cohorts.
+- **Bayesian Knowledge Tracing.** A hidden Markov model per skill; needs attempt sequences per student per skill, not end-of-semester marks. Corbett and Anderson 1995. https://doi.org/10.1007/BF01099821
+- **Mastery learning (Bloom 1968).** Over 90% of students can reach mastery when time and feedback vary; practice uses 80 to 90% on a criterion-referenced test. https://eric.ed.gov/?id=ED053419
+- **Standard setting.** Angoff: each judge estimates the probability that a minimally competent student answers each item; the sum is the cut score. Bookmark: items ordered by difficulty, judges mark where a borderline student's chance drops below about 0.67. Cizek and Bunch 2007, SAGE. Panel size 10 to 15 judges, from Hurtz and Hertz 1999, EPM 59(6). https://doi.org/10.1177/00131649921970233
+- **Umbrella standard.** AERA, APA and NCME, Standards for Educational and Psychological Testing (2014): validity, reliability and fairness for a stated use. https://www.testingstandards.net/
+
+## 5. Self-reported mastery against assessed attainment
+
+- Sitzmann, Ely, Brown and Bauer 2010 (meta-analysis): self-assessed knowledge tracks motivation and satisfaction more than measured learning; the learning link is only moderate. AMLE 9(2). https://doi.org/10.5465/AMLE.2010.51428542
+- Kruger and Dunning 1999: bottom-quartile performers overrate themselves. https://doi.org/10.1037/0022-3514.77.6.1121. Gignac and Zajenkowski 2020: much of that pattern is regression to the mean. https://doi.org/10.1016/j.intell.2020.101449
+- Uttl, White and Gonzalez 2017: no meaningful correlation between student ratings of teaching and learning once small-study bias is removed. https://doi.org/10.1016/j.stueduc.2016.08.007
+- Practice: report perception (self-rating, SSRT) and attainment (CLO-mapped marks) as separate series with intervals and show the gap; never average them into one mastery number.
+
+## 6. Predicting the effect of a course change
+
+- **Naive baseline.** Next cohort = last cohort; simple methods "serve as benchmarks rather than the method of choice". Hyndman and Athanasopoulos, FPP3, ch. 5. https://otexts.com/fpp3/simple-methods.html
+- **Difference-in-differences.** (changed course after minus before) minus (comparison course after minus before); needs an unchanged comparison course and a cohort each side; assumes parallel trends. Card and Krueger 1994. https://www.jstor.org/stable/2118030
+- **Interrupted time series.** Segmented regression over a run of cohorts; needs several cohorts on each side. Bernal, Cummins and Gasparrini 2017. https://doi.org/10.1093/ije/dyw098
+- **Pre-registration.** Freeze the predicted numbers, metric and analysis before the semester's data arrive. Nosek et al 2018, PNAS. https://doi.org/10.1073/pnas.1708274114
+- **Calibration.** Brier score (1/N) Σ (f - o)²; reliability diagram (Murphy and Winkler 1977, https://doi.org/10.2307/2346866); maximise sharpness subject to calibration (Gneiting, Balabdaoui and Raftery 2007, https://doi.org/10.1111/j.1467-9868.2007.00587.x).
+- **"Acceptance" as a construct.** Technology Acceptance Model: perceived usefulness and perceived ease of use, two validated six-item scales (Davis 1989, MIS Quarterly 13(3), https://doi.org/10.2307/249008). Kirkpatrick's levels separate Reaction from Learning; Alliger et al 1997: reactions are only weakly related to learning. https://doi.org/10.1111/j.1744-6570.1997.tb00911.x
+
+## 7. Combining qualitative and quantitative
+
+- **Thematic analysis**, six phases. Braun and Clarke 2006. https://doi.org/10.1191/1478088706qp063oa
+- **Inter-rater reliability.** Cohen's κ. https://doi.org/10.1177/001316446002000104. Landis and Koch bands are convention, not evidence. Protocol (double-code a subset, report κ, reconcile the codebook): O'Connor and Joffe 2020. https://doi.org/10.1177/1609406919899220
+- **Integration.** Convergent mixed-methods design (Creswell and Plano Clark 2017); triangulation protocol with a convergence matrix per theme (O'Cathain, Murphy and Nicholl 2010, BMJ 341:c4587, https://doi.org/10.1136/bmj.c4587).
+- **LLM coding of open comments.** Pangakis, Wolken and Fasching 2023: performance is "highly contingent" on the task, so every run must be validated against human labels. https://arxiv.org/abs/2306.00176. Törnberg 2024 gives the protocol: codebook, structured prompts, stability checks, validation. https://doi.org/10.6092/issn.1971-8853/19461. A 2025 study: only a fine-tuned model reached macro-F1 0.87, and models mishandle "don't know" codes. https://arxiv.org/abs/2506.14634. Lyceum protocol: a human gold set of 100 to 200 comments, κ shown in the UI, human sign-off, re-validation on any prompt or model change.
+
+## 8. Standards and ethics
+
+- JISC Code of Practice for Learning Analytics: responsibility, transparency and consent, privacy, validity, access, minimising adverse impacts, stewardship. https://www.jisc.ac.uk/guides/code-of-practice-for-learning-analytics
+- DELICATE checklist, Drachsler and Greller 2016. https://doi.org/10.1145/2883851.2883893. Prinsloo and Slade 2017, Handbook of Learning Analytics ch. 4. https://doi.org/10.18608/hla17.004
+- GDPR Article 22: a right not to be subject to a decision based solely on automated processing with significant effects. https://gdpr-info.eu/art-22-gdpr/. A per-student predicted mastery that triggers an intervention needs meaningful human review; cohort-level predictions do not engage it.
+- Malaysia PDPA 2010 (Act 709), seven principles; the 2024 amendment adds a data protection officer duty, breach notification and portability, with no Article 22-style right found. https://www.pdp.gov.my/. Treat per-student predictions as profiling anyway.
+
+## Recommended stack for Lyceum
+
+| cohort | survey | per-CLO estimate | mastery calibration | prediction | label unknown when |
+|:--|:--|:--|:--|:--|:--|
+| under 60 | census; show n of N; FPC-adjusted Wilson and t | partial pooling with past cohorts, raw beside pooled | none; the Rasch spine stays "illustrative" | naive baseline only | responses below the Krejcie-Morgan figure; fewer than 2 prior cohorts |
+| 60 to 200 | census target; Nulty stringent standard | same, pooled across sections | Rasch at 100+ responses per item, stable at 150+; no 2PL | difference-in-differences with an unchanged comparison course | no comparison course; fewer than 3 cohorts |
+| over 200, or semesters pooled | Agresti-Coull is fine | hierarchical over cohort × CLO | 2PL at 500+ with unchanged items; Angoff or Bookmark cut score, 10 to 15 judges | interrupted time series over 6+ cohorts, pre-registered, Brier-scored | under about 30 resolved predictions |
+
+Always: perception and attainment shown separately with the gap; predictions frozen before data and scored against carry-forward; comments coded against a human gold set with κ shown; no solely automated per-student decisions; JISC and DELICATE as written policy.
+
+===== FILE: docs/research/pain-and-market-2026-10-11.md =====
+# Lyceum research note: the pain and the market
+
+Date: 11 October 2026. Written for the organiser's two asks: explain the pain at Asia level or better, and bring real market research and market intelligence.
+
+Labels: [primary] official document opened and quoted; [secondary] reputable press or vendor page; [estimate] commercial market research, method not inspected; [not verified] primary could not be opened.
+
+## 1. The pain
+
+### 1.1 Malaysia
+
+The brief said "32.2% underemployment". That is skill-related underemployment (graduates in jobs below their qualification). Hours-based underemployment was 0.8%. Keep the two apart in a pitch.
+
+| 2024 figure | Value | Source |
+| --- | --- | --- |
+| Graduates | 5.98 million, 22.3% of the working-age population; 5.14 million in the labour force | DOSM Graduates Statistics 2024 [primary] |
+| Unemployment | 3.2% (165,900), down from 3.4% | DOSM [primary] |
+| Skill-related underemployment | 32.2%; 1.60 million "employed below their qualifications", count up 3.9%. Series: 29.5% (2020), 33.8%, 34.2%, 32.4%, 32.2% | DOSM [primary] |
+| By age | 66.0% under 25; 18.6% at 45 and above | DOSM [primary] |
+| Occupations | 67.8% skilled; 31.0% semi-skilled; 1.2% low-skilled, the last up 11.0% | DOSM [primary] |
+| Pay | Median RM4,521; semi-skilled graduates RM2,550 | DOSM [primary] |
+| Comparators in the same release (ILOSTAT) | Brunei 18.1%, US 27.3%, Australia 27.5%, UK 28.5%, Malaysia 32.2%, South Korea 36.8%, Indonesia 42.2%, Philippines 56.7%, Myanmar 64.4% | DOSM [primary] |
+| Overqualified | 48.6% of graduates in 2021 (peak 57.3% in 2018); 65.6% started below RM2,000 | KRI Shifting Tides 2024, with MOHE, via Malay Mail [secondary] |
+| Skills under-used | 26.9% of graduates in 2022, from 8.6% in 2010 | World Bank Malaysia Economic Monitor, via NST [secondary] |
+| Still live politically | HR Minister's written reply, June 2026, repeats 1.60 million (32.2%) | NST [secondary] |
+| MOHE target | Graduate employability target 86.4% (Graduate Tracer Study 2024) | Bernama [secondary] |
+| AI exposure | 620,000 jobs (18% of 3.5 million in 10 sectors) highly impacted within three to five years | TalentCorp Impact Study 2024, via Malay Mail [secondary] |
+
+What the regulator asks of every programme, MQA Code of Practice for Programme Accreditation, 2nd edition [primary, IIUM-hosted copy]:
+
+- 1.1.2: a programme "must be considered only after a needs assessment has indicated that there is a need"; needs assessment includes "the market demand of a programme".
+- 1.2.3: "consult the stakeholders in the development of the curriculum."
+- 6.1.6: "conduct internal and external consultations, market needs and graduate employability analyses."
+- 7.1.3 and 7.1.4: "continual review of the programme to ensure its currency and relevancy"; the review system "must constructively engage stakeholders, including the alumni and employers as well as external experts".
+- In practice the cycle is every three to five years (UiTM study) [secondary].
+
+DOSM's Chief Statistician closed the release with "efforts to align the education system with labour market demands". Today a lecturer's evidence for that alignment is advisory-board minutes and tracer surveys, not employer text.
+
+### 1.2 ASEAN and Asia
+
+| Figure | Value | Source |
+| --- | --- | --- |
+| Youth unemployment 2025 | Global 12.4% (67 million), up in 8 of 11 subregions; South-East Asia and the Pacific under 10% but rising, with NEET; youth face five to seven times adult risk in South-East and South Asia; NEET 20% (257 million); 6.1% of jobs held by 15 to 29 year olds highly exposed to AI | ILO Global Employment Trends for Youth 2026 [primary page; figures via press] |
+| Employers | 77% of 10,095 Asia Pacific employers cannot find the skills they need, from 45% in 2014; global 74%; IT and data 32%, engineering 27% | ManpowerGroup Talent Shortage 2025 [vendor survey] |
+| Perception gap | Indonesia: 96% of training institutions called graduates work-ready, 33% of food and beverage manufacturers agreed; Cambodia: almost 90% of employers said graduates were inadequately prepared | ADB Industry 4.0 skills study 2021 [primary] |
+| Skills constraint | 10% to 18% of employers in the Philippines, Indonesia, Laos, Malaysia and Cambodia struggle to find the right skills (WB Enterprise Surveys 2015) | ASEAN Secretariat, ASEAN for Business 2022 [primary] |
+| Technology | 2018 to 2022 robots displaced about 1.4 million low-skilled workers and created 2 million skilled jobs; only about 10% of jobs in the region involve AI-complementary tasks | World Bank, Future Jobs 2025 [primary] |
+| Singapore, public universities | Full-time permanent employment 79.5% (84.1% in 2023); 87.1% employed within six months (89.6%); median S$4,500 | Joint GES 2024, SUSS release [secondary] |
+| Singapore, private institutions | Full-time permanent 46.4% in 2023/24 (58.7% a year earlier); 46.9% in 2024/25 | SkillsFuture Singapore PEI GES [primary] |
+| Indonesia | Over 1 million unemployed university graduates (BPS, Feb 2025); bachelor's-and-above unemployment 4.80% (2022) to 5.39% (2025); about half of workers vertically mismatched | UNDP Indonesia 2025; Jakarta Post analysis 2026 [secondary] |
+| Philippines | 3 in 10 graduates mismatched (PIDS tracer); PIDS 2025: "persistent skills mismatch, producing more college graduates than the economy can absorb" | PIDS [primary] |
+| Vietnam | 23.4% of employers plan to hire fresh graduates in the next six months; 62.3% of those laid off were entry-level (about 3,000 respondents) | Vieclam24h via Viet Nam News 2025 [secondary] |
+| India | 42.6% of graduates employable, from 44.3% (1 million-plus students, 2,700-plus campuses) | Mercer-Mettl Graduate Skill Index 2025 [vendor] |
+| China | Record 12.22 million graduates in 2025; youth (16 to 24, excluding students) unemployment 18.9% in August 2025 | Xinhua via Reuters; NBS via Trading Economics [secondary] |
+| Employers' ranking | 13,240 managers in 33 countries; 52 Asian universities in the top 250 | THE Global Employability University Ranking 2025 [primary] |
+| Skills readiness | 81 countries, 280 million postings; QS asks for "greater agility through modular learning and curricula advancement" | QS World Future Skills Index 2025 [primary] |
+
+### 1.3 Global
+
+| Figure | Value | Source |
+| --- | --- | --- |
+| Employer forecast | 1,000-plus employers, 14 million workers, 55 economies: 170 million jobs created, 92 million displaced by 2030 (22% churn); 39% of skills change; 63% call the skills gap the biggest barrier | WEF Future of Jobs Report 2025 [primary report page] |
+| Policy prescription | Lifelong learning backed by "timely labour-market intelligence" because skill demands change faster than policy cycles; skills often under-utilised | OECD Skills Outlook 2025 [page blocked; via Worlddidac summary] |
+| Supply | 264 million students in 2023; gross enrolment ratio 19% (2000) to 43% (2023) | UNESCO figures at a glance 2025 [record blocked; via ICEF] |
+| Underemployment persists | 52% of US bachelor's graduates underemployed one year out, 45% ten years out; 73% of those underemployed in their first job still are a decade later | Burning Glass Institute and Strada, Talent Disrupted 2024 [primary] |
+| Skills churn | 70% of skills used in most jobs change by 2030 | LinkedIn Work Change Report 2025 [primary] |
+| Fastest growing skill | GenAI demand up 866% year on year across 7,000-plus institutional customers | Coursera Job Skills Report 2025 [vendor] |
+| Faculty and AI | 30% of instructors and 42% of students use GenAI weekly; 28% of institutions have an active policy (3,300-plus respondents) | Tyton Partners, Time for Class 2025 [primary] |
+
+## 2. Market research
+
+### 2.1 Size and growth
+
+No public estimate exists for "labour-market intelligence for education" as a segment. The nearest sized category is higher-education catalogue and curriculum management software: USD 3.46 billion (2024) to 7.62 billion (2032), 10.1% CAGR (Verified Market Research), or USD 3.48 billion (2025) to 8.99 billion (2032), 14.5% CAGR (360iResearch). Both are [estimate]; read them as low single-digit billions growing at roughly 10% to 15%. The data leader, Lightcast, is private and publishes no revenue; it ingests postings from more than 65,000 sources daily (UC3M description) [secondary].
+
+### 2.2 Competitors
+
+| Vendor and product | Sells what, to whom | Public pricing |
+| --- | --- | --- |
+| Lightcast Skillabi | Curriculum intelligence: ingests programme text, tags it against a 33,000-plus skill taxonomy, Program Occupation Alignment Score 0 to 100 (June 2025); provosts, institutional research, L&D; deeper data needs an Analyst subscription | No list price. One public point: Analyst (state-level, higher education) renewal USD 13,905 for 2026-27, Sauk Valley Community College |
+| Chmura JobsEQ | Regional labour data, program alignment (IPEDS awards against postings), alumni outcomes; institutional research, workforce boards | Quote-based |
+| Burning Glass Institute | Non-profit research, not software | n/a |
+| Coursera for Campus | Catalogue, Course Builder, Job Skills Report; universities, enterprises | Custom; Vendr benchmark USD 250 to 450 per learner per year (Business tier, 200 to 1,000 learners) |
+| Watermark | Planning and Self-Study (assessment, program review, self-study with AACSB template), Curriculum Strategy; accreditation offices | Quote-based |
+| Ellucian | Banner and Colleague SIS; Journey (2025) maps continuing-education catalogues to skills taxonomies, 100-plus institutions | Quote-based |
+| Anthology (Blackboard) | LMS; AI Design Assistant generates learning modules from a course title and description | Quote-based |
+| Modern Campus Curriculum | Proposals, approvals, audit trails; 325-plus institutions | Quote-based |
+| Coursedog | Curriculum, catalogue, scheduling; 400-plus institutions | Quote-based |
+| Kuali Curriculum Management | Canonical course and programme record, approval routing (ASU) | Quote-based |
+| D2L | Brightspace LMS; upskilling arm spun out as SkillsWave, 2024 | Quote-based |
+| SkillsFuture Singapore | Skills Demand for the Future Economy report and Jobs-Skills Portal (Jan 2025); course funding tightened from 31 Dec 2025 to make providers engage enterprises | Free, government |
+| JobKred (Singapore) | Skills intelligence for governments and enterprises; built the intelligence behind MyCareersFuture | Quote-based |
+| TalentCorp MyMahir (Malaysia) | National jobs and skills intelligence, Future Skills Talent Council | Free, government |
+
+### 2.3 What none of them do at the lecturer's desk
+
+Judged on public product descriptions:
+
+1. Collect on request for one course. Incumbents sell a standing feed bought centrally; the lecturer inherits a dashboard.
+2. Keep the employer's exact sentence. Skillabi, JobsEQ and Journey normalise text into taxonomy skills; the quotation is gone before the meeting.
+3. Show an honest count. Vendor deduplication and weighting cannot be inspected; Lyceum counts what it collected and says so.
+4. Map to this course's outcomes and write the brief that an MQA 7.1.4 review or ABET Criterion 2 process needs.
+5. Workflow tools (Modern Campus, Coursedog, Kuali, Watermark) route approvals and hold no external evidence; government portals aggregate nationally, not by course.
+
+## 3. Market intelligence
+
+In Lyceum's favour:
+
+- Skills-first language is the norm in postings and surveys (WEF 39%, LinkedIn 70%), so employers write quotable requirements. Caveat: Burning Glass Institute and Harvard found real hiring change in "not even 1 in 700 hires", with 45% of firms changing in name only. Present counts as what employers ask for, not what they hire.
+- Accreditors demand evidence: MQA 1.1.2, 6.1.6, 7.1.4; ABET Criterion 2, objectives consistent with "the needs of the program's various constituencies" through "a documented, systematically utilized, and effective process"; AACSB Standard 4.1, content that is "current, relevant, forward-looking, globally oriented".
+- Micro-credentials multiply review events. MQA's Guidelines to Good Practices: Micro-credentials (2020) include market needs assessment; the OECD (2023) says evidence of their value "remains scarce", so each needs its own demand case.
+- Governments push alignment: DOSM's closing statement, SkillsFuture's funding rule, TalentCorp's 620,000-job study.
+- Lecturers already use AI weekly (30%, Tyton); a drafting assistant that keeps quotations fits the habit.
+
+Threats:
+
+- Data access. LinkedIn's User Agreement 8.2 (effective 3 Nov 2025) bars software used to "scrape or copy the Services, including profiles and other data"; LinkedIn sued Proxycurl in January 2025 and it shut by July. JobStreet's terms 7(d) (updated 20 July 2026) prohibit "data mining, robots, screen scraping, or similar automated data gathering" without written consent. Lyceum must collect through licensed APIs, employer-owned pages and user-supplied files; small on-request collection is the safe design.
+- Incumbent AI. Lightcast's alignment score, Anthology's AI Design Assistant and Ellucian Journey generate alignment at scale. Lyceum's defence is provenance: quotations, honest counts, lecturer-level workflow.
+- Signal noise. Postings overstate skills-based hiring (1 in 700).
+- Procurement. Data is bought centrally (about USD 14,000 a year for one Lightcast seat), so a lecturer tool must be cheap to try or bought by a faculty.
+
+## 4. What to say in a pitch
+
+1. "In 2024 graduate unemployment in Malaysia fell to 3.2%, yet 1.60 million graduates, 32.2%, worked below their qualification, and under 25 the rate was 66%." (DOSM Graduates Statistics 2024)
+2. "Employers across Asia Pacific report the mirror image: 77% cannot find the skills they need, up from 45% in 2014." (ManpowerGroup Talent Shortage 2025)
+3. "The regulator already asks for this evidence: MQA's code requires 'market needs and graduate employability analyses' and a review system that 'must constructively engage stakeholders, including the alumni and employers'." (MQA COPPA 2nd edition, 6.1.6 and 7.1.4)
+4. "Over 1,000 employers told the World Economic Forum that 39% of skills will change by 2030 and 63% call the skills gap their biggest barrier." (WEF Future of Jobs Report 2025)
+5. "The OECD prescribes timely labour-market intelligence because skill demands move faster than policy cycles; Lyceum puts that intelligence on the lecturer's desk as exact employer quotations, counted honestly and mapped to course outcomes." (OECD Skills Outlook 2025)
+
+## Sources
+
+Malaysia
+- Graduates Statistics 2024, press release. DOSM, 31 Oct 2025. https://www.dosm.gov.my/uploads/release-content/file_20260401145140.pdf
+- Malaysian graduates are overqualified and underpaid, KRI report reveals. Malay Mail, 4 Mar 2024. https://www.malaymail.com/news/malaysia/2024/03/04/malaysian-graduates-are-overqualified-and-underpaid-khazanah-research-institute-report-reveals/121313
+- Over 1/4 Malaysian degree holders have jobs unrelated to their field (World Bank Malaysia Economic Monitor). NST, 11 Oct 2024. https://nst.com.my/amp/business/corporate/2024/10/1118089/over-14-malaysian-degree-holders-have-jobs-unrelated-their
+- Ramanan: reforms to be accelerated amid 1.6mil underemployed graduates. NST, 1 Jul 2026. https://www.nst.com.my/amp/news/nation/2026/07/1477499/ramanan-reforms-be-accelerated-amid-16mil-underemployed-graduates
+- UUM graduate employability 96.6%, national target 86.4%. Bernama, 12 Apr 2025. https://bernama.com/en/news.php?id=2411823
+- HR Minister proposes upskilling as study shows 620,000 jobs set for impact. Malay Mail, 18 Nov 2024. https://www.malaymail.com/news/malaysia/2024/11/18/hr-minister-proposes-upskilling-as-study-shows-620000-jobs-in-10-sectors-set-for-impact-soon-from-ai-digitalisation/157256
+- Code of Practice for Programme Accreditation, 2nd edition. MQA, 2017 (Nov 2019 print), IIUM-hosted copy. https://office.iium.edu.my/kca/wp-content/uploads/2024/09/COPPA-2nd-Edition-Nov-2017.pdf
+- Curriculum review: from theory to practice. UiTM Institutional Repository. https://ir.uitm.edu.my/id/eprint/43292
+- Guidelines to Good Practices: Micro-credentials. MQA, 2020, UNIMAS-hosted copy. https://www.cflex.unimas.my/images/Documents/MC/GGP_Micro-credentials.pdf
+
+ASEAN and Asia
+- Global Employment Trends for Youth 2026: Back to the future. ILO, Aug 2026. https://www.ilo.org/node/743476
+- South-East Asia and the Pacific remains a hotspot for youth-adult unemployment disparities. Human Resources Online, 2026. https://www.humanresourcesonline.net/southeast-asia-the-pacific-remains-a-global-hotspot-for-youth-adult-unemployment-disparities-ilo
+- Talent Shortage 2025, Asia Pacific. ManpowerGroup, 2025. https://www.manpowerthailand.com/apac-talent-shortage
+- Skills development vital to enabling transition to Industry 4.0 in Southeast Asia. ADB, 2021. https://www.adb.org/news/skills-development-vital-enabling-transition-industry-4-0-southeast-asia-adb-study
+- ASEAN for Business, 22nd edition. ASEAN Secretariat, Aug 2022. https://asean.org/wp-content/uploads/2022/09/ASEAN-for-Business-22nd-Edition-August-2022.pdf
+- Future Jobs: Robots, Artificial Intelligence, and Digital Platforms in East Asia and Pacific. World Bank, 2025. https://www.worldbank.org/en/region/eap/publication/future-jobs
+- Higher salaries for university graduates despite uncertainties (Joint GES 2024). SUSS, Feb 2025. https://www.suss.edu.sg/about-suss/media-centres/media-releases/higher-salaries-for-university-graduates-despite-uncertainties-in-the-global-economy
+- Private Education Institution Graduate Employment Survey 2023/2024. SkillsFuture Singapore. https://www.ssg.gov.sg/resources/pei/pei-ges/private-education-institution-graduate-employment-survey-2023-2024
+- Private Education Institution Graduate Employment Survey 2024/2025. SkillsFuture Singapore, 2026. https://www.ssg.gov.sg/resources/pei/pei-ges/private-education-institution-graduate-employment-survey-2024-2025/
+- Why Indonesian youth need more than a degree. UNDP Indonesia, 2025. https://www.undp.org/indonesia/blog/why-indonesian-youth-need-more-degree
+- Analysis: rosy labor figures conceal deeper cracks. The Jakarta Post, 25 Aug 2026. https://thejakartapost.com/opinion/2026/08/25/analysis-rosy-labor-figures-conceal-deeper-cracks
+- New college grads mismatched to their jobs. PIDS. https://pids.gov.ph/details/new-college-grads-mismatched-to-their-jobs
+- Enhancing the Philippine labor market information system and TESDA's skills anticipation framework. PIDS, 2025. https://www.pids.gov.ph/publication/research-paper-series/enhancing-the-philippine-labor-market-information-system-and-tesda-s-skills-anticipation-and-prioritization-of-skills-requirements-framework
+- Hiring caution grows as opportunities shrink for fresh graduates, survey finds. Viet Nam News, 2025. https://vietnamnews.vn/economy/1723241/hiring-caution-grows-as-opportunities-shrink-for-fresh-graduates-survey-finds.html
+- India's Graduate Skill Index 2025. Mercer-Mettl, Feb 2025. https://resources.mettl.com/research/india-graduate-skill-index-2025/
+- Record number of students to graduate college in China in 2025. Reuters via MarketScreener, 2024. https://ca.marketscreener.com/news/latest/Record-number-of-students-to-graduate-college-in-China-in-2025-48357689/
+- China's youth unemployment hits record under new methodology. Trading Economics, Sep 2025. https://tradingeconomics.com/china/youth-unemployment-rate/news/485930
+- Global Employability University Rankings 2025. Times Higher Education, Nov 2024. https://www.timeshighereducation.com/press-releases/global-employability-university-rankings-2025
+- QS World Future Skills Index 2025. QS, Jan 2025. https://www.qs.com/insights/world-future-skills-index-2025
+
+Global
+- The Future of Jobs Report 2025. World Economic Forum, Jan 2025. https://www.weforum.org/publications/the-future-of-jobs-report-2025/in-full/
+- OECD Skills Outlook 2025: Building the Skills of the 21st Century for All. OECD, Dec 2025. https://www.oecd.org/en/publications/2025/12/oecd-skills-outlook-2025_ac37c7d4.html
+- OECD Skills Outlook 2025 summary. Worlddidac, 2025. https://worlddidac.org/news/oecd-skills-outlook-2025-building-the-skills-of-the-21st-century-for-all/
+- Higher education: figures at a glance. UNESCO, 2025. https://unesdoc.unesco.org/ark:/48223/pf0000394112
+- The number of students in higher education abroad has more than tripled. ICEF Monitor, Jun 2025. https://monitor.icef.com/2025/06/the-number-of-students-in-higher-education-abroad-has-more-than-tripled-since-the-turn-of-the-century
+- Talent Disrupted. Burning Glass Institute and Strada, Feb 2024. https://www.burningglassinstitute.org/s/Talent-Disrupted-03052024.pdf
+- Skills-Based Hiring: The Long Road from Pronouncements to Practice. Burning Glass Institute and Harvard Business School, Feb 2024. https://burningglassinstitute.org/research/skills-based-hiring-2024
+- Work Change Report: AI is coming to work. LinkedIn Economic Graph, Jan 2025. https://economicgraph.linkedin.com/content/dam/me/economicgraph/en-us/PDF/Work-Change-Report.pdf
+- Job Skills Report 2025. Coursera, 2025. https://www.coursera.org/skills-reports/job-skills-2025
+- Time for Class 2025. Tyton Partners, Jun 2025. https://tytonpartners.com/time-for-class-2025/
+- Micro-credentials for lifelong learning and employability: uses and possibilities. OECD, 2023, Utrecht University mirror. https://www.fisme.science.uu.nl/publicaties/literatuur/2023_oecd_micro_credentials.pdf
+
+Market and competitors
+- Higher Education Catalog and Curriculum Management Software Market (360iResearch). GII, 2026. https://www.giiresearch.com/report/ires2083980-higher-education-catalog-curriculum-management.html
+- Global Higher Education Catalog and Curriculum Management Software Market (Verified Market Research). GII. https://www.gii.tw/report/veri1738564-global-higher-education-catalog-curriculum.html
+- Lightcast database description. UC3M Business School. https://business.uc3m.es/en/resources/lightcast
+- Skillabi product page. Lightcast. https://lightcast.io/solutions/software/skillabi
+- Lightcast addresses higher education's relevance crisis (Program Occupation Alignment Score). Lightcast, 3 Jun 2025. https://lightcast.io/resources/blog/skillabi-press-release-june-3-2025
+- Board action item, Lightcast Analyst renewal. Sauk Valley Community College, Jul 2026. https://www.svcc.edu/about/board-of-trustees/board-meetings/jul2026packet/4.13%20Action.pdf
+- Program Alignment for workforce and education leaders. Chmura JobsEQ. https://www.chmura.com/jobseq/education/program-alignment
+- Coursera pricing intelligence. Vendr. https://www.vendr.com/marketplace/coursera-e79d6
+- Educational Impact Suite brochure. Watermark. https://resources.watermarkinsights.com/m/5d239448cccdc27c/original/Watermark-Solutions-Educational-Impact-Suite.pdf
+- Ellucian Journey recognized in 2025 EdTech Awards. Ellucian, 2025. https://www.ellucian.com/newsroom/ellucian-journey-recognized-2025-edtech-awards-workforce-innovation
+- AI Design Assistant. Anthology. https://anthology.com/ai-design-assistant
+- Curriculum Management. Modern Campus. https://moderncampus.com/products/curriculum-management
+- Coursedog vs Kuali. Coursedog. https://coursedog.com/clients/kuali
+- Curriculum management (Kuali). Arizona State University Provost. https://provost.asu.edu/curriculum-development/curriculum-management
+- D2L announces spin-out transaction for D2L Wave. Canada Newswire, Apr 2024. https://newswire.ca/news-releases/d2l-inc-announces-spin-out-transaction-for-d2l-wave-845245430.html
+- Opening address at the launch of the Skills Demand for the Future Economy Report 2025. MOE Singapore, 22 Jan 2025. https://www.moe.gov.sg/news/speeches/20250122-opening-address-by-ms-gan-siow-huang-minister-of-state-ministry-of-education-for-the-launch-of-the-skills-demand-for-the-future-economy-report-2025-marina-bay-sands-expo-and-convention-centre
+- SkillsFuture Singapore tightens course funding guidelines. SSG, Jan 2026. https://www.ssg.gov.sg/newsroom/skillsfuture-singapore-tightens-course-funding-guidelines-and-identifies-skills-trends-to-strengthen-workforce-development/
+- JobKred Pte Ltd, Skills Profiling for Enterprises. IMDA Singapore. https://www.imda.gov.sg/Content-and-News/Innovative-Tech-Companies/JobKred-Pte-Ltd---Skills-Profiling-for-Enterprises-SPRE
+
+Trends and terms
+- Criteria for Accrediting Engineering Programs, 2025-2026. ABET. https://www.abet.org/accreditation/accreditation-criteria/criteria-for-accrediting-engineering-programs-2025-2026/
+- Standard 4: Curriculum. AACSB, 2025. https://www.aacsb.edu/educators/accreditation/business-accreditation/ai-use-cases-for-accreditation/standard-4
+- User Agreement, effective 3 Nov 2025. LinkedIn. https://www.linkedin.com/legal/user-agreement
+- LinkedIn takes legal action to defend member privacy (Proxycurl). LinkedIn, Jan 2025. https://news.linkedin.com/2025/linkedin-takes-legal-action-to-defend-member-privacy
+- Website Terms and Conditions, updated 20 Jul 2026. JobStreet Malaysia. https://my.jobstreet.com/terms
+
+===== FILE: docs/research/hackastone-and-competitors-2026-10-22.md =====
+# Research note: HackaSTONE, readiness levels, pitch evidence, the market and the competitors
+
+Date: 22 October 2026. For the Grand Final: what the competition is, how to state readiness honestly, what judges reward, who buys in universities, who else sells alignment, and what the education evidence allows us to claim. Compiled in a research session on 22 October 2026; sources marked vendor or secondary where they are.
+
+## 1. What HackaSTONE is
+
+- Official site hackastone.varteledu.com. Organiser: the Association of Global AI Technomics, Education and Exchange (GATEE). Theme "Agentic AI for Education": AI assistants for higher education, K-12, preschool and special needs, vocational and lifelong learning. https://hackastone.varteledu.com/
+- Leadership: advisor Chris Dede (Harvard); general chairs Yiyu Cai (NTU), Simon See (NVIDIA), Sui Lin Goei (Windesheim); technical committee co-chairs Wouter van Joolingen (Utrecht) and Qi Cao (NUS). https://hackastone.varteledu.com/steering-committee/
+- Scale and stages: over 50 universities, about 20 countries, over 150 teams; finalists 15 August; winners 29 October 2026 (ITS news, secondary). https://www.its.ac.id/?p=72149
+- Grand Final: 29 October 2026, Amsterdam, inside "AI for Education The Netherlands 2026" (VU Amsterdam day one, UvA and HvA day two). Format: "max 8 min project presentation", "2 mins QnA", then "max 10 mins demonstration including QnA" at a team booth. Prizes: first S$1000 (up to 5 winners), second S$600 (up to 10), third S$350 (up to 15), merit S$200 (up to 20). Teams are strongly encouraged to bring university T-shirts and banners. https://hackastone.varteledu.com/grand-final/
+- Published criteria, four, no weights on the site: Innovation and Novelty ("original thought, creative ingenuity, and a meaningful departure" from existing solutions); Technical Readiness Level ("maturity, robustness, and operational functionality of the implementation", "demonstrable performance"); Commercial Viability ("credible path to adoption"); Educational Significance and Applicability ("contribution to learning outcomes and its capacity for meaningful deployment"). https://hackastone.varteledu.com/spotlight/. The briefing slide photographed on 22 October shows Innovation 30%, Technology Readiness 20%, Commercial Viability 15%, Education Significance 15%, Presentation 10%, Demo 10%, marked "to be firmed"; confirm against the finalist pack.
+- Finalists announced 12 to 14 October 2026 include EmoAgent (SCNU, social-emotional dialogue agent), Charlie humanoid tutor (SUSS), Signify (ITB, deaf learners), Cognitive Arena (UESTC), Cogniva (ITB, learning by teaching), EcoLearn (BVRIT) and EduVent (ITS). Nearly all are learner-facing tutors; a lecturer-facing decision tool is a positioning gap. https://hackastone.varteledu.com/news-update/
+- Past winners: none found; this looks like the first edition.
+
+## 2. Technology Readiness Level, adapted to software
+
+- EU wording (Horizon 2020 Annex G, carried into Horizon Europe): TRL 5 "technology validated in relevant environment"; TRL 6 "technology demonstrated in relevant environment"; TRL 7 "system prototype demonstration in operational environment"; TRL 8 "system complete and qualified"; TRL 9 "actual system proven in operational environment". https://ec.europa.eu/research/participants/data/ref/h2020/wp/2014_2015/annexes/h2020-wp1415-annex-g-trl_en.pdf
+- NASA ESTO software column: TRL 5 "End-to-end software elements implemented and interfaced with existing systems/simulations"; TRL 6 "Prototype implementations of the software demonstrated on full-scale realistic problems", partially integrated, limited documentation; TRL 7 "Prototype software exists having all key functionality available for demonstration and test", integrated with operational systems; TRL 8 fully debugged, documentation complete, verification done; TRL 9 run in the operational environment. https://esto.nasa.gov/trl/
+- NASA reviewer checklist of weak TRL claims: "The 'relevant' environment is not defined" and "Software development is not addressed". Define the relevant environment: real postings, a real syllabus, a real lecturer. https://lws.larc.nasa.gov/vfmo/pdf_files/Common-causes-TRL-Weaknesses-Ver03.080118.pdf
+- Honest placement for Lyceum: software TRL 6. TRL 7 needs one department running it for a term inside its LMS; TRL 8 needs full documentation and verification.
+- EdTech evidence ladders: Digital Promise "Research-Based Design" (ESSA Tier 4) needs a logic model with five citations, an annotated bibliography of five design decisions and one qualitative user study; "Evidence-Based Edtech" (Tier 3) needs a well-designed quantitative study showing benefits for learners. https://digitalpromise.org/product-certifications/
+- US Department of Education letter, 20 August 2026: judge edtech on outcomes, not usage; "Responsible design is the floor". https://www.edsurge.com/news/department-of-education-issues-long-awaited-edtech-guidance-for-states-and-districts. UK DfE EdTech Testbed, 24 September 2026: rapid evaluations then EEF trials, on outcomes, workload and inclusion. https://www.gov.uk/government/publications/edtech-testbed-programme/edtech-testbed-programme-guidance
+
+## 3. Pitch and demo evidence
+
+- Y Combinator, Geoff Ralston (2016): intrigue, do not close; say what you do plainly; three or four "vertebrae"; one presenter; about seven words per slide; restate key points at the close. https://www.ycombinator.com/blog/guide-to-demo-day-pitches/
+- Paul Graham: say what you do in the first sentence; "A demo explains what you've made more effectively than any verbal description"; never have one person talk while operating the computer; no more than four or five numbers; craft a memorable one-liner. https://paulgraham.com/investors.html
+- Stripe Atlas, Patrick McKenzie: have a demo ready in 20 seconds; "Give people a link that drops them into a fully authenticated session on a pre-populated account"; fake slow third-party steps openly; know competitors. https://stripe.com/blog/atlas-pitching
+- A hackathon judge (July 2026): demos that do not run are the largest score differentiator; opening with context wastes a third of the slot; admitting a weakness raised scores; judges ask "who is this for specifically" and "what breaks first at scale"; keep a 60-second screen recording; "Pick the sentence you want a judge to repeat to another judge an hour later." https://dev.to/kurbaitaev/what-judges-actually-score-notes-from-a-year-of-hackathon-judging-3p4l
+- Devpost: the video is one of the first things judges look at, usually under three minutes, elevator pitch first, show the product in use, no slide decks in the video. https://info.devpost.com/blog/6-tips-for-making-a-hackathon-demo-video. MLH: the video should be a demo, not a presentation. https://guide.mlh.com/general-information/judging-and-submissions/judging-plan.md
+- Red Gate, 10 September 2026: across about 150 recorded sessions "the demos failed in 2/3 of the sessions"; record every demo and narrate the recording live; never debug live. https://www.red-gate.com/simple-talk/?p=111618
+
+## 4. Commercial viability in university edtech
+
+- Coursera 10-K (February 2026) cites "the complicated approval process within some of these entities" and "longer sales cycles" abroad. https://www.sec.gov/Archives/edgar/data/1651562/000165156226000015/cour-20251231.htm. A vendor guide (Stackmatix, September 2026) puts higher-education cycles at 6 to 12 months, split between department-led purchases and central IT. https://www.stackmatix.com/blog/gtm-for-edtech-startups. No authoritative pilot-to-licence conversion benchmark was found.
+- Who competitors sell to: Gray DI targets presidents, CFOs, provosts, deans and institutional research; Coursedog targets provosts, registrars and CIOs; Lightcast's quoted customer is a director of institutional research; Chmura's output is "the case you take to your board or your funder". Nobody sells to the lecturer.
+- Pricing anchors (Vendr, secondary): Canvas "$3 to $12 per active user" a year, median contract $21,789. https://www.vendr.com/marketplace/instructure. Coursera for Business $250 to $550 per learner a year. https://www.vendr.com/marketplace/coursera-e79d6. SkillsEngine Team at $999 a month. https://skillsengine.com/. Blackboard's AI Design Assistant is "included as standard" at no extra cost, so AI course generation is already priced at zero inside the LMS. https://www.blackboard.com/ai-design-assistant
+- Tool fatigue: WGU Labs faculty survey (2023): 77% feel "always on the job because of technology", 83% still say edtech enhances teaching, only 30% trust their institution to choose the right products, more than half fear edtech reduces autonomy over course design. https://wgulabs.org/posts/survey-higher-ed-faculty-mixed-on-edtech-and-ai-two-thirds-say-higher-ed-is-headed-in-wrong-direction
+- Tyton Partners, Time for Class 2026 (June 2026, 3,000 or more respondents): 89% of institutions willing to invest more in faculty-facing AI; faculty daily AI use 25% against administrators 43%; 63% of faculty say they assign real-world projects but only 26% of students report completing one; 60% of students against 70% of administrators believe courses prepare for work; 12% of institutions embed career-connected learning across all undergraduate departments. https://tytonpartners.com/time-for-class-2026/
+- EDUCAUSE Horizon Report 2026 (May 2026): leaders put "greater emphasis on alignment with the labor market"; "growing pressure to prove credential ROI"; staffing cuts worsening burnout; "Digital learning is becoming a sustainability strategy"; awareness of AI's environmental cost is growing. https://library.educause.edu/-/media/files/library/2026/5/2026hrteachinglearning.pdf
+
+## 5. Competitors and adjacent products (vendor pages unless noted)
+
+- Lightcast Skillabi (score launched 3 June 2025): program-occupation score 0 to 100 from course descriptions, top-10 missing skills, "18 billion labor market data points", quote-only. Not offered: lecturer-run collection, quoted postings, posting counts, teaching materials. https://lightcast.io/solutions/software/skillabi/align-courses
+- Chmura JobsEQ Program Alignment: CIP-to-SOC alignment, "Over 350 million job postings from 45,000+ sites", board reporting, aggregates only. https://www.chmura.com/jobseq/education/program-alignment
+- Coursedog: approval workflows plus "Labor Market Insights" inside program proposals; program level, source unnamed. https://www.coursedog.com/products/labor-market-insights
+- Watermark Curriculum Strategy: catalogue and approval workflows; no labour-market data on the page. https://www.watermarkinsights.com/discover/lp-curriculum-strategy/
+- Anthology Blackboard AI Design Assistant: modules, questions, rubrics and images from existing course context; no labour-market data, no citations. https://www.blackboard.com/ai-design-assistant
+- Ellucian Journey (February 2026): labour-market intelligence for continuing-education programmes at 100 or more institutions; learner recommendations, not degree-course design. https://www.ellucian.com/newsroom/ellucian-journey-named-2025-campus-technology-product-year
+- Instructure Canvas Career (29 January 2026): skills-first platform for adult and workforce learning. https://www.stocktitan.net/news/INST/instructure-advances-skills-first-workforce-learning-with-broad-w99l8u8l94ks.html
+- Coursera for Campus, Credly by Pearson, Riipen, Gray DI, Jobspeaker, SkillsEngine: content, credentials, projects and programme analytics; none at the lecturer's desk.
+- Academic signal: UNSW (INTED 2026) mapped CLOs to nine skills with machine learning plus educator review "over 90% accuracy across more than 1,000 courses"; taxonomy mapping, not quoted employer evidence. https://library.iated.org/view/CHUGH2026MAP
+- Net gap: no product shows exact posting quotations with honest denominators, lets a lecturer run their own collection, or produces a meeting brief plus an editable teaching pack; all sell to institutional research, provosts or boards.
+
+## 6. Educational significance
+
+- Biggs, constructive alignment: "The key is that all components in the teaching system, the curriculum and its intended outcomes, the teaching methods used, the assessment tasks, are aligned to each other." https://www.biologie.uzh.ch/dam/jcr:94dbcc23-1c4d-4892-bab8-ba16abc4ef66/ConstructiveAlignment_Biggs.pdf
+- Limits: Scandurra et al 2023, Studies in Higher Education, 87 papers: the employability-programme evidence base "is dominated by small-scale case studies and evaluations that are not sufficiently robust" to infer causal effects. https://www.uloyola.es/en/scientific-offer/publications/do-employability-programmes-in-higher-education-improve-skills-and-labour-market-outcomes-a-systematic-review-of-academic-literature-article
+- Does labour-market information change decisions? Baker, Bettinger, Jacob and Marinescu (NBER 2017): students overestimated salaries by about 13% and underestimated employment probability by almost 25%. https://www.nber.org/papers/w23333. Kerr et al (IZA 2015, 97 Finnish schools): a third of students updated beliefs, but enrolment did not shift. https://www.iza.org/publications/dp/9372. Lesson: information shifts beliefs more than behaviour, so the evidence must arrive with a decision and a deliverable. No study of lecturer-targeted labour-market information changing course decisions was found: a pilot can fill it.
+- Employer view, AAC&U Agility Imperative (December 2025, 1,030 employers): 85% say colleges are "doing a good job of preparing students for the workforce"; nine in ten say AI-related skills matter. https://www.aacu.org/research/the-agility-imperative
+
+## Do this in the pitch and the demo
+
+1. Innovation: open with the sentence a judge will repeat an hour later, then name what is new against Skillabi and JobsEQ in 30 seconds.
+2. Innovation: put a receipt on screen in the first minute (exact quotation, posting count, date, source), because no competitor page claims this.
+3. Technology Readiness: state "software TRL 6" in NASA wording, show the check and smoke suites as evidence, and name the TRL 7 step (one department, one term, inside its LMS).
+4. Technology Readiness: demo from a pre-populated, signed-in workspace, mock slow third-party calls and say so, never debug live.
+5. Technology Readiness: answer "what breaks first at scale" before they ask (posting coverage, representativeness, model drift); honest limits score.
+6. Commercial Viability: anchor against free LMS generation (Blackboard), quote-only institutional data (Lightcast, Chmura) and Canvas at $3 to $12 per user, then propose a per-department subscription that rides existing LMS and data contracts.
+7. Commercial Viability: show the demand signal (89% of institutions want to invest in faculty-facing AI; 30% faculty trust in institutional tool choice) and the "no new platform" integration slide; give the 6-to-12-month cycle and a department-led pilot path.
+8. Education Significance: frame the teaching pack as constructive alignment: evidence to intended outcomes to aligned activities and assessment, and trace one quotation through all three.
+9. Education Significance: be candid that employability evidence is small-scale and that information alone shifts beliefs more than behaviour, so Lyceum pairs evidence with a decision and a deliverable; propose a Tier 4 logic model plus lecturer study, then a Tier 3 before-and-after design.
+10. Education Significance: use the perception gap (63% of faculty against 26% of students on real-world projects; 52% underemployed) rather than "universities are failing" (85% of employers say colleges do a good job).
+11. Presentation: one presenter, slides as supporting cast, no more than five numbers, restate three points at the close, rehearse until smooth, and keep hard-question answers ready for the two-minute Q&A.
+12. Demo: at the booth, split narrator and operator, run one end-to-end path, test on venue wifi with an offline mode, keep the narrated 60-second recording and the video as fallbacks, and bring the university banner the organisers ask for.
+
+Unverified or missing: the official weights, the Presentation and Demo descriptors, any Instructure and Lightcast tie, MLH's criteria page text, IES ESSA tier text, pilot-to-licence conversion norms.
+
+===== FILE: docs/research/doors-and-taxonomies-2026-10-22.md =====
+# Research note: the doors, the skill taxonomies, the boards and the standards
+
+Date: 22 October 2026. For the "one core, many doors" architecture: what the assistants universities run can connect to today, what the open Agent Skills standard makes possible, which skill taxonomies are free, which job boards have a documented public API, and which professional curriculum standards can stand as supply-side references. Facts were fetched from official pages in a research session on 22 October 2026 unless marked unverified.
+
+## 1. MCP support in the assistants universities run
+
+- **Copilot Studio.** MCP generally available since 29 May 2025 (Add a tool, search MCP server; generative orchestration required; Streamable HTTP, SSE deprecated). https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/model-context-protocol-mcp-is-now-generally-available-in-microsoft-copilot-studio/. MCP tools in agent workflows generally available 15 July 2026. Licensing: needs the standalone Copilot Studio subscription with Copilot Credits; the Teams plan bundled in Microsoft 365 has no generative orchestration, so no MCP. https://learn.microsoft.com/en-us/microsoft-copilot-studio/requirements-licensing-subscriptions
+- **Microsoft 365 Copilot declarative agents.** MCP plugins are custom actions inside declarative agents; tools discovered at runtime; packaged with the Microsoft 365 Agents Toolkit. https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/overview-plugins. Agents go through submission and approval in the admin centre Agent Registry. https://learn.microsoft.com/en-us/microsoft-365/admin/manage/manage-copilot-agents-integrated-apps. The Copilot add-on is sold on Microsoft 365 A1, A3 and A5 for faculty, staff and students aged 13 and over. https://learn.microsoft.com/en-us/microsoft-365/copilot/copilot-license-options
+- **ChatGPT.** Apps SDK announced 6 October 2025, built on MCP; launch apps included Coursera and Canva; preview for Business, Enterprise and Edu from 13 November 2025. https://openai.com/index/introducing-apps-in-chatgpt/. Admin turns on Developer mode, only owners and admins publish; Enterprise and Edu add role-based access. https://help.openai.com/en/articles/12584461-build-with-the-apps-sdk. Public directory: verified developer identity, OAuth or no-auth only, no API-key flow. https://developers.openai.com/apps-sdk/deploy/submission
+- **Claude.** Custom connectors (remote MCP) on Free, Pro, Max, Team and Enterprise; on Team and Enterprise the Owner adds it under Organization settings, then each member authenticates. https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp. Claude for Education (2 April 2025) added a Canvas LTI and pre-built MCP connectors for Panopto and Wiley on 9 July 2025. https://www.anthropic.com/news/advancing-claude-for-education
+- **Google.** Gemini Enterprise supports a "custom MCP server" data store; the admin must override the policy that blocks custom MCP stores, allow-list domains and register an OAuth client; Streamable HTTP only, public-CA TLS. https://docs.cloud.google.com/gemini/enterprise/docs/connectors/custom-mcp-server/set-up-custom-mcp-server. Consumer and Workspace Gemini app custom MCP: not confirmed. Gemini CLI extensions bundle MCP servers from any GitHub repo.
+
+## 2. Agent Skills and comparable formats
+
+- Claude Skills launched 16 October 2025 (Pro, Max, Team, Enterprise; Claude Code; API); 18 December 2025 added organisation-wide management and a partner skills directory. https://claude.com/blog/skills
+- Open standard: SKILL.md with YAML front matter (name and description required; license, compatibility, metadata, allowed-tools optional) plus scripts, references and assets folders. https://agentskills.io/specification. Repository Apache-2.0 code, CC-BY-4.0 docs. https://github.com/agentskills/agentskills
+- Client showcase lists 46 products: Claude, Claude Code, ChatGPT and Codex, GitHub Copilot, VS Code, Gemini CLI, Cursor, OpenCode, OpenHands, Goose, Kiro, Databricks, Snowflake, JetBrains Junie, Tabnine, Qodo, Roo Code, Mistral Vibe and others. https://agentskills.io/clients
+- OpenAI: ChatGPT and Codex skills "build on the open agent skills standard"; distribution is a plugin (skills plus MCP plus optional UI) in the ChatGPT directory. https://learn.chatgpt.com/docs/build-skills
+- Microsoft: Copilot Studio agents accept uploaded skill files or packages (9 September 2026). https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/skills-overview. GitHub Copilot reads .github/skills, .claude/skills and .agents/skills. https://docs.github.com/en/copilot/concepts/agents/about-agent-skills
+- Google: Gemini CLI supports the standard (`gemini skills install`). https://geminicli.com/docs/cli/skills/
+- Verdict: a product can ship its workflow as one skill folder and it loads unchanged in Claude, ChatGPT and Codex, Copilot Studio, GitHub Copilot and Gemini CLI.
+
+## 3. LMS integration standards
+
+- LTI 1.3 Core plus LTI Advantage: Deep Linking 2.0, Names and Role Provisioning 2.0, Assignment and Grade Services 2.0, on OAuth 2.0, OIDC and JWT. https://standards.1edtech.org/lti/specifications/guides/implementation_guide/implementation-guide
+- QTI 3.0 final 11 May 2022. https://www.1edtech.org/standards/qti/versions. Moodle XML quiz format. https://docs.moodle.org/en/Moodle_XML_format
+- Canvas: LTI 1.3 configuration through Developer Keys; Dynamic Registration lets an admin paste one URL. https://developerdocs.instructure.com/services/canvas/external-tools/lti/file.lti_dev_key_config. Moodle: Site administration, Plugins, External tool, Manage tools, paste the registration URL. https://help.feedbackfruits.com/hc/en-us/articles/23527115832082-How-to-configure-LTI-1-3-for-Moodle
+- 1EdTech certification is bundled with paid Alliance membership; prices not published. https://www.1edtech.org/certification/lti
+- Teams for Education: Graph education APIs (rostering, assignments, submissions) with admin consent. https://learn.microsoft.com/graph/education-concept-overview. Google Classroom add-ons: Workspace Marketplace, Teaching and Learning or Plus licences, domain allow-list. https://developers.google.com/classroom/add-ons
+
+## 4. Open skill taxonomies and APIs
+
+- **ESCO (EU).** 3,039 occupations, 13,939 skills, 28 languages; v1.2.1 (10 December 2025); free download in CSV, JSON-LD, RDF and XML; hosted web API and a local API (EUPL 1.2). Reuse under CC BY 4.0 with attribution. https://esco.ec.europa.eu/en/use-esco/download and https://esco.ec.europa.eu/en/use-esco/use-esco-services-api
+- **O*NET (US).** Database 31.0 under CC BY 4.0; Web Services free with registration and attribution; paid applications need written permission. https://www.onetcenter.org/database.html and https://services.onetcenter.org/help/license_data
+- **Lightcast Open Skills.** 33,000 or more skills; the free tier is for non-profit and public-good work only (50 extractions a month, by approval); "A commercial license is required for for-profit or production use cases." https://docs.lightcast.io/lightcast-api/docs/api-access
+- **Singapore.** Sector Skills Frameworks on skillsfuture.gov.sg; course datasets on data.gov.sg under the Open Data Licence; the SSG developer portal listed no APIs when fetched. https://www.skillsfuture.gov.sg/skills-framework/ict
+- **UK.** Skills England dashboards under OGL v3.0; the DfE and IfATE Standard Skills Classification is a project, not a published dataset. https://www.gov.uk/government/collections/job-and-skills-data
+- **Australia.** The Australian Skills Classification was decommissioned (removed January 2025); the National Skills Taxonomy is in consultation. https://www.jobsandskills.gov.au/work/australian-skills-classification
+- **Malaysia.** MyMahir (TalentCorp) lists 800 or more skills and links to the Critical Occupations List; no API or licence stated. https://mymahir.my/
+- **Nesta.** ojd_daps_skills maps advert text to ESCO or Lightcast, MIT licence; data releases stopped in 2022. https://github.com/nestauk/ojd_daps_skills
+- **ILO ISCO-08.** Four-level occupation classification, free to use without prior authorisation.
+
+## 5. Legitimate job-posting sources
+
+- **Ashby.** GET api.ashbyhq.com/posting-api/job-board/{board}, no credentials shown, full descriptions. https://developers.ashbyhq.com/docs/public-job-posting-api
+- **Workable.** Public endpoint api/accounts/:subdomain returns an account's public jobs. https://workable.readme.io/
+- **SmartRecruiters.** Posting API for customer career sites; per-company postings reported keyless where the customer enables it (unverified). https://developers.smartrecruiters.com/docs/posting-api
+- **Workday.** No documented public API; treat as unavailable.
+- **Adzuna.** REST API with app id and key by registration; quotas in the registration terms. https://developer.adzuna.com/overview
+- **USAJOBS.** Free key; public data may be copied, analysed and redistributed, attribution encouraged. https://developer.usajobs.gov/guides/terms-of-service
+- **EURES.** No documented public API found; do not rely on it.
+- **Indeed.** Publisher API retired 2023; terms forbid scraping. https://www.indeed.com/legal. **LinkedIn.** User Agreement 8.2 bans scraping and bots. https://www.linkedin.com/legal/user-agreement
+- **schema.org JobPosting.** Google requires datePosted, description, hiringOrganization, jobLocation and title on single-job pages; employer career pages that publish it are a legitimate structured source. https://developers.google.com/search/docs/appearance/structured-data/job-posting
+
+## 6. Supply-side curriculum standards
+
+- CS2023 (ACM, IEEE-CS, AAAI), January 2024. https://csed.acm.org/
+- ACM Computing Competencies for Undergraduate Data Science Curricula, 2021; a successor is being presented in 2026. https://dstf.acm.org/
+- SFIA 9, 30 October 2024; free for internal and personal use, a fee-bearing Partner Licence to sell products that use SFIA. https://sfia-online.org/en/about-sfia/licensing-sfia
+- NICE Cybersecurity Workforce Framework, NIST SP 800-181r1 plus components in JSON. https://www.nist.gov/itl/applied-cybersecurity/nice/nice-framework-resource-center/nice-framework-current-versions
+- CDIO Syllabus 3.0 and Standards 3.0. https://research.chalmers.se/en/publication/534193
+- IEA Graduate Attributes and Professional Competencies v4 (Washington Accord). https://www.internationalengineeringalliance.org/accords/washington-accord
+- AACSB 2026 Global Standards (Standards 4, 5 and 6). https://www.aacsb.edu/educators/accreditation/business-accreditation/aacsb-business-accreditation-standards. EQUIS Standards. https://www.efmdglobal.org/accreditations/business-schools/equis/
+
+## 7. The doors are real: examples, 2024 to 2026
+
+- Coursera shipped as an app inside ChatGPT at the Apps SDK launch, 6 October 2025.
+- Claude for Education: Canvas LTI plus Panopto and Wiley MCP connectors, 9 July 2025.
+- University of Hong Kong: a first-year undergraduate Copilot built in Copilot Studio (Microsoft customer story, 27 January 2025). https://www.microsoft.com/en/customers/story/21598-the-university-of-hong-kong-microsoft-365-copilot
+- Florida State University faculty course assistants in Copilot Studio (29 August 2024). https://its.fsu.edu/node/15491. Teesside University staff guide to module agents (July 2025). https://eatsupport.tees.ac.uk/staff/knowledgebase/building-ai-agents-with-microsoft-copilot/
+- EduBase (assessment platform) ships a remote MCP server for claude.ai (2026). https://www.edubase.net/news/feed/51/Connect-EduBase-with-Claude-in-Under-a-Minute-The-Complete-MCP-Integration-Guide-2026-Update
+- Canvas and Moodle MCP servers exist as community projects on personal API tokens; no official MCP repository under instructure, moodle or openedx on 22 October 2026.
+
+## What this means for Lyceum's architecture
+
+1. One remote MCP server (Streamable HTTP, HTTPS with a public CA, OAuth 2.0, or no-auth for read-only tools) is the single door into Claude, ChatGPT, Copilot Studio, Microsoft 365 Copilot declarative agents and Gemini Enterprise.
+2. Do not build SSE; Copilot Studio and Gemini Enterprise have dropped it, and ChatGPT's directory has no API-key path.
+3. Ship a Lyceum skill folder (SKILL.md plus scripts) under the open standard; the same files load in Claude, Codex and ChatGPT plugins, Copilot Studio, GitHub Copilot and Gemini CLI.
+4. Package the same core as a ChatGPT plugin and as a Microsoft 365 declarative agent, and publish per-vendor admin steps, because every door is admin-gated.
+5. The LMS door is LTI 1.3 with Deep Linking (push packs into Canvas and Moodle) plus QTI 3.0 and Moodle XML exports for quizzes; 1EdTech certification waits for revenue.
+6. Key quotations to ESCO (CC BY 4.0, 28 languages) with an O*NET crosswalk and ISCO-08 codes; keep Lightcast optional because commercial use needs a licence.
+7. Sources stay Greenhouse, Lever, Ashby, Workable, SmartRecruiters, USAJOBS and Adzuna, plus schema.org JobPosting from employer career pages; never LinkedIn, Indeed or Workday feeds.
+8. Supply-side references (CS2023, SFIA 9, NICE, CDIO, Washington Accord, AACSB 2026) give the lecturer a legitimate baseline for what a course should contain.
+9. Put licences on the diagram: Copilot Studio needs its own subscription; Lightcast and SFIA commercial use need licences; ESCO, O*NET and USAJOBS are free with attribution.
+10. The proof for judges that the doors are real: Coursera inside ChatGPT, Wiley and Panopto inside Claude for Education, HKU's agent inside Copilot Studio.
+
+===== FILE: docs/research/design-and-video-references-2026-10-22.md =====
+# Research note: Remotion, mascots, honest gamification, dashboards, decks and diagrams
+
+Date: 22 October 2026. References for the overhaul: how to build the demo video in Remotion, what Duolingo's character and motion rules actually say, what the evidence says about gamification for adults, mascot systems in grown-up products, calm dashboard references, deck craft, and how to use product logos in an architecture diagram legitimately. Compiled in a research session on 22 October 2026; dates are publication dates where the page showed one.
+
+## 1. Remotion
+
+- Version: remotion 4.0.537, published 19 October 2026. https://github.com/remotion-dev/remotion/releases
+- Licence (v4): free, including commercial videos, for individuals, for-profit organisations with up to three employees, non-profits and evaluation. Educational institutions do not count as non-profits without written permission, so if the university owns Lyceum, check. Company licence otherwise: Creators $25 a seat a month, Automators $0.01 a render with a $100 monthly minimum. The 5.0 terms count the combined headcount of all involved parties; four or more needs a company licence. https://github.com/remotion-dev/remotion/blob/main/LICENSE.md and https://www.remotion.dev/docs/license/terms
+- Official skills: "Remotion Agent Skills", `npx skills add remotion-dev/skills`, for Claude Code, Codex, Cursor and others; twelve skills including best-practices, create, captions, render, multimedia. Claude Code plugin: `claude plugin marketplace add remotion-dev/claude-code-plugin` then `claude plugin install remotion@remotion`. Any docs URL plus `.md` returns Markdown. https://www.remotion.dev/docs/ai/skills and https://www.remotion.dev/docs/ai/claude-code-plugin. Third-party rule from the house style: scan with SkillSpector before first use.
+- Structure: `src/Root.tsx` registers `<Composition>`; every visual is a pure function of `useCurrentFrame()`; scenes via `<Sequence>` and `<Series>`; motion via `interpolate` and `spring`. https://www.remotion.dev/docs/the-fundamentals
+- Rendering: `npx remotion render <entry> <compId> out/video.mp4`, H.264 default. On Windows, pass props as a file, not inline JSON. https://www.remotion.dev/docs/cli/render
+- Real screens in: Playwright `recordVideo` on `browser.newContext` with `size` equal to the 1920 by 1080 viewport (the file is finalised on `context.close()`), or `page.screenshot`. https://playwright.dev/docs/videos. Put files in `public/` and load with `staticFile()` into `<OffthreadVideo>` or `<Img>`. https://www.remotion.dev/docs/staticfile. Scripted capture beats manual recording because it re-records when the UI changes.
+- Captions and voice: `@remotion/captions` with converters from Whisper (`@remotion/install-whisper-cpp`) and ElevenLabs speech-to-text. https://www.remotion.dev/docs/captions. Text-to-speech templates exist (Azure, Google); ElevenLabs TTS has no official package, so generate one file per scene and size scenes with `calculateMetadata`.
+- Pitfalls: frames render in parallel, so no CSS transitions, no wall clock, `random()` not `Math.random`; load fonts with `@remotion/fonts` and wait before measuring text; `<Img>` not `background-image`; `delayRender` for async data. https://www.remotion.dev/docs/flickering and https://www.remotion.dev/docs/fonts
+- Templates: no official product-demo template; the Recorder template (screen and webcam, Whisper captions) is the closest. https://www.remotion.dev/docs/recorder
+
+## 2. Duolingo design and the gamification evidence
+
+- Building character (November 2020): Duo is geometric, big eyes, detached feet; the human cast shares his shapes; each character has its own correct-answer animation. https://blog.duolingo.com/building-character/
+- Reshaping Duo (November 2013): silhouette first, details cannot rescue a weak shape; quarter-turn pose. https://blog.duolingo.com/reshaping-duo/
+- Shape language (July 2020): few vector shapes, negative space, exaggeration to lower the fear of mistakes. https://blog.duolingo.com/shape-language-duolingos-art-style/
+- World character visemes (November 2022): Rive state machines, 20 or more mouth shapes per character, tiny files. https://blog.duolingo.com/world-character-visemes
+- Core tabs refresh (February 2026): character art in every header "felt forced"; ask "does it serve a purpose?"; whitespace over containers. https://blog.duolingo.com/core-tabs-redesign/
+- Streak critique: El País (December 2024) on guilt notifications; Desirability Lab (October 2023) "Manipulative, yes. Also completely effective." https://desirabilitylab.com/backfill/backfill-2024-302-duolingo-streak-mechanics
+- Evidence: Sailer and Homner 2020, Educational Psychology Review 32, 77-112: g = 0.49 cognitive, 0.36 motivational, 0.25 behavioural, only the cognitive effect robust in rigorous studies. https://link.springer.com/article/10.1007/s10648-019-09498-w. Hamari, Koivisto and Sarsa 2014: effects depend on context and users. Mekler et al 2017: points, levels and leaderboards raised output but not intrinsic motivation. https://doi.org/10.1016/j.chb.2015.08.048. Deci, Koestner and Ryan 1999: contingent rewards undermine intrinsic motivation, informational feedback supports it. https://doi.org/10.1037/0033-2909.125.6.627. These justify "quality feedback, no leaderboards, no streaks".
+- Ethics: Kim and Werbach 2016, four tests (exploitation, manipulation, harm, character). https://doi.org/10.1007/s10676-016-9401-5. Deterding 2014, "Eudaimonic Design". https://mediarep.org/entities/bookpart/8a83c8bf-8ec2-48c2-bbde-0829488ad549/full
+
+## 3. Mascots in grown-up products
+
+- Mailchimp with COLLINS (September 2018): Freddie reduced to a single-colour silhouette; hand-drawn imperfection. https://www.wearecollins.com/work/mailchimp/
+- Notion (Roman Muradov): ink curves, halftone shading, no skin colour, colour only for emphasis. https://designcompass.org/en/2025/01/20/notion/
+- GitHub mascots: never as a logo, never for money, security or apologies; "less is more". https://brand.github.com/graphic-elements/mascots
+- Slack (Alice Lee, 2017): organic imperfect shapes, darker tones to ground an enterprise brand, 40 or more modular spots. https://www.byalicelee.com/slack
+- Headspace with Italic Studio (April 2024): the face gains stress and sadness, a more professional persona for care. https://www.itsnicethat.com/articles/italic-studio-headspace-graphic-design-project-250424
+- Consistency rules: one perspective, fixed stroke weights, scale rules per size class. https://www.rmcad.edu/blog/building-an-illustration-system-shapes-strokes-and-scale-rules/. NN/g (April 2024): abstract illustrations are less memorable; keep one cohesive style. https://www.nngroup.com/articles/picture-superiority-effect/
+- For the seven agents: one shape family like Duo plus cast, forest ink lines, lime as the single accent, moods through brows and posture rather than colour, and GitHub's rule of keeping mascots out of error, billing and security moments.
+
+## 4. Calm but alive dashboards
+
+- Mercury breakdown (October 2026): green primary, red and yellow reserved for errors, dense but strictly hierarchical. https://www.925studios.co/blog/mercury-design-breakdown
+- Robinhood style reference: near-black with one electric lime. https://styles.refero.design/style/48ba2283-13b5-423a-8742-390ea4e53c36
+- Linear design refresh (March 2026): "don't compete for attention you haven't earned", "structure should be felt not seen". https://linear.app/blog/behind-the-latest-design-refresh
+- Google Material 3 Expressive research (I/O 2025): 46 studies, 18,000 or more participants, key elements spotted up to four times faster; "No amount of emotion can compensate for a lack of clarity." https://design.google/library/expressive-material-design-google-research
+- Motion tokens: Atlassian 50 to 150 ms feedback, 150 to 400 ms transitions, reduced-motion support. https://atlassian.design/foundations/motion. Carbon productive against expressive, 70 to 700 ms. https://carbondesignsystem.com/elements/motion/overview/
+- Empty states: Polaris, one primary call to action and action-led titles. https://polaris.shopify.com/components/empty-state. Carbon, positive title and next action. https://carbondesignsystem.com/patterns/empty-states-pattern/
+- Dribbble, Behance and Mobbin surfaced no strong forest-plus-lime dashboard; Mercury, Linear and Robinhood are the better anchors; amanah-wallet's mascot system maps most closely to Headspace and Mailchimp.
+
+## 5. Deck and poster craft
+
+- Kawasaki 10/20/30. https://guykawasaki.com/the-102030-rule-of-powerpoint/
+- Duarte, slide:ology (2008): ideas before slides, diagrams, data, arrangement, movement. https://www.oreilly.com/library/view/slideology/9780596522346/
+- Reynolds, Presentation Zen (2008): the Takahashi method, one huge word or number per slide.
+- Picture superiority: Shepard 1967 (96.7% against 88.4% recognition); Standing 1973. https://doi.org/10.1080/14640747308400340. NN/g caveats: literal, familiar, cohesive, shown long enough, icons still need labels.
+- Mayer, Multimedia Learning: words plus pictures beat words alone in retention and transfer. https://www.cambridge.org/core/books/abs/multimedia-learning/multimedia-principle/C5CE697EE4411F0D8DC0D7B6D6F94EE3
+
+## 6. Architecture diagrams
+
+- C4 notation: title with type and scope, a legend, every line labelled with direction and purpose (never "uses"), technology on lines, consistent colour, legible in black and white. https://c4model.com/diagrams/notation
+- Logo sources: Simple Icons is CC0 as a project but each icon keeps its brand licence; read the per-icon guidelines. https://github.com/simple-icons/simple-icons/blob/develop/DISCLAIMER.md. svgl is MIT for the code, logos remain the owners' property. https://github.com/pheralb/svgl
+- Brand rules: Microsoft, names referentially fine, logos and icons never without a licence. https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general. Google, request form, up to two weeks. https://support.google.com/contact/brand_request_form. Slack media kit. https://slack.com/media-kit. GitHub. https://github.com/logos. Moodle: references to the software are free, logos implying endorsement need permission. https://moodle.com/trademarks/. OpenAI brand page. https://openai.com/brand/. Anthropic has a press kit but no public usage page. Instructure has no public brand page. Safe pattern for a poster: monochrome marks or text labels, "integrates with", no endorsement implied.
+- Tools: Excalidraw (MIT), D2 (MPL-2.0, TALA engine for architecture) https://d2lang.com, Mermaid `architecture-beta` with icon packs (layout can overlap) https://mermaid.js.org/syntax/architecture.html, Figma for the print-grade final.
+
+## Recommended Remotion pipeline
+
+1. Install the Remotion agent skills after a SkillSpector scan; pin remotion 4.0.537 across all `@remotion/*`.
+2. Write the script as scene JSON (title, agent, on-screen action, line of narration).
+3. Drive the real app with Playwright at 1920 by 1080 in demo mode, `recordVideo` per scene plus 2x stills for hero frames, into `public/scenes/`.
+4. Convert WebM to MP4 with `npx remotion ffmpeg`, trim, name by scene id.
+5. Build `Root.tsx` with one composition per cut; a `<Series>` of scenes, each a `<Sequence>` with `OffthreadVideo` plus a forest and lime overlay layer driven by `spring` and `interpolate`.
+6. Load Bricolage Grotesque, Plus Jakarta Sans and JetBrains Mono via `@remotion/fonts` from `public/fonts`, one shared loader awaited before any text measurement.
+7. Narration: team voices recorded per line (the dataworks method), text-to-speech only as a fallback; `calculateMetadata` sets scene length from the audio.
+8. Captions from the transcript with the script's spelling and stress marks, rendered in the caption band with the speaker's colour bar.
+9. Mascot moments: SVG keyframes synced to the frame, one per scene at most, never over an error state.
+10. Render locally with a props file (Windows), check determinism by rendering twice, Lambda only if the team grows past the free tier.
+
+## Do not do (the AI-slop tells)
+
+1. No gradient blobs, glassmorphism or glowing lime on everything; lime is one accent per screen.
+2. No generic isometric 3D cities or stock "people at laptops" illustrations; one flat ink style, seven characters, the same stroke.
+3. No AI-generated text inside graphics, no fake data in screenshots, no mock dashboards; capture the real demo mode and say so.
+4. No ragged mixed-logo wall: monochrome marks, equal height, labelled, with a legend.
+5. No rapid pop-ins and confetti on every transition; Carbon-style durations and a purpose per motion.
+6. No streak counters, leaderboards, badges for volume or guilt notifications anywhere in the UI or the video copy.
+
+===== FILE: src/ui/screens/Landing.tsx =====
+// The public landing page (plan Section 5.1): the loop as the hero with the host
+// at its centre, the problem at three levels with sources, the clauses the
+// accreditors already use, the doors as a monochrome strip labelled planned,
+// what is proven with dates, and two ways in. Every figure here is in
+// docs/claims.md; no synthetic figure appears, and the illustrative research
+// sandbox stays behind sign-in, labelled there.
+
+import { ArrowRight, BookOpen, CheckCircle2, GraduationCap, Globe, MessagesSquare, Monitor, Play, Plug, Puzzle, ShieldCheck, Users } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { ACCREDITOR_MAPPING } from "../../data/accreditors.ts";
+import { PAIN_STATS } from "../../data/painStats.ts";
+import { PROOF } from "../../data/proof.ts";
+import { tourMinutes } from "../../demo/script.ts";
+import { navigate } from "../../app/store.ts";
+import { Button, Tag } from "../primitives/index.tsx";
+import { Mark } from "../mascots/mark.tsx";
+import { LoopGraphic } from "./LoopGraphic.tsx";
+
+/** The doors (plan Section 11.2): where a lecturer reaches the same core. The web workspace is built; the MCP
+ *  server runs locally over an exported workspace (docs/doors.md); the skill folder is written; the rest are planned. */
+type DoorStatus = "Built" | "Local, read-only" | "Written" | "Planned";
+export const DOORS: Array<{ name: string; how: string; icon: LucideIcon; status: DoorStatus }> = [
+  { name: "Web workspace", how: "everything that needs a full editor", icon: Monitor, status: "Built" },
+  { name: "The university's assistant", how: "an MCP server for Claude and other assistants; local over an exported workspace, remote and OAuth planned", icon: Plug, status: "Local, read-only" },
+  { name: "A Lyceum skill", how: "the loop as a skill folder the assistant loads, for the local door", icon: Puzzle, status: "Written" },
+  { name: "Microsoft 365 and Teams", how: "briefs posted as cards that link to the receipts", icon: MessagesSquare, status: "Planned" },
+  { name: "Google Workspace", how: "a brief saved to Docs, a pack to Slides", icon: Globe, status: "Planned" },
+  { name: "The learning platform", how: "launched from the course page through LTI 1.3", icon: GraduationCap, status: "Planned" },
+];
+
+export function LandingScreen() {
+  return <div className="landing dot-grid">
+    <header className="landing-bar on-forest"><span className="wordmark"><Mark size={32} tone="white" leaf />Lyceum</span>
+      <div className="button-row"><Button variant="ghost" onClick={() => window.dispatchEvent(new Event("lyceum:play-demo"))}><Play size={14} /> Watch the tour</Button><Button variant="lime" data-demo-id="index-signin" onClick={() => navigate("login")}>Try it as a lecturer <ArrowRight size={15} /></Button></div></header>
+    <section className="landing-hero">
+      <div className="landing-hero-card card-forest on-forest">
+        <div>
+          <p className="eyebrow">A lecturer's course workspace</p>
+          <h1>Course decisions, with receipts.</h1>
+          <p className="landing-lead">Lyceum turns real job postings into a course decision with receipts, every semester. Watch what employers ask for, report it with every quotation, decide with a reason on record, update the course, teach it, and see what came back. Nothing runs by itself. Nothing changes a course without you.</p>
+          <div className="button-row"><Button variant="lime" onClick={() => navigate("login")}>Try it as a lecturer <ArrowRight size={15} /></Button><Button variant="ghost" onClick={() => window.dispatchEvent(new Event("lyceum:play-demo"))}><Play size={14} /> Watch the tour, about {tourMinutes()} minutes</Button></div>
+        </div>
+        <div className="landing-hero-loop"><LoopGraphic surface="forest" compact /></div>
+      </div>
+    </section>
+
+    <section className="landing-section" aria-labelledby="pain-title">
+      <h2 id="pain-title">The evidence moves faster than the course</h2>
+      <p className="landing-lead">The asks change within a year; the approval cycle takes longer than that. The problem at three levels, one figure each.</p>
+      <div className="stat-grid level-grid">{PAIN_STATS.map((s) => <div className="stat-tile level-tile" key={s.claim} data-demo-id={"level-" + s.scope.toLowerCase()}>
+        <Tag>{s.scope}</Tag>
+        <span className="stat-value">{s.value}</span>
+        <span className="stat-label">{s.label}{s.vendor ? " (a vendor survey)" : ""}.</span>
+        <span className="stat-sources">{s.sources.map((src, i) => <span key={src.url}>{i ? " · " : ""}<a className="stat-source" href={src.url} target="_blank" rel="noreferrer">{src.name}</a></span>)}</span>
+      </div>)}</div>
+      <p className="landing-note">These are desk research: published sources checked on 11 and 22 October 2026, each listed with its link in the project's claims register. Interviews with lecturers in three Asian countries are planned and will add one quotation per level.</p>
+    </section>
+
+    <section className="landing-section" aria-labelledby="accreditors-title">
+      <h2 id="accreditors-title">Each step is a clause the accreditors already use</h2>
+      <p className="landing-lead">The rule already exists; the evidence is what is missing. The names are plain so the loop reads the same in Kuala Lumpur, Amsterdam, Jakarta or Boston.</p>
+      <ol className="accreditor-list">{ACCREDITOR_MAPPING.map((m) => <li key={m.step}>
+        <div className="accreditor-step"><strong>{m.step}</strong><span className="muted">{m.what}</span></div>
+        <div className="accreditor-clauses">{m.clauses.map((c) => <blockquote key={c.body} className="accreditor-clause">
+          <p>{c.paraphrase ? c.quote : "“" + c.quote + "”"}</p>
+          <footer><a href={c.url} target="_blank" rel="noreferrer">{c.body}</a>{c.paraphrase ? <span className="muted"> · paraphrased from a secondary source</span> : null}</footer>
+        </blockquote>)}</div>
+      </li>)}</ol>
+    </section>
+
+    <section className="landing-section" aria-labelledby="doors-title">
+      <h2 id="doors-title">One core, many doors</h2>
+      <p className="landing-lead">The same deterministic core, reached from the tools lecturers already use. Today it is the web workspace and a local, read-only door for an assistant; the other doors are planned.</p>
+      <ul className="doors-strip">{DOORS.map((d) => { const Icon = d.icon; return <li key={d.name} className={d.status === "Planned" ? "" : "is-built"}>
+        <Icon size={24} strokeWidth={1.75} aria-hidden />
+        <strong>{d.name}</strong><span className="muted">{d.how}</span>
+        <Tag tone={d.status === "Built" ? "ok" : d.status === "Planned" ? "neutral" : "accent"}>{d.status}</Tag>
+      </li>; })}</ul>
+    </section>
+
+    <section className="landing-section" aria-labelledby="proof-title">
+      <h2 id="proof-title">What is proven today</h2>
+      <div className="stat-grid">{PROOF.map((p) => <div className="stat-tile" key={p.claim}><span className="stat-value">{p.value}</span><span className="stat-label">{p.label}</span></div>)}</div>
+      <ul className="proof-list">
+        <li><CheckCircle2 size={16} /> Live collection from the Greenhouse and Lever employer board APIs, on request, with the source policy shown.</li>
+        <li><CheckCircle2 size={16} /> Decisions recorded as data: adopt, retain, defer or return, with the reason, the person, the course version and the term.</li>
+        <li><CheckCircle2 size={16} /> Editable teaching packs and brief decks generated from saved data, with speaker notes and no AI-written text.</li>
+        <li><CheckCircle2 size={16} /> Versioned course revisions checked against hours, links and protected foundations.</li>
+        <li><CheckCircle2 size={16} /> A local, read-only door: an MCP server over an exported workspace answers with the same counts and quotations, and writes nothing to the workspace.</li>
+        <li><ShieldCheck size={16} /> Not built yet: shared accounts, the remote and planned doors above, collectors for sites without an API, model-drafted slide text, and any learning claim. The earlier illustrative screens stay behind sign-in, labelled.</li>
+      </ul>
+    </section>
+
+    <section className="landing-section" aria-labelledby="who-title">
+      <h2 id="who-title">Built for the people who do the work</h2>
+      <div className="who-grid">
+        <div><BookOpen size={20} aria-hidden /><strong>Lecturers</strong><p>Prepare a class or a course refresh with evidence you can show.</p></div>
+        <div><Users size={20} aria-hidden /><strong>Coordinators and programme owners</strong><p>Receive briefs with receipts instead of opinions, and record the decision with its reason.</p></div>
+        <div><ShieldCheck size={20} aria-hidden /><strong>Quality and accreditation units</strong><p>Versioned outlines, decision records and cited evidence, exportable for review.</p></div>
+      </div>
+    </section>
+    <section className="landing-section landing-ways" aria-labelledby="ways-title">
+      <h2 id="ways-title">Two ways in</h2>
+      <div className="button-row"><Button variant="primary" onClick={() => navigate("login")}>Try it as a lecturer <ArrowRight size={15} /></Button><Button onClick={() => window.dispatchEvent(new Event("lyceum:play-demo"))}><Play size={14} /> Watch the tour, about {tourMinutes()} minutes</Button></div>
+    </section>
+    <footer className="landing-footer">Local prototype. Workspace storage is local to this browser; file parsing and live collection go through the local API. Built by Hafiz Azman. <Button variant="quiet" onClick={() => navigate("login")}>Sign in</Button></footer>
+  </div>;
+}
+</stdin>
+codex
+## 1. Row by row
+
+M verdicts cover only whether the row states what it records and where it is checked. Clause rows have no claim ids, so they are identified by step and clause.
+
+| claim id | verdict | the evidence | the fix |
+|---|---|---|---|
+| `world-skills-and-approval` | needs a caveat | “workers can expect that two-fifths (39%)”; “twelve to eighteen months for new degree programs to complete the internal review and approval process” | Identify the employer forecast. Name the US institutions, distinguish internal from full approval, and retain Texas Tech's “up to” qualifier. |
+| `asia-talent-shortage` | supported | “77% of 10,095 Asia Pacific employers cannot find the skills they need, from 45% in 2014” | Keep the vendor survey label, sample size, region and dates. |
+| `malaysia-underemployment` | needs a caveat | “32.2%; 1.60 million”; “3.2% (165,900), down from 3.4%” | Keep the employed-graduate denominator for 32.2%. State that 3.2% uses graduates in the labour force. |
+| `proof-checks` | supported | no passage found | Count and date stated; `src/data/suites.ts` and the A6 verification table in `docs/as-built.md` named. |
+| `proof-live-board` | supported | no passage found | One employer and fetch date stated; the as-built record and improvement-plan Section 30 named. |
+| `proof-no-keys` | supported | no passage found | AI-key scope stated; proofs, smokes and `src/agents/mode.ts` named. |
+| `tour-length` | supported | no passage found | Pacing estimate and live-fetch allowance stated; `tourMinutes()` in `src/demo/script.ts` named. |
+| `proof-no-paraphrase` | supported | no passage found | Exact-match rule stated; both proof files and the curriculum smoke's rejected misquote named. |
+| `deck-receipt` | supported | no passage found | Saved sample, duplicate and reviewed denominator stated; `mcp/sample-workspace.json` and generator checks named. |
+| `deck-trl` | needs a caveat | “Prototype implementations of the software demonstrated on full-scale realistic problems”; “real postings, a real syllabus, a real lecturer” | Keep self-assessed. Reconcile the note's proposed real syllabus and lecturer with the registered sample outline and persona. |
+| Watch: AUN-QA 1.4 | supported | “the requirements of the stakeholders, especially the external stakeholders, are gathered, and that these are reflected in the expected learning outcomes” | Keep S and identify the reports reproducing the guide. |
+| Watch: UK QAA, External Expertise | needs a caveat | “Providers are encouraged to engage with employers and other external stakeholders at all stages of course design, approval and review” | Keep “encouraged”. Describe this as guidance in the landing introduction. |
+| Report: MQA COPPA 6.1.6 | supported | “conduct internal and external consultations, market needs and graduate employability analyses.” | Keep P and the clause reference. |
+| Report: NAAC 1.4.1 | supported | “structured feedback on the syllabus from students, teachers, employers and alumni” | Keep S and the paraphrase label. |
+| Decide: ABET Criterion 2 | supported | “involving program constituencies, for the periodic review of these program educational objectives” | Keep the programme educational-objectives scope. |
+| Update: ESG 1.9 | supported | “Institutions should monitor and periodically review their programmes”; “Programmes are reviewed and revised regularly involving students and other stakeholders.” | Keep “should” and the periodic-review scope. |
+| Teach: Biggs, constructive alignment | mislabelled | “the curriculum and its intended outcomes, the teaching methods used, the assessment tasks, are aligned to each other.” | Call this a teaching principle. Widen the landing heading that calls every step an accreditation clause. |
+| Learn: ABET Criterion 4 | supported | “The results of these evaluations must be systematically utilized as input for the program's continuous improvement actions.” | Keep the source and criterion. |
+
+## 2. Source labels
+
+- **WEF:** P correctly describes the original report, but the shown wording should identify 39% as an employer survey forecast. Primary provenance does not establish an observed result.
+- **ManpowerGroup:** correctly V and explicitly described as a vendor survey.
+- **NASA:** P applies to the readiness definition. Lyceum's placement is explicitly self-assessed, so the register does not present an independent award. The department pilot is Lyceum's proposed next step.
+- **No primary/secondary reversal is evident.** AUN-QA and NAAC are correctly S. Hosting an MQA document at IIUM, or a Biggs paper at another university, does not itself make the work secondary. Biggs's problem is its grouping under accreditation clauses.
+
+## 3. Caveats
+
+The landing's imported data files are absent. Conditional rendering does not establish which caveats actually appear.
+
+| Caveat in the note | Register carries it? | Landing carries it? |
+|---|---|---|
+| WEF's 39% is an average forecast for 2025 to 2030, from a survey of over 1,000 employers covering 14 million workers and 55 economies. | Period present; average, forecast status and survey basis omitted. | Unverified in `PAIN_STATS`. |
+| Approval times concern particular US institutions and new degrees. Wayne State describes internal review, with further approvals potentially needed. Texas Tech gives up to 18 months for full approval. Course changes have shorter examples. The note found no global measured approval-to-delivery study. | New-degree scope present; institutional limits, internal/full distinction and “up to” omitted. | Static heading and lead generalize to courses and assert change within a year. Tile wording is unverified. |
+| Manpower's figure is a vendor survey of 10,095 Asia Pacific employers, with a 2014 comparison. | Yes. | Vendor label appears only if `s.vendor` is true; actual data unverified. |
+| DOSM's 32.2% is skill-related underemployment. Hours-based underemployment was 0.8%. Underemployment and unemployment use different denominators. | Below-qualification meaning and employed denominator carried. Labour-force denominator for 3.2% remains implicit. | Unverified in `PAIN_STATS`. |
+| NASA's TRL 6 description includes partial integration and limited documentation; TRL 7 includes key functionality and operational integration. The note proposes a real syllabus and lecturer as the environment. | Self-assessment and sample/persona limits disclosed. Definition qualifiers omitted; the environment differs from the note's proposal. | No explicit TRL wording in the supplied component; other surfaces unverified. |
+| AUN-QA wording was checked in two self-assessment reports reproducing the guide. NAAC supplies a secondary paraphrase. | S labels and NAAC paraphrase carried; AUN reproduction detail remains in the note. | Paraphrase disclosure is conditional; actual clause data and AUN attribution unverified. |
+| QAA encourages engagement; ESG uses “should”; Biggs supplies a teaching principle. | Sources correctly named. | The blanket accreditation-clause heading and “rule” introduction lose these distinctions. |
+| The pain note warns that skills-first statements do not establish changed hiring behaviour. | No actual-hiring claim made. | “Watch what employers ask for” preserves the appropriate scope. |
+
+## 4. Wording
+
+- **World comparison:** replace the general approval claim with:  
+  “WEF's employer survey forecasts that, on average, 39% of workers' existing skills will be transformed or become outdated between 2025 and 2030. Wayne State gives 12 to 18 months for internal approval of new degree programmes; Texas Tech says full approval can take up to 18 months.”
+
+- **Landing timing heading and lead:** neither the five-year WEF forecast nor the institutional approval examples establishes that asks change within a year while course changes take longer. Replace the heading with “Skills forecasts and approval timelines”, and the lead with:  
+  “Employers forecast substantial skill changes by 2030. The cited US approval timelines concern new degree programmes; the note gives shorter timelines for course changes.”
+
+- **Malaysian comparison:** make both populations explicit:  
+  “In 2024, 32.2% of employed Malaysian graduates, 1.60 million people, worked below their qualification. Among graduates in the labour force, 3.2% were unemployed.”
+
+- **Accreditation introduction:** replace the heading with “Standards, guidance and teaching principles behind the loop”. Replace “The rule already exists; the evidence is what is missing” with:  
+  “These sources support stakeholder consultation, programme review and aligned teaching.”
+
+- **Readiness roadmap:** introduce the department pilot as “Our next step is one department running Lyceum for a term inside its LMS.” The note does not establish a universal NASA requirement for that particular duration or setting.
+
+- **“One figure each”:** each level contains several numbers. Use “One comparison per level.”
+
+## 5. Unverified
+
+- **Unverified:** actual landing values, labels, quotation text and caveat flags. `painStats.ts`, `proof.ts`, `accreditors.ts` and the tour implementation are not embedded.
+- **Unverified:** the named software records and execution results. The M verdicts confirm the register's descriptions and check locations only.
+- **Unverified:** deck, brief, poster and film contents, generated PDFs, and the claimed generator and quotation checks.
+- **Unverified:** whether the sample-outline and persona demonstration satisfies NASA's full-scale realistic-problems criterion.
+- **Unverified:** the plan for interviews in “three Asian countries”. This planning count has no register row or embedded supporting plan.
+- **Unverified:** linked documents and their current contents independently of the supplied research notes.
+tokens used
+56,707
+## 1. Row by row
+
+M verdicts cover only whether the row states what it records and where it is checked. Clause rows have no claim ids, so they are identified by step and clause.
+
+| claim id | verdict | the evidence | the fix |
+|---|---|---|---|
+| `world-skills-and-approval` | needs a caveat | “workers can expect that two-fifths (39%)”; “twelve to eighteen months for new degree programs to complete the internal review and approval process” | Identify the employer forecast. Name the US institutions, distinguish internal from full approval, and retain Texas Tech's “up to” qualifier. |
+| `asia-talent-shortage` | supported | “77% of 10,095 Asia Pacific employers cannot find the skills they need, from 45% in 2014” | Keep the vendor survey label, sample size, region and dates. |
+| `malaysia-underemployment` | needs a caveat | “32.2%; 1.60 million”; “3.2% (165,900), down from 3.4%” | Keep the employed-graduate denominator for 32.2%. State that 3.2% uses graduates in the labour force. |
+| `proof-checks` | supported | no passage found | Count and date stated; `src/data/suites.ts` and the A6 verification table in `docs/as-built.md` named. |
+| `proof-live-board` | supported | no passage found | One employer and fetch date stated; the as-built record and improvement-plan Section 30 named. |
+| `proof-no-keys` | supported | no passage found | AI-key scope stated; proofs, smokes and `src/agents/mode.ts` named. |
+| `tour-length` | supported | no passage found | Pacing estimate and live-fetch allowance stated; `tourMinutes()` in `src/demo/script.ts` named. |
+| `proof-no-paraphrase` | supported | no passage found | Exact-match rule stated; both proof files and the curriculum smoke's rejected misquote named. |
+| `deck-receipt` | supported | no passage found | Saved sample, duplicate and reviewed denominator stated; `mcp/sample-workspace.json` and generator checks named. |
+| `deck-trl` | needs a caveat | “Prototype implementations of the software demonstrated on full-scale realistic problems”; “real postings, a real syllabus, a real lecturer” | Keep self-assessed. Reconcile the note's proposed real syllabus and lecturer with the registered sample outline and persona. |
+| Watch: AUN-QA 1.4 | supported | “the requirements of the stakeholders, especially the external stakeholders, are gathered, and that these are reflected in the expected learning outcomes” | Keep S and identify the reports reproducing the guide. |
+| Watch: UK QAA, External Expertise | needs a caveat | “Providers are encouraged to engage with employers and other external stakeholders at all stages of course design, approval and review” | Keep “encouraged”. Describe this as guidance in the landing introduction. |
+| Report: MQA COPPA 6.1.6 | supported | “conduct internal and external consultations, market needs and graduate employability analyses.” | Keep P and the clause reference. |
+| Report: NAAC 1.4.1 | supported | “structured feedback on the syllabus from students, teachers, employers and alumni” | Keep S and the paraphrase label. |
+| Decide: ABET Criterion 2 | supported | “involving program constituencies, for the periodic review of these program educational objectives” | Keep the programme educational-objectives scope. |
+| Update: ESG 1.9 | supported | “Institutions should monitor and periodically review their programmes”; “Programmes are reviewed and revised regularly involving students and other stakeholders.” | Keep “should” and the periodic-review scope. |
+| Teach: Biggs, constructive alignment | mislabelled | “the curriculum and its intended outcomes, the teaching methods used, the assessment tasks, are aligned to each other.” | Call this a teaching principle. Widen the landing heading that calls every step an accreditation clause. |
+| Learn: ABET Criterion 4 | supported | “The results of these evaluations must be systematically utilized as input for the program's continuous improvement actions.” | Keep the source and criterion. |
+
+## 2. Source labels
+
+- **WEF:** P correctly describes the original report, but the shown wording should identify 39% as an employer survey forecast. Primary provenance does not establish an observed result.
+- **ManpowerGroup:** correctly V and explicitly described as a vendor survey.
+- **NASA:** P applies to the readiness definition. Lyceum's placement is explicitly self-assessed, so the register does not present an independent award. The department pilot is Lyceum's proposed next step.
+- **No primary/secondary reversal is evident.** AUN-QA and NAAC are correctly S. Hosting an MQA document at IIUM, or a Biggs paper at another university, does not itself make the work secondary. Biggs's problem is its grouping under accreditation clauses.
+
+## 3. Caveats
+
+The landing's imported data files are absent. Conditional rendering does not establish which caveats actually appear.
+
+| Caveat in the note | Register carries it? | Landing carries it? |
+|---|---|---|
+| WEF's 39% is an average forecast for 2025 to 2030, from a survey of over 1,000 employers covering 14 million workers and 55 economies. | Period present; average, forecast status and survey basis omitted. | Unverified in `PAIN_STATS`. |
+| Approval times concern particular US institutions and new degrees. Wayne State describes internal review, with further approvals potentially needed. Texas Tech gives up to 18 months for full approval. Course changes have shorter examples. The note found no global measured approval-to-delivery study. | New-degree scope present; institutional limits, internal/full distinction and “up to” omitted. | Static heading and lead generalize to courses and assert change within a year. Tile wording is unverified. |
+| Manpower's figure is a vendor survey of 10,095 Asia Pacific employers, with a 2014 comparison. | Yes. | Vendor label appears only if `s.vendor` is true; actual data unverified. |
+| DOSM's 32.2% is skill-related underemployment. Hours-based underemployment was 0.8%. Underemployment and unemployment use different denominators. | Below-qualification meaning and employed denominator carried. Labour-force denominator for 3.2% remains implicit. | Unverified in `PAIN_STATS`. |
+| NASA's TRL 6 description includes partial integration and limited documentation; TRL 7 includes key functionality and operational integration. The note proposes a real syllabus and lecturer as the environment. | Self-assessment and sample/persona limits disclosed. Definition qualifiers omitted; the environment differs from the note's proposal. | No explicit TRL wording in the supplied component; other surfaces unverified. |
+| AUN-QA wording was checked in two self-assessment reports reproducing the guide. NAAC supplies a secondary paraphrase. | S labels and NAAC paraphrase carried; AUN reproduction detail remains in the note. | Paraphrase disclosure is conditional; actual clause data and AUN attribution unverified. |
+| QAA encourages engagement; ESG uses “should”; Biggs supplies a teaching principle. | Sources correctly named. | The blanket accreditation-clause heading and “rule” introduction lose these distinctions. |
+| The pain note warns that skills-first statements do not establish changed hiring behaviour. | No actual-hiring claim made. | “Watch what employers ask for” preserves the appropriate scope. |
+
+## 4. Wording
+
+- **World comparison:** replace the general approval claim with:  
+  “WEF's employer survey forecasts that, on average, 39% of workers' existing skills will be transformed or become outdated between 2025 and 2030. Wayne State gives 12 to 18 months for internal approval of new degree programmes; Texas Tech says full approval can take up to 18 months.”
+
+- **Landing timing heading and lead:** neither the five-year WEF forecast nor the institutional approval examples establishes that asks change within a year while course changes take longer. Replace the heading with “Skills forecasts and approval timelines”, and the lead with:  
+  “Employers forecast substantial skill changes by 2030. The cited US approval timelines concern new degree programmes; the note gives shorter timelines for course changes.”
+
+- **Malaysian comparison:** make both populations explicit:  
+  “In 2024, 32.2% of employed Malaysian graduates, 1.60 million people, worked below their qualification. Among graduates in the labour force, 3.2% were unemployed.”
+
+- **Accreditation introduction:** replace the heading with “Standards, guidance and teaching principles behind the loop”. Replace “The rule already exists; the evidence is what is missing” with:  
+  “These sources support stakeholder consultation, programme review and aligned teaching.”
+
+- **Readiness roadmap:** introduce the department pilot as “Our next step is one department running Lyceum for a term inside its LMS.” The note does not establish a universal NASA requirement for that particular duration or setting.
+
+- **“One figure each”:** each level contains several numbers. Use “One comparison per level.”
+
+## 5. Unverified
+
+- **Unverified:** actual landing values, labels, quotation text and caveat flags. `painStats.ts`, `proof.ts`, `accreditors.ts` and the tour implementation are not embedded.
+- **Unverified:** the named software records and execution results. The M verdicts confirm the register's descriptions and check locations only.
+- **Unverified:** deck, brief, poster and film contents, generated PDFs, and the claimed generator and quotation checks.
+- **Unverified:** whether the sample-outline and persona demonstration satisfies NASA's full-scale realistic-problems criterion.
+- **Unverified:** the plan for interviews in “three Asian countries”. This planning count has no register row or embedded supporting plan.
+- **Unverified:** linked documents and their current contents independently of the supplied research notes.
