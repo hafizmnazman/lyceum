@@ -167,6 +167,11 @@ export async function downloadDeck(spec: DeckSpec): Promise<void> {
   const pptx = await renderDeck(spec, await loadPptx());
   await pptx.writeFile({ fileName: spec.fileName });
 }
+/** Browser or Node: the deck as bytes, for the course file. */
+export async function deckBytes(spec: DeckSpec): Promise<Uint8Array> {
+  const pptx = await renderDeck(spec, await loadPptx());
+  return (await pptx.write({ outputType: "uint8array" })) as Uint8Array;
+}
 /** Node: build the deck as a buffer, for proofs. */
 export async function deckBuffer(spec: DeckSpec): Promise<Uint8Array> {
   const pptx = await renderDeck(spec, await loadPptx());

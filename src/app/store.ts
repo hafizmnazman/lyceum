@@ -42,6 +42,7 @@ import type {
   RelevanceRating,
   ResultUpload,
   RoleAssignment,
+  Rubric,
   Subject,
   SubjectId,
   SubjectVersion,
@@ -85,7 +86,7 @@ import { runAnalogy } from "../agents/analogy.ts";
 import { runSignal } from "../agents/signal.ts";
 import { computeRelevanceRatings } from "../data/market.ts";
 import { backupSummary, parseWorkspaceBackup, serializeWorkspaceBackup, workspaceFingerprint } from "../lib/workspaceBackup.ts";
-import { courseDefinition, curriculumChanges, curriculumImpact, draftStructureError, validateCourseDefinition } from "../lib/curriculum.ts";
+import { courseDefinition, curriculumChanges, curriculumImpact, draftStructureError, validateCourseDefinition, withDerivedFields } from "../lib/curriculum.ts";
 import { sessionIssues, type SaveResult, type SessionInput } from "../lib/teachingPlan.ts";
 import {
   evidenceReport, evidenceSourceError, mappingError, meetingBriefMarkdown, mentionError, normaliseWhitespace, proposeMentions, RECOMMENDATION_LABEL, skillKey, textFingerprint,
@@ -109,8 +110,12 @@ import {
   PEOPLE,
   PROGRAMME,
   ROLE_ASSIGNMENTS,
+  SEED_CLOS,
+  SEED_COURSE_DEFINITIONS,
   SEED_PREDICTIONS,
   SEED_RESULT_UPLOADS,
+  SEED_RUBRICS,
+  SEED_SUBJECTS,
   SEED_SUBJECT_VERSIONS,
   SUBJECTS,
   SURVEY,
@@ -179,6 +184,7 @@ export interface AppState {
   testDrafts: TestDraft[];
   teachingPlans: TeachingPlan[];
   courseDefinitions: Record<string, CourseDefinition>;
+  rubrics: Rubric[]; // the assessment rubrics a course definition's components name (depth plan Section 4.2)
   curriculumDrafts: CurriculumDraft[];
   evidenceSources: EvidenceSource[];
   skillMentions: SkillMention[];
@@ -215,7 +221,7 @@ export interface AppState {
 }
 
 /** A real request in flight. A mascot shows "working" only while one of these exists (plan Section 7.2). */
-export interface InFlightRequest { id: string; kind: "collect" | "parse" | "pack"; subjectId: SubjectId | null; startedAt: string }
+export interface InFlightRequest { id: string; kind: "collect" | "parse" | "pack" | "course-file"; subjectId: SubjectId | null; startedAt: string }
 
 function idleAgents(): Record<AgentId, AgentState> {
   return {
@@ -234,8 +240,8 @@ function seedState(): AppState {
     people: PEOPLE,
     assignments: [...ROLE_ASSIGNMENTS],
     programme: PROGRAMME,
-    subjects: [...SUBJECTS],
-    clos: [...CLOS],
+    subjects: structuredClone(SEED_SUBJECTS),
+    clos: structuredClone(SEED_CLOS),
     survey: SURVEY,
     institution: structuredClone(DEMO_INSTITUTION),
 
@@ -255,7 +261,8 @@ function seedState(): AppState {
     subjectVersions: [...SEED_SUBJECT_VERSIONS],
     testDrafts: [],
     teachingPlans: [],
-    courseDefinitions: {},
+    courseDefinitions: structuredClone(SEED_COURSE_DEFINITIONS),
+    rubrics: structuredClone(SEED_RUBRICS),
     curriculumDrafts: [],
     evidenceSources: [],
     skillMentions: [],
@@ -315,6 +322,7 @@ const PERSISTED_KEYS = [
   "testDrafts",
   "teachingPlans",
   "courseDefinitions",
+  "rubrics",
   "curriculumDrafts",
   "evidenceSources",
   "skillMentions",
@@ -1857,7 +1865,7 @@ export function saveCurriculumRevision(draftId: string, expectedRevision: number
     return { ok: false, error: "Invalid revision rationale or teaching term." };
   const revision = draft.revision + 1;
   set(s => ({ curriculumDrafts: s.curriculumDrafts.map(d => d.id === draftId ? {
-    ...d, definition: structuredClone(input.definition), reason: input.reason.trim(), effectiveTerm: input.effectiveTerm.trim(),
+    ...d, definition: withDerivedFields(input.definition), reason: input.reason.trim(), effectiveTerm: input.effectiveTerm.trim(),
     revision, checkedRevision: null, history: [...d.history, { at: nowIso(), byPersonId: currentPerson()!.id,
       action: "saved", note: "Candidate edited; previous checks invalidated.", revision }] } : d), toast: "Revision saved. Current course version is unchanged." }));
   return { ok: true };

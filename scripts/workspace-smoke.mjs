@@ -49,7 +49,7 @@ try {
   await textIncludes("No courses match");
   await clickText("Clear filters");
   await click("course-open-CS310");
-  await textIncludes("Current learning outcomes");
+  await textIncludes("The course record");
   assert.equal(await page.$eval(selector("rail-course"), (e) => e.getAttribute("aria-current")), "page");
   assert.equal(await page.evaluate(() => location.hash), "#/course/CS310");
   // The step path is reached by keyboard: Tab walks the steps in order and Enter opens one.

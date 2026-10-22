@@ -1007,3 +1007,73 @@ Chosen: (b), because the plan's Section 0.3 lists `docs/screenshots/` among the 
 Reverse it if: the owner wants the captures to follow the build between packages.
 
 To reverse: stop running `git checkout -- docs/screenshots/` after the checks; no code changes.
+
+## 2026-10-22 18:40, D1: the plan's week list and its learning-time line disagree
+
+Options: (a) follow the week list of Section 4.3 (thirteen weeks of 2 lecture and 2 lab hours, week 14 of 1 lecture hour), which gives 27 lecture and 26 lab hours before the revision, a free slot of 1 lecture and 2 lab hours in week 14, and 28 and 28 after. (b) Follow the learning-time line (lecture 28 in both states, lab 25 before and 28 after), which needs two weeks changed from the list and a topic of 3 lab hours.
+
+Chosen: (a), because it keeps the fourteen weeks exactly as listed, keeps the totals the plan states (117 hours before, 120 after) and arrives at the plan's own after state, 28 lecture and 28 lab hours, with the added topic lab-weighted (2 of its 3 hours). The line's 28 and 25 before the revision is an arithmetic slip against its own week list.
+
+Reverse it if: the owner wants the before split exactly as the learning-time line says.
+
+To reverse: `SCHEDULE` and `SLT_BEFORE` in `src/data/sample-course/cs310.ts`, and the figures in `src/prove-course-record.ts`.
+
+## 2026-10-22 18:42, D1: the added topic's default week and split
+
+Options: (a) the next free slot: the first week with fewer hours than the course's usual week (week 14, 1 lecture hour and no lab), with that slot's free hours, lecture first, so three hours typed become 1 lecture and 2 lab hours. (b) Week 6, where the brief's note and the mapping put the dashboard exercise. (c) No week, as before Track C.
+
+Chosen: (a), the plan's own suggestion, because it is a rule a lecturer can see rather than a reading of the brief's words, and it puts the three hours exactly where the outline leaves them free; the tour types no week, so the default decides. The brief's "week 6" names the exercise in week 6's lab session, which Teach holds; the outline's new topic sits in week 14, and the Week field moves it.
+
+Reverse it if: the owner prefers the topic beside week 12's storytelling or in week 6.
+
+To reverse: `nextFreeSlot` and `splitForSlot` in `src/lib/curriculum.ts`, `addTopic` in `src/ui/screens/CurriculumWorkspace.tsx`, `cs310After` in `src/data/sample-course/cs310.ts`.
+
+## 2026-10-22 18:44, D1: the revision editor's targets once a course has five outcomes and fourteen topics
+
+Options: (a) leave every outcome and topic with the same ids, so the tour types its words into CLO1 and week 1 instead of CLO5 and the topic it adds. (b) Give each outcome's wording its own id (`curriculum-outcome-text-<label>`) and point the tour's one step at CLO5's, and keep the plain topic ids only on topics added in the revision, a topic from the baseline carrying its id in its targets. (c) Give the plain id to whichever outcome renders first, after reordering CLO5 to the top.
+
+Chosen: (b), because the plan allows a target change where the richer course requires it (Section 0.2 item 2), the caption and the step order are untouched, and the rule is one a reader can see: the topic you add is the one the plain ids name. The curriculum smoke now names CLO1's wording, and baseline topics fold to one line in the editor so a fourteen-week outline stays readable.
+
+Reverse it if: a later capture needs the old target name; the film is cut by caption, so none does today.
+
+To reverse: the outcome and topic ids in `src/ui/screens/CurriculumWorkspace.tsx`, one target in `src/demo/script.ts`, two lines in `scripts/curriculum-smoke.mjs`.
+
+## 2026-10-22 18:46, D1: the sandbox's catalogue beside the course record
+
+Options: (a) change the seed's `CLOS` and `SUBJECTS` for CS310 to the five outcomes everywhere, which breaks the synthetic survey split and the analogy agent, whose cohort rated one outcome per course. (b) Keep `CLOS` and `SUBJECTS` as the illustrative sandbox's catalogue and seed the store from `SEED_CLOS` and `SEED_SUBJECTS`, which carry the record.
+
+Chosen: (b), because the sandbox computes over a synthetic cohort that knows only CLO5 for CS310, while the workspace opens on the record; the relevance index rates only outcomes with market data, so CS310 still shows CLO5 there and every sandbox number is unchanged (the acceptance scenario's 12 checks pass as before).
+
+Reverse it if: the sandbox is rebuilt on the course record (Track B).
+
+To reverse: the `SEED_*` constants in `src/data/seed.ts` and `seedState` in `src/app/store.ts`.
+
+## 2026-10-22 18:48, D1: the stored learning time and matrix links when a revision changes the outline
+
+Options: (a) store lecture, lab and self-study hours as typed, so the tour's added topic leaves the stored totals behind and the check blocks the revision. (b) Derive them from the topics when a revision is saved (`withDerivedFields`), check the editor's outline as it will be saved, and keep the stored-against-topics check for imported records.
+
+Chosen: (b), because the plan's model stores the totals (Section 4.2) and checks them against the topics, and deriving on save keeps both while the lecturer never types a sum the outline already holds. A matrix level for a programme outcome the mapping drops is dropped with it.
+
+Reverse it if: a campus wants learning time entered by hand.
+
+To reverse: `withDerivedFields` in `src/lib/curriculum.ts`, `saveCurriculumRevision` in `src/app/store.ts`, and the `issues` line in `RevisionEditor`.
+
+## 2026-10-22 18:50, D1: the rubric spreadsheet in the course file
+
+Options: (a) write the rubric as an XLSX in D1 through SheetJS. (b) Put each rubric in the zip as a Markdown table now and leave the spreadsheet to D7, which the plan gives the rubric-to-XLSX writer (Section 10).
+
+Chosen: (b), because the plan places the writer in D7 and the rubric's whole content is already in the Markdown; the manifest says the spreadsheet comes with D7.
+
+Reverse it if: D7 does not land and the owner wants the spreadsheet in Amsterdam.
+
+To reverse: `files()` and the rubrics line of `courseFileManifest` in `src/lib/courseFile.ts`.
+
+## 2026-10-22 18:52, D1: Folio and the course file
+
+Options: (a) record each export as a new event, `course-file-exported`, so Folio can show "done" after it, which adds an event kind the plan's Section 11 does not list. (b) Register the export as a request in flight, so Folio is "working" while the file builds and rests after, and leave "done" until an export is a stored record.
+
+Chosen: (b), because a mood must follow a record (master plan Section 7.2) and the plan names no export record; the build is a real request, so "working" is honest.
+
+Reverse it if: the owner wants exports on the event log, which would also put them on the How it works timeline.
+
+To reverse: `InFlightRequest` in `src/app/store.ts`, `moodsFor` in `src/app/moods.ts`.

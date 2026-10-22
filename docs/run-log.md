@@ -8,7 +8,7 @@ To resume after an interruption, start at the first package below that has no "e
 
 ### Needs the owner (Track C)
 
-None yet.
+1. **The tour's Course caption no longer matches the course** (raised 2026-10-22 18:55, D1). Step 3 of `src/demo/script.ts` reads "Course: what CS310 promises today. One outcome, visualisation; no employer evidence yet." Since D1, CS310 opens on its sample course record with five outcomes and a fourteen-week outline (depth plan Section 4.3), so the caption contradicts the screen it is shown over. The plan freezes the captions (Section 0.2 item 2), the driver forbids editing one, and the plan does not resolve the clash. A replacement for that one caption, same step and order: "Course: what CS310 promises today. Five outcomes and a fourteen-week outline; no employer evidence yet." It touches the film only at D9, when the tour is captured again and the timeline rebuilt from the captions. Until you answer, the caption stays as written. Nothing else waits on this.
 
 ### Packages
 
@@ -34,9 +34,26 @@ None yet.
 - 18:23 five decisions logged (docs/decisions.md).
 - 18:24 ended; committed as "D0: the institution profile at schema 6, the partner mark and its contrast exception, the brand row, the honesty line and the two CLAUDE.md clauses" (the hash is in `git log`).
 
+#### D1, the course record
+
+- 18:25 started; re-read Section 16 and this log; read Sections 1, 3, 4 and 11, the course-records note, `types.ts`, `curriculum.ts`, both Studio panels, the seed, the tour script (no caption or typed value changed), the demo smoke, the runner, the loop's done rules, the moods, `mcp/sample.ts` and the proofs that drive CS310.
+- 18:30 found: the revision editor gives every outcome and every topic the same target ids, and the runner takes the first match, so with five outcomes and fourteen topics the tour would type into CLO1 and week 1; per-outcome ids and plain ids only on added topics, with one tour target changed (docs/decisions.md).
+- 18:32 found: the plan's week list (27 lecture and 26 lab hours before) and its learning-time line (28 and 25) disagree; followed the week list, which reaches the plan's after state of 28 and 28 (docs/decisions.md).
+- 18:35 the model's optional fields (synopsis, methods, references and their gap, the assessment plan with allocations by outcome and Bloom level, learning time, MQF clusters, the matrix levels, topic kinds and splits, activities, readings, misconceptions), `AssessmentComponent`, `Rubric` and the programme's PLOs; the validator's new checks; `src/data/sample-course/cs310.ts` written as a labelled fixture; the store seeded from it, with the sandbox keeping its catalogue (docs/decisions.md); the backup carries rubrics and PLOs.
+- 18:38 check: every suite run on its own: 184 passed, 1 failed (the sample workspace was stale, and `mcp/sample.ts` appended the tour's words to the first outcome, now CLO1); the builder now applies the tour's change through `cs310After`; regenerated.
+- 18:45 the Course step rebuilt for a course with a record: the header with the sample line, the synopsis and learning-time bar, the outcomes with the matrix as a heat table carrying its level in text, the assessment plan with the table of specifications and the rubrics, the schedule, the references with the gap; `src/lib/courseFile.ts` builds the course file with its manifest in EAC's order; Folio works while it builds.
+- 18:50 `src/prove-course-record.ts`, 12 checks, registered in prove:all, the suites table, the landing's check count (197) and its claims row.
+- 18:52 check: the tour's Update inputs driven in the built app: before deriving the learning time the editor showed two errors, so it now checks the outline as it will be saved; after: nothing to fix, the topic in week 14 with 1 lecture and 2 lab hours, the learning time 28 and 28, checked.
+- 18:55 Needs the owner 1 raised: the tour's Course caption says "One outcome" over a course with five.
+- 18:56 check: `npm run smoke` 19 of 19, `smoke:curriculum` 6 of 6, `smoke:integrity` 2 of 2; `smoke:workspace` failed, waiting for the old heading "Current learning outcomes"; the smoke now waits for "The course record": 7 of 7, with the 390 and 320 px layouts.
+- 18:58 looked at the Course step at 1440 and 390 px and at the course file's Markdown; fixed the methods list, the "assessed by" phrasing, the component titles, the repeated kind on every schedule row and the manifest's plurals. The export button in the built app: "7 items in it, 5 not yet built and 3 not included".
+- 19:00 seven decisions logged (docs/decisions.md).
+- 19:03 check on the final build: `npm run typecheck` passed; `npm run prove:all` 197 passed, 0 failed, eighteen suites; `npm run build` passed; `npm run smoke` 19 of 19; `smoke:curriculum` 6 of 6; contrast check OK; no en or em dash in 296 text files; the guide check matches; BACKUP MIGRATION OK; the sample workspace and the partner mark match. The tracked captures the smokes rewrote were restored.
+- 19:04 ended; committed as "D1: the course record for CS310 in the shape of a course file, the Course step rebuilt on it, the course file zip with an honest manifest, and its proofs" (the hash is in `git log`).
+
 ### What is left
 
-D1 to D8c, in the order above. For D8a: claims rows for the sourced examples in the institution's help lines (UTHM's 50% at 55, McGill's floor by class size, McLennan's five), if the register's scope covers settings' help text.
+D2 to D8c, in the order above. For D8a: claims rows for the sourced examples in the institution's help lines (UTHM's 50% at 55, McGill's floor by class size, McLennan's five), if the register's scope covers settings' help text. For D2: the tour's new session takes the week after the last saved one, so fourteen seeded sessions would put it in week 15; seeded sessions must not tick Teach; the tour's pack must stay the lecturer's own (its caption says no AI text). For D8a: claims rows for the sourced examples in the institution's help lines (UTHM's 50% at 55, McGill's floor by class size, McLennan's five), if the register's scope covers settings' help text.
 
 ## Track A
 
@@ -58,7 +75,7 @@ D1 to D8c, in the order above. For D8a: claims rows for the sourced examples in 
 
 8. **The sample's dates** (raised 2026-10-22 10:18, A8) Records built outside the browser take the seed clock, 1 July 2026, so the sample workspace and the screenshots restored from it show a brief, a decision and results dated before the postings they cite were retrieved (9 October 2026). Moving the clock to 22 October fails two journey proofs whose term windows are anchored to July, so this run left it (docs/decisions.md). The live demo uses the browser's real clock. Say if the screenshots' dates should be consistent before the final; it is one change with those two proofs re-anchored. *Resolved 11:08:* the owner asked for the fix; the seed clock is now 22 October 2026 and the proofs build their moments from it (docs/decisions.md).
 
-### Codex queue
+### Codex queue (Track A)
 
 The owner's Codex limit was reached on 22 October and resets within hours. A Codex run also sends the embedded files to OpenAI, which this run's rules forbid without the owner's go-ahead, so no package here waits on Codex. Reviews worth running once the limit resets and the owner approves are listed here with their files and question; each is `codex exec --sandbox read-only` with the files on stdin and the report saved under `docs/review/`.
 
@@ -68,7 +85,7 @@ At 09:18 the owner reported the limit reset; the owner's earlier message asked f
 2. **The claims audit** (09:18, returned 09:28): `docs/claims.md` row by row against the six research notes, with the landing page. Report: `docs/review/astra-claims-audit-2026-10-22.md`.
 3. **The question bank** (10:01, returned 10:11): a sceptical judge's rehearsal of plan Section 14's ten questions against `JUDGES.md`, the booth script, the deck, the claims register, the as-built drafts, the colour audit and `docs/doors.md`. Report: `docs/review/astra-question-bank-2026-10-22.md`.
 
-### Packages
+### Packages (Track A)
 
 #### A0, checkpoint and the branch
 
@@ -303,6 +320,6 @@ At 09:18 the owner reported the limit reset; the owner's earlier message asked f
 - 15:03 the final build deployed: <https://lyceum-rho.vercel.app> serves `index-235_z167.js`, the same file as `dist/`. Published `d8ca740` to the team's main: the help pill and three refreshed captures.
 - 15:05 `docs/as-built.md` stamped and its verification section brought to this run. Nothing is committed; the owner commits.
 
-### What is left
+### What is left (Track A)
 
 Track A is done, apart from the Needs the owner list at the top of this file and the parts that need a person (`docs/as-built.md`, section 6: the voices, the music bed, the Claude Desktop run, the playback test on the presenting laptop, the NVDA and wifi-off passes, the rehearsals). Track B follows in pilot order (plan Section 17.2).

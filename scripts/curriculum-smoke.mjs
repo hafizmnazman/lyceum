@@ -59,7 +59,7 @@ try {
   await fill(selector("curriculum-contact-budget"),"6");
   await fillLabel("Teaching weeks","12");await fillLabel("Programme outcome labels","PLO1, PLO2");
   assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll("label")].find(e=>e.textContent==="Programme outcome labels").nextElementSibling.value),"PLO1, PLO2");
-  await click("curriculum-add-outcome");await fill(selector("curriculum-outcome-text"),"Prepare and justify a cash-flow plan for a small business.");
+  await click("curriculum-add-outcome");await fill(selector("curriculum-outcome-text-CLO1"),"Prepare and justify a cash-flow plan for a small business.");
   await fillLabel("CLO1 achievement evidence","Worked case with an explanation rubric.");
   await fillLabel("CLO1 programme mappings","PLO1, PLO2");
   await click("curriculum-add-topic");await fill(selector("curriculum-topic-title"),"Cash-flow foundations");await fill(selector("curriculum-topic-hours"),"7");
@@ -154,7 +154,7 @@ try {
   assert.match(await packDeck.file("ppt/slides/slide4.xml").async("string"),/Build a cash-flow plan in pairs/);
   await openDisclosure("teach-assessment");await click("assessment-start");await click("assessment-generate");
   const assessmentItems=await state(()=>JSON.stringify(window.__lyceum.getState().testDrafts.find(t=>t.subjectId==="BUS205").items));
-  await click("rail-update");await click("curriculum-start");await fill(selector("curriculum-outcome-text"),"Prepare a cash-flow plan and evaluate its sensitivity.");
+  await click("rail-update");await click("curriculum-start");await fill(selector("curriculum-outcome-text-CLO1"),"Prepare a cash-flow plan and evaluate its sensitivity.");
   await fill(selector("curriculum-reason"),"Extend the outcome to include sensitivity analysis after reviewing the teaching activity.");await fill(selector("curriculum-term"),"2026-S2");
   await click("curriculum-save");await click("curriculum-check");await click("curriculum-ack");await click("curriculum-adopt");
   await page.waitForFunction(()=>window.__lyceum.getState().curriculumDrafts.filter(d=>d.subjectId==="BUS205").every(d=>d.status==="adopted"));

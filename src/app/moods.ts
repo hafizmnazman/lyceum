@@ -44,8 +44,8 @@ export function moodsFor(state: AppState, requests: readonly InFlightRequest[], 
     stuck ? "stuck" : working ? "working" : waiting ? "waiting" : done ? "done" : "resting";
 
   const helpers: Record<HelperRole, HelperMood> = {
-    // Folio reads the course: uploaded syllabi and slides.
-    folio: mood(forCourse("parse") && !pendingResults, pendingCourseDocs, filed.some((d) => (d.kind === "syllabus" || d.kind === "material") && within(d.ingestedAt, now))),
+    // Folio reads the course (uploaded syllabi and slides) and keeps its file: working while the course file builds.
+    folio: mood((forCourse("parse") && !pendingResults) || forCourse("course-file"), pendingCourseDocs, filed.some((d) => (d.kind === "syllabus" || d.kind === "material") && within(d.ingestedAt, now))),
     // Scout collects: working while a fetch runs, waiting while fetched postings are not yet kept.
     scout: mood(forCourse("collect"), Boolean(run && run.status === "done" && run.postings.some((p) => !keptIds.has(p.id))),
       sources.some((s) => within(s.addedAt, now)), Boolean(run && run.status === "failed")),

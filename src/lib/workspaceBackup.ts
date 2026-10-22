@@ -3,14 +3,15 @@ import { draftStructureError } from "./curriculum.ts";
 import { COVERAGE_STAGES, EVIDENCE_KINDS, REQUIREMENT_LEVELS, locateExcerpt, skillKey, textFingerprint } from "./evidence.ts";
 import { institutionError } from "./institution.ts";
 import { DEMO_INSTITUTION } from "../data/institution.ts";
+import { DEMO_PLOS } from "../data/sample-course/cs310.ts";
 
 export const WORKSPACE_DATA_KEYS = ["programme", "assignments", "subjects", "clos", "survey", "institution", "proposals",
   "notifications", "predictions", "resultUploads", "dataSources", "subjectVersions", "testDrafts", "teachingPlans",
-  "courseDefinitions", "curriculumDrafts", "evidenceSources", "skillMentions", "skillMappings", "evidenceBriefs", "evidenceSnapshots", "briefDecisions", "events", "skillLexicon", "relevanceRatings", "idSeq"] as const;
+  "courseDefinitions", "rubrics", "curriculumDrafts", "evidenceSources", "skillMentions", "skillMappings", "evidenceBriefs", "evidenceSnapshots", "briefDecisions", "events", "skillLexicon", "relevanceRatings", "idSeq"] as const;
 /** Records added after schema version 1 (2: evidence, 3: briefs and lexicon, 4: evidence snapshots, 5: the decision record and
  *  the event log, 6: Track C's institution profile and course records). A backup without one restores with its default; Track C
  *  adds its records to schema 6 package by package, so a schema 6 file from an earlier package restores the same way. */
-const LATER_DEFAULTS: Partial<Record<typeof WORKSPACE_DATA_KEYS[number], unknown>> = { evidenceSources: [], skillMentions: [], skillMappings: [], evidenceBriefs: [], evidenceSnapshots: [], briefDecisions: [], events: [], skillLexicon: {}, institution: DEMO_INSTITUTION };
+const LATER_DEFAULTS: Partial<Record<typeof WORKSPACE_DATA_KEYS[number], unknown>> = { evidenceSources: [], skillMentions: [], skillMappings: [], evidenceBriefs: [], evidenceSnapshots: [], briefDecisions: [], events: [], skillLexicon: {}, institution: DEMO_INSTITUTION, rubrics: [] };
 export const BACKUP_SCHEMA_VERSION = 6;
 export type WorkspaceData = Pick<AppState, typeof WORKSPACE_DATA_KEYS[number]>;
 export interface WorkspaceBackup { application: "Lyceum"; schemaVersion: 1 | 2 | 3 | 4 | 5 | 6; exportedAt: string; data: WorkspaceData }
@@ -35,7 +36,7 @@ const event = shape({ at: str, byPersonId: id, action: id, note: opt(str) });
 const item = shape({ id, text: str, targetCLO: id, bloomLevel: bloom, difficulty: num, marks: nonnegative, source: one("agent", "human"), modelAnswer: opt(str) });
 const blueprint = shape({ subjectId: id, totalMarks: num, cloWeights: array(shape({ cloId: id, weight: num }), 1000), bloomMix: dict(num) });
 const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
-  programme: shape({ id, title: str, departmentOwnerId: id, subjectIds: strings }),
+  programme: shape({ id, title: str, departmentOwnerId: id, subjectIds: strings, plos: opt(array(shape({ id, text: str, cluster: str }), 100)) }),
   assignments: array(shape({ personId: id, subjectId: id, hat: one("coordinator", "lecturer") })),
   subjects: array(shape({ id, title: str, programmeId: id, year: integer, semester: integer, cloIds: strings,
     prerequisiteSubjectIds: strings, sharedWithProgrammeIds: strings, status: one("active", "proposed"), currentVersionId: id,
@@ -71,6 +72,8 @@ const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
       resources: str, status: one("draft","ready","delivered"), updatedAt: str, updatedBy: id,
       needsReview: opt(boolean), courseVersionId: opt(id) })) })),
   courseDefinitions: dict(x => record(x)),
+  rubrics: array(shape({ id, subjectId: id, componentId: id, title: str, sample: opt(boolean),
+    criteria: array(shape({ name: str, marks: nonnegative, cloIds: strings, levels: x => Array.isArray(x) && x.length === 4 && x.every(str) }), 100) }), 1000),
   curriculumDrafts: array(shape({ id, subjectId: id, baselineVersionId: id, revision: integer, definition: x => record(x),
     reason: str, effectiveTerm: str, status: one("drafting","adopted","discarded"), checkedRevision: x => x === null || integer(x),
     history: array(shape({ at: str, byPersonId: id, action: one("created","saved","checked","adopted","discarded"), note: str, revision: integer })) })),
@@ -119,10 +122,12 @@ export function parseWorkspaceBackup(raw: string, knownPersonIds: string[]): { o
   const data = parsed.data;
   if (Object.keys(data).some(k => !WORKSPACE_DATA_KEYS.includes(k as typeof WORKSPACE_DATA_KEYS[number]))) return fail("The backup contains unsupported workspace fields.");
   for (const [key, value] of Object.entries(LATER_DEFAULTS)) if (data[key] === undefined) data[key] = structuredClone(value);
+  // The programme's outcomes came with schema 6: an older programme takes the demo programme's eight, as the seed does.
+  if (record(data.programme) && data.programme.plos === undefined) data.programme.plos = structuredClone(DEMO_PLOS);
   for (const key of WORKSPACE_DATA_KEYS) if (!predicates[key](data[key])) return fail("Invalid workspace data in " + key + ".");
   const backup = parsed as unknown as WorkspaceBackup;
   const d = backup.data;
-  if (![d.subjects,d.clos,d.proposals,d.notifications,d.resultUploads,d.subjectVersions,d.testDrafts,d.curriculumDrafts,d.evidenceSources,d.skillMentions,d.evidenceBriefs,d.evidenceSnapshots,d.briefDecisions,d.events].every(uniqueIds))
+  if (![d.subjects,d.clos,d.proposals,d.notifications,d.resultUploads,d.subjectVersions,d.testDrafts,d.curriculumDrafts,d.evidenceSources,d.skillMentions,d.evidenceBriefs,d.evidenceSnapshots,d.briefDecisions,d.events,d.rubrics].every(uniqueIds))
     return fail("The backup contains duplicate record identities.");
   const subjects = new Set(d.subjects.map(s => s.id)), people = new Set(knownPersonIds);
   if (!people.has(d.programme.departmentOwnerId)) return fail("The programme owner is unknown to this local workspace.");
@@ -143,7 +148,10 @@ export function parseWorkspaceBackup(raw: string, knownPersonIds: string[]): { o
       return fail("The active course definition has no preserved version for " + subjectId + ".");
 
     if (definition.title.trim() !== subject.title) return fail("Course title and definition disagree for " + subjectId + ".");
+    if ((definition.assessment ?? []).some(a => a.rubricId !== undefined && !d.rubrics.some(r => r.id === a.rubricId && r.subjectId === subjectId)))
+      return fail("An assessment in " + subjectId + " names a rubric that is not in the backup.");
   }
+  if (d.rubrics.some(r => !subjects.has(r.subjectId))) return fail("A rubric refers to an unknown course.");
   for (const version of d.subjectVersions) {
     if (!subjects.has(version.subjectId) || !people.has(version.changedBy) || version.cloSnapshot.some(c => c.subjectId !== version.subjectId) ||
       (version.definition && draftStructureError(version.definition, version.subjectId))) return fail("Invalid course version.");

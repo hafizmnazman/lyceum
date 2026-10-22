@@ -4,12 +4,16 @@ import { plural } from "../../app/loop.ts";
 import { can, navAllows } from "../../app/roles.ts";
 import {
   definitionForCourse, deleteTeachingSession, downloadPack, navigate, nowIso, saveTeachingPlanDetails, saveTeachingSession,
-  selectSubject, type AppState,
+  selectSubject, trackRequest, type AppState,
 } from "../../app/store.ts";
+import { DEMO_LINE } from "../../data/sample-course/index.ts";
+import { buildCourseFile, type CourseFilePack } from "../../lib/courseFile.ts";
+import { downloadBytes } from "../../lib/download.ts";
+import { AssessmentPanel, hasCourseRecord, OutcomesPanel, ReferencesPanel, SchedulePanel, SynopsisPanel } from "./CourseRecord.tsx";
 import { evidenceReport } from "../../lib/evidence.ts";
-import { sessionDeck } from "../../lib/slides.ts";
+import { deckBytes, sessionDeck } from "../../lib/slides.ts";
 import { planSummary, teachingPlanMarkdown, type SessionInput } from "../../lib/teachingPlan.ts";
-import type { ChangeProposal, Person, Subject, TeachingPlan } from "../../types.ts";
+import type { ChangeProposal, CourseDefinition, Person, Subject, TeachingPlan } from "../../types.ts";
 import { Button, Disclosure, Field, Input, Select, Tag, Textarea } from "../primitives/index.tsx";
 import { Meter } from "../primitives/loop.tsx";
 import { useUnsavedEditor } from "../useUnsavedEditor.ts";
@@ -35,15 +39,17 @@ export function CourseOverview({ state, person, subject, proposal, onPlan, onPro
   const budget = definition?.brief.contactHours ?? null;
   const fresh = evidenceSources === 0;
   const outcomeOf = (id: string) => definition?.outcomes.find((o) => o.id === id);
+  const record = hasCourseRecord(definition) ? definition : null;
   return (
     <div className="course-outline">
       <section className="workspace-panel" aria-labelledby="current-outcomes">
-        <div className="section-heading"><div><h2 id="current-outcomes">Current learning outcomes</h2>
+        <div className="section-heading"><div><h2 id="current-outcomes">{record ? "The course record" : "Current learning outcomes"}</h2>
           <p className="muted">Version <span className="tabular">{subject.currentVersionId}</span> · {plan?.term ? "teaching term " + plan.term : "teaching term not set"} · {evidenceSources ? evidenceSources + " sources, " + quotedRequirements + " quoted requirements" : "no employer evidence yet"}</p></div>
           {fresh ? <Button variant="primary" data-demo-id="course-watch" onClick={onEvidence}>Watch employers</Button>
             : <Button variant="primary" data-demo-id="course-revise" onClick={onCurriculum}>Start a revision</Button>}
         </div>
-        {clos.length ? <ul className="outline-cards">{clos.map((clo) => {
+        {record?.sample ? <p className="sample-line" data-demo-id="course-sample-line"><Tag tone="warn">Sample, synthetic</Tag> {DEMO_LINE}</p> : null}
+        {record ? null : clos.length ? <ul className="outline-cards">{clos.map((clo) => {
           const o = outcomeOf(clo.id);
           return <li key={clo.id} className="outline-card">
             <div className="outline-card-head"><strong>{clo.label ?? clo.id}</strong><Tag>{clo.bloomLevel}</Tag></div>
@@ -53,9 +59,18 @@ export function CourseOverview({ state, person, subject, proposal, onPlan, onPro
         })}</ul> : <p>No outcomes are recorded for this course yet. {fresh ? "Start a revision in Update to write the first outcome; the loop opens once one exists." : ""}</p>}
         {!plan?.term && can(person, "draft-change", { subjectId: subject.id, assignments: state.assignments }) ? <TermSetter subjectId={subject.id} notes={plan?.notes ?? ""} /> : null}
         {fresh && clos.length ? <p className="muted">The course is open. Next, watch what employers ask for; the revision comes after a decision. <Button variant="quiet" onClick={onCurriculum}>Revise the outline now</Button></p> : null}
+        {definition ? <CourseFileExport state={state} subject={subject} definition={definition} /> : null}
       </section>
 
-      <section className="workspace-panel" aria-labelledby="course-topics">
+      {record ? <>
+        <SynopsisPanel definition={record} />
+        <OutcomesPanel definition={record} plos={state.programme.plos ?? []} sessions={summary.sessions} />
+        <AssessmentPanel definition={record} rubrics={state.rubrics.filter((r) => r.subjectId === subject.id)} />
+        <SchedulePanel definition={record} />
+        <ReferencesPanel definition={record} />
+      </> : null}
+
+      {record ? null : <section className="workspace-panel" aria-labelledby="course-topics">
         <div className="section-heading"><div><h2 id="course-topics">Topics and hours</h2></div></div>
         {budget !== null ? <Meter value={contact} max={budget} over={contact > budget} label={<><strong className="tabular">{contact}</strong> of <span className="tabular">{budget}</span> contact hours outlined</>} note={contact > budget ? "Over the contact-hour budget: Update blocks a version like this." : undefined} />
           : <p className="muted">{contact} contact hours outlined; the contact-hour budget is not recorded.</p>}
@@ -64,7 +79,7 @@ export function CourseOverview({ state, person, subject, proposal, onPlan, onPro
           <strong>{t.title || "Untitled topic"}</strong>
           <p className="muted"><span className="tabular">{t.contactHours}</span> contact h · <span className="tabular">{t.selfStudyHours}</span> self-study h{t.cloIds.length ? " · " + t.cloIds.map((id) => outcomeOf(id)?.label ?? id).join(", ") : " · no outcome linked"}</p>
         </li>)}</ol> : <p>No topic outline is recorded yet. Topics, their hours and their links are added in Update.</p>}
-      </section>
+      </section>}
 
       <section className="workspace-panel course-more" aria-label="Course context">
         <Disclosure summary="Teaching context, prerequisites and programme outcomes">
@@ -209,6 +224,40 @@ export function TeachingPlanPanel({ state, person, subject }: CourseProps) {
       {!filtered.length ? <div className="workspace-panel"><h3>{summary.sessions.length ? "No sessions match this filter" : "Build your first teaching session"}</h3><p>{summary.sessions.length ? "Choose All sessions to see the rest of your plan." : "Start with the next class you need to teach. You can save a topic as a draft, then return to add its activity, CLO links and materials."}</p>{!editor && mayEdit && !summary.sessions.length ? <Button onClick={add}>Add the first session</Button> : null}</div> : null}
     </div>
   );
+}
+
+/** The course file in one click (depth plan Section 4.4): the record, the rubrics, the decisions and versions and the packs of
+ *  the saved sessions, with a manifest of what is present, sample, not yet built and not included. Folio works while it builds. */
+function CourseFileExport({ state, subject, definition }: { state: AppState; subject: Subject; definition: CourseDefinition }) {
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  async function build() {
+    setBusy(true); setMessage("");
+    try {
+      await trackRequest("course-file", subject.id, async () => {
+        const institution = state.institution;
+        let mark: Uint8Array | null = null;
+        if (institution.showMark) try { mark = new Uint8Array(await (await fetch(institution.mark.pngSmall)).arrayBuffer()); } catch { mark = null; }
+        const clos = state.clos.filter((c) => c.subjectId === subject.id);
+        const report = evidenceReport(subject.id, state.evidenceSources, state.skillMentions, state.skillMappings, clos);
+        const packs: CourseFilePack[] = [];
+        for (const session of state.teachingPlans.find((p) => p.subjectId === subject.id)?.sessions ?? []) {
+          const spec = sessionDeck(subject, session, clos, report, state.skillMentions, state.evidenceSources, state.people, nowIso());
+          packs.push({ fileName: spec.fileName, week: session.week, bytes: await deckBytes(spec) });
+        }
+        const result = await buildCourseFile({ subject, definition, versionId: subject.currentVersionId, rubrics: state.rubrics.filter((r) => r.subjectId === subject.id),
+          plos: state.programme.plos ?? [], versions: state.subjectVersions.filter((v) => v.subjectId === subject.id), decisions: state.briefDecisions.filter((d) => d.subjectId === subject.id),
+          briefs: state.evidenceBriefs.filter((b) => b.subjectId === subject.id), people: state.people, packs, institution, mark, demoLine: definition.sample ? DEMO_LINE : null, generatedAt: nowIso() });
+        downloadBytes(subject.id + "-course-file.zip", result.bytes);
+        const count = (status: string) => result.manifest.filter((m) => m.status === status).length;
+        setMessage("Course file downloaded: " + (count("present") + count("sample")) + " items in it, " + count("not yet built") + " not yet built and " + count("not included") + " not included, each named in MANIFEST.md.");
+      });
+    } catch { setMessage("The course file could not be built. Nothing was downloaded."); } finally { setBusy(false); }
+  }
+  return <div className="course-file-export">
+    <Button onClick={() => void build()} disabled={busy} aria-busy={busy} data-demo-id="course-file-export"><Download size={15} /> Export the course file (.zip)</Button>
+    {message ? <p role="status" className="save-status" data-demo-id="course-file-message">{message}</p> : null}
+  </div>;
 }
 
 /** The term this loop runs for, set at the start so the brief, the decision, the version and the results all carry it

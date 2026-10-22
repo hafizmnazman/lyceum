@@ -95,7 +95,7 @@ export const SCRIPT: DemoStep[] = [
   { caption: "It opens the course's Decide step: adopt, by Dr Rahman, with the reason.", target: "inbox-open-top", action: "click", settleMs: 3000 },
   { caption: "Update: the change the decision approved. A revision starts from the current version; the baseline is preserved.", target: "rail-update", action: "click", settleMs: 1800 },
   { caption: "He starts a revision.", target: "curriculum-start", action: "click", settleMs: 1600 },
-  { caption: "He sharpens the outcome wording himself.", target: "curriculum-outcome-text", action: "type", value: " with dashboards that answer a stakeholder's question", settleMs: 1000 },
+  { caption: "He sharpens the outcome wording himself.", target: "curriculum-outcome-text-CLO5", action: "type", value: " with dashboards that answer a stakeholder's question", settleMs: 1000 },
   { caption: "A new topic, with its hours declared. Adding a topic never expands the timetable.", target: "curriculum-add-topic", action: "click", settleMs: 1000 },
   { caption: "", target: "curriculum-topic-title", action: "type", value: "Dashboards and data storytelling", settleMs: 600 },
   { caption: "Three contact hours.", target: "curriculum-topic-hours", action: "type", value: "3", settleMs: 800 },

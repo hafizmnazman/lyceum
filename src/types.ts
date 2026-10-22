@@ -55,7 +55,10 @@ export interface Programme {
   title: string; // "Bachelor of Computer Science"
   departmentOwnerId: PersonId;
   subjectIds: SubjectId[];
+  // Track C (depth plan Section 4.2): the programme learning outcomes, each with its MQF cluster.
+  plos?: ProgrammeOutcome[];
 }
+export interface ProgrammeOutcome { id: string; text: string; cluster: string }
 
 export interface Subject {
   id: SubjectId; // "CS220"
@@ -459,27 +462,68 @@ export interface CourseBrief {
   programmeOutcomes: string[];
   notes: string;
 }
+export type PloLevel = "H" | "M" | "L";
 export interface CourseOutcome extends CLO {
   label: string;
   assessmentEvidence: string;
-  ploIds: string[];
+  ploIds: string[]; // kept for compatibility; derived from ploLinks when they exist
+  // Track C (depth plan Section 4.2), optional so older records load:
+  mqfCluster?: string;
+  ploLinks?: Array<{ ploId: string; level: PloLevel }>; // the CLO to PLO matrix, a level in every linked cell
 }
+export type TopicKind = "lecture" | "lab" | "mixed" | "quiz" | "studio" | "review";
 export interface CourseTopic {
   id: string;
   title: string;
   week: number | null;
-  contactHours: number;
+  contactHours: number; // the sum the Meter and the constraint check use; lectureHours + labHours when both are recorded
   selfStudyHours: number;
   cloIds: string[];
   prerequisiteTopicIds: string[];
   protected: boolean;
   resources: string;
+  // Track C, optional:
+  kind?: TopicKind;
+  lectureHours?: number;
+  labHours?: number;
+  activities?: string;
+  readings?: string;
+  misconceptions?: string[];
+}
+export interface Reference { citation: string; year: number | null; note?: string }
+/** Student learning time in hours (depth plan Section 4.3): lecture and lab follow the topics; the total is checked against credits times 40. */
+export interface StudentLearningTime {
+  lecture: number; lab: number; selfStudy: number;
+  assessmentWork: { quizzes: number; labs: number; essay: number; project: number };
+  exam: number;
+}
+/** One assessed component, with its marks allocated by outcome and Bloom level, so the table of specifications is a sum. */
+export interface AssessmentComponent {
+  id: string; title: string; kind: "quiz" | "lab" | "project" | "defence" | "essay" | "exam"; weight: number; week: string;
+  description: string; individual: boolean;
+  allocation: Array<{ cloId: string; bloomLevel: BloomLevel; marks: number }>;
+  rubricId?: string;
 }
 export interface CourseDefinition {
   title: string;
   brief: CourseBrief;
   outcomes: CourseOutcome[];
   topics: CourseTopic[];
+  // Track C (depth plan Section 4.2), optional so older records load:
+  synopsis?: string;
+  methods?: string[];
+  references?: Reference[];
+  referencesGap?: string; // what the reference list still lacks, said rather than hidden
+  assessment?: AssessmentComponent[];
+  slt?: StudentLearningTime;
+  source?: string; // where a sample record's content was modelled from
+  sample?: boolean; // a labelled fixture written for the prototype
+}
+/** A rubric: four levels in the VALUE rubrics' grid shape, with our own descriptors (depth plan Section 4.2). */
+export interface Rubric {
+  id: string; subjectId: SubjectId; componentId: string; title: string;
+  criteria: Array<{ name: string; marks: number; cloIds: string[]; levels: [string, string, string, string] }>; // capstone, milestone 2, milestone 1, benchmark
+  sample?: boolean;
 }
 export interface CurriculumDecision {
   at: string;

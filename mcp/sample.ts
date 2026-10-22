@@ -14,6 +14,7 @@ import { PEOPLE_IDS } from "../src/data/seed.ts";
 import { interpretLocally } from "../src/agents/intakeLocal.ts";
 import { parseSheet } from "../server/parse/sheet.ts";
 import type { CollectedPosting } from "../src/types.ts";
+import { cs310After } from "../src/data/sample-course/cs310.ts";
 
 const ROOT = new URL("../", import.meta.url);
 export const SAMPLE_PATH = fileURLToPath(new URL("mcp/sample-workspace.json", ROOT));
@@ -54,9 +55,8 @@ export async function buildSampleBackup(): Promise<string> {
   store.login(PEOPLE_IDS.sobri);
   const started = store.startCurriculumRevision("CS310"); must(started, "revision");
   const draft = S().curriculumDrafts.find((d) => d.id === started.draftId)!;
-  const definition = structuredClone(draft.definition);
-  definition.outcomes[0].text = definition.outcomes[0].text + " with dashboards that answer a stakeholder's question";
-  definition.topics.push({ id: "CS310-topic-dashboards", title: "Dashboards and data storytelling", week: 6, contactHours: 3, selfStudyHours: 0, cloIds: ["CLO5"], prerequisiteTopicIds: [], protected: false, resources: "" });
+  // The tour's typed change: CLO5's wording extended, the dashboard topic with three contact hours in the next free slot.
+  const definition = cs310After(draft.definition);
   must(store.saveCurriculumRevision(draft.id, draft.revision, { definition, reason: "Adopted by the programme owner on the brief: add a dashboard exercise within the existing hours.", effectiveTerm: "2026/2027 semester 1" }), "save");
   const saved = S().curriculumDrafts.find((d) => d.id === draft.id)!;
   must(store.checkCurriculumRevision(saved.id, saved.revision), "check");

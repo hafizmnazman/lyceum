@@ -2,9 +2,9 @@ import { useRef, useState, type InputHTMLAttributes } from "react";
 import { can } from "../../app/roles.ts";
 import { adoptCurriculumRevision, checkCurriculumRevision, definitionForCourse, discardCurriculumRevision,
   saveCurriculumRevision, startCurriculumRevision, type AppState } from "../../app/store.ts";
-import { BLOOM_LEVELS, curriculumChanges, curriculumImpact, curriculumMarkdown, validateCourseDefinition } from "../../lib/curriculum.ts";
+import { BLOOM_LEVELS, curriculumChanges, curriculumImpact, curriculumMarkdown, learningTime, nextFreeSlot, splitForSlot, topicHours, validateCourseDefinition, withDerivedFields } from "../../lib/curriculum.ts";
 import { downloadText } from "../../lib/download.ts";
-import type { BloomLevel, CourseDefinition, CourseOutcome, CourseTopic, CurriculumDraft, Person, Subject } from "../../types.ts";
+import type { BloomLevel, CourseDefinition, CourseOutcome, CourseTopic, CurriculumDraft, Person, PloLevel, Subject, TopicKind } from "../../types.ts";
 import { Button, Disclosure, Field, Input, Select, Tag, Textarea } from "../primitives/index.tsx";
 import { DecisionCard, Meter } from "../primitives/loop.tsx";
 import { briefDecisionState } from "../../lib/decisions.ts";
@@ -51,16 +51,21 @@ function HoursMeters({ definition }: { definition: CourseDefinition }) {
 }
 
 function DefinitionSummary({ definition }: { definition: CourseDefinition }) {
+  const time = learningTime(definition);
   return <div>
-    <dl className="context-list"><div><dt>Programme</dt><dd>{definition.brief.programmeTitle || "Not supplied"}</dd></div></dl>
+    <dl className="context-list"><div><dt>Programme</dt><dd>{definition.brief.programmeTitle || "Not supplied"}</dd></div>
+      {time ? <div><dt>Student learning time</dt><dd>{time.total} of {time.capacity ?? "an unstated number of"} hours{time.unallocated ? ", " + time.unallocated + " unallocated" : ""}</dd></div> : null}</dl>
     <HoursMeters definition={definition} />
     <h4>Course learning outcomes</h4>
-    {definition.outcomes.length ? <ol className="outcome-list">{definition.outcomes.map(c => <li key={c.id}><strong>{c.label}</strong> · {c.bloomLevel}<p>{c.text}</p>
+    {definition.outcomes.length ? <ol className="outcome-list">{definition.outcomes.map(c => <li key={c.id}><strong>{c.label}</strong> · {c.bloomLevel}{c.mqfCluster ? " · " + c.mqfCluster : ""}<p>{c.text}</p>
       <p className="muted">Achievement: {c.assessmentEvidence || "Not recorded"}</p></li>)}</ol> : <p>Add your course learning outcomes to begin.</p>}
     <h4>Topic sequence</h4>
-    {definition.topics.length ? <ol className="journey-list">{definition.topics.map(t => <li key={t.id}><strong>{t.title}</strong> · {t.contactHours} contact h · {t.selfStudyHours} self-study h · week {t.week ?? "not set"}</li>)}</ol> : <p>No topic outline is recorded yet.</p>}
+    {definition.topics.length ? <ol className="journey-list">{definition.topics.map(t => <li key={t.id}><strong>{t.title}</strong> · {topicHours(t)} · {t.selfStudyHours} self-study h · week {t.week ?? "not set"}</li>)}</ol> : <p>No topic outline is recorded yet.</p>}
   </div>;
 }
+
+const TOPIC_KINDS: Array<[TopicKind, string]> = [["lecture", "Lecture"], ["lab", "Lab"], ["mixed", "Lecture and lab"], ["quiz", "Quiz"], ["studio", "Studio"], ["review", "Review"]];
+const PLO_LEVELS: PloLevel[] = ["H", "M", "L"];
 
 function RevisionEditor({ state, subject, draft, baseline, mayEdit }: Props & {
   draft: CurriculumDraft; baseline: CourseDefinition; mayEdit: boolean;
@@ -73,10 +78,15 @@ function RevisionEditor({ state, subject, draft, baseline, mayEdit }: Props & {
   const [removing, setRemoving] = useState<string | null>(null);
   const [discarding, setDiscarding] = useState(false);
   const [discardNote, setDiscardNote] = useState("");
+  // A topic added in this revision into the schedule's free slot takes that slot's lecture hours first and the rest in the
+  // lab, until its hours are split by hand (lib/curriculum.ts nextFreeSlot).
+  const [autoSplit, setAutoSplit] = useState<Record<string, { lecture: number }>>({});
+  const baselineTopicIds = new Set(baseline.topics.map(t => t.id));
   const alertRef = useRef<HTMLDivElement>(null);
   const dirty = JSON.stringify(definition) !== JSON.stringify(draft.definition) || reason !== draft.reason || term !== draft.effectiveTerm;
   useUnsavedEditor(dirty);
-  const issues = validateCourseDefinition(definition, subject.id, baseline);
+  // Checked as it will be saved: the stored learning time follows the topics on save (lib/curriculum.ts withDerivedFields).
+  const issues = validateCourseDefinition(withDerivedFields(definition), subject.id, baseline);
   const changes = curriculumChanges(baseline, definition);
   const impact = curriculumImpact(baseline, definition, state.teachingPlans.find(p => p.subjectId === subject.id), state.testDrafts.filter(t => t.subjectId === subject.id));
   const stale = subject.currentVersionId !== draft.baselineVersionId;
@@ -96,10 +106,20 @@ function RevisionEditor({ state, subject, draft, baseline, mayEdit }: Props & {
   };
   const addTopic = () => {
     const id = subject.id + "-topic-" + crypto.randomUUID();
-    setDefinition(d => ({ ...d, topics: [...d.topics, { id, title: "", week: null, contactHours: 0, selfStudyHours: 0,
-      cloIds: [], prerequisiteTopicIds: [], protected: false, resources: "" }] }));
+    const slot = nextFreeSlot(definition);
+    setDefinition(d => ({ ...d, topics: [...d.topics, { id, title: "", week: slot?.week ?? null, contactHours: 0, selfStudyHours: 0,
+      cloIds: [], prerequisiteTopicIds: [], protected: false, resources: "", ...(slot ? { kind: "mixed" as const } : {}) }] }));
+    if (slot) setAutoSplit(a => ({ ...a, [id]: { lecture: slot.lecture } }));
     requestAnimationFrame(() => document.getElementById("topic-title-" + id)?.focus());
   };
+  const setContactHours = (t: CourseTopic, contact: number) => patchTopic(t.id, { contactHours: contact,
+    ...(autoSplit[t.id] ? splitForSlot(autoSplit[t.id], contact) : t.labHours !== undefined ? { lectureHours: contact - t.labHours } : {}) });
+  const setLabHours = (t: CourseTopic, text: string) => {
+    setAutoSplit(a => { const next = { ...a }; delete next[t.id]; return next; });
+    patchTopic(t.id, text === "" ? { lectureHours: undefined, labHours: undefined } : { labHours: Number(text), lectureHours: t.contactHours - Number(text) });
+  };
+  const setLevel = (c: CourseOutcome, ploId: string, level: PloLevel | "") => patchOutcome(c.id, { ploLinks: [
+    ...(c.ploLinks ?? []).filter(l => l.ploId !== ploId), ...(level ? [{ ploId, level }] : [])].sort((a, b) => c.ploIds.indexOf(a.ploId) - c.ploIds.indexOf(b.ploId)) });
   const move = (id: string, direction: number) => setDefinition(d => {
     const topics = [...d.topics], at = topics.findIndex(t => t.id === id), next = at + direction;
     if (next < 0 || next >= topics.length) return d;
@@ -137,10 +157,15 @@ function RevisionEditor({ state, subject, draft, baseline, mayEdit }: Props & {
         {!definition.outcomes.length ? <p>No outcomes yet. Add the first outcome; you can save an incomplete draft.</p> : null}
         {definition.outcomes.map(c => <article className="curriculum-object" key={c.id}>
           <div className="form-grid"><Field label="Outcome label"><Input value={c.label} onChange={e => patchOutcome(c.id, { label: e.target.value })} /></Field>
-            <Field label={"Bloom level for " + c.label}><Select value={c.bloomLevel} onChange={e => patchOutcome(c.id, { bloomLevel: e.target.value as BloomLevel })}>{BLOOM_LEVELS.map(b => <option key={b}>{b}</option>)}</Select></Field></div>
-          <Field label={c.label + " wording"}><Textarea id={"outcome-text-" + c.id} data-demo-id="curriculum-outcome-text" value={c.text} onChange={e => patchOutcome(c.id, { text: e.target.value })} /></Field>
+            <Field label={"Bloom level for " + c.label}><Select value={c.bloomLevel} onChange={e => patchOutcome(c.id, { bloomLevel: e.target.value as BloomLevel })}>{BLOOM_LEVELS.map(b => <option key={b}>{b}</option>)}</Select></Field>
+            <Field label={"MQF cluster for " + c.label}><Input value={c.mqfCluster ?? ""} placeholder="e.g. Cognitive skills" onChange={e => patchOutcome(c.id, { mqfCluster: e.target.value || undefined })} /></Field></div>
+          <Field label={c.label + " wording"}><Textarea id={"outcome-text-" + c.id} data-demo-id={"curriculum-outcome-text-" + c.label} value={c.text} onChange={e => patchOutcome(c.id, { text: e.target.value })} /></Field>
           <Field label={c.label + " achievement evidence"} hint="An assessment task, rubric criterion or observable demonstration."><Textarea value={c.assessmentEvidence} onChange={e => patchOutcome(c.id, { assessmentEvidence: e.target.value })} /></Field>
-          <Field label={c.label + " programme mappings"} hint="Use the programme outcome labels recorded above."><CommaListInput values={c.ploIds} onValuesChange={values => patchOutcome(c.id, { ploIds: values })} /></Field>
+          <Field label={c.label + " programme mappings"} hint="Use the programme outcome labels recorded above."><CommaListInput values={c.ploIds} onValuesChange={values => patchOutcome(c.id, { ploIds: values, ...(c.ploLinks ? { ploLinks: c.ploLinks.filter(l => values.includes(l.ploId)) } : {}) })} /></Field>
+          {c.ploIds.length ? <fieldset className="clo-choices plo-levels"><legend>{c.label} in the CLO to PLO matrix: the strength of each link</legend>
+            {c.ploIds.map(ploId => <label key={ploId}><span>{ploId}</span><Select aria-label={c.label + " link to " + ploId} value={c.ploLinks?.find(l => l.ploId === ploId)?.level ?? ""} onChange={e => setLevel(c, ploId, e.target.value as PloLevel | "")}>
+              <option value="">No level</option>{PLO_LEVELS.map(l => <option key={l} value={l}>{l === "H" ? "H, high" : l === "M" ? "M, medium" : "L, low"}</option>)}</Select></label>)}
+          </fieldset> : null}
           {removing === c.id ? <div className="button-row"><span>Remove {c.label}? Topic links will need review.</span><Button variant="danger" onClick={() => { setDefinition(d => ({ ...d, outcomes: d.outcomes.filter(o => o.id !== c.id) })); setRemoving(null); }}>Confirm outcome removal</Button><Button onClick={() => setRemoving(null)}>Keep outcome</Button></div>
             : <Button variant="quiet" aria-label={"Remove " + c.label} onClick={() => setRemoving(c.id)}>Remove outcome</Button>}
         </article>)}
@@ -148,21 +173,35 @@ function RevisionEditor({ state, subject, draft, baseline, mayEdit }: Props & {
       <section className="workspace-panel"><div className="section-heading"><h3>Topic sequence</h3><Button disabled={definition.topics.length >= 300} data-demo-id="curriculum-add-topic" onClick={addTopic}>Add topic</Button></div>
         <p className="muted">Declare time and dependencies. Adding a topic does not expand the available budget.</p>
         {!definition.topics.length ? <p>No topics recorded yet. Add your current outline before evaluating coverage.</p> : null}
-        {definition.topics.map((t, index) => <article className="curriculum-object" key={t.id}>
-          <div className="section-heading"><h4>Topic {index + 1}</h4><div className="button-row"><Button aria-label={"Move " + (t.title || "topic") + " earlier"} disabled={index === 0} onClick={() => move(t.id,-1)}>Move up</Button><Button aria-label={"Move " + (t.title || "topic") + " later"} disabled={index === definition.topics.length - 1} onClick={() => move(t.id,1)}>Move down</Button></div></div>
-          <Field label={"Topic " + (index + 1) + " title"}><Input id={"topic-title-" + t.id} data-demo-id="curriculum-topic-title" value={t.title} onChange={e => patchTopic(t.id, { title: e.target.value })} /></Field>
+        {definition.topics.map((t, index) => {
+          // A topic added in this revision carries the editor's plain ids and opens; a topic from the baseline is folded,
+          // with ids scoped to it, so a long outline stays readable and the tour's target is the topic it adds.
+          const isNew = !baselineTopicIds.has(t.id);
+          const target = (name: string) => (isNew ? name : name + "-" + t.id);
+          return <details className="curriculum-object topic-entry" key={t.id} open={isNew || undefined}>
+          <summary><span className="topic-entry-head"><strong>Topic {index + 1}{t.week ? " · week " + t.week : ""}</strong> <span>{t.title || "Untitled topic"}</span> <span className="muted">{topicHours(t)}{isNew ? " · added in this revision" : ""}</span></span></summary>
+          <div className="topic-entry-body">
+          <div className="button-row"><Button aria-label={"Move " + (t.title || "topic") + " earlier"} disabled={index === 0} onClick={() => move(t.id,-1)}>Move up</Button><Button aria-label={"Move " + (t.title || "topic") + " later"} disabled={index === definition.topics.length - 1} onClick={() => move(t.id,1)}>Move down</Button></div>
+          <Field label={"Topic " + (index + 1) + " title"}><Input id={"topic-title-" + t.id} data-demo-id={target("curriculum-topic-title")} value={t.title} onChange={e => patchTopic(t.id, { title: e.target.value })} /></Field>
           <div className="form-grid"><Field label="Week (optional)"><Input type="number" min={1} max={52} value={t.week ?? ""} onChange={e => patchTopic(t.id, { week: optionalNumber(e.target.value) })} /></Field>
-            <Field label="Contact hours"><Input type="number" min={0} step="any" data-demo-id="curriculum-topic-hours" value={t.contactHours} onChange={e => patchTopic(t.id, { contactHours: Number(e.target.value) })} /></Field>
+            <Field label="Kind of session"><Select value={t.kind ?? ""} onChange={e => patchTopic(t.id, { kind: (e.target.value || undefined) as TopicKind | undefined })}><option value="">Not recorded</option>{TOPIC_KINDS.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</Select></Field>
+            <Field label="Contact hours"><Input type="number" min={0} step="any" data-demo-id={target("curriculum-topic-hours")} value={t.contactHours} onChange={e => setContactHours(t, Number(e.target.value))} /></Field>
+            <Field label="Of which lab hours" hint={t.labHours !== undefined ? (t.lectureHours ?? 0) + ((t.lectureHours ?? 0) === 1 ? " lecture hour" : " lecture hours") : "Blank when the split is not recorded."}><Input type="number" min={0} step="any" value={t.labHours ?? ""} onChange={e => setLabHours(t, e.target.value)} /></Field>
             <Field label="Self-study hours"><Input type="number" min={0} step="any" value={t.selfStudyHours} onChange={e => patchTopic(t.id, { selfStudyHours: Number(e.target.value) })} /></Field></div>
-          <fieldset className="clo-choices"><legend>Outcomes supported by this topic</legend>{definition.outcomes.map(c => <label key={c.id}><input type="checkbox" checked={t.cloIds.includes(c.id)} data-demo-id={"topic-outcome-" + c.label} onChange={e => patchTopic(t.id, { cloIds: e.target.checked ? [...t.cloIds,c.id] : t.cloIds.filter(id => id !== c.id) })} /><span>{c.label} · {c.text || "Wording to add"}</span></label>)}
+          <fieldset className="clo-choices"><legend>Outcomes supported by this topic</legend>{definition.outcomes.map(c => <label key={c.id}><input type="checkbox" checked={t.cloIds.includes(c.id)} data-demo-id={target("topic-outcome-" + c.label)} onChange={e => patchTopic(t.id, { cloIds: e.target.checked ? [...t.cloIds,c.id] : t.cloIds.filter(id => id !== c.id) })} /><span>{c.label} · {c.text || "Wording to add"}</span></label>)}
             {t.cloIds.filter(id => !definition.outcomes.some(c => c.id === id)).map(id => <div key={id} className="button-row"><span className="form-error">Removed outcome: {id}</span><Button onClick={() => patchTopic(t.id, { cloIds: t.cloIds.filter(x => x !== id) })}>Remove broken link</Button></div>)}</fieldset>
           <fieldset className="clo-choices"><legend>Prerequisite topics</legend>{definition.topics.filter(p => p.id !== t.id).map(p => <label key={p.id}><input type="checkbox" checked={t.prerequisiteTopicIds.includes(p.id)} onChange={e => patchTopic(t.id, { prerequisiteTopicIds: e.target.checked ? [...t.prerequisiteTopicIds,p.id] : t.prerequisiteTopicIds.filter(id => id !== p.id) })} /><span>{p.title || "Untitled topic"}</span></label>)}
             {t.prerequisiteTopicIds.filter(id => !definition.topics.some(p => p.id === id)).map(id => <div key={id} className="button-row"><span className="form-error">Removed prerequisite: {id}</span><Button onClick={() => patchTopic(t.id, { prerequisiteTopicIds: t.prerequisiteTopicIds.filter(x => x !== id) })}>Remove broken dependency</Button></div>)}</fieldset>
           <label className="checkbox-line"><input type="checkbox" checked={t.protected} disabled={baseline.topics.some(b => b.id === t.id && b.protected)} onChange={e => patchTopic(t.id, { protected: e.target.checked })} />Protect this foundational or mandatory topic from removal</label>
+          <Field label="Activities"><Textarea value={t.activities ?? ""} onChange={e => patchTopic(t.id, { activities: e.target.value })} /></Field>
+          <Field label="Readings"><Textarea value={t.readings ?? ""} onChange={e => patchTopic(t.id, { readings: e.target.value })} /></Field>
+          <Field label="Misconceptions to address" hint="One per line."><Textarea value={(t.misconceptions ?? []).join("\n")} onChange={e => patchTopic(t.id, { misconceptions: e.target.value.split("\n") })} /></Field>
           <Field label="References and resources"><Textarea value={t.resources} onChange={e => patchTopic(t.id, { resources: e.target.value })} /></Field>
           {removing === t.id ? <div className="button-row"><span>Remove {t.title || "this topic"}?</span><Button variant="danger" onClick={() => { setDefinition(d => ({ ...d, topics: d.topics.filter(x => x.id !== t.id) })); setRemoving(null); }}>Confirm topic removal</Button><Button onClick={() => setRemoving(null)}>Keep topic</Button></div>
             : <Button variant="quiet" disabled={baseline.topics.some(b => b.id === t.id && b.protected)} aria-label={"Remove topic " + (t.title || String(index + 1))} onClick={() => setRemoving(t.id)}>Remove topic</Button>}
-        </article>)}
+          </div>
+        </details>;
+        })}
       </section>
       <section className="workspace-panel"><h3>Decision context</h3>
         <Field label="Why make this revision?"><Textarea data-demo-id="curriculum-reason" value={reason} onChange={e => setReason(e.target.value)} placeholder="Record the evidence, educational reason and trade-offs you considered." /></Field>
