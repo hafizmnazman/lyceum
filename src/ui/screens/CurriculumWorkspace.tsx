@@ -1,6 +1,6 @@
 import { useRef, useState, type InputHTMLAttributes } from "react";
 import { can } from "../../app/roles.ts";
-import { adoptCurriculumRevision, checkCurriculumRevision, definitionForCourse, discardCurriculumRevision, nowIso,
+import { adoptCurriculumRevision, checkCurriculumRevision, definitionForCourse, discardCurriculumRevision, nowIso, openRecap,
   saveCurriculumRevision, startCurriculumRevision, type AppState } from "../../app/store.ts";
 import { BLOOM_LEVELS, curriculumChanges, curriculumImpact, curriculumMarkdown, learningTime, nextFreeSlot, splitForSlot, topicHours, validateCourseDefinition, withDerivedFields } from "../../lib/curriculum.ts";
 import { downloadText } from "../../lib/download.ts";
@@ -29,6 +29,13 @@ export function CurriculumPanel({ state, person, subject }: Props) {
   const mayEdit = can(person, "draft-change", { subjectId: subject.id, assignments: state.assignments });
   const [error, setError] = useState("");
   const baseline = draft && state.subjectVersions.find(v => v.id === draft.baselineVersionId)?.definition || current;
+  // With no revision open, the change in use: the current version against the one it replaced (depth plan Section 6.2).
+  const inUse = state.subjectVersions.find(v => v.id === subject.currentVersionId);
+  const replaced = inUse ? previousVersion(state, inUse) : null;
+  const lastChange = !draft && inUse?.definition && replaced?.definition ? { from: replaced, to: inUse, before: replaced.definition, after: inUse.definition } : null;
+  const lastPack = lastChange ? sessionInWeek(state.teachingPlans.find(p => p.subjectId === subject.id)?.sessions ?? [], changedOutcomeWeek(lastChange.after, lastChange.before)) : null;
+  const makeLastPack = packMaker(state, subject, null, nowIso());
+  const lastSlides = lastChange && lastPack ? deckDiff(makeLastPack(lastPack, lastChange.from), makeLastPack(lastPack, lastChange.to)) : [];
   return <div>
     <div className="section-heading"><div><h2>Outcomes & topics</h2></div>
       <Button onClick={() => downloadText(subject.id + "-course-outline.md", curriculumMarkdown(subject, current, subject.currentVersionId))}>Export current outline</Button>
@@ -43,6 +50,15 @@ export function CurriculumPanel({ state, person, subject }: Props) {
           const result = startCurriculumRevision(subject.id); if (!result.ok) setError(result.error);
         }}>Start course revision</Button> : <p className="muted">Only assigned lecturers and coordinators can edit this course.</p>}
       </section>}
+    {lastChange ? <section className="workspace-panel revision-compare" aria-labelledby="update-last-change-title" data-demo-id="update-last-change">
+      <h3 id="update-last-change-title">The change in use: {lastChange.to.id} against {lastChange.from.id}</h3>
+      <ChangeSummary text={changeSummary(lastChange.before, lastChange.after, lastSlides)} />
+      <h4>Outcomes</h4>
+      <OutcomeChanges before={lastChange.before} after={lastChange.after} />
+      <h4>Topics and hours</h4>
+      <TwoColumn before={lastChange.before} after={lastChange.after} beforeLabel={lastChange.from.id} afterLabel={lastChange.to.id} />
+      <p className="muted">History has the decision behind this version{lastPack ? " and the week " + lastPack.week + " pack under both versions" : ""}.</p>
+    </section> : null}
   </div>;
 }
 
@@ -279,7 +295,8 @@ export function CurriculumHistoryPanel({ state, subject }: { state: AppState; su
   const sessions = state.teachingPlans.find(p => p.subjectId === subject.id)?.sessions ?? [];
   const openDecision = (id: string) => { const el = document.getElementById("decision-" + id); el?.scrollIntoView({ block: "center" }); el?.focus({ preventScroll: true }); };
   return <div>
-    <section className="workspace-panel" aria-labelledby="history-title"><h2 id="history-title">Versions and decisions</h2>
+    <section className="workspace-panel" aria-labelledby="history-title"><div className="section-heading"><h2 id="history-title">Versions and decisions</h2>
+      <Button onClick={() => openRecap(subject.id)} data-demo-id="history-recap">The term recap</Button></div>
       <p className="muted">Newest first. A local version keeps the outline, the reason and the term; it does not attest university approval.</p>
       {entries.length ? <ol className="history-timeline" data-demo-id="history-timeline">{entries.map(e => { if (e.kind === "version") {
         const prev = previousVersion(state, e.v);

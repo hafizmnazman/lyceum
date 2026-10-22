@@ -1227,3 +1227,93 @@ Chosen: (b), because the proof caught (a) calling an unrelated slide a rename, a
 Reverse it if: lecturer-written slides arrive and renames with all-new text become common.
 
 To reverse: `match` inside `deckDiff` in `src/lib/diff.ts`, and the renamed-slide test in `src/prove-diff.ts`.
+
+## 2026-10-22 20:38, D6a: how the walk reaches the tour's end state
+
+Options: (a) replay the tour's actions in the browser before the first stop, which takes minutes and needs the network or the saved sample. (b) Fetch the sample workspace, the tour's end state that `node mcp/sample.ts` builds and checks, from `public/demo/`, and restore it the way a backup is restored, keeping the current workspace as the recovery copy and asking first when it holds saved work.
+
+Chosen: (b), because the plan says the walk restores the sample workspace first, and a restore is instant, offline and the same records the door and the screenshots read. The recovery copy means a judge who had been trying things loses nothing, which the tour's reset does not offer.
+
+Reverse it if: the owner wants the walk to show the tour's records being made rather than made already.
+
+To reverse: `restoreSampleWorkspace` in `src/app/store.ts`, the start of `WalkOverlay` (`src/demo/WalkOverlay.tsx`), and the second file `mcp/sample.ts` writes.
+
+## 2026-10-22 20:40, D6a: the walk's Decide stop target
+
+Options: (a) the decision card, by the prefix `decision-*`. (b) The Decide panel, `decide-panel`, which holds the decision record, its status and the form.
+
+Chosen: (b), because the runner takes the first match and `decision-form` shares the prefix, so (a) could spotlight the empty form instead of the record. The panel shows the record with the brief it decides.
+
+Reverse it if: the decision card gets an id of its own that no other element shares.
+
+To reverse: the `decide` stop in `src/demo/walk.ts`.
+
+## 2026-10-22 20:41, D6a: the walk's spotlight and steps
+
+Options: (a) driver.js (MIT, about 5 kB, no dependencies) for the spotlight, the popovers and the keys. (b) The existing runner in a guided mode that waits for Next, Back or Escape, with a spotlight of our own: a ring and a scrim drawn around the element, leaving the page usable under it.
+
+Chosen: (b), because the driver allows lz-string and nothing else without a decision, and the runner already finds targets by `data-demo-id` the way the tour does, so the walk and the tour share their targets and their checks. The plan names driver.js as the option to keep in this log.
+
+Reverse it if: an accessibility review finds the overlay's focus handling short of driver.js's.
+
+To reverse: `runWalk` and `findStop` in `src/demo/runner.ts`, and `src/demo/WalkOverlay.tsx`.
+
+## 2026-10-22 20:42, D6a: the clock during the walk
+
+Options: (a) the browser's own clock, so on 29 October the sample's records read a week old and Home's done window has passed. (b) Pin the clock to the sample's moment while the walk runs, as the tour pins it, and release it when the walk ends.
+
+Chosen: (b), because the stops then show what the tour showed at that moment, Tualang celebrating the closed ring included, and every record keeps its own date either way. The walk itself records nothing; a judge who saves something mid-walk gets the sample's moment as its time, as happens while the tour plays.
+
+Reverse it if: a judge's own edits during the walk need their real time.
+
+To reverse: the `setClockPinned` calls in `src/demo/WalkOverlay.tsx`.
+
+## 2026-10-22 20:42, D6a: Before and after on the judge's page
+
+Options: (a) a page of its own with the comparison laid out once. (b) A three-stop walk on the same runner: Update's change in use, Teach's changed slide, History's decision link, with the host at the two ends.
+
+Chosen: (b), because the comparison already lives on those screens from D5a, so a judge sees the real views rather than a copy of them, and the walk's rules (twenty words, labels, the host's two lines) apply unchanged. It costs three stop records and no new screen.
+
+Reverse it if: the booth wants one static view to point at while talking.
+
+To reverse: `BEFORE_AFTER` in `src/demo/walk.ts` and the second button on `src/ui/screens/Judge.tsx`.
+
+## 2026-10-22 20:42, D6a: Ask the door on a public page
+
+Options: (a) call the door from the page, which needs a server on the internet and credentials, and sends data off the laptop. (b) A panel with the question to ask Claude Desktop, what comes back and the command that asks it without Claude Desktop, labelled local and read-only.
+
+Chosen: (b), because the door is local by design and the run sends nothing off this machine; the panel says plainly that the page cannot reach it. At the booth the door runs on the team's laptop beside the app.
+
+Reverse it if: the remote door with OAuth is built.
+
+To reverse: the door panel in `src/ui/screens/Judge.tsx`.
+
+## 2026-10-22 20:43, D6a: the decision the recap names
+
+Options: (a) the latest decision recorded on the course this term, whatever it decided. (b) The decision that authorised the version in use (D5a's link through the event log), and only when there is none, the latest decision this term.
+
+Chosen: (b), because the recap's "what was decided" sits above "what changed", and the decision behind the change is the one that explains it. A term with no change still shows its latest decision, retain or defer included.
+
+Reverse it if: a term with two decisions on two briefs needs both on the page.
+
+To reverse: `recapFor` in `src/app/recap.ts`.
+
+## 2026-10-22 20:45, D6a: Update once the change is in use
+
+Options: (a) point the walk's Update stop at History's comparison, leaving Update with the current outline only after an adoption. (b) Show "The change in use" on Update whenever no revision is open and the current version replaced another: the summary, the redline and the hours against the version before.
+
+Chosen: (b), because Update is the step that answers what the approved change looks like, and after the tour it otherwise shows nothing of the change; the walk then shows the change where the loop puts it and the decision where History keeps it. During a revision the check panel shows the candidate instead, so the two never sit together.
+
+Reverse it if: the owner wants Update to show only the work in progress.
+
+To reverse: `lastChange` and its section in `CurriculumPanel` (`src/ui/screens/CurriculumWorkspace.tsx`), and the `update` stops in `src/demo/walk.ts`.
+
+## 2026-10-22 21:02, D6a: the browser's copy of the sample workspace and the dash scan
+
+Options: (a) scan `public/demo/sample-workspace.json` like any text file, which fails on the posting text an employer wrote with dashes. (b) Treat it as the scan already treats `mcp/sample-workspace.json`: verbatim evidence, quoted as published and never edited.
+
+Chosen: (b), because the two files are identical and `node mcp/sample.ts --check` fails if they differ, so the copy carries nothing the exempt file does not. Editing a quotation to pass the scan would break its fingerprint and its receipt.
+
+Reverse it if: the walk stops fetching the sample workspace.
+
+To reverse: `VERBATIM_EVIDENCE` in `scripts/dash-scan.mjs`.

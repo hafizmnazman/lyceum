@@ -7,7 +7,7 @@
 // the same course supersedes the decisions on an older one, and a decision taken
 // before the evidence changed is shown with that fact rather than deleted.
 
-import type { BriefDecision, CurriculumDraft, DecisionOutcome, EvidenceBrief, EvidenceSource, LoopEvent, SkillMapping, SkillMention } from "../types.ts";
+import type { BriefDecision, CurriculumDraft, DecisionOutcome, EvidenceBrief, EvidenceSource, LoopEvent, SkillMapping, SkillMention, SubjectVersion } from "../types.ts";
 
 export const DECISION_OUTCOMES: DecisionOutcome[] = ["adopt", "retain", "defer", "return"];
 export const OUTCOME_LABEL: Record<DecisionOutcome, string> = {
@@ -93,4 +93,16 @@ export function authorisingDecision(versionId: string, events: LoopEvent[], deci
   });
   const adopting = [...standing.values()].filter((s) => s.decision.outcome === "adopt" && s.decision.courseVersionId === baseline).sort((x, y) => x.order - y.order);
   return adopting.at(-1)?.decision ?? null;
+}
+
+/** The version a version replaced: the baseline its revision started from (through the version-adopted event), otherwise the
+ *  one before it in time; null for the first version on record. */
+export function previousVersionOf(version: SubjectVersion, versions: SubjectVersion[], events: LoopEvent[], drafts: CurriculumDraft[]): SubjectVersion | null {
+  const adopted = events.find((e) => e.kind === "version-adopted" && e.refs.versionId === version.id);
+  const baseline = adopted && drafts.find((d) => d.id === adopted.refs.draftId)?.baselineVersionId;
+  const byId = baseline ? versions.find((v) => v.id === baseline) : undefined;
+  if (byId) return byId;
+  const ordered = versions.filter((v) => v.subjectId === version.subjectId).sort((a, b) => a.changedAt.localeCompare(b.changedAt));
+  const at = ordered.findIndex((v) => v.id === version.id);
+  return at > 0 ? ordered[at - 1] : null;
 }

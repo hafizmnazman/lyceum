@@ -18,6 +18,7 @@ import {
   mayDecide,
   navigate,
   openNotification,
+  openRecap,
   openStep,
   personWithHat,
   selectBrief,
@@ -183,7 +184,8 @@ function StartHere({ subjectId, resume, resumeNote }: { subjectId: string; resum
     <div className="start-here-host">{moods ? <Mascot who="host" mood={moods.host} size={88} /> : null}</div>
     <div className="start-here-body">
       <div className="section-heading"><div><span className="eyebrow">Start here · {subjectId}</span><h2 id="start-here-title">{loop.closed ? "The loop is closed for this term" : "Continue the loop on " + subjectId}</h2></div>
-        {loop.next ? <Button variant="primary" data-demo-id="journey-next" onClick={() => openStep(subjectId, loop.next!)}>Continue: {stepDef(loop.next).label} <ArrowRight size={15} /></Button> : null}</div>
+        {loop.next ? <Button variant="primary" data-demo-id="journey-next" onClick={() => openStep(subjectId, loop.next!)}>Continue: {stepDef(loop.next).label} <ArrowRight size={15} /></Button>
+          : loop.closed ? <Button data-demo-id="journey-recap" onClick={() => openRecap(subjectId)}>The term recap <ArrowRight size={15} /></Button> : null}</div>
       <RingPanel loop={loop} onStep={(step) => openStep(subjectId, step)} />
       {resume ? <div className="start-here-resume button-row">{resume}{resumeNote ? <span className="muted">{resumeNote}</span> : null}</div> : null}
     </div>

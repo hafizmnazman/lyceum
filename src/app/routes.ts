@@ -9,17 +9,18 @@ import type { AppState } from "./store.ts";
 
 export const HASH_SCREENS: Screen[] = [
   "login", "index", "inbox", "trends", "approval", "programme", "new-subject", "assignments", "courses",
-  "studio", "watch", "report", "decide", "proposal", "acceptance", "upload", "learn", "backtest", "dataroom", "office", "evaluation", "guide",
+  "studio", "watch", "report", "decide", "proposal", "acceptance", "upload", "learn", "backtest", "dataroom", "office", "evaluation", "guide", "judge",
 ];
 
 export interface CourseRoute { subjectId: string; step: CourseStep; reportTab?: ReportTab }
-export type Route = { screen: Screen } | { course: CourseRoute };
+export type Route = { screen: Screen } | { course: CourseRoute } | { recap: string };
 
 const isReportTab = (x: string): x is ReportTab => (REPORT_TABS as string[]).includes(x);
 
 export function parseRoute(hash: string): Route | null {
   const path = hash.replace(/^#\/?/, "");
   const course = /^course\/([^/]+)(?:\/([a-z]+))?(?:\/([a-z]+))?\/?$/.exec(path);
+  if (course && course[2] === "recap" && course[3] === undefined) return { recap: decodeURIComponent(course[1]) };
   if (course) {
     const step = course[2] ?? "course";
     if (!isCourseStep(step)) return null;
@@ -43,6 +44,7 @@ export function effectiveStep(s: RouteState): CourseStep | null {
 }
 
 export function hashFor(s: RouteState): string {
+  if (s.screen === "recap" && s.selectedSubjectId) return "#/course/" + encodeURIComponent(s.selectedSubjectId) + "/recap";
   const step = effectiveStep(s);
   if (!step || !s.selectedSubjectId) return "#/" + s.screen;
   // Setup is the course itself (#/course/:id, plan Section 4); "#/course/:id/course" still parses.

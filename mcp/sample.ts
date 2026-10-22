@@ -6,6 +6,7 @@
 // fresh export from the app instead (docs/doors.md).
 //
 // Write it:  node mcp/sample.ts        Check it: node mcp/sample.ts --check
+// It writes the same file to public/demo/ too, where the judge's guided walk fetches it.
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -18,6 +19,8 @@ import { cs310After } from "../src/data/sample-course/cs310.ts";
 
 const ROOT = new URL("../", import.meta.url);
 export const SAMPLE_PATH = fileURLToPath(new URL("mcp/sample-workspace.json", ROOT));
+/** The same file where the browser fetches it, for the judge's guided walk (depth plan Section 9.1 item 2). */
+export const PUBLIC_SAMPLE_PATH = fileURLToPath(new URL("public/demo/sample-workspace.json", ROOT));
 
 const must = (result: { ok: boolean; error?: string }, step: string) => { if (!result.ok) throw new Error(step + ": " + (result.error ?? "failed")); };
 
@@ -77,10 +80,12 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const raw = await buildSampleBackup();
   if (process.argv.includes("--check")) {
     // A Windows checkout may hold the file with CRLF line ends (core.autocrlf); the content is what is compared.
-    if (readFileSync(SAMPLE_PATH, "utf8").replace(/\r\n/g, "\n") !== raw) throw new Error("mcp/sample-workspace.json is stale. Run node mcp/sample.ts.");
-    console.log("The sample workspace matches the tour's end state.");
+    for (const [path, name] of [[SAMPLE_PATH, "mcp/sample-workspace.json"], [PUBLIC_SAMPLE_PATH, "public/demo/sample-workspace.json"]])
+      if (readFileSync(path, "utf8").replace(/\r\n/g, "\n") !== raw) throw new Error(name + " is stale. Run node mcp/sample.ts.");
+    console.log("The sample workspace matches the tour's end state, in mcp/ and in public/demo/.");
   } else {
     writeFileSync(SAMPLE_PATH, raw, "utf8");
-    console.log("Wrote mcp/sample-workspace.json (" + raw.length + " characters).");
+    writeFileSync(PUBLIC_SAMPLE_PATH, raw, "utf8");
+    console.log("Wrote mcp/sample-workspace.json and public/demo/sample-workspace.json (" + raw.length + " characters).");
   }
 }

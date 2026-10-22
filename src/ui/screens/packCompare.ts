@@ -2,6 +2,7 @@
 // session's pack under either, built at one moment with the course's brand so two packs differ only where the versions do.
 
 import type { AppState } from "../../app/store.ts";
+import { previousVersionOf } from "../../lib/decisions.ts";
 import { brandFor, packUnderVersion, type DeckSpec } from "../../lib/slides.ts";
 import type { CLO, CourseDefinition, Subject, SubjectVersion, TeachingSession } from "../../types.ts";
 
@@ -14,14 +15,7 @@ export function packMaker(state: AppState, subject: Subject, markData: string | 
     packUnderVersion(subject, session, version, evidence, state.people, at, brandFor(state.institution, version.definition ?? null, subject, session.week, markData));
 }
 
-/** The version a version replaced: the baseline its revision started from (through the version-adopted event), otherwise the
- *  one before it in time; null for the first version on record. */
+/** The version a version replaced, read from the workspace's records (lib/decisions.ts previousVersionOf). */
 export function previousVersion(state: AppState, version: SubjectVersion): SubjectVersion | null {
-  const adopted = state.events.find((e) => e.kind === "version-adopted" && e.refs.versionId === version.id);
-  const baseline = adopted && state.curriculumDrafts.find((d) => d.id === adopted.refs.draftId)?.baselineVersionId;
-  const byId = baseline ? state.subjectVersions.find((v) => v.id === baseline) : undefined;
-  if (byId) return byId;
-  const ordered = state.subjectVersions.filter((v) => v.subjectId === version.subjectId).sort((a, b) => a.changedAt.localeCompare(b.changedAt));
-  const at = ordered.findIndex((v) => v.id === version.id);
-  return at > 0 ? ordered[at - 1] : null;
+  return previousVersionOf(version, state.subjectVersions, state.events, state.curriculumDrafts);
 }

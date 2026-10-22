@@ -42,7 +42,9 @@ export type Screen =
   | "dataroom"
   | "office" // how Lyceum works: the roles in order and the real run record
   | "evaluation" // how it is tested: live checks, benchmarks, protocol
-  | "guide";
+  | "guide"
+  | "judge" // the judge's page, public like the landing page (depth plan Section 9.1)
+  | "recap"; // a course's term recap, at #/course/:id/recap
 
 export type Capability =
   | "see-trends"
@@ -139,7 +141,7 @@ export function can(
  *  "what needs me"). Shared screens (closed loop, agents, data room) are
  *  appended for all; the public index sits last. */
 export function navFor(person: Person, assignments: RoleAssignment[]): Screen[] {
-  const shared: Screen[] = ["backtest", "office", "evaluation", "dataroom", "index", "guide"];
+  const shared: Screen[] = ["backtest", "office", "evaluation", "dataroom", "index", "guide", "judge", "recap"];
   if (person.orgRole === "management") {
     return ["inbox", "trends", "approval", ...shared];
   }
@@ -164,5 +166,5 @@ export function landingScreen(person: Person, assignments: RoleAssignment[]): Sc
 
 /** Does this person's nav include the screen? */
 export function navAllows(person: Person, assignments: RoleAssignment[], screen: Screen): boolean {
-  return screen === "login" || screen === "index" || navFor(person, assignments).includes(screen);
+  return screen === "login" || screen === "index" || screen === "judge" || navFor(person, assignments).includes(screen);
 }

@@ -1986,6 +1986,40 @@ export function restoreWorkspaceBackup(raw: string, expectedFingerprint: string,
   return { ok: true };
 }
 
+/** The guided walk's starting point (depth plan Section 9.1): the tour's end state from the sample workspace, restored the
+ *  way a backup is, with the current workspace kept as the recovery copy, and signed in as the person the walk follows. */
+export function restoreSampleWorkspace(raw: string, personId: PersonId): SaveResult {
+  if (!state.people.some(p => p.id === personId)) return { ok: false, error: "The walk's person is not in this workspace." };
+  const parsed = parseWorkspaceBackup(raw, state.people.map(p => p.id));
+  if (!parsed.ok) return parsed;
+  const recovery = exportWorkspaceBackup();
+  const next: AppState = { ...seedState(), ...structuredClone(parsed.backup.data),
+    currentPersonId: personId, screen: "inbox", persistenceStatus: "saved", selectedSubjectId: null, selectedProposalId: null, toast: null };
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem(RECOVERY_KEY, recovery);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(Object.fromEntries(PERSISTED_KEYS.map(k => [k, next[k]]))));
+    } catch {
+      // The walk still runs in memory; the recovery copy stays in memory for this visit.
+    }
+  }
+  if (saveTimer) clearTimeout(saveTimer);
+  if (simTimer) clearInterval(simTimer);
+  if (signalTimer) clearInterval(signalTimer);
+  if (drillTimer) clearInterval(drillTimer);
+  saveTimer = null; simTimer = null; signalTimer = null; drillTimer = null;
+  recoveryBackup = recovery;
+  state = next;
+  emit();
+  return { ok: true };
+}
+
+/** A course's term recap (depth plan Section 9.1 item 4), at #/course/:id/recap. */
+export function openRecap(subjectId: SubjectId) {
+  if (!confirmLeaveEditor()) return;
+  set({ screen: "recap", selectedSubjectId: subjectId, courseStep: null });
+}
+
 
 // ---------- lecturer-supplied evidence receipts (plan Sections 7 and 8, manual path) ----------
 // Nothing here fetches. A source is the text the lecturer pasted; a mention is an

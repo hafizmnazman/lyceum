@@ -1976,3 +1976,77 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; }
   .diff-table tfoot tr { border: 2px solid var(--forest); }
   .diff-table tfoot th, .diff-table tfoot td { border-top: 0; }
 }
+/* The judge's page (depth plan Section 9.1): the host greets once beside the three ways in; the card of what is not built. */
+.judge-hero { grid-template-columns: auto minmax(0, 1fr); }
+.judge-hero h1 { font-size: 34px; line-height: 1.2; margin: 6px 0 20px; }
+.judge-actions { gap: 10px; }
+.judge-watch { margin: 16px 0 0; color: var(--on-forest); display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.judge-note { margin: 14px 0 0; font-size: 14px; line-height: 1.55; color: var(--on-forest); max-width: 620px; }
+.judge-not-built { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 24px; align-items: start; padding: 24px; border: 2px solid var(--forest); border-radius: var(--radius-card); background: var(--white); box-shadow: 0 6px 0 var(--forest); }
+.judge-remaining > div { display: grid; grid-template-columns: minmax(150px, 1fr) 3fr; gap: 20px; border-top: 1px solid var(--border); padding: 14px 0; }
+.judge-remaining dt { font-weight: 600; }
+.judge-remaining dd { margin: 0; color: var(--ink-2); }
+.judge-door q { font-style: italic; }
+@media (max-width: 760px) {
+  .judge-hero { grid-template-columns: minmax(0, 1fr); }
+  .judge-hero h1 { font-size: 26px; }
+  .judge-not-built { grid-template-columns: minmax(0, 1fr); padding: 16px; }
+  .judge-remaining > div { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+}
+/* The guided walk: a spotlight that leaves the page usable, the app's caption, and the host's corner card with the controls. */
+.walk-spotlight { position: fixed; z-index: 110; border-radius: 12px; box-shadow: 0 0 0 9999px var(--scrim); outline: 3px solid var(--emerald); pointer-events: none; }
+.walk-dock { position: fixed; z-index: 112; left: 16px; right: 16px; bottom: 16px; display: flex; gap: 12px; align-items: flex-end; justify-content: space-between; pointer-events: none; }
+.walk-dock > * { pointer-events: auto; }
+.walk-caption { flex: 0 1 720px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px 16px; border-radius: var(--radius-card); background: var(--scrim-strong); color: var(--white); font-size: 15px; line-height: 1.5; box-shadow: var(--depth-menu); }
+.walk-caption .muted { color: var(--on-forest); }
+.walk-card { position: relative; flex: 0 0 300px; display: grid; gap: 8px; padding: 12px 14px; border: 2px solid var(--forest); border-radius: var(--radius-card); background: var(--white); box-shadow: var(--depth-menu); }
+.walk-card-alone { position: fixed; z-index: 112; right: 16px; bottom: 16px; width: min(360px, calc(100vw - 32px)); }
+.walk-card-host { display: flex; align-items: center; gap: 10px; padding-right: 32px; }
+.walk-leave { position: absolute; top: 6px; right: 6px; min-height: 32px; padding: 4px 8px; }
+.walk-host-line { margin: 0; font-weight: 600; color: var(--ink); }
+.walk-count { margin: 0; font-family: var(--font-mono); font-size: 13px; color: var(--emerald-text); }
+.walk-keys { margin: 0; font-size: 12px; }
+@media (max-width: 760px) {
+  .walk-dock { left: 8px; right: 8px; bottom: 8px; flex-direction: column; align-items: stretch; gap: 8px; }
+  .walk-caption { flex: none; font-size: 14px; }
+  .walk-card { flex: none; padding: 10px 12px; }
+  .walk-keys { display: none; }
+}
+/* The term recap: one A4 page per course and term (depth plan Section 9.1 item 4). */
+.recap { max-width: 860px; margin: 0 auto; padding: 32px; border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--white); }
+.recap-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: center; margin-bottom: 12px; }
+.recap-head h1 { margin: 4px 0; font-size: 28px; }
+.recap-mark { display: grid; justify-items: end; gap: 4px; font-size: 12px; color: var(--ink-2); }
+.recap-mark img { height: 44px; width: auto; }
+.recap-part { margin-top: 20px; }
+.recap-part h2 { font-size: 18px; margin: 0 0 6px; }
+.recap-list { margin: 6px 0; padding-left: 20px; }
+.recap-foot { margin-top: 24px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-2); }
+@media (max-width: 760px) {
+  .recap { padding: 16px; }
+  .recap-head { grid-template-columns: minmax(0, 1fr); }
+  .recap-mark { justify-items: start; }
+}
+@media print {
+  @page { size: A4; margin: 14mm; }
+  .app-header, .app-sidebar, .skip-link, .no-print, .walk-dock, .walk-spotlight, .redline-controls button, [data-demo-part], [data-demo-id="play-demo"] { display: none !important; }
+  /* The shell fixes the page to the window and scrolls inside; on paper every level grows with its content. */
+  html, body, #root, #root > div, .app-shell, .app-body, .app-main { display: block !important; overflow: visible !important; height: auto !important; min-height: 0 !important; background: var(--white) !important; }
+  .section-help { display: none !important; }
+  /* One A4 sheet: smaller type and tighter tables than on screen, the same content. */
+  .recap { border: 0; padding: 0; max-width: none; font-size: 11.5px; line-height: 1.4; }
+  .recap-head { margin-bottom: 6px; gap: 12px; }
+  .recap-head h1 { font-size: 21px; }
+  .recap-host svg { width: 48px; height: 48px; }
+  .recap-mark img { height: 32px; }
+  .recap .sample-line { margin: 4px 0; }
+  .recap-part { margin-top: 10px; break-inside: avoid; }
+  .recap-part h2 { font-size: 14px; margin-bottom: 4px; }
+  .recap .muted { font-size: 10.5px; }
+  .recap .record-table { margin: 4px 0; font-size: 11px; }
+  .recap .record-table th, .recap .record-table td { padding: 3px 8px; }
+  .recap .change-summary { padding: 5px 10px; margin: 4px 0; }
+  .recap .redline-legend { font-size: 10.5px; }
+  .recap .redline-list li { padding: 5px 8px; }
+  .recap-foot { margin-top: 12px; padding-top: 6px; font-size: 10px; }
+}

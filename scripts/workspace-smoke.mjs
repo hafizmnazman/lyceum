@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { preview } from "vite";
 import puppeteer from "puppeteer-core";
+import { WALK } from "../src/demo/walk.ts";
 
 const executablePath = ["C:/Program Files/Google/Chrome/Application/chrome.exe", "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"].find(existsSync);
 assert.ok(executablePath, "An installed Chrome or Edge is required");
@@ -122,7 +123,7 @@ try {
   await click("nav-guide");
   await textIncludes("What has not been built yet");
   await clickText("All roles");
-  assert.equal(await page.$$(".guide-entry").then((entries) => entries.length), 20);
+  assert.equal(await page.$$(".guide-entry").then((entries) => entries.length), 22);
   await page.type('input[type="search"]', "slide");
   assert.ok(await page.$$(".guide-entry").then((entries) => entries.length) > 0);
   console.log("PASS resume path, session updates and all-role section guide");
@@ -167,6 +168,48 @@ try {
   assert.ok(await blocked.evaluate(() => document.body.innerText.includes("Browser storage is unavailable.")));
   await blocked.close();
   console.log("PASS browser storage blocked at load still opens a usable workspace with a warning");
+
+  // The judge's walk (depth plan Section 9.1): from the judge's page signed out, every stop by keyboard on the sample
+  // workspace, a spotlight at each, the host's line at the first and the last stop only, at 1440 and 320 px; Esc leaves.
+  const walkPage = await browser.newPage();
+  walkPage.on("pageerror", (e) => errors.push(String(e)));
+  walkPage.on("dialog", (dialog) => void dialog.accept());
+  await walkPage.setRequestInterception(true);
+  walkPage.on("request", (request) => void (request.url().startsWith(origin + "/") ? request.continue() : request.abort()));
+  for (const [width, height] of [[1440, 1000], [320, 800]]) {
+    await walkPage.setViewport({ width, height });
+    await walkPage.goto(origin + "/#/judge", { waitUntil: "networkidle0" });
+    await walkPage.evaluate(() => localStorage.clear());
+    await walkPage.goto(origin + "/#/judge", { waitUntil: "networkidle0" });
+    await walkPage.click(selector("judge-walk"));
+    await walkPage.waitForSelector(selector("walk-card"), { timeout: 15000 });
+    const seen = [];
+    for (let n = 1; n <= WALK.length; n++) {
+      await walkPage.waitForFunction((k, total) => document.querySelector('[data-demo-id="walk-count"]')?.textContent === "Stop " + k + " of " + total, { timeout: 15000 }, n, WALK.length);
+      await walkPage.waitForSelector(".walk-spotlight", { timeout: 15000 });
+      seen.push(await walkPage.evaluate(() => ({ hash: location.hash, host: Boolean(document.querySelector('[data-demo-id="walk-host-line"]')),
+        focus: document.activeElement?.getAttribute("data-demo-id"), overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth })));
+      await walkPage.keyboard.press("ArrowRight");
+    }
+    await walkPage.waitForFunction(() => !document.querySelector('[data-demo-id="walk-card"]'));
+    assert.deepEqual(seen.map((s) => s.hash), WALK.map((s) => s.route), "every stop opened its route at " + width);
+    assert.deepEqual(seen.map((s) => s.host), WALK.map((_, i) => i === 0 || i === WALK.length - 1), "the host spoke at the two ends only");
+    assert.ok(seen.every((s) => s.focus === "walk-next" && s.overflow === 0), "Next holds the focus and nothing overflows at " + width);
+    await walkPage.screenshot({ path: join(output, "walk-end-" + width + ".png") });
+  }
+  await walkPage.click(selector("journey-recap"));
+  await walkPage.waitForSelector(selector("recap"));
+  assert.equal(await walkPage.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), 0, "the recap fits 320 px");
+  await walkPage.goto(origin + "/#/judge", { waitUntil: "networkidle0" });
+  await walkPage.click(selector("judge-walk"));
+  await walkPage.waitForFunction(() => document.querySelector('[data-demo-id="walk-count"]')?.textContent?.startsWith("Stop 1 "), { timeout: 15000 });
+  await walkPage.keyboard.press("ArrowRight");
+  await walkPage.waitForFunction(() => document.querySelector('[data-demo-id="walk-count"]')?.textContent?.startsWith("Stop 2 "), { timeout: 15000 });
+  await walkPage.keyboard.press("Escape");
+  await walkPage.waitForFunction(() => !document.querySelector('[data-demo-id="walk-card"]'));
+  assert.equal(await walkPage.evaluate(() => location.hash), WALK[1].route, "Esc leaves the walk where it stood");
+  await walkPage.close();
+  console.log("PASS the judge's walk by keyboard on the sample workspace at 1440 and 320 px, the host at the two ends, Esc leaves, and the recap from Home");
   assert.deepEqual(errors, []);
   console.log("PASS zero page errors");
   console.log("Screenshots and exported plan: " + output);

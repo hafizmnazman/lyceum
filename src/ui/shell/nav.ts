@@ -11,12 +11,14 @@ import {
   FileSearch,
   Database,
   FlaskConical,
+  Footprints,
   Globe,
   Inbox,
   Layers,
   ListChecks,
   PenLine,
   PlusSquare,
+  ScrollText,
   Scale,
   Target,
   Telescope,
@@ -49,6 +51,8 @@ export const NAV_META: Record<Exclude<Screen, "login">, { label: string; icon: L
   evaluation: { label: "Evaluation", icon: ListChecks },
   index: { label: "Relevance Index", icon: Globe },
   guide: { label: "Guide & progress", icon: BookMarked },
+  judge: { label: "For judges", icon: Footprints },
+  recap: { label: "Term recap", icon: ScrollText },
 };
 
 export function screenLabel(screen: Screen): string {

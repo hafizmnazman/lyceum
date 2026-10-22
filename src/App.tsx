@@ -7,11 +7,13 @@ import { useEffect, useRef } from "react";
 import { navAllows, subjectsForPerson } from "./app/roles.ts";
 import { stepDef } from "./app/loop.ts";
 import { hashFor, parseRoute, type CourseRoute } from "./app/routes.ts";
-import { currentPerson, getState, navigate, useStore } from "./app/store.ts";
+import { currentPerson, getState, navigate, openRecap, useStore } from "./app/store.ts";
 import { Shell } from "./ui/shell/Shell.tsx";
 import { SCREENS } from "./ui/screens/index.ts";
 import { DemoOverlay } from "./demo/DemoOverlay.tsx";
 import { LandingScreen } from "./ui/screens/Landing.tsx";
+import { JudgeScreen } from "./ui/screens/Judge.tsx";
+import { WalkOverlay } from "./demo/WalkOverlay.tsx";
 
 /** A course route is honoured only for a course this person may open in the workspace. */
 function mayOpen(route: CourseRoute): boolean {
@@ -42,8 +44,14 @@ export default function App() {
       const s = getState();
       const person = currentPerson();
       if (!person) {
-        if ("screen" in route && (route.screen === "index" || route.screen === "login")) navigate(route.screen);
+        if ("screen" in route && (route.screen === "index" || route.screen === "login" || route.screen === "judge")) navigate(route.screen);
         else window.history.replaceState(null, "", hashFor(s)); // a private link, signed out: keep the URL honest
+        return;
+      }
+      if ("recap" in route) {
+        // The recap opens for anyone who may open the course itself.
+        if (!mayOpen({ subjectId: route.recap, step: "course" })) { window.history.replaceState(null, "", hashFor(s)); return; }
+        if (s.screen !== "recap" || s.selectedSubjectId !== route.recap) openRecap(route.recap);
         return;
       }
       if ("course" in route) {
@@ -73,11 +81,14 @@ export default function App() {
   if (!state.currentPersonId) {
     // Signed out, the index route is the public landing page. The Relevance
     // Index sandbox itself stays behind sign-in, labelled as illustrative.
-    const Public = state.screen === "index" ? LandingScreen : SCREENS.login;
+    const Public = state.screen === "index" ? LandingScreen : state.screen === "judge" ? JudgeScreen : SCREENS.login;
     content = <Public />;
   } else if (state.screen === "login") {
     const Login = SCREENS.login;
     content = <Login />;
+  } else if (state.screen === "judge") {
+    // The judge's page is the same bare page signed in or out (depth plan Section 9.1).
+    content = <JudgeScreen />;
   } else {
     content = (
       <Shell>
@@ -90,6 +101,7 @@ export default function App() {
     <div style={{ height: "100%" }}>
       {content}
       <DemoOverlay />
+      <WalkOverlay />
     </div>
   );
 }

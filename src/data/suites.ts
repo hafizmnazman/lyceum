@@ -22,6 +22,7 @@ export const SUITES: Array<[string, number, string]> = [
   ["The course record", 12, "the sample course in both states, its learning time, the assessment plan and its table of specifications, the matrix levels, the references gap, the rubrics, the tour's revision through the store, and the course file with its manifest"],
   ["Teaching material", 8, "the fourteen sample sessions and their packs read back slide by slide, 18 pt body text, the mark and the demo line in every master, the repair of the parts pptxgenjs declares but does not write, the preview against the file, and samples kept out of the term's teaching"],
   ["Before and after", 8, "the word diff and both texts back from it, topic hours before and after, the week 6 pack under each version changing only where the outcome did, a region for every changed part, renamed and added slides, results marked not comparable when an outcome is reworded, the summary in words, and the decision behind each version read from the event log"],
+  ["The judge's way through", 5, "every walk stop rendered by its screen with a route that opens it, captions within twenty words with their labels, the host at the two ends only, the not-built list word for word, the sample workspace restored with the current one kept, and the recap's numbers against their records"],
 ];
 
 export const SUITE_TOTAL = SUITES.reduce((n, s) => n + s[1], 0);

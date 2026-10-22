@@ -4,7 +4,8 @@ import { useState } from "react";
 import { navAllows } from "../../app/roles.ts";
 import { REMAINING_WORK, SECTION_GUIDES } from "../../app/sectionGuides.ts";
 import { currentPerson, navigate, useStore } from "../../app/store.ts";
-import { Play } from "lucide-react";
+import { Footprints, Play } from "lucide-react";
+import { HOST_NAME } from "../mascots/index.tsx";
 import { Button, Field, Input, Page, PageHead, Tag } from "../primitives/index.tsx";
 
 export function GuideScreen() {
@@ -18,7 +19,7 @@ export function GuideScreen() {
     [guide.title, guide.purpose, guide.output, guide.limitation, ...guide.steps].join(" ").toLowerCase().includes(query.toLowerCase().trim()));
   return (
     <Page>
-      <PageHead title="Guide & development progress" context="How to use each section, and where the prototype still needs work." actions={<Button data-demo-id="guide-play-demo" onClick={() => window.dispatchEvent(new Event("lyceum:play-demo"))}><Play size={15} /> Play the demo tour</Button>} />
+      <PageHead title="Guide & development progress" context="How to use each section, and where the prototype still needs work." actions={<><Button data-demo-id="guide-judge" onClick={() => navigate("judge")}><Footprints size={15} /> For judges: walk with {HOST_NAME}</Button><Button data-demo-id="guide-play-demo" onClick={() => window.dispatchEvent(new Event("lyceum:play-demo"))}><Play size={15} /> Play the demo tour</Button></>} />
       <section className="workspace-panel" aria-labelledby="start-guide">
         <h2 id="start-guide">A lecturer's working session</h2>
         <ol className="journey-list">

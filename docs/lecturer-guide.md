@@ -77,7 +77,7 @@ Set up the course, make the decided change, prepare classes and keep a traceable
 
 **Output:** An editable course definition, candidate and active local versions, the decision history, a teaching plan, Markdown outlines and an assessment draft.
 
-**Current limit:** One teaching plan per course in this browser. Local version activation does not attest institutional approval. Slide packs are generated from saved data with no model-written text; model-drafted slide content and template import remain to be built. Configurable institution-wide reviews, term archives and accurate assessment allocation remain to be built. Agent drafting still uses fixtures.
+**Current limit:** One teaching plan per course in this browser. Local version activation does not attest institutional approval. Slide packs are generated from saved data and the generator adds no text of its own; the sample course's slides are written for this prototype and labelled synthetic. Model-drafted slide content and template import remain to be built. Configurable institution-wide reviews, term archives and accurate assessment allocation remain to be built. Agent drafting still uses fixtures.
 
 ## Watch
 
@@ -322,12 +322,41 @@ Explore the prototype's course relevance and source-agreement presentation.
 
 **Current limit:** Source agreement describes direction only, not reliability or truth. All shipped market records are synthetic; this is not a live labour-market ranking.
 
+## For judges
+
+**For:** Everyone, signed in or not · **Status:** Working locally
+
+Meet the loop in a few minutes: walk it stop by stop on the sample workspace, see one change before and after, or read how the local door answers.
+
+1. Open the judge's page from the landing page or from this Guide.
+2. Choose Walk the loop: ten stops over the real app on the sample workspace, the tour's end state. Next, Back and Esc move it, and each stop's caption says what is real and what is synthetic.
+3. Choose Before and after for one change three ways, or Ask the door for the question to put to the local door.
+4. Read what is proven today and what is not built, word for word from this Guide.
+
+**Output:** A guided look at every step's record on one course, with the honesty label at every stop.
+
+**Current limit:** The walk replaces this browser's workspace with the sample workspace and keeps the current one as a recovery copy under Backups. The door runs only on a laptop with Claude Desktop configured; the page cannot reach it.
+
+## Term recap
+
+**For:** Everyone who may open the course · **Status:** Working locally
+
+One page per course and term from the records: what employers asked for, what was decided, what changed, what was taught and what came back.
+
+1. Open it from History, or from Home once the ring closes.
+2. Read each part: every number is read from a record in this workspace, and the sample course says it is synthetic.
+3. Print it, or save it as a PDF, at A4.
+
+**Output:** A printable A4 recap with the sample line and the honesty line.
+
+**Current limit:** The OBE report against a stated threshold and the surveys beside the marks are planned. The recap does not attest institutional approval.
+
 ## What has not been built yet
 
 - **Evidence collection:** On-request collection from the Greenhouse and Lever board APIs, exact-excerpt receipts, fingerprint duplicate detection, lexicon-assisted scanning, reviewed denominators and meeting briefs work. Scrapling page adapters, snapshots of arbitrary sites, cross-site vacancy clustering, scheduled refresh and refresh-failure reporting remain planned. Frozen evidence snapshots and their comparison work; a re-collected posting is matched by its board posting id.
 - **Defensible calculations:** Observed shares with explicit numerators and denominators, Wilson intervals, reviewed coverage stages and a demand-weighted coverage index work for recorded evidence. Comparable time windows, employer-balanced sensitivity views, publication gates and validation against real course/cohort data remain planned.
-- **Institutional review:** Local CLO/topic editing, constraints, diffs and version activation work, and decisions on briefs are recorded with their reason, person, course version and term. Institution profiles, configurable review authorities, positions as data, term archives and server-enforced decisions remain to be built.
-- **Teaching materials:** Editable PPTX teaching packs and brief decks are generated from saved sessions, outcomes and evidence receipts, with speaker notes and no model-written text. Model-drafted slide content with lecturer review, selective regeneration, institutional templates, handouts and accessibility checks of exported decks remain planned.
+- **Institutional review:** Local CLO/topic editing, constraints, word-level before and after views and version activation work; decisions on briefs are recorded with their reason, person, course version and term, and each version names the decision behind it. One institution profile per workspace works, the demo's, labelled demo. Configurable review authorities, positions as data, term archives and server-enforced decisions remain to be built.
+- **Teaching materials:** Editable PPTX teaching packs and brief decks are generated from saved sessions, outcomes and evidence receipts, with speaker notes; the generator adds no text of its own. The sample course's packs carry slide masters with the demo institution's mark, and its sample slides are written for this prototype and labelled synthetic. Model-drafted slide content with lecturer review, selective regeneration, a campus's own template, handouts and accessibility checks of exported decks remain planned.
 - **Agent integrations:** A local, read-only MCP server over an exported workspace works (mcp/, docs/doors.md), with a skill folder for assistants. Remote access with OAuth, the Teams, Google Workspace and LMS doors, structured model output, provider SDK adapters, job retries, usage and cost controls and evaluation fixtures remain planned.
 - **Shared institutional workspace:** Database, authenticated roles, durable source files, validated legacy migration, term/cohort separation and collaboration. JSON backup/restore works locally; it does not include original uploaded files.
 - **Accessibility and pilot validation:** Full WCAG 2.2 AA audit, screen-reader testing, accessible exports and a real lecturer trial. Current improvements are not a compliance certification.
