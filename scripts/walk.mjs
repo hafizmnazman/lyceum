@@ -153,6 +153,37 @@ try {
   check("sample results file files end to end", Boolean(receipt));
   await shot("21-upload-receipt");
 
+  // Tier 2: the OBE course report, saved as printed, on CS310's results filed under the loop's term as the tour files them;
+  // and the student's survey address, which renders outside the shell and, with no collector behind a short link, says so.
+  const term = "2026/2027 semester 1";
+  await page.evaluate(() => (window.location.hash = "#/course/CS310"));
+  await page.waitForSelector('[data-demo-id="course-term"]', { timeout: 8000 });
+  await page.click('[data-demo-id="course-term"]', { clickCount: 3 });
+  await page.keyboard.press("Backspace");
+  await page.type('[data-demo-id="course-term"]', term);
+  await click("course-term-save");
+  await sleep(300);
+  await page.evaluate(() => (window.location.hash = "#/course/CS310/learn"));
+  await page.waitForSelector('[data-demo-id="sample-results"]', { timeout: 8000 });
+  await click("sample-results");
+  await page.waitForSelector('[data-demo-id="upload-confirm"]', { timeout: 15000 });
+  await page.click('[data-demo-id="upload-term"]', { clickCount: 3 });
+  await page.keyboard.press("Backspace");
+  await page.type('[data-demo-id="upload-term"]', term);
+  await click("upload-confirm");
+  await page.waitForSelector('[data-demo-id="obe-live"]', { timeout: 10000 });
+  check("the OBE course report renders from the filed results", await page.evaluate(() => /at 55 or above/i.test(document.querySelector('[data-demo-id="obe-live"]')?.textContent ?? "") && document.querySelectorAll('[data-demo-id="obe-live"] tbody tr').length > 0));
+  await click("obe-save");
+  await sleep(300);
+  check("the OBE course report saves as printed", await page.evaluate(() => window.__lyceum.getState().obeReports.length === 1));
+  await page.evaluate(() => (window.location.hash = "#/survey/t/" + "A".repeat(22)));
+  await page.waitForSelector('[data-demo-id="survey-page"]', { timeout: 8000 });
+  await sleep(800);
+  await shot("22-survey-page");
+  check("the student's survey address renders alone, and says when its collector is not there", await page.evaluate(() => !document.querySelector(".app-header") && /could not be loaded/i.test(document.body.innerText)));
+  await page.evaluate(() => (window.location.hash = "#/course/" + window.__lyceum.getState().selectedSubjectId + "/learn"));
+  await sleep(450);
+
   // Persistence: reload and confirm we are still signed in on the same screen.
   await page.reload({ waitUntil: "networkidle0" });
   await sleep(500);

@@ -4,8 +4,8 @@
 
 **Stamp.**
 
-- Last updated: 22 October 2026, 23:06 Kuala Lumpur time, after Track C's D4a.
-- Reflects: `main` after Track C's D0, D1, D2, D5a, D6a, D8a and D3a (`87d585d`, `81072d1`, `5715efc`, `02f5c73`, `963b0f2`, `54d400f`, `78aed88`) and D4a's attainment; Track A ended at `b4bfdc4`, with the owner's follow-ups committed as `ba980e7`; the base is `f5b26a4`, tagged `pre-overhaul`. Nothing is pushed; `amsterdam-2026` is the owner's tag at the freeze. Sections 1 to 5 describe Track A's build and its run of 22 October, afternoon; Track C's additions and their verification are in Section 8.
+- Last updated: 22 October 2026, 23:22 Kuala Lumpur time, after Track C's Tier 2 (D8b).
+- Reflects: `main` after Track C's D0, D1, D2, D5a, D6a, D8a, D3a and D4a (`87d585d`, `81072d1`, `5715efc`, `02f5c73`, `963b0f2`, `54d400f`, `78aed88`, `6c0b262`) and D8b's documentation and checks; Track A ended at `b4bfdc4`, with the owner's follow-ups committed as `ba980e7`; the base is `f5b26a4`, tagged `pre-overhaul`. Nothing is pushed; `amsterdam-2026` is the owner's tag at the freeze. Sections 1 to 5 describe Track A's build and its run of 22 October, afternoon; Track C's additions and their verification are in Section 8.
 - Project: Lyceum, Universiti Teknologi PETRONAS, for the Grand Final on 29 October 2026 in Amsterdam ([docs/competition/grand-final-2026.md](competition/grand-final-2026.md)).
 
 **Rollback.** `git checkout pre-overhaul` returns the tree as it stood before the overhaul: the whole October workspace, committed on 22 October 2026 at 03:25 as "Checkpoint before the overhaul".
@@ -165,7 +165,9 @@ What this run could not do on its own, with where each item stands. The owner's 
 | Section 19's remaining documents | `problem-statement.md`, `ui-accessibility-review.md` (with the axe and NVDA passes) and `user-study.md` (the pilot protocol) | Not written in this run |
 | The tour's Course caption (Track C) | The captions are frozen; step 3 still says "One outcome" over a course with five | Needs the owner 1 in [run-log.md](run-log.md), with a replacement for that one caption |
 | The "no AI text" lines (Track C) | The tour's Teach caption, the deck's note, the booth script and the README card say the pack has no model text, while the sample course's wording is a labelled fixture the build session wrote | Needs the owner 2 in [run-log.md](run-log.md), with a replacement that stays true; the booth script carries a "do not say" guard meanwhile |
-| The recording go (Track C) | The screenshots, the film, the deck, the brief, the poster and the pack's PowerPoint renders are captured once, on the owner's written go | The stale list and the exact commands are under "Verification after Tier 1" in Section 8 |
+| Hono's advisories (Track C) | Upgrading the local API's framework is the owner's call; the plan names no such change | Needs the owner 3 in [run-log.md](run-log.md): nine advisories fixed by 4.13.11, none reachable from the booth's network since D3a's checks |
+| The booth's network at the venue (Track C) | Windows asks once to let Node.js take connections on the hotspot, the operator picks the laptop's Wi-Fi address, and only a person at the booth can see a judge's phone reach it | `npm run booth` and the address choice are built and tested from this laptop's own Wi-Fi address; the steps are in [demo-script.md](demo-script.md) |
+| The recording go (Track C) | The screenshots, the film, the deck, the brief, the poster and the pack's PowerPoint renders are captured once, on the owner's written go | The stale list and the exact commands are under the latest verification in Section 8, after Tier 2 |
 
 ## 7. Changelog: Track A, package by package
 
@@ -558,3 +560,32 @@ The full run after D0, D1, D2, D5a and D6a, on the build machine between 21:17 a
 - On paper a record table stays a table, so the recap is back on one A4 page with five outcomes.
 - Not built in D4a: the programme-level PLO figure, pooling, frozen predictions and comment themes (planned); the slopegraph of results between terms (D5b), which will mark CLO5 not comparable since its wording changed.
 - Checks: typecheck; prove:all 240 passed, twenty-three suites (the new `prove-attainment`, 10; the intake suite at 22); the build, main chunk 935.84 kB (277.10 kB gzipped); `smoke` 19 of 19; `smoke:integrity` 3 of 3; `smoke:workspace` 8 of 8; `smoke:curriculum` 6 of 6; the walk; the contrast, dash, guide, migration, sample and partner-mark checks; the report and the recap printed to PDF at one A4 page each.
+
+### Verification after Tier 2 (D8b): 22 October 2026
+
+The full run after D3a and D4a, on the build machine between 23:16 and 23:19 Kuala Lumpur time, on the code committed as D8b. D8b added the survey's booth round trip to the workspace smoke, the OBE report and the student's survey address to the walk, and the door's two read-only tools, `lyceum_course_record` and `lyceum_attainment`; it brought `JUDGES.md`, the booth script, the README, the not-built list and the guides up to the surveys and the report. No gated command ran.
+
+| Command | Result |
+|:--|:--|
+| `npm run typecheck` | Passed |
+| `npm run prove:all` | 241 passed, 0 failed, twenty-three suites (Track C's six: the course record 12, teaching material 8, before and after 8, the judge's way through 5, the two student surveys 8, attainment against a stated threshold 10; the intake suite now 22 and the local door 6) |
+| `npm run build` | Passed; the sizes below |
+| `npm run smoke` | 19 of 19, DEMO SMOKE OK: the whole tour, now filing the results file of 38 students on five outcomes, the decision record, both downloads, the closed ring |
+| `npm run smoke:integrity` | 3 of 3: no synthetic figure on the landing page; the judge's page with the register's figures and the not-built list word for word, now eight entries; the notice only on the sandbox screens |
+| `npm run smoke:workspace` | 9 of 9: the earlier eight, the course file's manifest now marking the OBE report "not included" where none is saved, and the survey's booth round trip: the local API on a spare port, the built app behind its proxy, the lecturer opening the Course Outcome Survey, a 320 px phone answering through the short link, one answer per device, and 1 from 1 device collected, never counted |
+| `npm run smoke:curriculum` | 6 of 6 |
+| `node scripts/walk.mjs` | WALK OK, 26 checks: the earlier 23, the OBE report rendering and saving on CS310's results filed under the term, and the student's survey address rendering alone and saying when no collector answers |
+| `node scripts/generate-guide.mjs --check` | The lecturer guide matches the in-app section catalogue, with the Learn and recap guides and the not-built list rewritten |
+| `node scripts/contrast-check.mjs` | CONTRAST CHECK OK: 61 ratios against `tokens.ts`, 226 files scanned for hand-written colours, 41 generated SVGs; `public/brand/partners/` by its exception |
+| `node scripts/dash-scan.mjs` | No en or em dash in 320 text files (`docs/history` and `docs/review` kept as written; the saved postings kept verbatim) |
+| `node scripts/check-backup-migration.mjs` | BACKUP MIGRATION OK, 28 checks: schemas 3, 4, 5 and 6 restore; the reports, the notes and rows without marks are proved in `prove-attainment` |
+| `node mcp/sample.ts --check` | The sample workspace matches the tour's end state, in `mcp/` and in `public/demo/` |
+| `node scripts/gen-partner-marks.mjs --check` | The partner mark matches: the copy, 3 PNGs and the manifest |
+| `node scripts/gen-theme-css.mjs --check`, `gen-mascots.mjs --check`, `gen-architecture.mjs --check` | All match: the theme outputs and the three fonts, 35 SVGs and 72 PNGs, the diagram |
+| `node mcp/try.ts` | The door over stdio lists eight tools, seven read-only, and answers the evidence report (23:15, recorded in `docs/doors.md`) |
+
+**The bundle.** The main chunk is 936.73 kB (277.36 kB gzipped), against 869.56 kB (255.93 kB) after Tier 1: Tier 2's surveys, attainment, the report's views and lz-string. The stylesheet is 91.88 kB (17.30 kB gzipped). The QR library (25.78 kB), pptxgenjs (275.35 kB), SheetJS (429.53 kB) and jszip (97.54 kB) load only when they are used. The gzipped main chunk is below the 300 kB at which D8a's decision on the comparison views would be reopened. Vite's warning about chunks over 500 kB stands.
+
+**Stale until D9** (plan Section 13.1). Each is a true record of the 22 October build before Track C and says so where it shows a date: the screenshots of Course, Teach, Learn, History and Courses (`docs/screenshots/`, `docs/presentation/shot-*.png`, the README's seven in `.github/readme/shots/`), Learn's now showing one outcome as filed, before the five-outcome results file, the surveys and the OBE report; the film's capture and both renders (`video/out/`, `deck/media/loop90.mp4`); the deck's slides 6 and 7 if the owner takes Section 18 item 6, and the deck's Teach line (Needs the owner 2); the brief's page with the pack and its Learn picture; the poster's screenshots; the pack as PowerPoint draws it (`docs/presentation/pack/`) and the two sample decks; the README's card, which says "no model text" (Needs the owner 2). Nothing in the list was regenerated.
+
+**The D9 commands, waiting for the owner's written go**, in order (plan Section 13.2): `npm run build`; `npm run shots` (the README's seven copied); `npm run gen:sample-decks` with PowerPoint (also the pack's clipping check); if Section 18 item 6 says so, the deck's slides 6 and 7, then `npm run deck`; `node scripts/gen-brief-pdf.mjs`; `node scripts/gen-poster.mjs`; `node video/capture/capture.mjs`; in `video/remotion`, `npm run render:loop90`, `npm run render:afternoon` and `npm run check:determinism`; the film copied into `deck/media/` and `npm run deck` again.

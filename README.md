@@ -15,7 +15,7 @@
 </div>
 
 <p align="center">
-  <a href="#hafizlyceum-npm-run-proveall"><img src="https://img.shields.io/badge/checks-218_passing-8BC34A?style=for-the-badge&labelColor=161b22" alt="checks: 218 passing"></a>
+  <a href="#hafizlyceum-npm-run-proveall"><img src="https://img.shields.io/badge/checks-241_passing-8BC34A?style=for-the-badge&labelColor=161b22" alt="checks: 241 passing"></a>
   <a href="#hafizlyceum-open-report"><img src="https://img.shields.io/badge/evidence-real_postings_with_receipts-B8F23A?style=for-the-badge&labelColor=161b22" alt="evidence: real postings with receipts"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/licence-proprietary-B9CDBF?style=for-the-badge&labelColor=161b22" alt="licence: proprietary"></a>
 </p>
@@ -52,7 +52,7 @@ A lecturer can suggest a change before the next review, but cannot show why: no 
 | Decide | What will we do, and who said so? | a decision record: adopt, retain, defer or return, by whom, when, why, on which brief, version and term |
 | Update | What does the approved change look like, within our hours? | a checked revision, adopted as a new version, the old one kept, with the before and after and the decision behind it |
 | Teach | What will the class do, and with what? | a session linked to an outcome and its editable teaching pack |
-| Learn | Did it work, as far as we can honestly tell? | the term's results, matched to the version taught, with n of N |
+| Learn | Did it work, as far as we can honestly tell? | the term's results, matched to the version taught, against a stated pass mark with n of N, and the OBE course report |
 
 A host, Tualang, and seven helpers do the work; at Decide there is no helper, because people decide. Nothing runs by itself and nothing changes a course without the lecturer.
 
@@ -97,7 +97,7 @@ A requirement is an exact substring of its saved source, or it is refused; a par
   </tr>
 </table>
 
-The screenshots are real captures of the app in its demo mode, on the dated saved sample of Stripe's public job board (`npm run shots`); the results on Learn come from the app's sample file and their marks are synthetic, as the screen says; the pack slide is PowerPoint's own rendering of the downloaded file. They record the build of 22 October, morning: the course record, the sample sessions with their branded packs, the before and after, the judge's walk and the term recap came later that day and are captured once, at the end.
+The screenshots are real captures of the app in its demo mode, on the dated saved sample of Stripe's public job board (`npm run shots`); the results on Learn come from the app's sample file and their marks are synthetic, as the screen says; the pack slide is PowerPoint's own rendering of the downloaded file. They record the build of 22 October, morning: the course record, the sample sessions with their branded packs, the before and after, the judge's walk, the term recap, the two student surveys and the OBE course report came later that day and are captured once, at the end.
 
 ### <samp>hafiz@lyceum:~$ npm run dev</samp>
 
@@ -108,6 +108,7 @@ npm install
 npm run dev        # the web workspace on http://localhost:5173 and the local API on :8787
 npm run build      # the production build into dist/
 npm run preview    # the workspace alone; parsing and live collection need the API
+npm run booth      # the built app on this laptop's network beside the API, for the survey on phones
 ```
 
 The core needs no AI key and no account: work is saved in this browser. Live board collection (Greenhouse and Lever) and document parsing go through the local API; the dated saved sample works without it. **Watch the tour** on the landing page plays the whole loop over the real app in about 7 minutes; **For judges: walk with Tualang** opens the judge's page (`#/judge`), where the walk takes ten stops over the real app on the sample workspace, Next, Back and Esc by hand. [JUDGES.md](JUDGES.md) is the five-minute way in.
@@ -120,7 +121,7 @@ The core needs no AI key and no account: work is saved in this browser. Live boa
 | Backtest (synthetic) | 4 | closed-loop arithmetic on synthetic data |
 | Flow and roles | 28 | store, permissions, state machine |
 | Signal reveal (fixture) | 12 | the staged fixture reveal |
-| Intake parsing | 18 | xlsx, csv, pdf, pptx parse and interpret |
+| Intake parsing | 22 | xlsx, csv, pdf, pptx parse and interpret; each results column on its own course's outcome by label, the listed students, the marks kept sorted with no identifier and the missing counted |
 | Integrity | 13 | evidence edge cases, approval guards |
 | Teaching plans | 10 | scope, validation, export |
 | Curriculum | 28 | revisions, constraints, adoption, recovery |
@@ -132,14 +133,16 @@ The core needs no AI key and no account: work is saved in this browser. Live boa
 | The loop and the record | 9 | done rules per term, the decision record, a new term, the event log first in the timeline, Learn matched to the version taught, the term set inside the ring, the routes, every landing figure in the claims register and every quoted clause in its note |
 | Evidence snapshots | 6 | frozen windows, change called only when intervals separate, identity matching, backups |
 | Moods | 8 | each mood a pure function of the records, the requests in flight and the clock |
-| The local door | 5 | every MCP tool through the protocol against the sample workspace: receipts, the export time, read-only annotations, the pack never overwriting, nothing written to the workspace, refusals and the call log |
+| The local door | 6 | every MCP tool through the protocol against the sample workspace: receipts, the export time, read-only annotations, the course record with the course file's manifest, attainment as the app shows it with a seeded file never counted, the pack never overwriting, nothing written to the workspace, refusals and the call log |
 | The course record | 12 | the sample course in both states, its learning time, the assessment plan and its table of specifications, the matrix levels, the references gap, the rubrics, the tour's revision through the store, and the course file with its manifest |
 | Teaching material | 8 | the fourteen sample sessions and their packs read back slide by slide, 18 pt body text, the mark and the demo line in every master, the repair of the parts pptxgenjs declares but does not write, the preview against the file, and samples kept out of the term's teaching |
 | Before and after | 8 | the word diff, topic hours before and after, the week 6 pack under each version, a region for every changed part, renamed and added slides, results marked not comparable when an outcome is reworded, the summary in words, and the decision behind each version |
 | The judge's way through | 5 | every walk stop rendered by its screen, captions within twenty words with their labels, the host at the two ends only, the not-built list word for word, the sample workspace restored with the current one kept, and the recap's numbers against their records |
-| **total** | **218** | twenty-one suites |
+| The two student surveys | 8 | the instruments from the record and the profile, the link under 2,000 characters with no secret in it, the collector's token against its own hash, the floor and the release showing nothing early, one response per device and booth responses never as evidence, the Microsoft Forms importer on its fixture, backups, and the sample's counts |
+| Attainment against a stated threshold | 10 | the direct line against a hand-computed fixture with missing marks, no interval at a census and the finite-population interval below it, the recomputation after a change to the pass mark with the saved report keeping its own, the survey beside the marks never averaged and never from the booth, the programme outcomes listed with no index, marks without identifiers, the CQI note, Lens's moods, and backups |
+| **total** | **241** | twenty-three suites |
 
-After `npm run build`, four headless browser runs drive the built app: `npm run smoke` (the whole tour, the decision record, both downloads, the closed ring), `smoke:integrity` (the landing page carries no synthetic figure; the judge's page shows the register's figures and the not-built list word for word), `smoke:workspace` (save, reload, export, keyboard and 320 px layouts; the judge's walk by keyboard and the course file with its manifest) and `smoke:curriculum` (Watch to Update with real downloads and a restore; the before and after at 320 px). `npm run deck` checks every figure in the pitch against the claims register; `node scripts/generate-guide.mjs --check`, `node scripts/contrast-check.mjs` and `node scripts/dash-scan.mjs` keep the guide, the palette and the prose honest. These are software checks, not learning validation. Results with dates: [docs/as-built.md](docs/as-built.md).
+After `npm run build`, four headless browser runs drive the built app: `npm run smoke` (the whole tour, the decision record, both downloads, the closed ring), `smoke:integrity` (the landing page carries no synthetic figure; the judge's page shows the register's figures and the not-built list word for word), `smoke:workspace` (save, reload, export, keyboard and 320 px layouts; the judge's walk by keyboard and the course file with its manifest; the survey's booth round trip from a 320 px phone) and `smoke:curriculum` (Watch to Update with real downloads and a restore; the before and after at 320 px). `npm run deck` checks every figure in the pitch against the claims register; `node scripts/generate-guide.mjs --check`, `node scripts/contrast-check.mjs` and `node scripts/dash-scan.mjs` keep the guide, the palette and the prose honest. These are software checks, not learning validation. Results with dates: [docs/as-built.md](docs/as-built.md).
 
 ### <samp>hafiz@lyceum:~$ tree ./architecture</samp>
 
@@ -154,7 +157,7 @@ src/data/sample-course/  the demo course record and its term's material, labelle
 src/demo/           the tour and the judge's walk over the real app
 src/ui/             primitives, the shell, one screen per loop step, the mascots
 src/prove-*.ts      the checks
-server/             the local API: parsing, permitted board collection
+server/             the local API: parsing, permitted board collection, the booth's survey collector
 mcp/                the local door: a read-only MCP server over an exported workspace
 skills/lyceum/      the skill folder for an assistant
 deck/               the pitch, an HTML deck with its PDF and PPTX export
@@ -203,13 +206,15 @@ Built for the Grand Final, package by package, each with its checks in [docs/as-
 - **Teaching material.** Fourteen labelled sample sessions, four with full slides, branded packs with a preview on screen, lab sheets and the project brief.
 - **Before and after.** The change as a redline, the hours as current against proposed, the week's pack under both versions, and the decision behind each version.
 - **The judge's way through.** The judge's page with Tualang, a ten-stop walk on the sample workspace, and a printable term recap.
+- **The two student surveys.** The Course Outcome Survey and a demo SSRT from the course record, answered on a phone through a QR at the booth, with a response floor, a release rule and a Microsoft Forms importer; booth answers never count.
+- **Attainment against a stated threshold.** Each outcome's share at the institution's pass mark with n of N, an interval only when some students have no mark, and the OBE course report saved as printed, with the survey beside the marks, the programme outcomes listed and the CQI note.
 
-In progress for the final: the two student surveys and attainment against a stated threshold.
+In progress for the final, as the days allow: assessment items with a Moodle export, the remaining survey importers and the paste code, and the animated compare views.
 
 Next, in the order a pilot needs it (plan Section 17.2):
 
 1. **Watch over time.** Snapshots as records, comparable windows, scheduled runs with failure reporting.
-2. **Learn's maths.** The adequacy meter, intervals, partial pooling, perception beside attainment, the frozen prediction and its score.
+2. **Learn's maths.** The adequacy meter, partial pooling, the frozen prediction and its score, and the programme's PLO figure from every course's data.
 3. **The shared core.** An API, identity, server-side permissions, tenancy and the audit log.
 4. **The remote and LMS doors.** MCP over HTTP with OAuth for the assistants a university already runs; LTI 1.3 for its LMS.
 5. **More sources, drafted materials, the pilot.** Further boards and taxonomies, model drafts reviewed sentence by sentence, the accessibility audit, and three to five lecturers for a term.

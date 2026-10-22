@@ -64,8 +64,10 @@ test("the judge's page greets once, shows the register's figures and lists REMAI
   assert.ok(page.includes("REMAINING_WORK.map((item)") && page.includes("<dt>{item.title}</dt><dd>{item.detail}</dd>"), "the not-built card prints the list as written");
   assert.ok(page.includes("PROOF.map((p)"), "the four figures from the register");
   assert.equal((page.match(/mood="greeting"/g) ?? []).length, 1, "one greeting");
-  assert.equal(REMAINING_WORK.length, 7);
+  assert.equal(REMAINING_WORK.length, 8);
   assert.ok(REMAINING_WORK.some((r) => r.detail.includes("One institution profile per workspace works")), "the list says what D0 built, not that it is missing");
+  assert.ok(REMAINING_WORK.some((r) => r.title === "Results and student surveys" && r.detail.includes("the OBE course report saved as printed") && r.detail.includes("booth collector")),
+    "and what D3a and D4a built, with what stays planned");
   assert.ok(SECTION_GUIDES.some((g) => g.screen === "judge") && SECTION_GUIDES.some((g) => g.screen === "recap"), "both new screens have a section guide");
   assert.equal(SAMPLE_WORKSPACE_URL, "/demo/sample-workspace.json");
   assert.equal(readFileSync(new URL("../public" + SAMPLE_WORKSPACE_URL, import.meta.url), "utf8").replace(/\r\n/g, "\n"), RAW.replace(/\r\n/g, "\n"), "the browser's copy is the sample workspace");

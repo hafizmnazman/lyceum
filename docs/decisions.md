@@ -1557,3 +1557,53 @@ Chosen: (b), because the report is built, so "not yet built" was no longer true,
 Reverse it if: a campus keeps its reports outside the course file.
 
 To reverse: `OBE_FILE`, the manifest entry and `obeReportMarkdown` in `src/lib/courseFile.ts`, and the export in `src/ui/screens/CourseWorkspace.tsx`.
+
+## 2026-10-22 23:06, D8b: the survey's response-rate context and the claims register
+
+Options: (a) add register rows for the figures in the response rate's context on Learn (Nulty's 58% and 35%, reported by Ahmad 2018, and Monash's 31%, Nair et al. 2008). (b) Keep them out of the register, as D8a kept the institution's help lines out: the line names its sources beside the figures, and the note it comes from is cited.
+
+Chosen: (b), because the register covers the judge-facing surfaces `prove-journey` checks (the landing page, the deck, the brief, the poster, the film and the README), and this line sits on Learn beside the rate it qualifies, with its authors named. A row with no surface to check would be a promise no check keeps.
+
+Reverse it if: the context appears on a judge-facing surface, a slide or a screenshot.
+
+To reverse: rows in `docs/claims.md` and their check in `src/prove-journey.ts`.
+
+## 2026-10-22 23:08, D8b: where the booth's round trip is checked
+
+Options: (a) a smoke script of its own. (b) The workspace smoke's ninth block: the local API on a spare port and a second preview of the built app that proxies `/api` to it, in the same isolated browser that blocks every outside request.
+
+Chosen: (b), because the workspace smoke already drives the built app in that isolation, and the round trip needs nothing else; `npm run smoke:workspace` stays the one place the booth is checked, as the booth script names it. The lecturer and a 320 px phone run in two pages of one browser, as at the booth.
+
+Reverse it if: starting the API makes the smoke flaky on a machine where the port is taken.
+
+To reverse: the block in `scripts/workspace-smoke.mjs`.
+
+## 2026-10-22 23:11, D8b: the not-built list and Tier 2
+
+Options: (a) leave results and surveys off the list, which then says nothing false about them. (b) Add "Results and student surveys": what works (attainment at a stated pass mark, the OBE report, the two surveys, the booth collector, the Forms importer, the floor and the release rule) and what stays planned (the other importers, the DOCX for Forms, the paste code, pooling, frozen predictions, comment themes, the programme's PLO figure, a validated instrument).
+
+Chosen: (b), because the list is where a judge reads the honest boundary, word for word on the judge's page, and Tier 2's work had no line on it. Naming what stays planned beside what works keeps the boundary where a judge looks for it.
+
+Reverse it if: D3b lands, when the planned half shrinks.
+
+To reverse: `REMAINING_WORK` in `src/app/sectionGuides.ts` and its count in `src/prove-judge.ts`.
+
+## 2026-10-22 23:14, D8b: how the door's course record names the packs
+
+Options: (a) leave the packs out, which would mark the teaching packs "not included" while the app's zip includes them. (b) Name each pack as the app's zip names it, from its deck spec, without building it.
+
+Chosen: (b), because the manifest the door returns then matches the zip the app exports, line for line, and the door still writes nothing. `lyceum_teaching_pack` remains the one tool that writes a pack.
+
+Reverse it if: building the spec for every session grows slow on a large course.
+
+To reverse: `courseRecordText` in `mcp/workspace.ts`.
+
+## 2026-10-22 23:14, D8b: what the door's attainment answers when no report is saved
+
+Options: (a) only a saved report, refusing otherwise. (b) The saved report if there is one; otherwise the report as the records stand, saying it is not saved; a seeded example never counted.
+
+Chosen: (b), because an assistant asked how a class did should get what the lecturer sees on Learn, with its status plain, and a refusal would push it to answer from memory. The reply opens with which of the two it is, and the report's own table says "Not saved".
+
+Reverse it if: a campus wants only saved reports to leave the workspace.
+
+To reverse: `attainmentText` in `mcp/workspace.ts`.

@@ -1,5 +1,6 @@
 // Isolated browser; external requests blocked. Exercises actual lecturer actions.
 import assert from "node:assert/strict";
+import { spawn } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -230,6 +231,66 @@ try {
   assert.equal(names.filter((n) => n.startsWith("lab-sheets/")).length, 3);
   await walkPage.close();
   console.log("PASS the judge's walk by keyboard on the sample workspace at 1440 and 320 px, the host at the two ends, Esc leaves, the recap from Home, and the course file with its manifest");
+  // The survey's booth round trip (depth plan Section 7.2): the local API on a spare port and the built app served with
+  // its proxy; the lecturer prepares and opens the Course Outcome Survey, a phone at 320 px answers through the short link
+  // the QR carries, and the lecturer collects one response from one device, never counted as the course's evidence.
+  const api = spawn(process.execPath, ["server/index.ts"], { env: { ...process.env, PORT: "8792" }, stdio: ["ignore", "pipe", "pipe"] });
+  let boothServer;
+  try {
+    await new Promise((resolve, reject) => { api.stdout.on("data", (d) => { if (String(d).includes("lyceum api")) resolve(); }); api.on("exit", () => reject(new Error("the local API exited"))); });
+    const boothOrigin = "http://127.0.0.1:4213";
+    boothServer = await preview({ configFile: false, preview: { host: "127.0.0.1", port: 4213, strictPort: true, proxy: { "/api": { target: "http://127.0.0.1:8792", changeOrigin: true } } } });
+    const open = async (width, height, mobile) => {
+      const p = await browser.newPage();
+      await p.setViewport({ width, height, isMobile: mobile, hasTouch: mobile });
+      p.on("pageerror", (e) => errors.push("booth: " + String(e)));
+      await p.setRequestInterception(true);
+      p.on("request", (request) => { const url = request.url(); void (url.startsWith(boothOrigin + "/") || url.startsWith("data:") || url.startsWith("blob:") ? request.continue() : request.abort()); });
+      return p;
+    };
+    const lecturer = await open(1440, 1000, false);
+    await lecturer.goto(boothOrigin, { waitUntil: "networkidle0" });
+    await lecturer.click(selector("login-P-SOBRI"));
+    await lecturer.waitForSelector(selector("nav-courses"), { visible: true });
+    await lecturer.evaluate(() => { location.hash = "#/course/CS310"; });
+    await lecturer.waitForSelector(selector("course-term"), { visible: true });
+    await lecturer.type(selector("course-term"), "2026/2027 semester 1");
+    await lecturer.click(selector("course-term-save"));
+    await lecturer.evaluate(() => { location.hash = "#/course/CS310/learn"; });
+    await lecturer.waitForSelector(selector("surveys-create"), { visible: true });
+    await lecturer.click(selector("surveys-create"));
+    const cosId = await lecturer.evaluate(() => window.__lyceum.getState().surveys.find((x) => !x.sample && x.kind === "course-outcome").id);
+    await lecturer.waitForSelector(selector("survey-class-" + cosId), { visible: true });
+    await lecturer.type(selector("survey-class-" + cosId), "38");
+    await lecturer.click(selector("survey-open-" + cosId));
+    await lecturer.waitForSelector(selector("survey-link-" + cosId) + " img.booth-qr", { timeout: 15000 });
+    const link = await lecturer.$eval(selector("survey-link-" + cosId) + " .booth-url", (e) => e.textContent);
+    assert.match(link, /#\/survey\/t\/[A-Za-z0-9_-]{22}$/, "the QR carries the short link");
+    const phone = await open(320, 700, true);
+    await phone.goto(boothOrigin + "/" + link.split("/").slice(3).join("/"), { waitUntil: "networkidle0" });
+    await phone.waitForSelector(selector("survey-submit"), { visible: true });
+    assert.ok(await phone.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1 && !document.querySelector(".app-header")), "the student page alone, no horizontal scroll at 320 px");
+    assert.ok(await phone.evaluate(() => /nothing you submit identifies you/i.test(document.body.innerText) && /synthetic/i.test(document.body.innerText)), "the consent line and the demo line");
+    await phone.click(selector("survey-Q1-4"));
+    await phone.click(selector("survey-Q2-5"));
+    await phone.click(selector("survey-submit"));
+    await phone.waitForSelector(selector("survey-done"), { timeout: 10000 });
+    await phone.reload({ waitUntil: "networkidle0" });
+    await phone.waitForSelector(selector("survey-done"), { timeout: 10000 });
+    await phone.close();
+    await lecturer.bringToFront();
+    await lecturer.click(selector("survey-collect-" + cosId));
+    await lecturer.waitForSelector(selector("booth-" + cosId), { timeout: 10000 });
+    assert.match(await lecturer.$eval(selector("booth-" + cosId), (e) => e.textContent), /Booth responses: 1 from 1 device\./);
+    const status = await lecturer.$eval(selector("survey-status-" + cosId), (e) => e.textContent);
+    assert.ok(status.startsWith("0 responses (0 of 38, 0%)") && status.includes("the floor is 10") && status.includes("results open when grades are released"), "the booth answer never counts: " + status);
+    await lecturer.close();
+    console.log("PASS the survey's booth round trip: opened on Learn, answered from a 320 px phone through the short link, one answer per device, collected as 1 from 1 device and never counted");
+  } finally {
+    api.kill();
+    if (boothServer) await new Promise((resolve) => boothServer.httpServer.close(resolve));
+  }
+
   assert.deepEqual(errors, []);
   console.log("PASS zero page errors");
   console.log("Screenshots and exported plan: " + output);

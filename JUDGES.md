@@ -7,9 +7,10 @@ Tualang, Lyceum's host, greets you on the judge's page and signs off at the end 
 ```bash
 npm install
 npm run dev         # the web workspace and the local API (document parsing, live board collection); open the printed URL
+npm run booth       # the built app on this laptop's network beside the local API, for the survey on your phone
 ```
 
-`npm run build` then `npm run preview` serves the workspace alone; the saved sample, the walk and the tour still work there. On Windows PowerShell, use `npm.cmd` if the execution policy blocks `npm.ps1`.
+`npm run build` then `npm run preview` serves the workspace alone; the saved sample, the walk and the tour still work there. On Windows PowerShell, use `npm.cmd` if the execution policy blocks `npm.ps1`. For the survey on phones, `npm run booth` serves the app to the laptop's network; the phones join the same Wi-Fi or hotspot, and only a phone's two survey routes answer them.
 
 ## Things to try, in order
 
@@ -18,7 +19,8 @@ npm run dev         # the web workspace and the local API (document parsing, liv
 3. **The before and after.** Choose **Before and after**: CLO5's words as a redline, each topic's hours with the change in words, the week 6 pack under both versions with the changed slide outlined, and the decision that authorised the change, opened from History.
 4. **The course file.** In CS310's Course step, **Export the course file (.zip)**: the course record, the rubrics, the decisions and versions, the packs, the lab sheets and the project brief, with `MANIFEST.md` marking each item present, sample, not yet built or not included. It is the shape of a course file; no accreditation is claimed.
 5. **The term recap.** From Home once the ring closes, or History: **The term recap**, one A4 page from the records (what employers asked for, what was decided, what changed, what was taught, what came back), printable.
-6. **The survey on your phone.** Planned for this track's second tier: a student survey with a response floor and a release rule that refuse to show a result too early. Not built yet.
+6. **The survey on your phone.** On CS310's Learn step, **Prepare this term's two surveys**, then open the Course Outcome Survey for the booth collector: the QR carries a short link. Answer on your phone; a device answers once, and nothing you send identifies you. **Collect responses** shows "1 from 1 device", marked not course evidence: booth answers never count, and below the floor (5 responses and 25% of the class, the stricter) or before the coordinator records grades released, no result shows. Last term's two surveys, a sample, show what an open result looks like.
+7. **The OBE course report.** Below Learn's results: each outcome's students at or above the stated pass mark of 55 over n, with N beside it and an interval only where some have no mark, the KPI met or not, the Course Outcome Survey's share beside it and never averaged with it, the programme outcomes listed with no index, and the CQI note. **Last term's report, a sample** has both columns open. Save it as printed, or print it on one A4 page.
 
 ## The loop
 
@@ -30,7 +32,7 @@ npm run dev         # the web workspace and the local API (document parsing, liv
 | Decide | What will we do, and who said so? | A decision record: adopt, retain, defer or return, by whom, when, why, on which brief, version and term |
 | Update | What does the approved change look like, within our hours? | A checked revision, adopted as a new version with the old one kept, and the before and after |
 | Teach | What will the class do, and with what? | A session linked to an outcome and its editable teaching pack |
-| Learn | Did it work, as far as we can honestly tell? | The term's results, matched to the version taught, with n of N |
+| Learn | Did it work, as far as we can honestly tell? | The term's results, matched to the version taught, against a stated pass mark with n of N, and the OBE course report |
 
 The ring on Home closes when every step has its record for the term.
 
@@ -48,7 +50,7 @@ Sign in as **Dr Sobri**, open **Courses**, then **CS310**. The path of round sto
 4. **Decide.** Switch to **Dr Rahman** from the account menu. On **Home**, open the brief, write the reason and record **Adopt**. A decision on your own brief is labelled self-recorded and stays open until a second person confirms.
 5. **Update.** Back as Dr Sobri, start a revision, change the outline within the hours, check it and adopt it. The check panel shows the change as a redline and the hours as current against proposed; **History** shows both versions, the decision behind the new one, and the week's pack under each.
 6. **Teach.** Save a session linked to CLO5 and download its teaching pack. The generator adds no text of its own; the term's fourteen sample sessions beside it are written for this prototype and labelled synthetic on every slide.
-7. **Learn.** File the sample results under the term and the version taught; attainment per outcome shows n of N. The sample file's marks are synthetic, and the screen says so. No learning gain is claimed.
+7. **Learn.** File the sample results under the term and the version taught. Each outcome shows the students at or above the pass mark of 55 with n of N; CLO3 carries an interval because three students have no mark, and CLO4 sits below the KPI. The OBE course report follows, with the CQI note and **Save the report as printed**. The sample file's marks are synthetic, and the screen says so. No learning gain is claimed.
 
 Then open **How it works** for the record of the afternoon by role, and **Evaluation** for the live checks and the suites.
 
@@ -60,17 +62,17 @@ Then open **How it works** for the record of the afternoon by role, and **Evalua
 
 - `deck/`: the eleven slides of the pitch, in the theme, with speaker notes; `npm run deck` checks every figure against [docs/claims.md](docs/claims.md) and exports the PDF and the PPTX.
 - `video/`: the film's script, storyboard and style, the capture of the real app and the Remotion project for both cuts, rendered silent with captions until the team records the voices (`video/README.md` says how to render and check it).
-- `docs/presentation/`: the brief (`lyceum-brief.pdf`), the A1 poster (`poster-a1.pdf`), the architecture diagram and the screenshots, all generated from the app and the tokens. The screenshots and the film predate this week's course record, walk and recap; they are captured again once, at the end.
+- `docs/presentation/`: the brief (`lyceum-brief.pdf`), the A1 poster (`poster-a1.pdf`), the architecture diagram and the screenshots, all generated from the app and the tokens. The screenshots and the film predate this week's course record, walk, recap, surveys and OBE report; they are captured again once, at the end.
 
 ## Checks
 
-`npm run prove:all` runs 218 checks in twenty-one suites. After `npm run build`, `npm run smoke`, `smoke:integrity`, `smoke:workspace` and `smoke:curriculum` drive the built app in a headless browser: the first plays the whole tour, and the workspace smoke walks the judge's ten stops by keyboard at desktop and phone width. [docs/as-built.md](docs/as-built.md) records every run with its date. These are software checks, not learning validation.
+`npm run prove:all` runs 241 checks in twenty-three suites. After `npm run build`, `npm run smoke`, `smoke:integrity`, `smoke:workspace` and `smoke:curriculum` drive the built app in a headless browser: the first plays the whole tour, and the workspace smoke walks the judge's ten stops by keyboard at desktop and phone width and answers the survey from a 320 px phone through the booth collector. [docs/as-built.md](docs/as-built.md) records every run with its date. These are software checks, not learning validation.
 
 ## What is real and what is not
 
-- **Real:** requested board collection, exact-quotation validation, reviewed denominators, counts with intervals, decision records, checked revisions and their before and after, teaching packs, results matched to versions, backups, the local read-only door. The saved sample is real Stripe postings retrieved on 9 October 2026, truncated and labelled as a saved sample.
-- **Sample:** the CS310 course record, its fourteen sessions with their slides, lab sheets and project brief, written for this prototype and labelled synthetic. UTP appears as a labelled demo institution: CS310 is not a UTP course outline.
+- **Real:** requested board collection, exact-quotation validation, reviewed denominators, counts with intervals, decision records, checked revisions and their before and after, teaching packs, results matched to versions, attainment against a stated pass mark and the OBE course report, the two student surveys with the booth collector, the floor and the release rule, the Microsoft Forms importer, backups, the local read-only door. The saved sample is real Stripe postings retrieved on 9 October 2026, truncated and labelled as a saved sample.
+- **Sample:** the CS310 course record, its fourteen sessions with their slides, lab sheets and project brief, its results for two terms and last term's two surveys with their responses and comments, written for this prototype and labelled synthetic. The SSRT is a demo instrument, unvalidated. UTP appears as a labelled demo institution: CS310 is not a UTP course outline.
 - **Prototype:** the personas, the seeded courses and browser-local role switching. Sending a brief is an in-app local workflow, not a message to anyone.
 - **Illustrative:** the sandbox's market figures and learner records; the sidebar labels the sandbox and its screens carry the notice. The sample results and survey files in `public/demo` hold synthetic marks and responses, and every record filed from them says so.
-- **Planned:** the shared workspace and sign-in, the student survey, the OBE report against a stated threshold, the remote assistant doors, the LMS door, Learn's intervals, pooling and perception gap, the benchmark run, scheduled watching.
+- **Planned:** the shared workspace and sign-in, the remote assistant doors, the LMS door, the other survey importers and the paste code, pooling, frozen predictions, comment themes, the programme's PLO figure, the benchmark run, scheduled watching.
 - **Never claimed:** representative labour-market counts, employability scores, learning gains or accreditation. No lecturer pilot has run. Formal approval stays in the university's process.
