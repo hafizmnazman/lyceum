@@ -1652,8 +1652,9 @@ summary { cursor: pointer; padding: 10px 2px; min-height: 44px; }
 .start-here-resume { margin-top: 12px; align-items: center; }
 
 /* The loop graphic: the host at the centre, the helpers at their stations */
-.loop-graphic { --station: 132px; --loop-surface: var(--mint); position: relative; container-type: inline-size; width: 100%; max-width: 600px; aspect-ratio: 1 / 1; margin: 8px auto 24px; }
-.loop-graphic.is-compact { --station: 112px; max-width: 460px; margin: 0 auto; }
+.tag-row { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; }
+.loop-graphic { --station: 118px; --loop-surface: var(--mint); position: relative; container-type: inline-size; width: 100%; max-width: 600px; aspect-ratio: 1 / 1; margin: 8px auto 24px; }
+.loop-graphic.is-compact { --station: 96px; max-width: 460px; margin: 0 auto; }
 .loop-graphic-ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .loop-graphic-track { fill: none; stroke: var(--border); stroke-width: 0.8; }
 .loop-graphic-path { fill: none; stroke: var(--emerald); stroke-width: 0.5; stroke-dasharray: 1 2.2; }

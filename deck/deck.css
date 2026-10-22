@@ -114,14 +114,14 @@ img { display: block; }
 .s-loop .title { font-size: 76px; }
 .ring { position: absolute; left: 920px; top: 60px; width: 900px; height: 900px; }
 .ring-track { position: absolute; inset: 0; }
-.ring-track circle { fill: none; }
+.ring-track ellipse { fill: none; }
 .ring-track .t { stroke: var(--tint-2); stroke-width: 22; }
 .ring-track .p { stroke: var(--emerald); stroke-width: 4; }
 .ring-host { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 10px; text-align: center; }
 .ring-host img { width: 230px; height: 230px; }
 .ring-host span { font-family: var(--font-mono); font-size: 20px; color: var(--ink-2); }
 .stations { margin: 0; padding: 0; list-style: none; }
-.station { --a: calc(-90deg + var(--i) * 45deg); position: absolute; left: 50%; top: 50%; width: 280px; transform: translate(-50%, -50%) rotate(var(--a)) translate(352px) rotate(calc(-1 * var(--a))); }
+.station { --a: calc(-90deg + var(--i) * 40deg); position: absolute; left: calc(50% + cos(var(--a)) * 370px); top: calc(50% + sin(var(--a)) * 352px); width: 280px; transform: translate(-50%, -50%); } /* nine stations on a ring a little wider than tall */
 .station .pop { display: grid; justify-items: center; gap: 2px; text-align: center; }
 .station .pop > strong, .station .pop > span:not(.people-badge) { padding: 0 10px; border-radius: 8px; background: var(--mint); }
 .station img, .people-badge { width: 104px; height: 104px; }

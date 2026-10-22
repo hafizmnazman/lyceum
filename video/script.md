@@ -66,7 +66,7 @@ Helpers: prism, lens
 Clips: "Saved. One click more" 3, "Outcomes, the employer evidence" 4, "Matched to the course version" 3, "Attainment per outcome" 4
 Hold: 0.6
 
-Host: The class gets an editable pack, built from the records. The results come back, matched to the version taught.
+Host: The class gets an editable pack, built from the records. Synthetic sample results come back, matched to the version taught.
 Lecturer: But did it **work**?
 Host: We claim no gain until the benchmark has run. So next semester, the loop runs again.
 
@@ -91,10 +91,10 @@ Visual: latency
 Chapter: Why now
 Hold: 1.0
 
-Host: Approving a new degree programme generally takes **12 to 18 months**.
-Host: Over the same years, **39%** of workers' skills are expected to be transformed or outdated, by 2030.
+Host: At the US universities we checked, approving a new degree programme takes **12 to 18 months**.
+Host: And employers expect **39%** of workers' skills to be transformed or outdated between 2025 and 2030.
 Lecturer: So the course is always **behind**?
-Host: Behind, and short of the evidence the accreditors already ask for. The two figures describe different people, so they never share a chart.
+Host: Often behind, and short of the evidence the accreditors already ask for. The two figures describe different people, so they never share a chart.
 
 ## aft-receipt: The receipt
 Visual: receipt
@@ -169,14 +169,14 @@ Helpers: lens
 Clips: "The sample results file" 4, "Matched to the course version" 3, "Attainment per outcome" 5
 Hold: 0.6
 
-Host: So the term's results come back, matched to the version taught, with n of N for each outcome. We claim no learning gain until the benchmark has run.
+Host: So the term's results come back, here a synthetic sample, matched to the version taught, with n of N for each outcome. We claim no learning gain until the benchmark has run.
 
 ## aft-proof: What is real
 Visual: proof
 Chapter: What is real
 Hold: 1.0
 
-Host: By our own assessment the software sits at **TRL 6**, demonstrated on real postings from a real public board. **185** automated checks pass. What is not built is shown in amber.
+Host: By our own assessment the software sits at **TRL 6**, demonstrated on real postings from a real public board, a sample course outline and a lecturer persona. **185** automated checks pass. What is not built is shown in amber.
 Lecturer: And the next step?
 Host: One department, one term, inside its LMS.
 
@@ -185,7 +185,7 @@ Visual: doors
 Chapter: The doors
 Hold: 1.0
 
-Host: Lyceum is one core with many doors: the web workspace today, and a local door that lets the university's own assistant read the evidence. The LMS and the office suite come next.
+Host: Lyceum is one core with many doors: the web workspace today, and a local, read-only door an assistant reads the evidence through. The remote doors, the LMS and the office suite are planned.
 Lecturer: So I do not open another platform?
 Host: No. You keep the tools you already use.
 

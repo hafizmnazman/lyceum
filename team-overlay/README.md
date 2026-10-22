@@ -1,6 +1,6 @@
 # Lyceum
 
-Lyceum is a course workspace for university lecturers. It collects what employers ask for from job postings, keeps every requirement as an exact quote from its source, counts honestly, and turns that into a meeting brief, a revised course outline and teaching materials (slides and quiz items) mapped to the Course Learning Outcomes. The lecturer stays in charge: nothing changes a course until a person approves it.
+Lyceum turns real job postings into a course decision with receipts, every semester, inside the tools lecturers already use. A lecturer runs one loop per course and term: Watch (postings fetched on request, each with its link, date and fingerprint), Report (exact quotations, the reviewed denominator, counts with intervals, a mapping, a brief), Decide (a decision record by a person), Update (a checked revision, adopted as a new version), Teach (an editable teaching pack) and Learn (results matched to the version taught, with n of N). Nothing changes a course without a person.
 
 This is the team repo, and it is private. Lyceum is a working local prototype today: the app runs in the browser with a small local API, and no AI key is needed.
 
@@ -13,7 +13,7 @@ npm install
 npm run dev
 ```
 
-On Windows PowerShell, use `npm.cmd` if `npm` is blocked. Open the URL it prints and choose Dr Sobri on the sign-in screen for the full lecturer workflow, or press **Play demo** there for the self-driving tour (about six minutes).
+On Windows PowerShell, use `npm.cmd` if `npm` is blocked. Open the URL it prints and choose Dr Sobri on the sign-in screen for the full lecturer workflow, or press **Play demo** there for the self-driving tour (about 7 minutes).
 
 `npm run dev` also starts the local API, which live job-board collection and file parsing need. Copy `.env.example` to `.env` only if you want the optional model features, and never commit `.env`.
 
@@ -21,23 +21,25 @@ On Windows PowerShell, use `npm.cmd` if `npm` is blocked. Open the URL it prints
 
 ```
 npm run typecheck
-npm run prove:all     # 166 checks today
+npm run prove:all     # 185 checks in seventeen suites
 npm run build
 npm run smoke         # the full demo tour in a headless browser
 ```
 
-More browser checks: `npm run smoke:integrity`, `npm run smoke:workspace`, `npm run smoke:curriculum` (run `npm run build` first).
+More browser checks: `npm run smoke:integrity`, `npm run smoke:workspace`, `npm run smoke:curriculum` (run `npm run build` first). The guide, the palette and the prose: `node scripts/generate-guide.mjs --check`, `node scripts/contrast-check.mjs`, `node scripts/dash-scan.mjs`. The pitch: `npm run deck`.
 
 ## Read these first
 
 | file | what it is |
 |:--|:--|
 | [FEEDBACK.md](FEEDBACK.md) | what the organizer said, what's done and what's open, on one page |
-| [docs/lyceum-improvement-plan.md](docs/lyceum-improvement-plan.md) | the master plan: Section 29 is the review, Section 18 the work packages (W14 to W17 are the newest) |
-| [docs/lyceum-v3-as-built-2026-10-09.md](docs/lyceum-v3-as-built-2026-10-09.md) | what is built and verified, with the 11 October addendum |
-| [DECISIONS.md](DECISIONS.md) | why things are the way they are |
+| [docs/lyceum-upgrade-plan.md](docs/lyceum-upgrade-plan.md) | the master plan for Amsterdam (Track A) and after (Track B), with the team lanes in Section 17.3 |
+| [docs/as-built.md](docs/as-built.md) | what is built and verified, with every check and its date, and what needs a person |
+| [docs/claims.md](docs/claims.md) | every number on every surface, with its source and the check that holds it |
+| [docs/decisions.md](docs/decisions.md) | every choice of the 22 October build, with how to reverse it; [DECISIONS.md](DECISIONS.md) keeps the record before that |
+| [docs/demo-script.md](docs/demo-script.md) | the booth walkthrough: what to do, what to say, what not to claim |
 | [docs/presentation/lyceum-brief.pdf](docs/presentation/lyceum-brief.pdf) | a three-page summary of the idea and the review |
-| [docs/research/pain-and-market-2026-10-11.md](docs/research/pain-and-market-2026-10-11.md) | the problem and the market, with sources |
+| [docs/research/](docs/research/) | the dated research notes behind every figure |
 | [docs/lecturer-guide.md](docs/lecturer-guide.md) | how each screen is used |
 | [JUDGES.md](JUDGES.md) | the five-minute walkthrough |
 
@@ -45,16 +47,20 @@ More browser checks: `npm run smoke:integrity`, `npm run smoke:workspace`, `npm 
 
 ```
 src/
-  ui/screens/     one file per screen (Evidence, Studio, How it works, Evaluation, Landing, ...)
+  ui/screens/     one file per loop step plus Home, Courses, How it works, Evaluation and the landing page
   ui/primitives/  shared components
-  app/            the store, roles, the journey, the run timeline
+  ui/mascots/     the host and the seven helpers, drawn in code
+  app/            the store, roles, the loop and its ring, the event log, moods
   lib/            the deterministic core: evidence maths, collection, curriculum checks, slides, benchmark
   data/           seed data, sourced figures, the labelled scan benchmark
   demo/           the self-driving demo
   prove-*.ts      the automated checks
 server/           the local API: file parsing, job-board collection, optional model streaming
 scripts/          browser smokes, screenshot and document generators
-docs/             plan, as-built, research, presentation material, history
+mcp/              the local door: a read-only MCP server over an exported workspace
+deck/             the pitch, an HTML deck with its PDF and PPTX export
+video/            the film: script, storyboard, style, the capture and the Remotion project
+docs/             plan, as-built, claims, decisions, research, presentation material, history
 ```
 
 ## How we work

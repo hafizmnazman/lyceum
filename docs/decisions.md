@@ -80,7 +80,7 @@ Chosen: (b), because A6 generates the replacement from the tokens and the histor
 
 Reverse it if: the owner wants the old diagram in the deck before A6's version exists.
 
-To reverse: move the two files back and restore the line in `docs/lyceum-v3-as-built-2026-10-09.md`.
+To reverse: move the two files back and restore the line in `docs/history/lyceum-v3-as-built-2026-10-09.md` (moved there in A8).
 
 ## 2026-10-22 04:05, A1: the floating Play demo button once signed in
 
@@ -781,3 +781,103 @@ Chosen: (b), because each review sees exactly the files its question needs, noth
 Reverse it if: the owner wants no project files sent to OpenAI; the three reports and their logs are the whole footprint.
 
 To reverse: delete `docs/review/astra-*-2026-10-22.md` and their run logs; nothing else depends on them.
+
+## 2026-10-22 09:48, A8: Lens on the loop graphic
+
+Options: (a) the eight stations of the A2b decision, Lens labelled "Report, Learn" between Atlas and Steward, so the ring reads Learn before Decide (the pitch review's finding). (b) Nine stations in loop order with Lens drawn twice, counting at Report and reading the results at Learn, which the A2b decision named as its reversal. (c) Seven stations, one per step with Report's three helpers grouped, which needs a new station layout.
+
+Chosen: (b), because the six steps then read in their order on every ring, with the same seven helpers, and the change is the station list on each surface. The rings are a little wider than tall where there is room (the film, the deck, the poster), and the landing's compact ring shows each step with its helper's name only, the full line kept for screen readers, because nine full lines do not fit at 460 px.
+
+Reverse it if: nine stations crowd the ring at a width the smokes or the shots show.
+
+To reverse: `STATIONS` in `src/ui/screens/LoopGraphic.tsx` (and its compact line) with the station widths in `src/theme/global.css`, `video/remotion/src/scenes/Drawn.tsx` and `scripts/gen-poster.mjs`, slide 4 in `deck/index.html` and its ring in `deck/deck.css`.
+
+## 2026-10-22 09:55, A8: how records from the app's sample files say they are synthetic
+
+Options: (a) leave them as they are: Learn shows the sample file's marks (N = 24, a mean of 62.1) with nothing to say they are made up, against the rule that synthetic data says synthetic. (b) Rename the sample files with a "sample-" prefix, which changes the names the tour, the proofs and the sample workspace check. (c) An optional `sample` flag that the sample buttons set on the parsed file and the store carries onto the result and the data source, shown as "Sample file, synthetic marks" on Learn, the course overview, the Data room and the upload receipt; old backups, without the flag, still restore.
+
+Chosen: (c), because only the app's own sample files are labelled, a lecturer's file of the same name is not, and nothing else changes name; the sample workspace and the door's proof now carry and assert the flag.
+
+Reverse it if: the sample files are replaced by a real, consented results file.
+
+To reverse: `sample` in `src/types.ts`, `handleFile` in `src/ui/screens/Upload.tsx`, `fileIntake` in `src/app/store.ts`, the shapes in `src/lib/workspaceBackup.ts`, the tags in `Learn.tsx`, `CourseWorkspace.tsx` and `DataRoom.tsx`, `mcp/sample.ts` and the assertion in `src/prove-mcp.ts`.
+
+## 2026-10-22 09:57, A8: what the claims audit changes
+
+Options: (a) keep the registered wording, which states WEF's forecast as a fact ("will be transformed"), the approval time as general where its sources are two US universities, and Biggs as an accreditor's clause. (b) The audit's full rewrite: new headings and longer labels on every surface. (c) The smallest change that makes each line true to its note, on every surface that shows it: employers expect the 39%; the approval time is at the US universities cited; the Malaysian 3.2% is of graduates in the labour force; the landing's unsourced "the asks change within a year" goes; Biggs is labelled a teaching principle; the interviews are in at least three Asian countries, as R1 says.
+
+Chosen: (c), because every changed line is now checkable against a quoted passage in its note, and the figures themselves, which the audit found supported, stay as they are.
+
+Reverse it if: a note gains a passage that supports the stronger wording.
+
+To reverse: the `world-skills-and-approval` and `malaysia-underemployment` rows in `docs/claims.md`, `src/data/painStats.ts`, `src/data/accreditors.ts`, `src/ui/screens/Landing.tsx`, slides 2 and 10 in `deck/index.html`, `scripts/gen-brief-pdf.mjs`, `scripts/gen-poster.mjs`, Afternoon's second scene in `video/script.md`.
+
+## 2026-10-22 09:57, A8: TRL 6 after the audit
+
+Options: (a) keep TRL 6, self-assessed, with the environment named as it is (real postings from a real public board, a sample course outline, a lecturer persona). (b) Present TRL 5 until a real syllabus and a real lecturer have run the loop, which the research note's own definition of the relevant environment asks for. (c) Run one real syllabus with one lecturer before the final.
+
+Chosen: (a) for now, because the level is a positioning claim the owner made in the plan and the deck already names the weaker environment beside it; the choice between (a), (b) and (c) is under Needs the owner.
+
+Reverse it if: the owner picks (b) or (c).
+
+To reverse: the `deck-trl` row in `docs/claims.md`, slide 8 in `deck/index.html`, `scripts/gen-brief-pdf.mjs`, `scripts/gen-poster.mjs`, Afternoon's proof scene in `video/script.md`.
+
+## 2026-10-22 09:58, A8: what the pitch review changes in the deck
+
+Options: (a) every copy suggestion, the opening reordered and the commercial slide rewritten. (b) The verified accuracy and timing fixes only: the ChatGPT door said as planned in the rehearsed answer, formal approval kept apart from what Lyceum records, the forecast period no longer tied to the approval time, "TRL 7 needs" as the register says, no claim about what every lecturer wants, the reviewed postings as the demo's, "People decide" back in the spoken close, slide 5's chip no longer saying live, and the notes of slides 1, 8 and 10 cut to fit 140 words a minute. (c) Nothing until the Story lane reads the review.
+
+Chosen: (b), because each of these lines was wrong or overran by the review's own count, while the opening order (plan Sections 4.1 and 14 disagree) and the commercial framing are the owner's and the Story lane's to settle; both are under Needs the owner.
+
+Reverse it if: the Story lane rewrites the talk; the review stays in `docs/review/` for it.
+
+To reverse: `deck/index.html`.
+
+## 2026-10-22 09:59, A8: the README
+
+Options: (a) merge the house-style README already on `origin/main` (7 October), which carries the v3 story with figures and sources the later audit withdrew (LinkedIn and Glassdoor as market sources, the backtest's 0.009 as headline evidence) and art in the old palette. (b) Rewrite the README to the loop in the house layout of the global CLAUDE.md, reading shuden, penyu and the profile README with `gh` (read-only; only the requests leave the machine): the banner and card from shuden's `build.py` (the later of the two, 6 October) with only its config block changed, every colour a token and lime only in the dark theme, the art a tree's cross-section in braille, real screenshots in pairs, the about block with a real command and its output. (c) Leave the old README.
+
+Chosen: (b), because the README must tell the same story as the deck and the app, and nothing in it may claim what the audit withdrew; the contrast check now holds the four SVGs to the tokens.
+
+Reverse it if: the owner wants `origin/main`'s README merged instead; the two can be compared line by line.
+
+To reverse: `README.md`, `.github/readme/`, the README lines in `scripts/presentation-shots.mjs` and `scripts/contrast-check.mjs`.
+
+## 2026-10-22 10:00, A8: DECISIONS.md and docs/decisions.md
+
+Options: (a) move DECISIONS.md into `docs/history/` and leave a one-line pointer, as plan Section 18 says. (b) Keep DECISIONS.md as written, because the project's CLAUDE.md names it as required reading, and add a note at its top that Track A's decisions, from 22 October, are in `docs/decisions.md`. (c) Merge the two files.
+
+Chosen: (b), because the operating brief points sessions at DECISIONS.md and changing that brief is the owner's call; a pointer at the top serves the same purpose without breaking it.
+
+Reverse it if: the owner updates CLAUDE.md's reading list; then the move in (a) is one commit.
+
+To reverse: the first lines of `DECISIONS.md`.
+
+## 2026-10-22 10:16, A8: what the question-bank rehearsal changes
+
+Options: (a) nothing until the Story lane reads it. (b) The overclaims it found that the files confirm: "Claude reads" the door, in the deck's notes, the brief, FEEDBACK.md and the booth script, where only the official MCP client has run it and the Claude Desktop run is still to be recorded; a rehearsed answer saying "today Claude"; and the film and the booth calling the local door the university's own assistant, which is a planned door. (c) Write the eight unrehearsed answers from it, which would put model text into the team's script.
+
+Chosen: (b), because each changed line now says what has been run, and the answers stay the Story lane's, with the review kept in `docs/review/` as their input.
+
+Reverse it if: the Claude Desktop run is recorded (Needs the owner 2); then "Claude reads" is true and can return.
+
+To reverse: slides 9 and 11 in `deck/index.html`, `scripts/gen-brief-pdf.mjs`, `team-overlay/FEEDBACK.md`, `docs/demo-script.md`, Afternoon's doors scene in `video/script.md`.
+
+## 2026-10-22 10:18, A8: the sample's seed clock
+
+Options: (a) leave the seed clock at 1 July 2026, so records built outside the browser (the sample workspace, and so the screenshots restored from it) are dated before the postings they cite were retrieved on 9 October. (b) Move it to 22 October; tried, and two journey proofs fail, because their term windows and decision rules are anchored to the July clock. (c) Pin a separate clock for the sample workspace only, which shifts its term against the seed records and is untested.
+
+Chosen: (a) for this run, because the proofs are the contract and re-anchoring them the day of the freeze is the larger risk; the live demo runs on the browser's real clock, so the booth shows today's dates.
+
+Reverse it if: the owner wants the screenshots' dates consistent before the final; then (b) with the two proofs re-anchored is one change.
+
+To reverse: `SEED_NOW` in `src/app/store.ts`, the dates asserted in `src/prove-journey.ts`, then `node mcp/sample.ts` and `npm run shots`.
+
+## 2026-10-22 10:53, A8: the as-built record
+
+Options: (a) a fresh as-built document with the package sections deleted. (b) The Amanah shape on top (stamp, what Lyceum is, plan versus built with the known mismatches, exact versions, layout, the full verification with its date, what needs a person) and the package sections kept as written below as the changelog, the 9 October report moved to `docs/history/` as Section 18 says. (c) Keep the package sections only.
+
+Chosen: (b), because the package sections are the dated evidence the plan-versus-built table points to, and a reader wants the summary first.
+
+Reverse it if: the file grows past what a judge will read; then the changelog moves to `docs/history/`.
+
+To reverse: `docs/as-built.md`, and `git mv` the 9 October report back.

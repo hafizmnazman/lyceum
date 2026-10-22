@@ -380,7 +380,7 @@ test("every landing figure is in the claims register with its source, and every 
   const note = (file: string) => readFileSync(new URL("../docs/research/" + file, import.meta.url), "utf8");
   const row = (id: string) => claims.split("\n").find((line) => line.startsWith("| `" + id + "` |"));
   const dash = new RegExp("[" + String.fromCharCode(0x2013, 0x2014) + "]");
-  assert.deepEqual(PAIN_STATS.map((s) => s.scope), ["World", "Asia", "Malaysia"], "the problem at three levels, one figure each");
+  assert.deepEqual(PAIN_STATS.map((s) => s.scope), ["World", "Asia", "Malaysia"], "the problem at three levels, one comparison each");
   for (const s of PAIN_STATS) {
     const r = row(s.claim);
     assert.ok(r, s.claim + " is registered in docs/claims.md");

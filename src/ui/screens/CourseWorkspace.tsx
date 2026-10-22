@@ -83,7 +83,7 @@ export function CourseOverview({ state, person, subject, proposal, onPlan, onPro
           <p className="muted">Filed source records, not stored files you can download. Confirmed uploads still need your academic review.</p>
           {sources.length ? <ul className="source-list">{sources.map((source, index) => <li key={index}>
             <strong>{source.sourceFileName ?? source.kind.replaceAll("-", " ")}</strong>
-            <span>{source.term} · {source.recordCount} records · {source.sourceFileName ? "Uploaded record" : "Seeded example"}</span>
+            <span>{source.term} · {source.recordCount} records · {source.sample ? "Sample file, synthetic" : source.sourceFileName ? "Uploaded record" : "Seeded example"}</span>
           </li>)}</ul> : <p>No source records yet. Upload a syllabus or course materials to establish the course context.</p>}
           <div className="button-row">
             {navAllows(person, state.assignments, "upload") ? <Button onClick={() => { selectSubject(subject.id); navigate("upload"); }}>Upload a document</Button> : null}

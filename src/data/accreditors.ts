@@ -1,5 +1,6 @@
-// The loop as the operational form of clauses accreditors already use (plan
-// Section 4), for the landing page and the deck. Each clause is quoted word for
+// The loop as the working form of what reviewers already look for (plan
+// Section 4), for the landing page and the deck: accreditors' clauses, a quality
+// code's guidance and, for Teach, a teaching principle, each labelled for what it is. Each clause is quoted word for
 // word from a dated research note, or marked as a paraphrase where the note
 // gives no quotable wording; nothing is quoted from memory. Clauses the plan
 // names but no note quotes (ESG 1.2, AACSB Standard 5) are left out until a
@@ -30,7 +31,7 @@ export const ACCREDITOR_MAPPING: StepClauses[] = [
       url: "https://www.enqa.eu/wp-content/uploads/2015/11/ESG_2015.pdf", note: "curriculum-latency-global-2026-10-22.md, Section 3 (P)" },
   ] },
   { step: "Teach", what: "constructive alignment of outcomes, activities and assessment", clauses: [
-    { body: "Biggs, constructive alignment", quote: "all components in the teaching system, the curriculum and its intended outcomes, the teaching methods used, the assessment tasks, are aligned to each other",
+    { body: "Biggs, constructive alignment, a teaching principle", quote: "all components in the teaching system, the curriculum and its intended outcomes, the teaching methods used, the assessment tasks, are aligned to each other",
       url: "https://www.biologie.uzh.ch/dam/jcr:94dbcc23-1c4d-4892-bab8-ba16abc4ef66/ConstructiveAlignment_Biggs.pdf", note: "hackastone-and-competitors-2026-10-22.md" },
   ] },
   { step: "Learn", what: "assurance of learning", clauses: [

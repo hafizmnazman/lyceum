@@ -93,12 +93,13 @@ export const Doors: React.FC<{ scene: Scene }> = ({ scene }) => {
   const frame = useCurrentFrame();
   const doors = cueAt(scene, "doors") ?? 0, local = cueAt(scene, "local") ?? 0;
   const zoom = 1 + 0.22 * draw(frame, doors, 60);
-  const W = 1440, scale = W / 1920; // the diagram is 1920 by 1080; the local door's tile is at 546, 236, 246 by 166
+  const W = 1240, H = Math.round((W * 1080) / 1920), scale = W / 1920; // the diagram is 1920 by 1080; the local door's tile is at 546, 236, 246 by 166
+  // below the chapter chip and clear of the host's badge and the captions
   return (
     <AbsoluteFill>
-      <div style={{ position: "absolute", left: 240, top: 50, width: W, height: 810, borderRadius: 24, overflow: "hidden", boxShadow: "0 0 0 6px " + C.forestBorder }}>
-        <div style={{ width: W, height: 810, transform: "scale(" + zoom + ")", transformOrigin: "30% 30%" }}>
-          <Img src={staticFile("doors/architecture.png")} style={{ width: W, height: 810 }} />
+      <div style={{ position: "absolute", left: 340, top: 150, width: W, height: H, borderRadius: 24, overflow: "hidden", boxShadow: "0 0 0 6px " + C.forestBorder }}>
+        <div style={{ width: W, height: H, transform: "scale(" + zoom + ")", transformOrigin: "30% 30%" }}>
+          <Img src={staticFile("doors/architecture.png")} style={{ width: W, height: H }} />
           <div style={{ position: "absolute", left: 546 * scale - 6, top: 236 * scale - 6, width: 246 * scale + 12, height: 166 * scale + 12, borderRadius: 14,
             boxShadow: "0 0 0 6px " + alpha(C.lime, fade(frame, local, 10)) }} />
         </div>

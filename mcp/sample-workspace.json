@@ -11509,7 +11509,8 @@
         ],
         "filedAt": "2026-07-01T10:00:00Z",
         "sourceFileName": "results.xlsx",
-        "courseVersionId": "CS310-workspace-45"
+        "courseVersionId": "CS310-workspace-45",
+        "sample": true
       }
     ],
     "dataSources": [
@@ -11520,7 +11521,8 @@
         "recordCount": 24,
         "ingestedAt": "2026-07-01T10:00:00Z",
         "verified": false,
-        "sourceFileName": "results.xlsx"
+        "sourceFileName": "results.xlsx",
+        "sample": true
       },
       {
         "kind": "clo-survey",

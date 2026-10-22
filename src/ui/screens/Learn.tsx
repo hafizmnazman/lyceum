@@ -69,11 +69,11 @@ export function LearnScreen() {
       {uploads.length || surveys.length ? <ul className="filed-list">
         {uploads.map((u) => <li key={u.id}>
           <div><strong>{u.sourceFileName ?? "Results"}</strong><span className="muted">Results · term {u.term} · filed {u.filedAt.slice(0, 10)} · {u.rows.length} {u.rows.length === 1 ? "outcome" : "outcomes"}{u.courseVersionId ? " · version " + u.courseVersionId : ""}</span></div>
-          {SEEDED.has(u.id) ? <Tag>Seeded example, never counted</Tag> : u.courseVersionId ? <Tag tone="ok">Matched to {u.courseVersionId}</Tag> : <Tag tone="warn">No course version</Tag>}
+          <span className="tag-row">{u.sample ? <Tag>Sample file, synthetic marks</Tag> : null}{SEEDED.has(u.id) ? <Tag>Seeded example, never counted</Tag> : u.courseVersionId ? <Tag tone="ok">Matched to {u.courseVersionId}</Tag> : <Tag tone="warn">No course version</Tag>}</span>
         </li>)}
         {surveys.map((d, i) => <li key={d.kind + d.term + i}>
           <div><strong>{d.sourceFileName ?? (d.kind === "ssrt" ? "SSRT survey" : "CLO survey")}</strong><span className="muted">{d.kind === "ssrt" ? "SSRT survey" : "CLO self-rating survey"} · term {d.term} · {d.recordCount} responses · filed {d.ingestedAt.slice(0, 10)}</span></div>
-          <Tag>{d.sourceFileName ? "Filed by a person" : "Seeded example"}</Tag>
+          <Tag>{d.sample ? "Sample file, synthetic responses" : d.sourceFileName ? "Filed by a person" : "Seeded example"}</Tag>
         </li>)}
       </ul> : <p className="muted">Nothing filed for this course yet.</p>}
       <p className="muted">Surveys are listed, not yet set beside the marks: perception beside attainment is planned.</p>
@@ -107,7 +107,7 @@ function AttainmentCard({ state, subject, upload, clos }: { state: AppState; sub
   return <div className="attainment">
     <div className="attainment-head">
       <div><strong>{upload.sourceFileName ?? "Results file"}</strong><span className="muted">Term {upload.term} · filed {upload.filedAt.slice(0, 10)} by {who} · N = {N}</span></div>
-      {seeded ? <Tag>Seeded example: last term's file, never counted</Tag> : upload.courseVersionId ? <Tag tone="ok">For version {upload.courseVersionId}</Tag> : <Tag tone="warn">No course version</Tag>}
+      <span className="tag-row">{upload.sample ? <Tag>Sample file, synthetic marks</Tag> : null}{seeded ? <Tag>Seeded example: last term's file, never counted</Tag> : upload.courseVersionId ? <Tag tone="ok">For version {upload.courseVersionId}</Tag> : <Tag tone="warn">No course version</Tag>}</span>
     </div>
     <ul className="attainment-rows">{rows.map((r) => <li key={r.cloId}>
       <div className="attainment-outcome"><strong>{r.clo?.label ?? r.cloId}</strong><span className="muted">{r.clo ? r.clo.text : "Not an outcome of " + subject.id + " today"}</span></div>

@@ -114,7 +114,7 @@ export function DataRoomScreen() {
                         maxWidth: 220,
                       }}
                     >
-                      {ds.sourceFileName}
+                      {ds.sourceFileName}{ds.sample ? ", a sample file, synthetic" : ""}
                     </span>
                   ) : null}
                 </Row>

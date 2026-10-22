@@ -68,7 +68,7 @@ export const Latency: React.FC<{ scene: Scene }> = ({ scene }) => {
   return (
     <AbsoluteFill>
       <div style={{ ...panel, left: 96, opacity: fade(frame, cal - 10, 10) }}>
-        <div style={{ fontFamily: F.body, fontSize: 32, color: C.onForest }}>Approving a new degree programme generally takes</div>
+        <div style={{ fontFamily: F.body, fontSize: 32, color: C.onForest }}>Approving a new degree programme, at the US universities we checked</div>
         <div style={{ marginTop: 18, fontFamily: F.display, fontWeight: 800, fontSize: 132, lineHeight: 1, color: C.white, transform: "scale(" + pop(frame, cal) + ")", transformOrigin: "left center" }}>
           {approval.lo} to {approval.hi} <span style={{ fontSize: 56, fontWeight: 600 }}>months</span>
         </div>
@@ -121,30 +121,35 @@ export const Receipt: React.FC<{ scene: Scene }> = ({ scene }) => {
 };
 
 // ---------- beat 4: the loop ----------
+// In loop order; Lens appears twice, counting at Report and reading the results at Learn (docs/decisions.md).
 const STATIONS: Array<[string, string, string]> = [
-  ["folio", "Course", "reads the outline"], ["scout", "Watch", "fetches, on request"], ["atlas", "Report", "quotes and maps"], ["lens", "Report, Learn", "counts, with n"],
+  ["folio", "Course", "reads the outline"], ["scout", "Watch", "fetches, on request"], ["atlas", "Report", "quotes and maps"], ["lens", "Report", "counts, with n"],
   ["steward", "Report", "prepares the brief"], ["people", "Decide", "people decide"], ["quill", "Update", "checks the revision"], ["prism", "Teach", "builds the pack"],
+  ["lens", "Learn", "reads the results, n of N"],
 ];
 export const Loop: React.FC<{ scene: Scene }> = ({ scene }) => {
   const frame = useCurrentFrame(), cue = cueOf(scene);
   const ringAt = cue("ring"), stationsAt = cue("stations"), peopleAt = cue("people");
-  const cx = 960, cy = 440, R = 300, L = 2 * Math.PI * R;
+  // A ring wider than it is tall, so nine stations clear each other and the captions.
+  const cx = 960, cy = 440, RX = 430, RY = 300;
+  const L = Math.PI * (3 * (RX + RY) - Math.sqrt((3 * RX + RY) * (RX + 3 * RY))); // Ramanujan's perimeter
+  const ring = "M " + cx + " " + (cy - RY) + " A " + RX + " " + RY + " 0 1 1 " + cx + " " + (cy + RY) + " A " + RX + " " + RY + " 0 1 1 " + cx + " " + (cy - RY);
   return (
     <AbsoluteFill>
       <svg viewBox="0 0 1920 1080" width={1920} height={1080} style={{ position: "absolute", inset: 0 }}>
-        <circle cx={cx} cy={cy} r={R} fill="none" stroke={C.forestBorder} strokeWidth={18} />
-        <circle cx={cx} cy={cy} r={R} fill="none" stroke={C.ray2} strokeWidth={8} strokeLinecap="round" strokeDasharray={L} strokeDashoffset={L * (1 - draw(frame, ringAt - 20, 40))} transform={"rotate(-90 " + cx + " " + cy + ")"} />
+        <path d={ring} fill="none" stroke={C.forestBorder} strokeWidth={18} />
+        <path d={ring} fill="none" stroke={C.ray2} strokeWidth={8} strokeLinecap="round" strokeDasharray={L} strokeDashoffset={L * (1 - draw(frame, ringAt - 20, 40))} />
       </svg>
       <div style={{ position: "absolute", left: cx - 150, top: cy - 168, width: 300, display: "grid", justifyItems: "center", transform: "translateY(" + float(frame, 0, 4) + "px)" }}>
         <HostFigure size={260} pose="greeting" mouth={mouthOf(scene, "host", frame)} />
         <span style={{ fontFamily: F.mono, fontSize: 22, color: C.onForest }}>Tualang, the host</span>
       </div>
       {STATIONS.map(([who, step, does], i) => {
-        const a = (-90 + i * 45) * Math.PI / 180, x = cx + R * Math.cos(a), y = cy + R * Math.sin(a);
+        const a = (-90 + (i * 360) / STATIONS.length) * Math.PI / 180, x = cx + RX * Math.cos(a), y = cy + RY * Math.sin(a);
         const s = pop(frame, stationsAt + i * 7);
         const glow = who === "people" ? fade(frame, peopleAt, 10) : 0;
         return (
-          <div key={who} style={{ position: "absolute", left: x - 160, top: y - 66, width: 320, display: "grid", justifyItems: "center", gap: 4, transform: "scale(" + s + ")" }}>
+          <div key={step + i} style={{ position: "absolute", left: x - 160, top: y - 66, width: 320, display: "grid", justifyItems: "center", gap: 4, transform: "scale(" + s + ")" }}>
             {isHelper(who) ? <HelperBadge who={who} size={112} pose="working" /> : (
               <div style={{ width: 112, height: 112, borderRadius: "50%", background: C.tint2, display: "grid", placeItems: "center", boxShadow: "0 0 0 " + 8 * glow + "px " + alpha(C.lime, 0.9) }}>
                 <svg viewBox="0 0 24 24" width={60} height={60} fill="none" stroke={C.forest} strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" /><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" /><path d="M7 21h10" /><path d="M12 3v18" /><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" /></svg>

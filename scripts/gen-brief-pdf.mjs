@@ -44,7 +44,7 @@ const STEPS = [
 const NOT_BUILT = ["Remote doors for ChatGPT Edu, Copilot and Gemini", "The LMS door for Canvas and Moodle", "Learn's intervals, pooling and the perception gap", "The benchmark run against the CLO survey", "Watching on a schedule", "A shared workspace with sign-in"];
 const REVIEW = [
   { ask: "Less wordy, more visual: give the agents mascots and living personas.", status: "Done", tone: "built", response: "A host and seven helpers, drawn in code, whose moods follow real records; in the app, the deck and the poster." },
-  { ask: "Research the problem beyond Malaysia, at Asia and world level.", status: "Started", tone: "local", response: "One sourced figure each for the world, Asia and Malaysia, labelled desk research. Interviews with lecturers in three Asian countries come next." },
+  { ask: "Research the problem beyond Malaysia, at Asia and world level.", status: "Started", tone: "local", response: "One sourced comparison each for the world, Asia and Malaysia, labelled desk research. Interviews with lecturers in at least three Asian countries come next." },
   { ask: "Make the flow of the app and the flow of the pitch tally.", status: "Done", tone: "built", response: "One loop with the same six names in the app, the demo, the deck and this brief; the film follows the same order." },
   { ask: "Benchmark the mock cohort against the SSRT and CLO surveys.", status: "Planned", tone: "planned", response: "Predictions frozen before a semester and scored against that semester's CLO survey and results. Not run yet." },
 ];
@@ -62,7 +62,7 @@ const page1 = `<section class="page">
   <section class="section">
     <p class="eyebrow">Why now</p>
     <div class="stats">${PAIN_STATS.map((s) => `<div class="stat" data-claim="${s.claim}"><div class="scope">${esc(s.scope)}</div><div class="num">${esc(s.value)}</div><div class="lbl">${esc(s.label)}${s.vendor ? " (a vendor survey)" : ""}</div><div class="src">${esc(s.sources.map((x) => x.name).join("; "))}</div></div>`).join("")}</div>
-    <p class="caption">Desk research, one figure for each level, until interviews with lecturers add a quotation per level. The figures describe different populations, so they are never one chart.</p>
+    <p class="caption">Desk research, one comparison for each level, until interviews with lecturers add a quotation per level. The figures describe different populations, so they are never one chart.</p>
   </section>
 
   <section class="section receipt-row">
@@ -120,7 +120,7 @@ const page3 = `<section class="page">
   <section class="section">
     <p class="eyebrow">The wider world: one core, many doors</p>
     ${shot("docs/presentation/architecture.png", 180, "Lyceum's architecture: people work through doors into one deterministic core; built doors solid, planned doors dashed.")}
-    <p class="caption">The web workspace is built, and a local, read-only door already lets Claude read an exported workspace through MCP. The doors for the university's own assistants, its LMS and its office suite are planned. No door confirms a quotation or decides.</p>
+    <p class="caption">The web workspace is built, and so is a local, read-only MCP door over an exported workspace, set up for Claude and tested with the official MCP client. The doors for the university's own assistants, its LMS and its office suite are planned. No door confirms a quotation or decides.</p>
   </section>
 
   <section class="section cols2">
@@ -131,7 +131,7 @@ const page3 = `<section class="page">
         <div class="tier"><strong>Department</strong><span class="pill planned">Planned</span><p>The shared workspace, sign-in, the assistant and LMS doors, the term's review pack.</p></div>
         <div class="tier"><strong>Institution</strong><span class="pill planned">Planned</span><p>Tenancy, audit, the office suite doors and data agreements.</p></div>
       </div>
-      <p class="caption">The periodic review happens anyway, and each step is the working form of a clause reviewers already use: <span data-ref>AUN-QA 1.4, MQA 6.1.6, ABET Criteria 2 and 4, ESG 1.9</span> and Biggs's constructive alignment.</p>
+      <p class="caption">The periodic review happens anyway, and each step is the working form of what reviewers already look for: <span data-ref>AUN-QA 1.4, MQA 6.1.6, ABET Criteria 2 and 4, ESG 1.9</span>, and for Teach the teaching principle of constructive alignment (Biggs).</p>
     </div>
     <div>
       <p class="eyebrow">The organiser's review of <span data-ref>14 October 2026</span>, and what we did</p>

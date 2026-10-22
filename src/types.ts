@@ -115,6 +115,8 @@ export interface ResultUpload {
   sourceFileName?: string;
   // A2b: the course version these results are for, the version taught that term, confirmed when filed (plan Section 4, Learn).
   courseVersionId?: string;
+  // A8: filed from one of the app's sample files, so its marks are synthetic and say so.
+  sample?: boolean;
 }
 
 export interface DataSource {
@@ -127,6 +129,7 @@ export interface DataSource {
   // v3: verified = ingested from a published document rather than self-entered.
   verified?: boolean;
   sourceFileName?: string;
+  sample?: boolean; // A8: filed from one of the app's sample files
 }
 
 // ---------- change proposals (the flow) ----------
@@ -293,6 +296,8 @@ export interface ParsedDoc {
   kind: UploadedFileKind;
   pages: Array<{ index: number; text: string }>; // slides = pages
   tables: Array<{ name: string; rows: string[][] }>; // sheets and detected tables
+  // A8: one of the sample files the app ships in public/demo; every record filed from it says it is synthetic.
+  sample?: boolean;
 }
 
 /** What the Intake agent makes of a ParsedDoc. The user always confirms this

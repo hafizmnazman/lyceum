@@ -12,16 +12,17 @@ import { CAST, HOST_NAME, Mascot, type Surface } from "../mascots/index.tsx";
 
 export interface Station { who: HelperRole | "people"; step: string; does: string }
 
-/** The stations in loop order, from Course round to Teach, Lens serving both Report and Learn. */
+/** The stations in loop order, from Course round to Learn; Lens stands twice, counting at Report and reading the results at Learn. */
 export const STATIONS: Station[] = [
   { who: "folio", step: "Course", does: "reads the outline" },
   { who: "scout", step: "Watch", does: "fetches on request" },
-  { who: "atlas", step: "Report", does: "proposes quotations, maps skills" },
-  { who: "lens", step: "Report and Learn", does: "counts, with n" },
+  { who: "atlas", step: "Report", does: "quotes and maps" },
+  { who: "lens", step: "Report", does: "counts, with n" },
   { who: "steward", step: "Report", does: "prepares the brief" },
   { who: "people", step: "Decide", does: "people decide" },
   { who: "quill", step: "Update", does: "checks the revision" },
-  { who: "prism", step: "Teach", does: "builds the teaching pack" },
+  { who: "prism", step: "Teach", does: "builds the pack" },
+  { who: "lens", step: "Learn", does: "reads the results, n of N" },
 ];
 
 export function LoopGraphic({ onSelect, selected, surface = "light", compact = false }: {
@@ -47,9 +48,12 @@ export function LoopGraphic({ onSelect, selected, surface = "light", compact = f
           const body = <>
             <span className="loop-station-figure">{s.who === "people" ? <span className="loop-station-people"><Scale size={size * 0.5} strokeWidth={1.75} aria-hidden /></span> : <Mascot who={s.who} mood="resting" size={size} surface={surface} />}</span>
             <span className="loop-station-step">{s.step}</span>
-            <span className="loop-station-who">{cast ? cast.name + ": " + s.does : s.does}</span>
+            {compact
+              // nine stations leave the compact ring room for the helper's name only; the full line stays for screen readers
+              ? <span className="loop-station-who"><span aria-hidden="true">{cast ? cast.name : "People"}</span><span className="sr-only">{cast ? cast.name + ": " + s.does : s.does}</span></span>
+              : <span className="loop-station-who">{cast ? cast.name + ": " + s.does : s.does}</span>}
           </>;
-          return <li key={s.who} className={"loop-station" + (selected === s.who ? " is-selected" : "")} style={style}>
+          return <li key={s.who + "-" + s.step} className={"loop-station" + (selected === s.who ? " is-selected" : "")} style={style}>
             {onSelect && s.who !== "people" ? <button type="button" className="loop-station-button" aria-pressed={selected === s.who} onClick={() => onSelect(s.who as HelperRole)}>{body}</button> : <div className="loop-station-button">{body}</div>}
           </li>;
         })}

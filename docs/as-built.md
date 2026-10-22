@@ -1,10 +1,173 @@
 # Lyceum: as built
 
-**Stamp.** Track A of [lyceum-upgrade-plan.md](lyceum-upgrade-plan.md), built from 22 October 2026 on `main`. Base commit `f5b26a4`, tagged `pre-overhaul`. Each package adds a dated section with its verification table; package A8 turns this file into the stamped as-built report for Amsterdam (plan-versus-built table, exact versions, the full verification table, the changelog). Each section is signed by the package's accepting owner (plan Section 17.3).
+> **What this file is.** The system as built for the HACKaSTONE 2026 Grand Final, written from the code and the checks that ran, with the plan's mismatches named. Where it and [lyceum-upgrade-plan.md](lyceum-upgrade-plan.md) disagree about what exists, this file wins. Keep it current: change it with the code, add a line to the changelog, keep the stamp in step.
+
+**Stamp.**
+
+- Last updated: 22 October 2026, 10:53 Kuala Lumpur time.
+- Reflects: `main` at the A8 commit, which follows `7f9b926`; the base is `f5b26a4`, tagged `pre-overhaul`. Nothing is pushed; `amsterdam-2026` is the owner's tag at the freeze.
+- Project: Lyceum, Universiti Teknologi PETRONAS, for the Grand Final on 29 October 2026 in Amsterdam ([docs/competition/grand-final-2026.md](competition/grand-final-2026.md)).
 
 **Rollback.** `git checkout pre-overhaul` returns the tree as it stood before the overhaul: the whole October workspace, committed on 22 October 2026 at 03:25 as "Checkpoint before the overhaul".
 
-## A0, checkpoint and the branch: 22 October 2026
+## Contents
+
+1. [What Lyceum is](#1-what-lyceum-is)
+2. [Plan versus built](#2-plan-versus-built)
+3. [Exact versions](#3-exact-versions)
+4. [Layout](#4-layout)
+5. [Verification](#5-verification-22-october-2026)
+6. [What needs a person](#6-what-needs-a-person)
+7. [Changelog: Track A, package by package](#7-changelog-track-a-package-by-package)
+
+## 1. What Lyceum is
+
+Lyceum turns real job postings into a course decision with receipts, every semester, inside the tools lecturers already use. A lecturer runs one loop per course and term: **Watch** (postings fetched on request from a permitted board, each with its link, date and fingerprint), **Report** (exact quotations beside their sources, the reviewed denominator, counts with Wilson intervals, a mapping to the outcomes, a brief), **Decide** (an immutable decision record by a person with the right to decide, bound to the brief, the version and the term), **Update** (a revision checked against the hours and the protected topics, adopted as a new version), **Teach** (sessions and an editable teaching pack with no model text) and **Learn** (results matched to the version taught, with n of N, and no learning gain claimed). The core is deterministic and needs no AI key; an assistant reaches it through the local, read-only door in `mcp/`. A host and seven helpers, drawn in code, make the steps visible; their moods follow records, never activity.
+
+## 2. Plan versus built
+
+Plan Section 17.1, package by package, against what this record and the code show. "Done" means built and verified on 22 October 2026; "partly" names what is missing; "not done" says why.
+
+| Package | The plan's acceptance | As built | Status |
+|:--|:--|:--|:--|
+| A0 Checkpoint and the branch | The tag exists; the snapshots suite is in prove:all; a schema 3 and a schema 4 backup restore | `pre-overhaul` on `f5b26a4`; the branch taken; the migration check restores schemas 3, 4 and 5 | Done |
+| A1 Theme and shell | Every screen in the new theme with no hand-written hex; the contrast table passes | `tokens.ts` the only source; generated CSS and bundled fonts; the loop rail; the contrast check | Done |
+| A3 Mascots v1 | PNGs for every character and mood; the mark as favicon and icon; prove:moods; nothing moves without a request | Eight characters in code, four poses each; 35 SVGs and 72 PNGs; the moods proof | Done |
+| A2a Watch, Report, Decide | The journey proof with the new done rules; a decision record and an event on the timeline; 320 px reflow | The Report sub-rail, the source pane, skill cards, the decision record, the event log, the ring per term | Done |
+| A2b The other loop screens, Home, How it works, Landing | No synthetic figure on the landing; every landing figure in claims.md; the integrity smoke | Learn matched to the version taught; the landing's figures and clauses registered and proved; in A8, records from the app's sample files labelled synthetic | Done; the doors strip keeps neutral icons until the owner decides on marks |
+| A4 Demo and checks | `npm run smoke` with the decision and both decks; the guide check | The tour in loop order, setting the term first; four smokes and the walk updated | Done |
+| A5 The local door | Claude Desktop returns CS310's evidence report from a fresh export; no tool writes to the workspace | Six tools, five read-only; proofs over the real protocol; a stdio session with the official client | Partly: the Claude Desktop run needs the owner |
+| A6 Deck, diagram, brief, poster | The PPTX opens in PowerPoint with notes and the film plays; the diagram passes the C4 checklist; no dash | The deck, its PDF and PPTX opened in PowerPoint with every note and the film; the diagram; the brief; the A1 poster; in A8, the Codex pitch review's verified fixes | Partly: the playback test needs the presenting laptop; the poster's QR code needs a public page |
+| A7 The film | The 90-second cut rendered and reviewed; a second render diffed | Both cuts built on the real capture and rendered; the frames of two renders diffed; captions and chapters | Partly: no voices yet (the team records them), no music bed, the phone review |
+| A8 Documentation and verification | Every claim traces to claims.md; the demo path by keyboard and NVDA; everything plays offline | This record, the claims register checked by a Codex audit, the booth script, README, JUDGES.md, FEEDBACK.md, the guide; the full verification | Partly: the NVDA pass and the wifi-off run need a person at the machine |
+
+### Known mismatches
+
+Where the build differs from the plan's text, and why. Each row's decision is in [decisions.md](decisions.md) under the time given.
+
+| # | Topic | The plan says | As built | Where |
+|:--|:--|:--|:--|:--|
+| 1 | The doors strip's marks | Section 17.1: the landing's doors strip "with the official marks" | Neutral icons with each door's name and a Planned tag; three Simple Icons marks (Claude, MCP, Greenhouse) only on the diagram, where Lyceum really connects | A2b 06:12, A6 06:55; Needs the owner 1 |
+| 2 | The film's capture | Section 16: Playwright's `recordVideo`, per scene | One screencast of the whole tour on the dated saved sample, piped into ffmpeg with each frame's arrival time; scenes cut from it by tour caption | A7 07:52, 07:58, 08:04 |
+| 3 | The lecturer's caption bar | Section 16.1: emerald | `ray3`, because emerald on forest is 2.96 to 1, under the 3 to 1 a graphic needs | A7 08:05 |
+| 4 | The film's voices | Section 16: the team's recordings, line by line | Silent renders, every line timed from its words at 2.6 a second, until the recordings exist | A7 08:07 |
+| 5 | The render check | Section 17.6, A7: render twice and diff | The frames of two renders diffed before encoding, failing above 2 levels; one set of frames encoded twice, byte for byte | A7 09:15 |
+| 6 | Third-party skills | Section 17.6, A7: remotion-dev/skills and brag, after a SkillSpector scan | None installed, so none needed a scan | A7 07:50 |
+| 7 | The Claude Desktop run | Section 17.1, A5: Claude Desktop returns the evidence report | A stdio session with the official SDK client; the desktop run needs the owner's app and account | A5 06:37; Needs the owner 2 |
+| 8 | The loop graphic | Section 7.3 and the A2b decision: eight stations, Lens as "Report and Learn" | Nine stations in loop order, Lens at Report and again at Learn, so the ring never reads Learn before Decide | A8 |
+| 9 | The rehearsed answers | Section 14: two answers word for word, one ending "it can be used from inside ChatGPT" | The deck's notes say the ChatGPT door is planned and the local door works today | A8 |
+| 10 | The latency wording | Section 2.4: "39% of workers' skills change by 2030, while programme approval takes 12 to 18 months" | Employers expect the 39%; the approval time is at the US universities cited | A8 |
+| 11 | The clause mapping | Section 4: each step is "a clause the accreditors already use", Teach as Biggs | Teach labelled a teaching principle; the heading says what reviewers already look for | A8 |
+| 12 | DECISIONS.md | Section 18: it becomes a pointer | Kept as written, because CLAUDE.md names it as required reading, with a pointer at its top | A8 |
+| 13 | The documentation set | Section 19's target layout: `problem-statement.md`, `ui-accessibility-review.md`, `user-study.md` | Not written: A8's session prompt does not name them, and the accessibility review needs the axe and NVDA passes | This record, section 6 |
+| 14 | The pitch's opening order | Section 4.1: person, urgency, receipt; Section 14: receipt, urgency, person | The deck follows Section 14 | Needs the owner |
+
+## 3. Exact versions
+
+As installed on the build machine on 22 October 2026.
+
+| Part | Version |
+|:--|:--|
+| Node.js, npm | 24.14.1, 11.11.0 |
+| TypeScript, Vite, React | 5.9.3, 6.4.3, 18.3.1 |
+| puppeteer-core (the smokes, the shots, the generators) | 23.11.1, driving Chrome 155.0.8059.85 |
+| pptxgenjs (the packs, the brief deck, the pitch PPTX) | 4.0.1 |
+| @modelcontextprotocol/sdk, zod (the local door) | 1.32.1, 4.6.7 |
+| simple-icons (the diagram's marks) | 16.35.0 |
+| unpdf (reading the PDFs back) | 0.12.2 |
+| Fontsource variable faces: Bricolage Grotesque, Plus Jakarta Sans, JetBrains Mono | 5.3.0 each |
+| Remotion, in `video/remotion/` only | 4.0.537, pinned |
+| ffmpeg (the film's capture, encodes and checks) | 8.1 |
+| Python (the README's banner and card only, standard library) | 3.12.10 |
+| Codex CLI (the read-only reviews in `docs/review/`) | 0.156.1, `gpt-6-astra` at max reasoning |
+
+## 4. Layout
+
+```text
+.github/readme/       the README's banner and card (build.py, banner.txt, art.txt) and its screenshots
+deck/                 the pitch: index.html, deck.css, deck.js, the generated theme; exports in deck/export (not committed)
+docs/
+  as-built.md  claims.md  decisions.md  demo-script.md  doors.md  brand-use.md  lecturer-guide.md  run-log.md
+  review/             the Codex reviews, kept as written with their run logs
+  lyceum-upgrade-plan.md  lyceum-improvement-plan.md (execution records and W numbers)
+  presentation/       architecture.svg and .png, lyceum-brief.pdf, poster-a1.pdf, the shots, pack/ (the teaching pack as PowerPoint draws it)
+  research/           the dated notes
+  history/            superseded documents, screenshots and presentations, and the 9 October as-built report
+mcp/                  the local door, its sample workspace and its try script
+skills/lyceum/        the skill folder
+video/                script, storyboard, style, capture/, the Remotion project in remotion/
+src/
+  theme/              tokens.ts (the source) and the generated global.css
+  ui/mascots/         the host, the seven helpers and the mark
+  ui/primitives/      the components
+  ui/screens/         one file per loop step plus Home, Courses, How it works, Evaluation, the landing page and the sandbox
+  app/                store, roles, the loop and its ring, routes, moods
+  lib/                the deterministic core
+  demo/               the self-driving tour
+  prove-*.ts          the checks
+scripts/              generators, the claims and contrast checks, the headless browser runs
+```
+
+## 5. Verification, 22 October 2026
+
+The full run after package A8, on the build machine, between 10:08 and 10:51 Kuala Lumpur time, every command from the repository root unless it says otherwise. The four smokes and the walk ran again at 10:50 on the final build, after the loop graphic's last change.
+
+| Command | Result |
+|:--|:--|
+| `npm run typecheck` | Passed |
+| `npm run prove:all` | 185 passed, 0 failed, seventeen suites |
+| `npm run build` | Passed |
+| `npm run smoke` | 19 of 19, DEMO SMOKE OK: the whole tour, the decision record, both downloads, the closed ring |
+| `npm run smoke:integrity` | 2 of 2: no synthetic figure on the landing page; the notice only on the sandbox screens |
+| `npm run smoke:workspace` | 7 of 7: role-scoped courses, save and reload, export, blocked storage, keyboard and 320 px layouts |
+| `npm run smoke:curriculum` | 6 of 6: Watch to Update with real downloads, a restore and the 390 and 320 px reflow |
+| `node scripts/walk.mjs` | WALK OK, 21 checks: every screen and every loop step, the real upload pipeline, no page error |
+| `node scripts/generate-guide.mjs --check` | The lecturer guide matches the in-app section catalogue |
+| `node scripts/contrast-check.mjs` | CONTRAST CHECK OK: 61 ratios against `tokens.ts`, 193 files scanned for hand-written colours, 41 generated SVGs (the README's four among them) |
+| `node scripts/dash-scan.mjs` | No en or em dash in 280 text files (`docs/history` and `docs/review` kept as written) |
+| `node scripts/check-backup-migration.mjs` | BACKUP MIGRATION OK: schema 3, 4 and 5 backups restore |
+| `node scripts/gen-theme-css.mjs --check`, `gen-mascots.mjs --check`, `gen-architecture.mjs --check` | All match: the theme outputs and the three fonts, 35 SVGs and 72 PNGs, the diagram |
+| `node mcp/sample.ts --check`, `node --test src/prove-mcp.ts` | The sample workspace matches the tour's end state; 5 of 5 |
+| `npm run shots` | 12 screenshots from the built app on the sample workspace; the README's seven copied into `.github/readme/shots` |
+| `npm run deck` | 11 slides, 5 figures in the claims register, the receipt in its source, the clauses word for word, no dash; the film loads on slide 5 (87.2 s at 1920 by 1080); the PDF (2,483 KB) read back, every digit registered or a reference; the PPTX (19,471 KB) opened in PowerPoint with 11 slides, every note and 1 media object |
+| `node scripts/gen-brief-pdf.mjs` | Three A4 pages; every number registered or a reference, no dash, nothing into a footer (1.3 mm to spare on page 3) |
+| `node scripts/gen-poster.mjs` | A1 landscape; every number registered or a reference, no dash, every card holds its content; the QR slot marked planned |
+| `node scripts/gen-sample-decks.mjs` | PowerPoint opened the pack: 6 slides, each with its notes |
+| `node scripts/sync.mjs`, `npx tsc --noEmit` (in `video/remotion`) | Loop90 1:27, 7 scenes, 33 captions; Afternoon 3:33, 13 scenes, 66 captions; every cue word, clip anchor and caption number checked, no dash; 0 of 41 lines recorded; the typecheck passed |
+| `node scripts/render.mjs Loop90` | 1:27 (87.2 s), 1920 by 1080, 30 fps, silent: 13,855,890 bytes, and the 720p copy (2,797,396 bytes) from the same frames |
+| `node scripts/determinism.mjs Loop90` | Passed: 2,615 frames rendered twice, 2,482 identical byte for byte and 133 differing by at most 1 level in 1 to 5 pixels; one set of frames encoded twice gave the same file byte for byte |
+| `node scripts/render.mjs Afternoon --master-only` | 3:33 (213.1 s), 1920 by 1080, 30 fps, silent: 31,447,971 bytes; 66 captions, 12 chapters; frames pulled from the loop and the doors scenes looked at |
+
+These are software checks. They prove that the records, the counts, the decisions and the exports behave as specified on the dated saved sample; they do not prove learning gains, representativeness or accreditation, which this build never claims. The README was not rendered on GitHub, since that sends it off the machine; its banner and card were rendered here on GitHub's dark and light backgrounds.
+
+## 6. What needs a person
+
+What this run could not do on its own, with where each item stands. The owner's decisions are also at the top of [run-log.md](run-log.md), under Needs the owner.
+
+| Item | Why it needs a person | Where it stands |
+|:--|:--|:--|
+| The film's voices | The plan's voices are the team's own, recorded line by line | `video/script.md` holds every line; the renders are silent, with captions timed from the script, until the WAV files exist |
+| A music bed for the film | Only a track whose licence allows YouTube use | None chosen |
+| TRL 6's environment | The research note defines the relevant environment as real postings, a real syllabus and a real lecturer; the build has the real postings, a sample outline and a persona | Every surface names the environment as it is; keep TRL 6 self-assessed, present TRL 5, or run one real syllabus with one lecturer before the final |
+| The sample's dates | Records built outside the browser take the seed clock, 1 July 2026, earlier than the postings' retrieval on 9 October, and moving it fails two proofs anchored to July | The screenshots show July dates on the brief, the decision and the results; the live demo uses the real clock |
+| The pitch's opening order and commercial framing | Plan Sections 4.1 and 14 order the opening differently, and the Codex pitch review asks who buys and what the pilot's purchase decision is | The deck follows Section 14; the review is in [review/astra-pitch-review-2026-10-22.md](review/astra-pitch-review-2026-10-22.md) |
+| Eight of the ten Q&A answers | The Story lane writes them in the team's words | [demo-script.md](demo-script.md) lists what each rests on; the Codex rehearsal of the bank is in [review/](review/) |
+| The Claude Desktop run of the local door | It needs the desktop app, an account and a change to a file outside the repository | A real stdio session with the official client is recorded in [doors.md](doors.md), with the steps for the desktop run |
+| Official marks beyond Claude, MCP and Greenhouse | Microsoft needs a licence, Google a request, Moodle permission; OpenAI's and Instructure's terms were not read | [brand-use.md](brand-use.md) lists each mark, its source and its terms |
+| The poster's QR code | It needs a public address for the landing page, and deploying sends the build off the machine | The slot is marked planned; `node scripts/gen-poster.mjs --qr <file>` places the code |
+| The PPTX and the film on the presenting laptop | Section 14.3 asks for the playback test on the venue's player | The PPTX opened in PowerPoint here with every note, and the film loads in Chrome on slide 5 |
+| The keyboard and NVDA pass, the offline run with wifi off | A person at the machine, with a screen reader | The smokes check keyboard focus and the 320 px layout; the tour runs on the saved sample offline |
+| The story review and the rehearsals | Plan Section 4.1 and 14.1: a teammate plays the sceptical judge | [demo-script.md](demo-script.md) for the booth, the deck's notes for the pitch |
+| Remotion's licence tier | Who owns Lyceum, the team or the university, decides which applies | Recorded in [video/README.md](../video/README.md); confirm before the film is published |
+| The GitHub repository's description | The house style asks for one plain sentence on GitHub, which changes a setting off this machine | Suggested: "Lyceum turns real job postings into a course decision with receipts, every semester." |
+| Section 19's remaining documents | `problem-statement.md`, `ui-accessibility-review.md` (with the axe and NVDA passes) and `user-study.md` (the pilot protocol) | Not written in this run |
+| Files the hook kept | The Blast Radius hook held the deletes of this run's experiment files, and they were not retried | In the ignored `video/out/` (about 370 MB) and in the system temp folder (`lyceum-pngtwice-*`, `lyceum-frames-*`, about 2 GB); safe to delete |
+
+## 7. Changelog: Track A, package by package
+
+Each package's own record, as written when it ended, with its verification table. Times and commits are in [run-log.md](run-log.md).
+
+### A0, checkpoint and the branch: 22 October 2026
 
 What was done:
 
@@ -34,7 +197,7 @@ Nothing else was changed; the checks revealed nothing to fix in the code.
 
 Accepted by: the Code lane (owner to sign).
 
-## A1, theme and shell: 22 October 2026
+### A1, theme and shell: 22 October 2026
 
 What was built:
 
@@ -64,7 +227,7 @@ Not done in A1, by design: the step screens themselves (A2a and A2b), the ring t
 
 Accepted by: the Code lane (owner to sign).
 
-## A3, mascots v1: 22 October 2026
+### A3, mascots v1: 22 October 2026
 
 What was built:
 
@@ -89,7 +252,7 @@ Not done in A3, by design: placing the helpers in the step header cards and empt
 
 Accepted by: the Code lane (owner to sign).
 
-## A2a, Watch, Report, Decide: 22 October 2026
+### A2a, Watch, Report, Decide: 22 October 2026
 
 What was built:
 
@@ -121,7 +284,7 @@ Not done in A2a, by design: the Learn step's match between a results file and th
 
 Accepted by: the Code lane (owner to sign).
 
-## A2b, the remaining loop screens, Home, How it works, Landing: 22 October 2026
+### A2b, the remaining loop screens, Home, How it works, Landing: 22 October 2026
 
 What was built:
 
@@ -153,7 +316,7 @@ Not done in A2b, by design: the term recap and the milestones of Section 8; Trac
 
 Accepted by: the Code lane (owner to sign).
 
-## A4, demo and checks: 22 October 2026
+### A4, demo and checks: 22 October 2026
 
 What was built:
 
@@ -179,7 +342,7 @@ Not done in A4, by design: the door step of the tour (A5); `docs/demo-script.md`
 
 Accepted by: the Code lane (owner to sign).
 
-## A5, the local door: 22 October 2026
+### A5, the local door: 22 October 2026
 
 What was built:
 
@@ -207,7 +370,7 @@ Not done in A5, by design: the recorded Claude Desktop run (on the owner's list 
 
 Accepted by: the Code lane (owner to sign).
 
-## A6, deck, diagram, brief, poster: 22 October 2026
+### A6, deck, diagram, brief, poster: 22 October 2026
 
 What was built:
 
@@ -239,7 +402,7 @@ Not done in A6: the film inside the deck and the PPTX (A7 renders it); the playb
 
 Accepted by: the Deck and poster lane (owner to sign).
 
-## A7, the film (the parts that need no human voice): 22 October 2026
+### A7, the film (the parts that need no human voice): 22 October 2026
 
 What was built:
 
@@ -266,3 +429,20 @@ The review checklist of Section 16, as far as it can run without a person: every
 Not done in A7, by design: the voices (the team's), the transcription that follows them, the music bed and its licence, the phone watch, and the Remotion licence question (all in `video/README.md`).
 
 Accepted by: the Video lane (owner to sign).
+
+### A8, documentation and the full verification: 22 October 2026
+
+What was done:
+
+- **This record** in the Amanah shape: the stamp, what Lyceum is, plan versus built with its known mismatches, exact versions, the layout, the full verification and what needs a person, with each package's own section kept below as the changelog; the 9 October report moved to `docs/history/`.
+- **`docs/claims.md`** lists every figure on the landing page, the deck, the brief, the poster, the film and the README, where each appears and which check holds it. A Codex audit read it row by row against the notes; where a line was stronger than its source it now says what the source says: employers expect the 39%, the approval time is at the US universities cited, the Malaysian 3.2% is of graduates in the labour force, Biggs is a teaching principle, and the landing's unsourced "the asks change within a year" is gone.
+- **The deck** after the Codex pitch review: the ChatGPT door said as planned in the rehearsed answer, formal approval kept apart from what Lyceum records, the forecast no longer tied to the approval time, "TRL 7 needs" as the register says, no claim about what every lecturer wants, the revision and the synthetic sample results named, "People decide" back in the spoken close, and the notes of slides 1, 8 and 10 cut to fit 140 words a minute.
+- **The loop graphic** on the landing page, How it works, the deck, the poster and the film: nine stations in loop order, Lens at Report and again at Learn, so no ring reads Learn before Decide.
+- **Synthetic sample records say so**: results and surveys filed from the app's own sample files carry an optional `sample` flag and a "Sample file, synthetic marks" tag on Learn, the course overview, the Data room and the upload receipt; the sample workspace carries it, and the door's proof asserts it.
+- **`README.md`** in the house layout (banner, card, badges, the about block with a real command and its output, paired real screenshots, the loop, the checks, the architecture, decisions, phases, what was not chased, licences), its art from shuden's `build.py` with only the config block changed and every colour a token; **`JUDGES.md`**, **`team-overlay/FEEDBACK.md`** and the team README refreshed to the loop; **`docs/demo-script.md`** for the booth, with what each of the ten bank questions rests on; the lecturer guide regenerated with the term at the Course step.
+- **Three Codex reviews**, read-only with only the named files on stdin: the pitch, the claims audit and the question bank, kept as written in `docs/review/` with their run logs; every finding acted on was checked first against the notes and the code.
+- **The film** rendered again with the corrected lines and the nine-station ring, and its frames diffed again.
+
+The verification is section 5 of this record.
+
+Accepted by: the Code lane (owner to sign).

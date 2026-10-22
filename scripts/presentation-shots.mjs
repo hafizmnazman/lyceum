@@ -6,7 +6,7 @@
 // CS310, and every loop screen is captured from it. The landing page is
 // captured signed out. Run `npm run build` first, then
 // `node scripts/presentation-shots.mjs`.
-import { existsSync, mkdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync } from "node:fs";
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, resolve } from "node:path";
@@ -116,4 +116,11 @@ try {
   console.log("wrote shot-landing.png");
   await visitorContext.close();
   if (errors.length) throw new Error("page errors: " + errors.slice(0, 3).join(" | "));
+  // The README's pairs, copied where the house style keeps them (the pack slide comes from gen-sample-decks).
+  mkdirSync(".github/readme/shots", { recursive: true });
+  for (const [from, to] of [["shot-home-ring.png", "home-ring.png"], ["shot-report-quote.png", "report-quote.png"], ["shot-report-card.png", "report-card.png"],
+    ["shot-decide.png", "decide.png"], ["shot-history.png", "history.png"], ["shot-learn.png", "learn.png"], ["pack/slide-03.png", "pack.png"]]) {
+    if (existsSync(join(OUT, from))) copyFileSync(join(OUT, from), join(".github/readme/shots", to));
+  }
+  console.log("copied the README's screenshots into .github/readme/shots");
 } finally { await browser.close(); server.close(); }

@@ -133,7 +133,7 @@ export function IntakePanel({ samples, prompt }: { samples: Array<[string, strin
   const pending = state.pendingIntake;
   const receipt = !pending ? state.flashUpload : null;
 
-  async function handleFile(file: File) {
+  async function handleFile(file: File, sample = false) {
     setParseError(null);
     setParsingName(file.name);
     const runId = beginAgentRun("intake", `Reading ${file.name}`, "upload");
@@ -150,7 +150,7 @@ export function IntakePanel({ samples, prompt }: { samples: Array<[string, strin
       label: `Read ${file.name}: ${interp.docType}, ${Math.round(interp.confidence * 100)}% confident`,
     });
     setLastVia(via);
-    stagePendingIntake(parsed.doc, interp);
+    stagePendingIntake(sample ? { ...parsed.doc, sample: true } : parsed.doc, interp);
     setParsingName(null);
   }
 
@@ -247,7 +247,7 @@ export function IntakePanel({ samples, prompt }: { samples: Array<[string, strin
                       const res = await fetch(`/demo/${name}`);
                       if (!res.ok) throw new Error(String(res.status));
                       const blob = await res.blob();
-                      await handleFile(new File([blob], name));
+                      await handleFile(new File([blob], name), true);
                     } catch {
                       setParseError(`Could not load the sample ${name}.`);
                     }
@@ -271,7 +271,7 @@ export function IntakePanel({ samples, prompt }: { samples: Array<[string, strin
                   <div style={{ fontSize: 13, color: "var(--ink-2)", marginTop: 2 }}>
                     <span className="num">{receipt.rows.length}</span> row
                     {receipt.rows.length === 1 ? "" : "s"}
-                    {receipt.sourceFileName ? ` from ${receipt.sourceFileName}` : ""}.
+                    {receipt.sourceFileName ? ` from ${receipt.sourceFileName}` : ""}{receipt.sample ? ", a sample file with synthetic marks" : ""}.
                   </div>
                   <div style={{ fontSize: 13, marginTop: 8 }}>
                     {receipt.courseVersionId ? <>For course version <span className="num">{receipt.courseVersionId}</span>. </> : null}

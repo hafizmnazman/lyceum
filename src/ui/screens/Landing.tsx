@@ -1,6 +1,6 @@
 // The public landing page (plan Section 5.1): the loop as the hero with the host
-// at its centre, the problem at three levels with sources, the clauses the
-// accreditors already use, the doors as a monochrome strip labelled planned,
+// at its centre, the problem at three levels with sources, what reviewers
+// already look for, the doors as a monochrome strip labelled planned,
 // what is proven with dates, and two ways in. Every figure here is in
 // docs/claims.md; no synthetic figure appears, and the illustrative research
 // sandbox stays behind sign-in, labelled there.
@@ -46,19 +46,19 @@ export function LandingScreen() {
 
     <section className="landing-section" aria-labelledby="pain-title">
       <h2 id="pain-title">The evidence moves faster than the course</h2>
-      <p className="landing-lead">The asks change within a year; the approval cycle takes longer than that. The problem at three levels, one figure each.</p>
+      <p className="landing-lead">Employers expect skills to keep shifting through 2030, while a new degree programme can take a year or more to approve. The problem at three levels, one comparison each.</p>
       <div className="stat-grid level-grid">{PAIN_STATS.map((s) => <div className="stat-tile level-tile" key={s.claim} data-demo-id={"level-" + s.scope.toLowerCase()}>
         <Tag>{s.scope}</Tag>
         <span className="stat-value">{s.value}</span>
         <span className="stat-label">{s.label}{s.vendor ? " (a vendor survey)" : ""}.</span>
         <span className="stat-sources">{s.sources.map((src, i) => <span key={src.url}>{i ? " · " : ""}<a className="stat-source" href={src.url} target="_blank" rel="noreferrer">{src.name}</a></span>)}</span>
       </div>)}</div>
-      <p className="landing-note">These are desk research: published sources checked on 11 and 22 October 2026, each listed with its link in the project's claims register. Interviews with lecturers in three Asian countries are planned and will add one quotation per level.</p>
+      <p className="landing-note">These are desk research: published sources checked on 11 and 22 October 2026, each listed with its link in the project's claims register. Interviews with lecturers in at least three Asian countries are planned and will add one quotation per level.</p>
     </section>
 
     <section className="landing-section" aria-labelledby="accreditors-title">
-      <h2 id="accreditors-title">Each step is a clause the accreditors already use</h2>
-      <p className="landing-lead">The rule already exists; the evidence is what is missing. The names are plain so the loop reads the same in Kuala Lumpur, Amsterdam, Jakarta or Boston.</p>
+      <h2 id="accreditors-title">Each step answers what reviewers already look for</h2>
+      <p className="landing-lead">Accreditors and quality codes already ask for stakeholder evidence, documented decisions and programme review, and constructive alignment is the teaching principle behind Teach; the evidence is what is missing. The names are plain so the loop reads the same in Kuala Lumpur, Amsterdam, Jakarta or Boston.</p>
       <ol className="accreditor-list">{ACCREDITOR_MAPPING.map((m) => <li key={m.step}>
         <div className="accreditor-step"><strong>{m.step}</strong><span className="muted">{m.what}</span></div>
         <div className="accreditor-clauses">{m.clauses.map((c) => <blockquote key={c.body} className="accreditor-clause">

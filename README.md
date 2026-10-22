@@ -1,233 +1,219 @@
-# Lyceum
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/banner-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset=".github/readme/banner-light.svg">
+    <img src=".github/readme/banner-dark.svg" alt="LYCEUM" width="850">
+  </picture>
+</div>
 
-**A curriculum-review prototype being developed into a lecturer's course workspace.**
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/card-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset=".github/readme/card-light.svg">
+    <img src=".github/readme/card-dark.svg" alt="Lyceum, a course workspace that turns real job postings into a course decision with receipts, every semester: six steps a lecturer runs on one course for one term, from Watch to Learn, with people deciding" width="850">
+  </picture>
+</div>
 
-The [upgrade plan](docs/lyceum-upgrade-plan.md) of 22 October 2026 is the current
-direction: the Lyceum Loop (Watch, Report, Decide, Update, Teach, Learn), the forest and lime
-design system with mascots, the maths of the Learn step, the doors through MCP and skills, and
-the Amsterdam pitch, booth demo and video, with the research behind it in
-[docs/research](docs/research/). The [improvement plan](docs/lyceum-improvement-plan.md) keeps the
-execution records and the work packages: traceable industry evidence, reviewed CLO/topic changes, assessments,
-editable teaching materials, and versioned academic review. It includes the
-repository audit, proposed agent identities, calculation design, source-access
-strategy, SDK/subscription options, accessibility requirements, and release gates.
+<p align="center">
+  <a href="#hafizlyceum-npm-run-proveall"><img src="https://img.shields.io/badge/checks-185_passing-8BC34A?style=for-the-badge&labelColor=161b22" alt="checks: 185 passing"></a>
+  <a href="#hafizlyceum-open-report"><img src="https://img.shields.io/badge/evidence-real_postings_with_receipts-B8F23A?style=for-the-badge&labelColor=161b22" alt="evidence: real postings with receipts"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licence-proprietary-B9CDBF?style=for-the-badge&labelColor=161b22" alt="licence: proprietary"></a>
+</p>
 
-The current app supports personal course creation, a complete manual CLO/topic
-editor, course constraints, before/after comparisons, local version history,
-CLO-linked teaching sessions, Markdown exports and validated JSON backup/restore.
-It also retains the prototype's role personas, document parsing and review,
-assessment editor, prerequisite checks, lecturer-supplied evidence receipts with
-exact excerpts, and illustrative analytics.
+```text
+hafiz@lyceum:~$ cat ./about
+lyceum turns real job postings into a course decision with receipts,
+every semester, inside the tools lecturers already use. one loop of six
+steps per course and term: watch, report, decide, update, teach, learn.
 
-Signed out, the app shows a public landing page: the pain with sources, the
-five steps, what is proven and what is not built. Signed in, a seven-step
-journey bar in Course Studio and a Start here card on Home read the saved work,
-so a step is done only when the workspace holds its result. **How it works**
-shows the seven roles and a timeline derived from real records for the selected
-course; **Evaluation** shows live self-checks, a labelled scan benchmark, the
-automated suites and the protocol for benchmarking the student-simulation agent
-against course outcomes and surveys (not yet run on real data).
-It is not yet a validated curriculum-rating or learning-prediction service:
+hafiz@lyceum:~$ npm run prove:journey | grep -E "^ℹ (tests|pass|fail)"
+ℹ tests 9
+ℹ pass 9
+ℹ fail 0
+```
 
-- The research sandbox screens (Trends, Acceptance test, Closed loop, Data
-  room, Relevance Index) use **synthetic fixtures** and say so on screen. Real
-  postings exist only in a course's Evidence tab: fetched on request from the
-  Greenhouse and Lever board APIs through the local API, or pasted by the lecturer.
-- The seeded 200-learner cohort is synthetic. The historical backtest is a
-  generated example, and S-0488 / ML-14 is a separately pinned illustration.
-  The displayed error of 0.009 is not evidence of predictive accuracy in practice.
-- The Rasch-style simulation uses heuristic ability/difficulty/penalty values.
-  Topic edits are not a validated model of learning gains.
-- Role switching is prototype state. Approval now applies the tested candidate
-  to a local version with role and stale-review checks, but server-side identity,
-  authorization and institutional verification remain to be built.
-- Upload parsing is functional. A successful parse or an uploaded syllabus does
-  not establish an official source; confirmation keeps institutional verification unset.
-- Live model text can augment the agent panel, but the sandbox's structured
-  drafts and scores still use fixtures. Teaching packs and brief decks are
-  generated deterministically from saved data as editable PPTX, with a chart
-  slide; model-drafted slide text is planned, not implemented.
+### <samp>hafiz@lyceum:~$ cat ./problem</samp>
 
-## Lecturer workspace
+Curricula move slower than the work they prepare students for. Approving a new degree programme generally takes 12 to 18 months, while 39% of workers' existing skills are expected to be transformed or outdated between 2025 and 2030 (World Economic Forum, Future of Jobs Report 2025; the approval pages of Wayne State and Texas Tech). The two figures describe different populations, so they are never drawn as one chart. The accreditors already ask for evidence from employers at every review; what a lecturer lacks is a way to show it. Every figure on every Lyceum surface is registered with its source in [docs/claims.md](docs/claims.md).
 
-Start with **Courses → Create course workspace → Outcomes & topics** or open an
-assigned course. Record the course brief, CLOs, achievement evidence, PLO mappings
-and topic sequence. Declare known hours and prerequisites. Save and check the
-revision, inspect its changes and warnings, record a rationale and teaching term,
-then explicitly choose **Use as my course version**.
+A lecturer can suggest a change before the next review, but cannot show why: no exact sentences from employers, no denominator, no record of who decided. Lyceum keeps all three.
 
-That decision applies your entered outline and preserves the baseline and history.
-It is local course preparation; official syllabus approval stays in the
-university's existing process. Broken links, cycles, exceeded budgets and removed
-protected content block a checked revision. Missing information stays visible
-instead of becoming an arbitrary readiness score.
+### <samp>hafiz@lyceum:~$ open ./loop</samp>
 
-In **Evidence**, run a research run: fetch postings from a permitted employer
-board (Greenhouse or Lever, through the local API) or the dated saved sample,
-keep the ones worth reading, scan them for the skills you name, and confirm each
-quotation in the source's exact words; a paraphrase is rejected. Mark the
-postings reviewed so they count, map quoted skills to outcomes with a reviewed
-coverage stage, then prepare a meeting brief with the table, the options and
-every receipt, to download or to send to a colleague inside Lyceum. You can also
-paste a document you are permitted to keep. Collection happens only when you
-ask, and nothing changes the course by itself.
+<p align="center">
+  <img src=".github/readme/shots/home-ring.png" alt="Home for Dr Sobri: the loop for CS310 closed for 2026/2027 semester 1, seven of seven steps done, each with the record behind it" width="850">
+</p>
 
-In **Teaching plan**, save sessions with CLO links, activities and learning checks,
-and download any session as an editable **teaching pack (.pptx)** built from the
-session and the evidence linked to its outcomes, with speaker notes and no AI
-text. The meeting brief downloads as slides too.
-A course change preserves affected teaching work and flags it for review.
-Affected assessments cannot be approved again until their course-change review
-is recorded and retired outcome links are repaired.
+| step | the question | the record it leaves |
+|:--|:--|:--|
+| Course | What does this course promise today, and for which term? | the outline, and the term every later record carries |
+| Watch | What are employers asking for, right now? | postings fetched on request from a permitted board, each with its link, date and fingerprint |
+| Report | What exactly do they ask, how often, and what does the course do about it? | exact quotations, the reviewed denominator, counts with Wilson intervals, a mapping, the brief |
+| Decide | What will we do, and who said so? | a decision record: adopt, retain, defer or return, by whom, when, why, on which brief, version and term |
+| Update | What does the approved change look like, within our hours? | a checked revision, adopted as a new version, the old one kept |
+| Teach | What will the class do, and with what? | a session linked to an outcome and its editable teaching pack |
+| Learn | Did it work, as far as we can honestly tell? | the term's results, matched to the version taught, with n of N |
 
-Use **Guide & progress → Workspace backup** or **Courses → Backups** to download
-saved data and versions as JSON. Restore includes a file preview, validation,
-replacement acknowledgement and a downloadable pre-restore recovery copy.
-Markdown course/plan exports are readable documents; JSON is the restorable
-workspace format. Original uploaded files and unsaved edits are excluded.
+A host, Tualang, and seven helpers do the work; at Decide there is no helper, because people decide. Nothing runs by itself and nothing changes a course without the lecturer.
 
-The core workflow needs **no paid AI subscription or API key**. Work is saved in
-this browser only. Shared accounts, server permissions, term archives and
-multi-device collaboration remain in development.
+### <samp>hafiz@lyceum:~$ open ./report</samp>
 
-The **Guide & progress** page explains every section and lists unfinished work.
-Every signed-in section also has a **How to use** disclosure. Read the full
-[lecturer and section guide](docs/lecturer-guide.md) for instructions, outputs and
-limitations. Regenerate it with `node scripts/generate-guide.mjs` when changing
-the shared in-app section catalogue.
+<table>
+  <tr>
+    <td width="50%"><samp>a quotation proposed beside its source</samp></td>
+    <td width="50%"><samp>counted over reviewed postings, with its interval</samp></td>
+  </tr>
+  <tr>
+    <td><img src=".github/readme/shots/report-quote.png" alt="A proposed quotation about dashboards beside the Stripe posting it came from, the matched words marked"></td>
+    <td><img src=".github/readme/shots/report-card.png" alt="The dashboards card: the reviewed postings that quote it, with its interval and a waffle of the postings"></td>
+  </tr>
+</table>
 
----
+A requirement is an exact substring of its saved source, or it is refused; a paraphrase typed by hand fails on screen. The count is over the postings the lecturer reviewed, with its Wilson interval, never over everything fetched.
 
-## Screenshots
+### <samp>hafiz@lyceum:~$ open ./decide</samp>
 
-The October lecturer workspace, using an example teaching plan entered during
-the browser checks:
+<table>
+  <tr>
+    <td width="50%"><samp>the decision, with its reason, term and version</samp></td>
+    <td width="50%"><samp>the adopted version, with the old one kept</samp></td>
+  </tr>
+  <tr>
+    <td><img src=".github/readme/shots/decide.png" alt="The brief, its recipient Dr Rahman and his decision to adopt the change, with the reason, the term and the course version"></td>
+    <td><img src=".github/readme/shots/history.png" alt="The course history: the adopted version with its reason, the earlier version and the decision"></td>
+  </tr>
+</table>
 
-![Lecturer home](docs/screenshots/workspace-home.png)
+### <samp>hafiz@lyceum:~$ open ./teach-and-learn</samp>
 
-![Teaching plan](docs/screenshots/workspace-teaching-plan.png)
+<table>
+  <tr>
+    <td width="50%"><samp>the teaching pack, as powerpoint draws it</samp></td>
+    <td width="50%"><samp>results matched to the version taught</samp></td>
+  </tr>
+  <tr>
+    <td><img src=".github/readme/shots/pack.png" alt="A slide of the teaching pack rendered by PowerPoint: what employers ask for, with the dashboards count and an exact quotation"></td>
+    <td><img src=".github/readme/shots/learn.png" alt="Learn: the results file filed for the course version taught, with the mean mark per outcome and n of N"></td>
+  </tr>
+</table>
 
-![Reviewed personal course outline](docs/screenshots/workspace-curriculum.png)
+The screenshots are real captures of the app in its demo mode, on the dated saved sample of Stripe's public job board (`npm run shots`); the results on Learn come from the app's sample file and their marks are synthetic, as the screen says; the pack slide is PowerPoint's own rendering of the downloaded file.
 
-The remaining screenshots document the original v3 interface and predate the
-October integrity and workspace improvements. Current screens explicitly label
-the synthetic data.
+### <samp>hafiz@lyceum:~$ npm run dev</samp>
 
-**Trends.** The Signal example maps synthetic market figures onto course outcomes.
-
-![Trends](docs/screenshots/10-trends.png)
-
-**Real intake.** What was read beside what the agent made of it; nothing files
-until a human confirms.
-
-![Upload review](docs/screenshots/20-upload-review.png)
-
-**The public Relevance Index.** An illustrative rating view, accessible without signing in.
-
-![Relevance Index](docs/screenshots/02-index-public.png)
-
----
-
-## Getting started
-
-Requirements: Node.js 24 recommended (the scripts execute TypeScript directly)
-and a modern browser. On Windows PowerShell, use `npm.cmd` if execution policy
-blocks `npm.ps1`.
+Node.js 24 (the scripts run TypeScript directly) and a modern browser. On Windows PowerShell, use `npm.cmd` if the execution policy blocks `npm.ps1`.
 
 ```bash
 npm install
-npm run dev        # web app on http://localhost:5173 + api on :8787
-npm run build      # production build into dist/
-npm run preview    # static UI; document parsing and live board collection need the API
-npm run typecheck  # tsc --noEmit
+npm run dev        # the web workspace on http://localhost:5173 and the local API on :8787
+npm run build      # the production build into dist/
+npm run preview    # the workspace alone; parsing and live collection need the API
 ```
 
-Live model calls are optional. The API uses `ANTHROPIC_API_KEY`; consult
-`.env.example` and confirm an available model before enabling it. Intake can
-request structured interpretation; other calls primarily provide streamed text
-alongside deterministic drafts. Without a key, local interpretation and fixtures
-remain available. The Cohort and Curriculum components run deterministic code.
-The complete document walkthrough needs `npm run dev`, but no model key.
+The core needs no AI key and no account: work is saved in this browser. Live board collection (Greenhouse and Lever) and document parsing go through the local API; the dated saved sample works without it. **Watch the tour** on the landing page plays the whole loop over the real app in about 7 minutes; [JUDGES.md](JUDGES.md) is the five-minute way in.
 
-## Proofs
+### <samp>hafiz@lyceum:~$ npm run prove:all</samp>
 
-The maths, the flows, and the intake pipeline are covered by deterministic
-proof scripts (no UI, no network):
+| suite | checks | what it proves |
+|:--|:--|:--|
+| Acceptance scenario (illustrative spine) | 12 | canonical numbers of the synthetic scenario |
+| Backtest (synthetic) | 4 | closed-loop arithmetic on synthetic data |
+| Flow and roles | 28 | store, permissions, state machine |
+| Signal reveal (fixture) | 12 | the staged fixture reveal |
+| Intake parsing | 18 | xlsx, csv, pdf, pptx parse and interpret |
+| Integrity | 13 | evidence edge cases, approval guards |
+| Teaching plans | 10 | scope, validation, export |
+| Curriculum | 28 | revisions, constraints, adoption, recovery |
+| Evidence | 13 | citations, duplicates, Wilson intervals, mappings, backups |
+| Collector | 6 | text extraction, cache, rate limits, timeouts |
+| Research run | 5 | import on request, exact proposals, briefs, decisions and events in backups |
+| Slides | 3 | decks unzipped and read back, chart part included |
+| Benchmark and self-checks | 5 | labelled scan set, metric arithmetic, live quotation re-verification, denominator rules |
+| The loop and the record | 9 | done rules per term, the decision record, a new term, the event log first in the timeline, Learn matched to the version taught, the term set inside the ring, the routes, every landing figure in the claims register and every quoted clause in its note |
+| Evidence snapshots | 6 | frozen windows, change called only when intervals separate, identity matching, backups |
+| Moods | 8 | each mood a pure function of the records, the requests in flight and the clock |
+| The local door | 5 | every MCP tool through the protocol against the sample workspace: receipts, the export time, read-only annotations, the pack never overwriting, nothing written to the workspace, refusals and the call log |
+| **total** | **185** | seventeen suites |
 
-```bash
-npm run prove          # the spine and the canonical numbers (12 checks)
-npm run prove:backtest # the closed-loop backtest (4 checks)
-npm run prove:flow     # store, roles, state machine, analogy, closed loop (28 checks)
-npm run prove:signal   # the staged Signal reveal (12 checks)
-npm run prove:intake   # every demo file parses, interprets, files (18 checks)
-npm run prove:integrity # evidence edge cases and direct approval/rejection permissions (13 tests)
-npm run prove:teaching # course scope, validation, preparation counts and export (10 tests)
-npm run prove:curriculum # curriculum decisions, constraint checks, recovery and stale assessments (28 tests)
-npm run prove:evidence # evidence receipts, citations, denominators, Wilson intervals, mappings and backups (13 tests)
-npm run prove:collect  # board collectors: text extraction, normalisation, cache, rate limits, size and timeout (6 tests)
-npm run prove:research # research run: import on request, exact proposals, bulk review, briefs and notifications (5 tests)
-npm run prove:slides   # editable teaching packs and brief decks, unzipped and read back (3 tests)
-npm run prove:benchmark # scan benchmark on a labelled set, metric arithmetic, live quotation re-verification (5 tests)
-npm run prove:journey  # journey completion rules, the derived timeline, the sourced landing figures (3 tests)
-npm run prove:all      # 160 checks total
-```
+After `npm run build`, four headless browser runs drive the built app: `npm run smoke` (the whole tour, the decision record, both downloads, the closed ring), `smoke:integrity` (the landing page carries no synthetic figure), `smoke:workspace` (save, reload, export, keyboard and 320 px layouts) and `smoke:curriculum` (Watch to Update with real downloads and a restore). `npm run deck` checks every figure in the pitch against the claims register; `node scripts/generate-guide.mjs --check`, `node scripts/contrast-check.mjs` and `node scripts/dash-scan.mjs` keep the guide, the palette and the prose honest. These are software checks, not learning validation. Results with dates: [docs/as-built.md](docs/as-built.md).
 
-Headless verification of the built app:
+### <samp>hafiz@lyceum:~$ tree ./architecture</samp>
 
-```bash
-npm run build
-node scripts/walk.mjs  # sign in, visit every screen, file a real upload, assert no errors
-npm run smoke          # play the full-tour demo, assert the end state including both downloaded decks
-npm run smoke:integrity # landing page free of synthetic figures, notice only on sandbox screens, split-source warning; local browser only
-npm run smoke:workspace # lecturer save/reload/export, guides, keyboard and mobile checks
-npm run smoke:curriculum # create/revise/version, evidence receipts and report, real downloads and restore, 320/390px checks
-node scripts/generate-guide.mjs --check # in-app catalogue and Markdown guide agree
-```
-
-## For judges
-
-**[JUDGES.md](JUDGES.md)** explains the prototype walkthrough and its limitations.
-The current [as-built report, 9 October 2026](docs/lyceum-v3-as-built-2026-10-09.md) describes
-the build as verified. The historical [as-built document](docs/history/lyceum-v3-as-built.md) contains claims that the
-current [audit and improvement plan](docs/lyceum-improvement-plan.md) corrects.
-
-## The self-driving demo
-
-The **Play demo** control on the sign-in screen and **Guide & progress**, or
-**Watch the tour** on the public landing page, plays a full tour of one course over the real app with a simulated
-cursor, about five and a half minutes after three intro cards: a course revision under
-constraint checks with its version history, a research run on a dated saved
-sample of real postings, exact quotations with a rejected paraphrase, bulk
-review, a coverage mapping, a teaching session with its slide pack downloaded, a
-template assessment, a meeting brief with slides sent to the programme owner, the step-by-step
-record on How it works, the guide and backup page, and the recipient reading
-the brief. The counts,
-quotations, decks and brief are computed live; only the postings are a saved
-sample, labelled as such. Live board collection needs the local API and a
-network connection. Press record, click Play once. Sample decks can be
-generated with `node scripts/gen-sample-decks.mjs`. Regenerate the sample
-postings from a raw board download with
-`npm run gen:sample <board.json> <board> <retrievedAt>`.
-
-## Project structure
+<p align="center">
+  <img src="docs/presentation/architecture.png" alt="Lyceum's architecture: people work through doors into one deterministic core; the web workspace and the local read-only door are built, the remote assistant doors, the LMS door and the office suite are planned" width="850">
+</p>
 
 ```text
-server/               the thin api: /api/parse (5 formats), /api/collect (two permitted board APIs, cached and rate limited), /api/agent (streaming, fallback)
-public/demo/          real sample files: results.xlsx, clo-survey.csv, syllabus.pdf, lecture-slides.pptx, collected-sample.json (dated postings)
-src/
-  types.ts            the Layer 0 data contract
-  theme/              tokens + global styles (one system, no ad-hoc styling)
-  lib/                curriculum constraints/diffs/exports, teaching plans, evidence receipts and calculations, board collection, slide packs, validated workspace backups
-  lib/spine/          the illustrative Rasch spine (pure maths, reused from v2 byte-identical)
-  data/               seed, cohorts, items, the multi-source market snapshots
-  agents/             the seven agents: client wrappers, local interpreters, fixtures
-  app/                store (persistent), roles, staged simulations
-  ui/                 primitives, shell, course creation/revision, recovery and other screens
-  demo/               the self-driving demo: the research-run script, runner and overlay
-scripts/              generators and headless verification
+src/lib/            the deterministic core: evidence, counts, curriculum checks, decisions, slides, backups
+src/app/            the store, the loop and its ring, roles, moods, routes
+src/ui/             primitives, the shell, one screen per loop step, the mascots
+src/prove-*.ts      the checks
+server/             the local API: parsing, permitted board collection
+mcp/                the local door: a read-only MCP server over an exported workspace
+skills/lyceum/      the skill folder for an assistant
+deck/               the pitch, an HTML deck with its PDF and PPTX export
+video/              the film: script, storyboard, style, the capture and the Remotion project
+scripts/            generators and the headless browser runs
+docs/               the plan, the as-built record, the claims, the decisions, the research
 ```
 
-## License
+### <samp>hafiz@lyceum:~$ cat ./decisions</samp>
 
-Copyright (c) 2026 Hafiz Azman. All rights reserved. Proprietary software; see
-[LICENSE](LICENSE).
+1. **Deterministic core, AI at the doors.** Counts, quotations and decisions come from code, so a number never depends on a model; an assistant reaches Lyceum through the door and may draft, never confirm or decide. The cost: no model writes slides or quiz items yet, so the lecturer writes them.
+2. **Exact quotations or nothing.** A requirement is a substring of its saved source, or it is refused; reviewed postings form the denominator. The cost: a lecturer confirms every quotation and reviews every posting a count uses.
+3. **One decision record.** Adopt, retain, defer or return, immutable, bound to the brief, the version and the term; a decision on one's own brief is self-recorded and stays open until a second person confirms. The cost: a second person, which a small department may not have.
+4. **Local first.** One course runs in the browser with no account, and backups are validated JSON. The cost: no shared workspace, no sign-in and no server-side permissions until the department tier.
+5. **The look from one file.** Every colour comes from `src/theme/tokens.ts`, checked against the WCAG audit by `scripts/contrast-check.mjs`, and the fonts are bundled. The cost: a new colour is a change to the audit first.
+
+Every decision of the build, dated, with its options and how to reverse it: [docs/decisions.md](docs/decisions.md).
+
+### <samp>hafiz@lyceum:~$ ls docs</samp>
+
+| file | what it is |
+|:--|:--|
+| [lyceum-upgrade-plan.md](docs/lyceum-upgrade-plan.md) | the plan for Amsterdam and after |
+| [as-built.md](docs/as-built.md) | the system as built, with every verification run and its date |
+| [claims.md](docs/claims.md) | every number on every surface, with its source |
+| [decisions.md](docs/decisions.md) | every choice made in the build, with its trade-off and how to reverse it |
+| [doors.md](docs/doors.md) | the local door, its tools and how to connect it |
+| [demo-script.md](docs/demo-script.md) | the booth walkthrough: what to do, what to say, what not to claim |
+| [brand-use.md](docs/brand-use.md) | each third-party mark shown, where it came from, and its terms |
+| [lecturer-guide.md](docs/lecturer-guide.md) | every screen, generated from the in-app guides |
+| [research/](docs/research/) | the dated research notes behind every figure |
+
+### <samp>hafiz@lyceum:~$ git log --phases</samp>
+
+Built for the Grand Final, package by package, each with its checks in [docs/as-built.md](docs/as-built.md):
+
+- **The theme and the shell.** The tokens as the only source of colour, bundled fonts, the loop rail and the contrast check.
+- **The loop.** Watch, Report, Decide, Update, Teach and Learn as screens, the decision record, the event log and the ring per term.
+- **The cast.** The host and seven helpers drawn in code, their moods a function of the records.
+- **The local door.** A read-only MCP server over an exported workspace, with the skill folder.
+- **The pitch and the print.** The HTML deck with its PDF and PPTX, the architecture diagram, the brief and the A1 poster.
+- **The film.** Two cuts built on a capture of the real app; silent until the team records the voices.
+
+Next, in the order a pilot needs it (plan Section 17.2):
+
+1. **Watch over time.** Snapshots as records, comparable windows, scheduled runs with failure reporting.
+2. **Learn's maths.** The adequacy meter, intervals, partial pooling, perception beside attainment, the frozen prediction and its score.
+3. **The shared core.** An API, identity, server-side permissions, tenancy and the audit log.
+4. **The remote and LMS doors.** MCP over HTTP with OAuth for the assistants a university already runs; LTI 1.3 for its LMS.
+5. **More sources, drafted materials, the pilot.** Further boards and taxonomies, model drafts reviewed sentence by sentence, the accessibility audit, and three to five lecturers for a term.
+
+### <samp>hafiz@lyceum:~$ cat ./not-chased</samp>
+
+- **Representative labour-market counts, employability scores, learning gains.** Lyceum counts what was collected, over a stated denominator, and claims no gain until the benchmark has run.
+- **Feeds the boards do not permit.** Never LinkedIn, Indeed or Workday; only employer boards with a documented public API, read on request.
+- **Formal approval.** It stays in the university's process; Lyceum records the decision that feeds it.
+- **Predictions about a real cohort.** Nothing predictive runs on a real course; the planned protocol freezes a prediction before a term and scores it after, against the last cohort carried forward.
+
+### <samp>hafiz@lyceum:~$ cat ./licences</samp>
+
+| part | licence |
+|:--|:--|
+| Lyceum | proprietary, all rights reserved ([LICENSE](LICENSE)) |
+| Bricolage Grotesque, Plus Jakarta Sans, JetBrains Mono | SIL Open Font License, bundled from Fontsource (`public/fonts`) |
+| Simple Icons | CC0 as a project; each mark keeps its owner's terms ([docs/brand-use.md](docs/brand-use.md)) |
+| Remotion (the film only) | Remotion's own licence; which tier applies is open ([video/README.md](video/README.md)) |
+
+<sub>The banner and card are generated by <code>.github/readme/build.py</code> (standard library Python). Change a value at the top and run it again.</sub>

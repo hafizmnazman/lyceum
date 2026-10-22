@@ -813,6 +813,7 @@ export function confirmPendingIntake(): string | null {
       filedAt: at,
       sourceFileName: doc.fileName,
       ...(courseVersionId ? { courseVersionId } : {}),
+      ...(doc.sample ? { sample: true } : {}),
     };
     const ds: DataSource = {
       kind: "results",
@@ -822,6 +823,7 @@ export function confirmPendingIntake(): string | null {
       ingestedAt: at,
       verified: false,
       sourceFileName: doc.fileName,
+      ...(doc.sample ? { sample: true } : {}),
     };
     set((s) => ({
       resultUploads: [...s.resultUploads, upload],
@@ -848,6 +850,7 @@ export function confirmPendingIntake(): string | null {
       ingestedAt: at,
       verified: false,
       sourceFileName: doc.fileName,
+      ...(doc.sample ? { sample: true } : {}),
     }));
     set((s) => ({
       survey: [...s.survey, ...records],
@@ -867,6 +870,7 @@ export function confirmPendingIntake(): string | null {
       ingestedAt: at,
       verified: false,
       sourceFileName: doc.fileName,
+      ...(doc.sample ? { sample: true } : {}),
     };
     set((s) => ({
       dataSources: [ds, ...s.dataSources],

@@ -25,8 +25,8 @@ const mascot = (who, pose = "resting") => dataUri("public/brand/mascots/" + who 
 const checks = PROOF.find((p) => p.claim === "proof-checks");
 const STATIONS = [
   ["folio", "Course", "Folio reads the outline"], ["scout", "Watch", "Scout fetches, on request"], ["atlas", "Report", "Atlas quotes and maps"],
-  ["lens", "Report, Learn", "Lens counts, with n"], ["steward", "Report", "Steward prepares the brief"], [null, "Decide", "People decide"],
-  ["quill", "Update", "Quill checks the revision"], ["prism", "Teach", "Prism builds the pack"],
+  ["lens", "Report", "Lens counts, with n"], ["steward", "Report", "Steward prepares the brief"], [null, "Decide", "People decide"],
+  ["quill", "Update", "Quill checks the revision"], ["prism", "Teach", "Prism builds the pack"], ["lens", "Learn", "Lens reads the results, n of N"],
 ];
 const PEOPLE_SVG = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>`;
 /** The refused paraphrase from scripts/presentation-shots.mjs, cropped to the excerpt and the refusal, at a width in mm. */
@@ -80,14 +80,14 @@ img { display: block; }
 .receipt blockquote { margin: 4mm 0; padding-left: 5mm; border-left: 1.2mm solid var(--emerald); font-size: 21pt; font-weight: 600; line-height: 1.3; }
 .receipt .count { display: flex; align-items: baseline; gap: 3mm; margin: 0 0 3mm; padding-top: 4mm; border-top: 0.3mm solid var(--border); font-size: 14pt; color: var(--ink-2); }
 .receipt .count strong { font-family: var(--font-display); font-weight: 800; font-size: 40pt; color: var(--emerald-text); }
-.ring { position: relative; width: 158mm; height: 158mm; margin: 0 auto; }
+.ring { position: relative; width: 214mm; height: 158mm; margin: 0 auto; } /* wider than tall, so nine stations clear each other */
 .ring svg.track { position: absolute; inset: 0; }
 .ring .t { fill: none; stroke: var(--tint-2); stroke-width: 4.2; }
 .ring .p { fill: none; stroke: var(--emerald); stroke-width: 0.9; }
 .ring .centre { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 1mm; text-align: center; }
 .ring .centre img { width: 34mm; height: 34mm; }
 .ring .centre span { font-family: var(--font-mono); font-size: 9pt; color: var(--ink-2); }
-.station { --a: calc(-90deg + var(--i) * 45deg); position: absolute; left: 50%; top: 50%; width: 54mm; transform: translate(-50%, -50%) rotate(var(--a)) translate(60mm) rotate(calc(-1 * var(--a))); display: grid; justify-items: center; gap: 0.6mm; text-align: center; }
+.station { --a: calc(-90deg + var(--i) * 40deg); position: absolute; left: calc(50% + cos(var(--a)) * 80mm); top: calc(50% + sin(var(--a)) * 60mm); width: 54mm; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 0.6mm; text-align: center; }
 .station img, .station .people { width: 17mm; height: 17mm; }
 .station .people { display: grid; place-items: center; border-radius: 50%; background: var(--tint-2); }
 .station .people svg { width: 10mm; height: 10mm; fill: none; stroke: var(--forest); stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
@@ -140,8 +140,8 @@ img { display: block; }
       <p class="text">Dr Aisyah, a fictional lecturer, is asked after class what her course should change before the next review. Her evidence sits in browser tabs and in memory.</p>
       <p class="eyebrow" style="margin-top: 7mm">Why now</p>
       <div class="latency">
-        <div class="fig" data-claim="world-skills-and-approval"><div class="num">12 to 18 <small>months</small></div><p>to approve a new degree programme, generally</p><div class="calendar">${cells(18, 12, "on")}</div></div>
-        <div class="fig" data-claim="world-skills-and-approval"><div class="num">39%</div><p>of workers' skills transformed or outdated, 2025 to 2030</p><div class="waffle">${cells(100, 39, "on")}</div></div>
+        <div class="fig" data-claim="world-skills-and-approval"><div class="num">12 to 18 <small>months</small></div><p>to approve a new degree programme, at the US universities cited</p><div class="calendar">${cells(18, 12, "on")}</div></div>
+        <div class="fig" data-claim="world-skills-and-approval"><div class="num">39%</div><p>of workers' skills that employers expect to be transformed or outdated, 2025 to 2030</p><div class="waffle">${cells(100, 39, "on")}</div></div>
       </div>
       <p class="caveat">Different measures of different populations, so never one chart.</p>
       <p class="sources" data-ref>World Economic Forum, Future of Jobs Report 2025; Wayne State and Texas Tech approval pages.</p>
@@ -162,7 +162,7 @@ img { display: block; }
     <div class="card loop-card">
       <p class="eyebrow">The plan: one loop, six steps, every semester</p>
       <div class="ring">
-        <svg class="track" viewBox="0 0 158 158" aria-hidden="true"><circle class="t" cx="79" cy="79" r="60"/><circle class="p" cx="79" cy="79" r="60"/></svg>
+        <svg class="track" viewBox="0 0 214 158" aria-hidden="true"><ellipse class="t" cx="107" cy="79" rx="80" ry="60"/><ellipse class="p" cx="107" cy="79" rx="80" ry="60"/></svg>
         <div class="centre"><img src="${mascot("host")}" alt=""><span>Tualang, the host</span></div>
         ${STATIONS.map(([who, step, does], i) => `<div class="station" style="--i:${i}">${who ? `<img src="${mascot(who)}" alt="">` : `<span class="people">${PEOPLE_SVG}</span>`}<strong>${step}</strong><em>${does}</em></div>`).join("")}
       </div>
@@ -176,7 +176,7 @@ img { display: block; }
       <div class="card">
         <p class="eyebrow">What is real, and what is not yet</p>
         <div class="real">
-          <div class="real-box" data-claim="deck-trl"><div class="num lime">TRL 6</div><p>Self-assessed against NASA ESTO's software column: “Prototype implementations of the software demonstrated on full-scale realistic problems.”</p></div>
+          <div class="real-box" data-claim="deck-trl"><div class="num lime">TRL 6</div><p>Self-assessed against NASA ESTO's software column: “Prototype implementations of the software demonstrated on full-scale realistic problems.” On real postings from a real public board, a sample course outline and a lecturer persona.</p></div>
           <div class="real-box" data-claim="proof-checks"><div class="num">${checks.value}</div><p>${checks.label}.</p></div>
           <div class="planned-box"><p><span class="pill planned">Planned</span>Not built yet</p><ul><li>Remote assistant doors</li><li>The LMS door</li><li>Learn's statistics</li><li>The benchmark run</li><li>Scheduled watching</li><li>Shared workspace, sign-in</li></ul></div>
         </div>

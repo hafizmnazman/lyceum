@@ -1,0 +1,1107 @@
+Reading additional input from stdin...
+OpenAI Codex v0.156.1
+--------
+workdir: C:\Users\abdul\OneDrive\Documents\01 Coding Project\27 Lyceum V3
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: max
+reasoning summaries: none
+session id: 01a16156-dfce-7531-8260-d694f4c3ecfb
+--------
+user
+Review Lyceum exactly as instructed in the text that follows on stdin; all files are embedded there.
+
+<stdin>
+You are a sceptical judge at the HACKaSTONE 2026 Grand Final (29 October 2026, Amsterdam), in the two minutes of questions after Lyceum's eight-minute pitch and in its ten-minute booth demo. Lyceum is a university lecturer's course workspace. The question bank the team rehearses is in plan Section 14 (embedded): is this scraping; where is the AI; why not ChatGPT alone; how do we know the postings are representative; what breaks first at scale; does it decide the syllabus; why another tool; what does the free tier cost us; what is the benchmark; is lime readable. Two answers are rehearsed word for word (in the deck's notes for slide 11); the booth script (docs/demo-script.md) says what each answer rests on and what is on screen. JUDGES.md, the claims register (docs/claims.md), the as-built summary and the deck are embedded so you can check every answer against what is built.
+
+Write a Markdown review with exactly these sections:
+1. The ten questions, one subsection each: the hardest follow-up a sceptical judge would ask next; the facts in the embedded files that a truthful one-breath answer can rest on, with the file each comes from; the claim the team must not make, because the files do not support it; and what to show on screen.
+2. The two rehearsed answers (deck slide 11 notes): anything in them a judge could catch as stronger than what is built, with the file that shows it.
+3. Five questions not in the bank that a judge is likely to ask, given what the files say is planned, illustrative or self-assessed, each with the facts a truthful answer rests on.
+4. Gaps: questions the files cannot answer truthfully today, and the fact the team would need.
+
+Rules: no en or em dashes anywhere in your output (use commas, colons or "to"); answer only from the embedded files and cite them; do not write the team's answers for them as finished scripts, give the facts and the limits; mark anything you could not verify as unverified; do not propose changing the main idea, the six steps (Watch, Report, Decide, Update, Teach, Learn), the palette, the honesty labels (real, prototype, illustrative, planned) or the dates.
+
+Your file tools may be unavailable. Everything you need is embedded below; do not call tools, review from this text only.
+
+===== FILE: docs/lyceum-upgrade-plan.md (Section 14) =====
+## 14. The pitch: 8 minutes plus 2
+
+One presenter speaks; a second person drives the screen. At most five numbers in the whole talk. Slides carry about seven words each; the graphics carry the rest. The deck is HTML in the theme (Section 14.3), presented from the laptop, with the PPTX and PDF handed to the organiser.
+
+| Minute | Slide | On screen | Spoken line (the gist) |
+|:--|:--|:--|:--|
+| 0:00 | 1. A receipt | The host holding one real posting sentence, its employer, its date, and "1 of N reviewed postings" with N the real denominator of the frozen demo state; the wordmark beside it | "This is a receipt. By the end of this talk you will have seen a course decision made of them." The sentence from Section 2.3. |
+| 0:30 | 2. The latency | A calendar strip (approval, 12 to 18 months) beside a churn figure (39% by 2030): two different measures as two different graphics, never one chart | The world problem, one figure, one caveat ("they describe different populations") |
+| 1:15 | 3. Who it lands on | Dr Aisyah's desk: tabs, a syllabus, a message asking what to change | Fictional lecturer, real workflow |
+| 1:45 | 4. The loop | The six steps with the host introducing the seven helpers | Watch, Report, Decide, Update, Teach, Learn: the same names in the app you are about to see |
+| 2:15 | 5. Live: Watch and Report | The app (or the 90-second film if the room is hostile): fetch, confirm a quotation, watch a paraphrase fail, the count with its denominator | "Nothing invented, nothing pasted. A paraphrase is rejected." |
+| 4:15 | 6. Decide and Update | The brief with receipts, the decision record, the checked revision | "The decision stays with people, and it leaves a record" |
+| 5:00 | 7. Teach and Learn | The teaching pack opened in PowerPoint; the Learn screen with n of N and the gap | "No model wrote a word of this pack" |
+| 5:45 | 8. What is real | Our assessment against NASA's software column, TRL 6, with the relevant environment named (real postings from a real board, a real syllabus, a lecturer persona); the checks; the sample; what is not built, in amber | Honest limits; the TRL 7 step named: one department, one term, inside its LMS |
+| 6:15 | 9. The doors | The architecture diagram | "One core; the assistants, the LMS and the office suite they already run; local read-only door built, remote planned" |
+| 6:50 | 10. Why a department pays | The ladder and the accreditor clauses | "The review happens anyway; the pack writes itself" |
+| 7:20 | 11. The ask and the close | The host with the ring closed; the pilot measures; the three points restated; the sentence | "Task completion, citation fidelity, time to a brief, repeat use. Evidence that arrives with a decision. Every semester adds a ring." |
+
+Questions bank for the two minutes: is this scraping; where is the AI; why not ChatGPT alone; how do we know the postings are representative; what breaks first at scale; does it decide the syllabus; why another tool; what does the free tier cost us; what is the benchmark; is lime readable. Each answer is one breath and ends with what is on screen. Two are rehearsed word for word. Where is the AI: "The numbers come from deterministic code on purpose. AI sits at the doors, where the university's own assistant asks Lyceum for the evidence report, and in drafting, where a model may propose and a lecturer confirms; it never confirms a quotation, never moves a count and never decides." Why not ChatGPT with search: "A chat can draft text. It cannot refuse a quotation that is not in the source, keep the denominator honest, record who decided, or keep the version history. Lyceum does those four things, and it can be used from inside ChatGPT."
+
+### 14.1 Delivery
+
+Open with the receipt, not with "hi, we are team". Pause after the paraphrase is rejected. Say the limits slower than the claims. Never read a slide. Restate three points at the end: receipts, people decide, the tools they already use. Every slide ends on the question the next one answers (Section 4.1), and the artefact is on screen before the word for it is spoken. The talk is rehearsed against the gap check until a listener who hears it once can retell the eight beats in order.
+
+### 14.2 Slide craft
+
+One message per slide; titles as full sentences; four lines of text at most; big numbers in Bricolage; real screenshots with a hairline border; mascots where they serve a purpose; the amber token for everything not built; no stock imagery, no gradients; third-party marks as their official versions at one consistent size, never recoloured.
+
+### 14.3 Production
+
+`deck/` in the repo: an HTML deck at 1920 by 1080 using the tokens, the bundled fonts, the mascots and real screenshots from `scripts/presentation-shots.mjs`, with keyboard navigation and the film embedded as a local file. `scripts/gen-deck.mjs` exports a PDF and a PPTX (one image per slide at 2x plus the speaker notes as real notes, built with the pptxgenjs dependency already in the project). The organiser asks for PowerPoint, so the PPTX embeds the film as a media object on its slide and is tested on the presenting laptop with the venue's player; present from the PPTX if the film plays there, otherwise from the HTML deck, and hand over the PPTX and the PDF either way. The brief PDF is regenerated from the same tokens.
+
+---
+
+===== FILE: docs/demo-script.md =====
+# The booth demo
+
+Ten minutes including questions, for the second judge team (plan Section 15; the format is in `docs/competition/grand-final-2026.md`). Two people: a **narrator** who never touches the keyboard and an **operator** who never speaks over the narrator. Every step below is also driven by a check, named beside it, so the path the judges see is the path the checks prove.
+
+## Before each run
+
+| Do | Why | Checked by |
+|:--|:--|:--|
+| Build once: `npm run build`, then serve it (`npm run preview`, or the local API with `npm run dev` if the live fetch is wanted) | The demo runs the built app | `npm run smoke` runs the same build |
+| Test the network. If it is down, the dated saved sample stands in, and the narrator says so before Watch | Honest provenance | The tour's `sampleIfFailed` step; the curriculum smoke |
+| Sign in as Dr Sobri; Guide & progress, Backups: restore the starting backup if a previous run left records | One dataset for everything | `npm run smoke:curriculum` restores a backup the same way |
+| Claude Desktop configured with the door (`docs/doors.md`), the app's export saved where the config points | The door answers from what is on screen | `node --test src/prove-mcp.ts`; the manual run in `docs/doors.md` |
+| On the laptop and a USB stick: the narrated 60-second recording, the 90-second film (`video/out/loop90.mp4`), the full tour recording | Never debug live | Played once on the laptop before the session |
+
+## The path, six minutes
+
+| Step | The operator does | The narrator says | Do not say | Checked by |
+|:--|:--|:--|:--|:--|
+| Course | Opens CS310 and sets the term, 2026/2027 semester 1 | "One course, one term, the whole loop. Every record we make carries this term." | That CS310 is a university's real course: it is the demo's seeded course | The tour and `npm run smoke` |
+| Watch | Fetches Stripe's public board on Greenhouse (or the saved sample), keeps the postings | "Research the lecturer runs, on request, from a board whose policy we state. Each posting keeps its link, its date and a fingerprint." | "We scrape LinkedIn", or anything about boards we do not read | `npm run smoke`; `node --test src/prove-collect.ts` |
+| Report | Names the skills, scans, confirms the proposals beside their sources; types a paraphrase and lets it fail; reviews the postings; shows the count; maps dashboards to CLO5; prepares and sends the brief | "A quotation is exact or it is refused. The count is over the postings the lecturer reviewed, with its interval." Pause after the refusal. | A percentage without its denominator; "employers want", where the screen says "postings quote" | `npm run smoke`; `node --test src/prove-evidence.ts src/prove-research.ts` |
+| Decide | Switches to Dr Rahman; opens the brief on Home; writes the reason; records adopt | "People decide, and the decision leaves a record: who, when, why, on which brief, for which version and term." | That the decision is the university's approval: formal approval stays in its process | `npm run smoke` asserts the decision and the event order |
+| Update | Back to Dr Sobri; starts the revision, sharpens the outcome, adds the dashboards topic within the hours, checks, adopts; opens History | "The change the decision approved, checked against the hours and the protected topics. The old version is kept." | That the revision is better teaching: it is a checked change | `npm run smoke`; `node --test src/prove-curriculum.ts` |
+| Teach | Saves the week 6 session and downloads its pack; opens it in PowerPoint | "An editable pack built from the records. No model wrote a word of it." | That the pack is ready to teach without the lecturer's review | `npm run smoke` asserts both downloads; `node --test src/prove-slides.ts` |
+| Learn | Files the sample results under the term and the version taught | "The app's sample results, synthetic marks, matched to the version taught, with n of N. We claim no learning gain until the benchmark has run." | That the marks are a real cohort's; any learning gain, any prediction, anything from the mock cohort | `npm run smoke`; `node --test src/prove-journey.ts` |
+| The door | In Claude Desktop, asks for CS310's evidence report | "The university's own assistant asks Lyceum for the evidence. Every line comes back with its receipt." | That remote access, ChatGPT, Copilot or the LMS doors are built: they are planned | `node --test src/prove-mcp.ts`; `node mcp/try.ts` |
+
+Home then shows the ring closed for the term; the narrator ends on "Every semester adds a ring."
+
+## If something fails
+
+Say what happened in one sentence, switch, and keep going: the saved sample if the network fails (the log says so on screen); the 60-second recording if the app fails; the 90-second film if the laptop's screen fails us; the full tour recording if the questions run long. Each switch is rehearsed as a step of its own, with its sentence.
+
+## Questions
+
+The bank is plan Section 14's ten questions. Two answers are rehearsed word for word and are in the deck's notes for slide 11 (`deck/index.html`); the Story lane writes the other eight in the team's words, one breath each, ending on what is on screen. What each answer rests on:
+
+| Question | The answer rests on | On screen |
+|:--|:--|:--|
+| Is this scraping? | Collection runs only when the lecturer asks, from a named employer's public board through the API its owner documents (Greenhouse or Lever), with the source policy shown; each posting keeps its link, its date and a fingerprint (`src/lib/collect.ts`) | Watch: the source policy and the run log |
+| Where is the AI? | Rehearsed word for word (slide 11's notes) | The door in Claude Desktop |
+| Why not ChatGPT alone? | Rehearsed word for word (slide 11's notes) | The refused paraphrase |
+| How do we know the postings are representative? | We do not claim they are: counts are over the postings the lecturer reviewed, from a named board, with Wilson intervals | Count: n of N and the interval |
+| What breaks first at scale? | The review time, because a person reviews every posting a count uses; and the workspace lives in one browser until the shared workspace is built (planned) | Slide 8: what is not built |
+| Does it decide the syllabus? | No: a person records the decision and its reason at Decide, and formal approval stays in the university's process | The decision record |
+| Why another tool? | It reaches the tools lecturers already use: Claude reads the evidence report through the local door, and the pack is an editable PowerPoint; the LMS and office doors are planned | Slide 9: the doors |
+| What does the free tier cost us? | Slide 10's notes: "Nothing to try: one course, one laptop, no account." | Slide 10: the ladder |
+| What is the benchmark? | Predictions frozen before a semester and scored against the last cohort carried forward (plan Section 9); it has not been run, so no learning gain is claimed | Evaluation |
+| Is lime readable? | Lime text sits only on forest, where it passes WCAG AAA, and never carries text, bars or lines on a light surface (`docs/design/colour-scheme-audit-2026-10-22.md`) | The app's header, the poster |
+
+Every number the narrator may say is in `docs/claims.md`.
+
+## Rehearsal
+
+Twice on 26 October, with `npm run smoke` under turbo as the warm-up, timed: the path under six minutes, the whole slot under ten.
+
+===== FILE: JUDGES.md =====
+# Five minutes with Lyceum (for judges)
+
+Lyceum turns real job postings into a course decision with receipts, every semester, inside the tools lecturers already use. What is worth judging is the loop: six steps a lecturer runs on one course for one term, each ending in a record, with people deciding at the one step that changes the course. No model key or external account is needed. Live collection needs the local API and a network connection; a dated saved sample of real postings works without them.
+
+```bash
+npm install
+npm run dev         # the web workspace and the local API (document parsing, live board collection); open the printed URL
+```
+
+`npm run build` then `npm run preview` serves the workspace alone; the saved sample still works there. On Windows PowerShell, use `npm.cmd` if the execution policy blocks `npm.ps1`.
+
+## The loop
+
+| Step | The question it answers | The record it leaves |
+|:--|:--|:--|
+| Course (setup) | What does this course promise today, and for which term? | The outline, and the term every later record carries |
+| Watch | What are employers asking for, right now? | Postings fetched on request, each with its link, its date and a fingerprint |
+| Report | What exactly do they ask, how often, and what does the course do about it? | Exact quotations, the reviewed denominator, counts with intervals, a mapping, the brief |
+| Decide | What will we do, and who said so? | A decision record: adopt, retain, defer or return, by whom, when, why, on which brief, version and term |
+| Update | What does the approved change look like, within our hours? | A checked revision, adopted as a new version with the old one kept |
+| Teach | What will the class do, and with what? | A session linked to an outcome and its editable teaching pack |
+| Learn | Did it work, as far as we can honestly tell? | The term's results, matched to the version taught, with n of N |
+
+The ring on Home closes when every step has its record for the term.
+
+## Option A: hands off
+
+On the public landing page (`#/index`, **See how Lyceum works** on the sign-in screen), choose **Watch the tour**, about 7 minutes. A cursor plays over the real app: Dr Sobri sets the term, fetches Stripe's public board (the dated saved sample stands in if the network fails, and the log says so), confirms exact quotations, watches a paraphrase be refused, reviews the postings, counts, maps dashboards to CLO5 and sends the brief; Dr Rahman decides adopt with a reason; Dr Sobri adopts the revision, saves the session and its pack, files the sample results, and Home shows the ring closed. Press Escape to take over; playing resets the local workspace and warns first if it finds saved work.
+
+## Option B: hands on
+
+Sign in as **Dr Sobri**, open **Courses**, then **CS310**. The rail beside the course follows the loop; each step opens with its question and ends with the handoff to the next.
+
+1. **Course.** Set the term, 2026/2027 semester 1.
+2. **Watch.** Keep the saved sample, fetch, select the postings and keep them.
+3. **Report.** In **Quote**, name `SQL, Python, dashboards|dashboard, stakeholders|stakeholder`, scan, and confirm the proposals beside their sources; then type a paraphrase under **Quote a requirement by hand** and watch it be refused. In **Review**, acknowledge the extraction and mark the postings reviewed. **Count** shows each skill over the reviewed postings with its interval; **Map** maps dashboards to CLO5; **Brief** prepares the brief and sends it to Dr Rahman.
+4. **Decide.** Switch to **Dr Rahman** from the account menu. On **Home**, open the brief, write the reason and record **Adopt**. A decision on your own brief is labelled self-recorded and stays open until a second person confirms.
+5. **Update.** Back as Dr Sobri, start a revision, change the outline within the hours, check it and adopt it. **History** shows both versions and the decision.
+6. **Teach.** Save a session linked to CLO5 and download its teaching pack: editable slides with the evidence and no model text.
+7. **Learn.** File the sample results under the term and the version taught; attainment per outcome shows n of N. The sample file's marks are synthetic, and the screen says so. No learning gain is claimed.
+
+Then open **How it works** for the record of the afternoon by role, and **Evaluation** for the live checks and the suites.
+
+## The local door
+
+`node mcp/try.ts` starts the read-only MCP server over `mcp/sample-workspace.json` (the tour's end state) and asks it for CS310's evidence report through the official client. [docs/doors.md](docs/doors.md) has the Claude Desktop and Claude Code configuration. Remote access, OAuth and the other doors are planned.
+
+## The pitch, the film and the print
+
+- `deck/`: the eleven slides of the pitch, in the theme, with speaker notes; `npm run deck` checks every figure against [docs/claims.md](docs/claims.md) and exports the PDF and the PPTX.
+- `video/`: the film's script, storyboard and style, the capture of the real app and the Remotion project for both cuts, rendered silent with captions until the team records the voices (`video/README.md` says how to render and check it).
+- `docs/presentation/`: the brief (`lyceum-brief.pdf`), the A1 poster (`poster-a1.pdf`), the architecture diagram and the screenshots, all generated from the app and the tokens.
+
+## Checks
+
+`npm run prove:all` runs 185 checks in seventeen suites. After `npm run build`, `npm run smoke`, `smoke:integrity`, `smoke:workspace` and `smoke:curriculum` drive the built app in a headless browser, the first through the whole tour. [docs/as-built.md](docs/as-built.md) records every run with its date. These are software checks, not learning validation.
+
+## What is real and what is not
+
+- **Real:** requested board collection, exact-quotation validation, reviewed denominators, counts with intervals, decision records, checked revisions, teaching packs, results matched to versions, backups, the local read-only door. The saved sample is real Stripe postings retrieved on 9 October 2026, truncated and labelled as a saved sample.
+- **Prototype:** the personas, the seeded courses and browser-local role switching. Sending a brief is an in-app local workflow, not a message to anyone.
+- **Illustrative:** the sandbox's market figures and learner records; the sidebar labels the sandbox and its screens carry the notice. The sample results and survey files in `public/demo` hold synthetic marks and responses, and every record filed from them says so.
+- **Planned:** the shared workspace and sign-in, the remote assistant doors, the LMS door, Learn's intervals, pooling and perception gap, the benchmark run, scheduled watching.
+- **Never claimed:** representative labour-market counts, employability scores, learning gains or accreditation. No lecturer pilot has run. Formal approval stays in the university's process.
+
+===== FILE: docs/claims.md =====
+# Lyceum: claims register
+
+Every figure shown on a Lyceum surface (the landing page, the deck, the brief, the poster, the film and the README) appears here once: the words it is shown in, its source and link, the research note or record that checked it, and the date. A figure that is not here does not ship. `src/prove-journey.ts` fails if a landing figure is missing from this file or a quoted clause is missing from its note; the deck, brief, poster and film generators fail on any number that is not a row here (the last section says which check covers which surface). The wording was checked row by row against the notes on 22 October 2026 (`docs/review/astra-claims-audit-2026-10-22.md`); each change it led to is in `docs/decisions.md`.
+
+Keys, as in the research notes: **P** a primary document fetched and quoted; **S** a reputable secondary source; **V** vendor material, said so beside the figure; **M** measured by this project, with the record that holds the measurement.
+
+## The landing page: the problem at three levels
+
+One comparison per level (plan Section 2.4). The landing page calls them desk research until the lecturer interviews (R1) add a quotation per level.
+
+| Claim | Figure | Shown as | Source | Checked in | Key | Checked on |
+|:--|:--|:--|:--|:--|:--|:--|
+| `world-skills-and-approval` | 39%; 12 to 18 months | 39% of workers' existing skills, employers expect, will be transformed or become outdated between 2025 and 2030, while approving a new degree programme takes 12 to 18 months at the US universities cited | World Economic Forum, Future of Jobs Report 2025 (<https://www3.weforum.org/docs/WEF_Future_of_Jobs_Report_2025.pdf>); Wayne State University, programme approval (<https://provost.wayne.edu/programs/approval-process>); Texas Tech University, new programme timelines (<https://www.depts.ttu.edu/provost/curriculum/new-programs/timelines.php>) | [curriculum-latency-global-2026-10-22.md](research/curriculum-latency-global-2026-10-22.md), Sections 1 and 2 | P | 22 October 2026 |
+| `asia-talent-shortage` | 77% of 10,095; 45% in 2014 | 77% of 10,095 Asia Pacific employers could not find the skills they needed in 2025, up from 45% in 2014 (a vendor survey) | ManpowerGroup, Talent Shortage 2025 (<https://www.manpowerthailand.com/apac-talent-shortage>) | [pain-and-market-2026-10-11.md](research/pain-and-market-2026-10-11.md), Section 1.2 | V | 11 October 2026 |
+| `malaysia-underemployment` | 32.2%; 1.60 million; 3.2% | 32.2% of employed Malaysian graduates, 1.60 million people, worked below their qualification in 2024, while 3.2% of graduates in the labour force were unemployed | DOSM, Graduates Statistics 2024 (<https://www.dosm.gov.my/uploads/release-content/file_20260401145140.pdf>) | [pain-and-market-2026-10-11.md](research/pain-and-market-2026-10-11.md), Section 1.1 | P | 11 October 2026 |
+
+The 39% is the average that the employers in the Forum's survey expect for 2025 to 2030 ("workers can expect that two-fifths (39%) of their existing skill sets will be transformed or become outdated"): a forecast, not a measurement. The 12 to 18 months is Wayne State's internal review of a new degree programme, with further approvals possibly needed, and Texas Tech gives up to 18 months for full approval; the note found no global measure of approval time, and the two figures describe different populations, so no surface draws them as one chart.
+
+"Of employed graduates" follows from the release: 1.60 million is 32.2% of the 4.97 million employed graduates (5.14 million in the labour force less 165,900 unemployed), so the rate is skill-related underemployment among the employed, not among all graduates. The 3.2% is over a different base, the graduates in the labour force, and the surfaces say so.
+
+## The landing page: what is proven today
+
+| Claim | Figure | Shown as | Record | Key | Checked on |
+|:--|:--|:--|:--|:--|:--|
+| `proof-checks` | 185 | 185 automated checks passed on 22 October 2026, plus four headless browser runs | `npm run prove:all` (seventeen suites, listed with their counts in `src/data/suites.ts` and on the Evaluation page) and the four smokes, the A6 verification table in [as-built.md](as-built.md) | M | 22 October 2026 |
+| `proof-live-board` | 727 | 727 real postings fetched live from one employer's public board on request, 9 October 2026 | The Stripe board on Greenhouse through the local API: [the 9 October as-built report](history/lyceum-v3-as-built-2026-10-09.md) and the execution record in [lyceum-improvement-plan.md](lyceum-improvement-plan.md), Section 30 | M | 9 October 2026 |
+| `proof-no-keys` | 0 | 0 AI keys needed; the core is deterministic, and file parsing and live collection use the local API | Every proof and smoke runs with no key set; the agents default to fixture mode (`src/agents/mode.ts`) | M | 22 October 2026 |
+| `tour-length` | about 7 minutes | Watch the tour, about 7 minutes | `tourMinutes()` in `src/demo/script.ts`, computed from the tour's own pacing: 393 seconds at full speed after A6 set the term at the Course step and on the results file (382 after the A4 rewrite); a live fetch can add a little | M | 22 October 2026 |
+| `proof-no-paraphrase` | 0 | 0 paraphrases accepted as evidence; a quotation must match its source text or it is rejected | `src/prove-evidence.ts`, `src/prove-research.ts` and the curriculum smoke's rejected misquote | M | 22 October 2026 |
+
+## The deck, the brief and the poster
+
+Package A6. The deck carries five figures in all (plan Section 14): the receipt's denominator, the two latency figures (`world-skills-and-approval` above), the readiness level and the check total (`proof-checks` above). `scripts/gen-deck.mjs` fails if a figure on a slide or in the notes is not in its row here, and reads the exported PDF back to check it again; the brief and the poster use the same rows.
+
+| Claim | Figure | Shown as | Source | Checked in | Key | Checked on |
+|:--|:--|:--|:--|:--|:--|:--|
+| `deck-receipt` | 1 of 9 | 1 of 9 reviewed postings, beside one exact sentence from Stripe's Data Analyst, Intern posting (published 2026-10-01, retrieved 2026-10-09) | The tour's end state, `mcp/sample-workspace.json`: the saved sample of Stripe's public Greenhouse board, 10 postings kept for CS310, 1 a duplicate, 9 reviewed | `scripts/gen-deck.mjs` checks the sentence against its source text and its confirmed quotation, the employer, the title, both dates, the link, the fingerprint and the denominator | M | 22 October 2026 |
+| `deck-trl` | TRL 6; TRL 7 next | Software TRL 6, "Prototype implementations of the software demonstrated on full-scale realistic problems", self-assessed, in a relevant environment of real postings from a real public board, a sample course outline and a lecturer persona; TRL 7 needs one department running it for a term inside its LMS | NASA ESTO, technology readiness levels, the software column (<https://esto.nasa.gov/trl/>) | [hackastone-and-competitors-2026-10-22.md](research/hackastone-and-competitors-2026-10-22.md), Section 2 | P | 22 October 2026 |
+
+The relevant environment says a sample course outline, not a real syllabus: the outline in `public/demo` is generated by `scripts/gen-demo-files.mjs` (docs/decisions.md).
+
+## The film
+
+Package A7. The film shows the same four rows as the deck, and only those: `deck-receipt` (1 of 9, counting up beside the receipt in both cuts), `world-skills-and-approval` (12 to 18 months and 39%, Afternoon's second scene), `deck-trl` (TRL 6) and `proof-checks` (185, counting up), both in Afternoon's proof scene. `video/remotion/scripts/sync.mjs` reads them from this file, checks the receipt's sentence, posting and denominator against `mcp/sample-workspace.json`, and fails on any digit in a caption that these rows do not hold. The app footage shows the app's own numbers from the dated saved sample, and its chip says "saved sample".
+
+## The landing page: clauses quoted beside the loop
+
+Each quotation is word for word from the note named, which quotes the document at the link; NAAC 1.4.1 is shown as a paraphrase because the note gives no quotable wording. Five steps quote an accreditor's clause or a quality code's guidance (QAA's is guidance: providers "are encouraged"); Teach quotes Biggs's constructive alignment, a teaching principle rather than an accreditor's clause, and the landing page and the deck label it so. ESG 1.2 and AACSB Standard 5, which plan Section 4 also names, are not shown until a note checks their wording (docs/decisions.md).
+
+| Step | Clause | Link | Checked in | Key |
+|:--|:--|:--|:--|:--|
+| Watch | AUN-QA Guide v4.0, 1.4 | <https://fet.iuh.edu.vn/upload/files/web_SAR_2023.pdf> | [curriculum-latency-global-2026-10-22.md](research/curriculum-latency-global-2026-10-22.md), Section 3 | S |
+| Watch | UK QAA, External Expertise | <https://www.qaa.ac.uk/docs/qaa/quality-code/advice-and-guidance-external-expertise.pdf> | the same note, Section 3 | P |
+| Report | MQA COPPA, 2nd edition, 6.1.6 | <https://office.iium.edu.my/kca/wp-content/uploads/2024/09/COPPA-2nd-Edition-Nov-2017.pdf> | [pain-and-market-2026-10-11.md](research/pain-and-market-2026-10-11.md), Section 1.1 | P |
+| Report | NAAC 1.4.1 (paraphrase) | <https://old.ncet.co.in/iqac/important-criteria> | [curriculum-latency-global-2026-10-22.md](research/curriculum-latency-global-2026-10-22.md), Section 3 | S |
+| Decide | ABET, Criterion 2 | <https://www.abet.org/accreditation/accreditation-criteria/criteria-for-accrediting-engineering-programs-2025-2026/> | the same note, Section 3 | P |
+| Update | ESG 2015, 1.9 | <https://www.enqa.eu/wp-content/uploads/2015/11/ESG_2015.pdf> | the same note, Section 3 | P |
+| Teach | Biggs, constructive alignment, a teaching principle | <https://www.biologie.uzh.ch/dam/jcr:94dbcc23-1c4d-4892-bab8-ba16abc4ef66/ConstructiveAlignment_Biggs.pdf> | [hackastone-and-competitors-2026-10-22.md](research/hackastone-and-competitors-2026-10-22.md), Section 6 | P (that note marks only vendor and secondary sources; this one is unmarked) |
+| Learn | ABET, Criterion 4 | <https://www.abet.org/accreditation/accreditation-criteria/criteria-for-accrediting-engineering-programs-2025-2026/> | [curriculum-latency-global-2026-10-22.md](research/curriculum-latency-global-2026-10-22.md), Section 3 | P |
+
+## Where each figure appears, and what checks it
+
+| Claim | Landing page | Deck | Brief | Poster | Film | README | Checked by |
+|:--|:--|:--|:--|:--|:--|:--|:--|
+| `world-skills-and-approval` | yes | slide 2 | page 1 | yes | Afternoon, beat 2 | yes | `src/prove-journey.ts` (landing), `scripts/gen-deck.mjs` (slides and the PDF read back), `scripts/gen-brief-pdf.mjs`, `scripts/gen-poster.mjs`, `video/remotion/scripts/sync.mjs` (captions and the counting graphics) |
+| `asia-talent-shortage` | yes | no | page 1 | no | no | no | `src/prove-journey.ts`, `scripts/gen-brief-pdf.mjs` |
+| `malaysia-underemployment` | yes | no | page 1 | no | no | no | `src/prove-journey.ts`, `scripts/gen-brief-pdf.mjs` |
+| `deck-receipt` | no | slide 1 | page 1 | yes | both cuts, beat 3 | no | `scripts/gen-deck.mjs` and `video/remotion/scripts/sync.mjs` check the sentence, its posting and the denominator against `mcp/sample-workspace.json` |
+| `deck-trl` | no | slide 8 | page 2 | yes | Afternoon, beat 6 | no | `scripts/gen-deck.mjs`, `scripts/gen-brief-pdf.mjs`, `scripts/gen-poster.mjs`, `video/remotion/scripts/sync.mjs` |
+| `proof-checks` | yes | slide 8 | page 2 | yes | Afternoon, beat 6 | yes | `src/prove-journey.ts` (the figure equals the suites' total), the generators above |
+| `proof-live-board` | yes | no | no | no | no | no | `src/prove-journey.ts` |
+| `proof-no-keys` | yes | no | no | no | no | no | `src/prove-journey.ts` |
+| `proof-no-paraphrase` | yes | no | no | no | no | no | `src/prove-journey.ts` |
+| `tour-length` | yes | no | no | no | no | yes | `src/prove-journey.ts` (the figure equals `tourMinutes()`) |
+
+A digit on the deck, the brief or the poster that is not one of these figures sits in an element marked as a reference (a date, an id, a clause), and the generators fail on any other. The film's sync fails on any digit in a caption that the four film rows do not hold. Screenshots show the app's own numbers from the dated saved sample, labelled as the sample; they are records, not claims.
+
+===== FILE: deck/index.html =====
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lyceum: a course decision with receipts</title>
+<link rel="icon" href="../public/brand/favicon.svg">
+<link rel="stylesheet" href="theme.generated.css">
+<link rel="stylesheet" href="deck.css">
+</head>
+<body>
+<!--
+  The pitch (plan Section 14): eleven slides, one presenter, eight minutes plus two.
+  Present: open this file in Chrome or Edge, press F for full screen; arrows,
+  space, Page Up and Page Down move; V plays the film on slide 5; N shows the notes.
+  Every figure carries data-claim with its id in docs/claims.md; dates, ids and
+  clause numbers carry data-ref. scripts/gen-deck.mjs checks both, then exports
+  the PDF and the PPTX (one 2x image per slide, these notes as speaker notes).
+-->
+<main class="stage">
+
+<!-- 1. A receipt (beat 3) -->
+<section class="slide forest s-receipt" data-title="A receipt">
+  <div class="brand"><img src="../public/brand/mark-white.svg" alt=""><span>Lyceum</span></div>
+  <h1 class="big hero">This is a receipt.</h1>
+  <div class="host-badge"><img src="../public/brand/mascots/host-greeting.svg" alt="Tualang, Lyceum's host, greeting"></div>
+  <div class="receipt-wrap">
+    <span class="chip lime">Real posting</span>
+    <article class="receipt" data-receipt data-source-hash="fnv1a-68604535-974">
+      <p class="receipt-meta" data-ref>Stripe · Data Analyst, Intern · published 2026-10-01</p>
+      <blockquote data-quote>“You'll build metrics, scalable data pipelines, dashboards, and reports to inform and run the business.”</blockquote>
+      <div class="receipt-count" data-claim="deck-receipt"><span class="big">1 of 9</span><span>reviewed postings</span></div>
+      <p class="receipt-link" data-ref>stripe.com/jobs/search?gh_jid=8194291 · retrieved 2026-10-09 · fingerprint fnv1a-68604535-974</p>
+    </article>
+  </div>
+  <footer class="foot"><span>A real posting, from the dated saved sample of Stripe's public job board.</span><span class="slide-number"></span></footer>
+  <aside class="notes">0:00 to 0:30. Open on the receipt, never on the team. Point at the sentence.
+"This is a receipt: one sentence from a real Stripe posting, one of nine reviewed in the demo workspace. By the end of this talk you will have seen a course decision made of them."
+Then the sentence: "Lyceum turns real job postings into a course decision with receipts, every semester, inside the tools lecturers already use."
+Transition: "But one receipt is not a decision, and the course it should change was approved long ago."</aside>
+</section>
+
+<!-- 2. The latency (beat 2) -->
+<section class="slide forest s-latency" data-title="The latency">
+  <p class="eyebrow">Why now</p>
+  <h2 class="title">Approval takes a year or more; skills keep moving.</h2>
+  <div class="latency-grid">
+    <figure class="panel" data-claim="world-skills-and-approval">
+      <figcaption class="panel-label">Approving a new degree programme, at the US universities cited</figcaption>
+      <p class="big num">12 to 18 <span class="unit">months</span></p>
+      <div class="calendar" data-months="18" data-certain="12" aria-hidden="true"></div>
+      <div class="calendar-key"><span><i class="on"></i>12 months</span><span><i></i>up to 18</span></div>
+    </figure>
+    <figure class="panel" data-claim="world-skills-and-approval">
+      <figcaption class="panel-label">Workers' skills employers expect to be transformed or outdated, 2025 to 2030</figcaption>
+      <p class="big num">39%</p>
+      <div class="waffle" data-cells="100" data-on="39" aria-hidden="true"></div>
+    </figure>
+  </div>
+  <p class="caveat">Different measures of different populations, so never one chart.</p>
+  <footer class="foot"><span data-ref>Sources: World Economic Forum, Future of Jobs Report 2025; Wayne State and Texas Tech approval pages.</span><span class="slide-number"></span></footer>
+  <aside class="notes">0:30 to 1:15. One figure, one caveat.
+"At the US universities we checked, approving a new degree programme takes twelve to eighteen months. And between 2025 and 2030, employers expect 39% of workers' existing skills to be transformed or outdated, the World Economic Forum reports."
+Slower, the caveat: "These describe different populations, so they are two pictures, never one chart."
+"The accreditors already ask universities for this evidence, and AI assistants are already on campuses such as the University of Hong Kong and Florida State."
+Transition: "So who does the review land on?"</aside>
+</section>
+
+<!-- 3. Who it lands on (beat 1) -->
+<section class="slide dots s-desk" data-title="Who it lands on">
+  <p class="eyebrow">Who it lands on</p>
+  <h2 class="title">She can suggest a change. She cannot show why.</h2>
+  <p class="lede">Dr Aisyah is fictional. The review she faces is real.</p>
+  <svg class="desk-scene" viewBox="0 0 1110 760" role="img" aria-label="A lecturer at her desk: a laptop with job posting tabs, the course outline on paper, and a message from her coordinator asking what to change before the review.">
+    <g transform="translate(560 8)">
+      <rect class="sc-card" x="0" y="0" width="540" height="176" rx="24"/>
+      <path class="sc-card" d="M70 170 L112 170 L84 206 Z"/>
+      <circle class="sc-dot" cx="42" cy="46" r="10"/>
+      <text class="sc-card-meta" x="66" y="52">PROGRAMME COORDINATOR</text>
+      <text class="sc-card-text" x="40" y="104">Before the review: what should</text>
+      <text class="sc-card-text" x="40" y="142">we change, and why?</text>
+    </g>
+    <rect class="sc-screen" x="330" y="236" width="620" height="374" rx="22"/>
+    <rect class="sc-tab-on" x="350" y="254" width="90" height="38" rx="10"/><text class="sc-label" x="364" y="279">Posting</text>
+    <rect class="sc-tab" x="446" y="254" width="90" height="38" rx="10"/><text class="sc-label" x="460" y="279">Posting</text>
+    <rect class="sc-tab" x="542" y="254" width="90" height="38" rx="10"/><text class="sc-label" x="556" y="279">Posting</text>
+    <rect class="sc-tab" x="638" y="254" width="90" height="38" rx="10"/><text class="sc-label" x="652" y="279">Posting</text>
+    <rect class="sc-tab" x="734" y="254" width="96" height="38" rx="10"/><text class="sc-label" x="746" y="279">Syllabus</text>
+    <rect class="sc-tab" x="836" y="254" width="96" height="38" rx="10"/><text class="sc-label" x="852" y="279">Survey</text>
+    <rect class="sc-line-strong" x="362" y="320" width="300" height="18" rx="9"/>
+    <rect class="sc-line" x="362" y="360" width="550" height="12" rx="6"/>
+    <rect class="sc-line" x="362" y="388" width="510" height="12" rx="6"/>
+    <rect class="sc-line" x="362" y="416" width="540" height="12" rx="6"/>
+    <rect class="sc-line" x="362" y="444" width="420" height="12" rx="6"/>
+    <rect class="sc-line" x="362" y="486" width="530" height="12" rx="6"/>
+    <rect class="sc-line" x="362" y="514" width="480" height="12" rx="6"/>
+    <rect class="sc-line" x="362" y="542" width="350" height="12" rx="6"/>
+    <path class="sc-base" d="M292 610 L988 610 L1030 652 L250 652 Z"/>
+    <g transform="rotate(-7 160 500)">
+      <rect class="sc-paper" x="40" y="352" width="232" height="300" rx="10"/>
+      <text class="sc-title" x="62" y="394">Course outline</text>
+      <rect class="sc-line" x="62" y="418" width="182" height="10" rx="5"/>
+      <rect class="sc-line" x="62" y="442" width="160" height="10" rx="5"/>
+      <rect class="sc-line" x="62" y="466" width="176" height="10" rx="5"/>
+      <rect class="sc-line" x="62" y="500" width="150" height="10" rx="5"/>
+      <rect class="sc-line" x="62" y="524" width="180" height="10" rx="5"/>
+      <rect class="sc-line" x="62" y="548" width="120" height="10" rx="5"/>
+      <rect class="sc-line" x="62" y="582" width="170" height="10" rx="5"/>
+    </g>
+    <path class="sc-person" d="M962 662 C962 566 998 524 1040 524 C1082 524 1108 566 1108 662 Z"/>
+    <circle class="sc-head" cx="1036" cy="456" r="58"/>
+    <circle class="sc-eye" cx="1008" cy="452" r="6"/>
+    <circle class="sc-eye" cx="1030" cy="454" r="6"/>
+    <rect class="sc-desk" x="0" y="652" width="1110" height="30" rx="15"/>
+  </svg>
+  <footer class="foot"><span>An illustrative scene. Dr Aisyah is a fictional lecturer.</span><span class="slide-number"></span></footer>
+  <aside class="notes">1:15 to 1:45. Fictional lecturer, real workflow.
+"Meet Dr Aisyah. She is fictional; the review she faces is not. After class, her coordinator asks what the course should change before the review. She has the outline, a row of tabs of job postings and a survey export."
+"She can suggest a change. She cannot show why: no exact sentences, no denominator, no record of who decided."
+Transition: "So we gave her a loop."</aside>
+</section>
+
+<!-- 4. The loop (beat 4) -->
+<section class="slide dots s-loop" data-title="The loop">
+  <div class="loop-copy">
+    <p class="eyebrow">The plan</p>
+    <h2 class="title">One loop, six steps, every semester.</h2>
+    <p class="lede">Seven helpers do the work. People decide.</p>
+  </div>
+  <div class="ring">
+    <svg class="ring-track" viewBox="0 0 900 900" aria-hidden="true"><ellipse class="t" cx="450" cy="450" rx="370" ry="352"/><ellipse class="p" cx="450" cy="450" rx="370" ry="352"/></svg>
+    <div class="ring-host"><img src="../public/brand/mascots/host-greeting.svg" alt="Tualang, the host, at the centre of the loop"><span>Tualang, the host</span></div>
+    <ol class="stations" aria-label="The loop, station by station">
+      <li class="station" style="--i:0"><div class="pop"><img src="../public/brand/mascots/folio-resting.svg" alt=""><strong>Course</strong><span>Folio reads the outline</span></div></li>
+      <li class="station" style="--i:1"><div class="pop"><img src="../public/brand/mascots/scout-resting.svg" alt=""><strong>Watch</strong><span>Scout fetches, on request</span></div></li>
+      <li class="station" style="--i:2"><div class="pop"><img src="../public/brand/mascots/atlas-resting.svg" alt=""><strong>Report</strong><span>Atlas quotes and maps</span></div></li>
+      <li class="station" style="--i:3"><div class="pop"><img src="../public/brand/mascots/lens-resting.svg" alt=""><strong>Report</strong><span>Lens counts, with n</span></div></li>
+      <li class="station" style="--i:4"><div class="pop"><img src="../public/brand/mascots/steward-resting.svg" alt=""><strong>Report</strong><span>Steward prepares the brief</span></div></li>
+      <li class="station" style="--i:5"><div class="pop"><span class="people-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span><strong>Decide</strong><span>People decide</span></div></li>
+      <li class="station" style="--i:6"><div class="pop"><img src="../public/brand/mascots/quill-resting.svg" alt=""><strong>Update</strong><span>Quill checks the revision</span></div></li>
+      <li class="station" style="--i:7"><div class="pop"><img src="../public/brand/mascots/prism-resting.svg" alt=""><strong>Teach</strong><span>Prism builds the pack</span></div></li>
+      <li class="station" style="--i:8"><div class="pop"><img src="../public/brand/mascots/lens-resting.svg" alt=""><strong>Learn</strong><span>Lens reads the results, n of N</span></div></li>
+    </ol>
+  </div>
+  <footer class="foot"><span>The same names in the app, the demo, the film and this deck.</span><span class="slide-number"></span></footer>
+  <aside class="notes">1:45 to 2:15. The host introduces the cast; the helpers arrive one by one.
+"Six steps, with the same names you will see in the app: Watch, Report, Decide, Update, Teach, Learn. Tualang hosts. Seven helpers each do one job, and you will meet them at their steps. At Decide there is no helper: people decide."
+Transition: "Let us run it on a real board."</aside>
+</section>
+
+<!-- 5. Live: Watch and Report (beat 5) -->
+<section class="slide s-live" data-title="Watch and Report">
+  <div class="slide-head">
+    <div class="head-row"><span class="chip live">In the app · Watch and Report</span><span class="by"><img class="helper" src="../public/brand/mascots/scout-resting.svg" alt="">Scout fetched Stripe's board, on request.</span></div>
+    <h2 class="title">A quotation is exact, or it is rejected.</h2>
+  </div>
+  <div class="screens">
+    <div class="side">
+      <figure class="shot"><div class="region" style="--x: 0; --y: 0; --w: 1604; --h: 530; --iw: 1604"><img src="../docs/presentation/shot-report-quote.png" alt="A proposed quotation about dashboards beside the Stripe posting it came from, the matched words marked in the posting."></div><figcaption><img class="helper" src="../public/brand/mascots/atlas-resting.svg" alt="">Atlas proposes each quotation beside its source.</figcaption></figure>
+      <figure class="shot"><div class="region" style="--x: 0; --y: 336; --w: 1604; --h: 372; --iw: 1604"><img src="../docs/presentation/shot-report-paraphrase.png" alt="A quotation typed by hand, experience with Python, refused because the words are not in the saved source text."></div><figcaption>A paraphrase, refused before it is stored.</figcaption></figure>
+    </div>
+    <figure class="shot"><img src="../docs/presentation/shot-report-card.png" alt="The dashboards card: postings that quote it over the reviewed postings, with its interval and a waffle of the postings."><figcaption><img class="helper" src="../public/brand/mascots/lens-resting.svg" alt="">Lens counts reviewed postings only, with an interval.</figcaption></figure>
+  </div>
+  <div class="film"><video src="media/loop90.mp4" preload="none" playsinline></video></div>
+  <footer class="foot"><span>Real screens from the demo, on the saved sample of a real board.</span><span class="slide-number"></span></footer>
+  <aside class="notes">2:15 to 4:15. Switch to the app; the operator drives and the presenter never touches the keyboard.
+Watch: fetch Stripe's board live, or the dated saved sample if the network is down, and say which.
+Report: scan, confirm a quotation beside its source, then type a paraphrase and let it fail. Pause after the rejection.
+"Nothing invented, nothing pasted. A paraphrase is rejected."
+Review the postings, then the count over reviewed postings with its interval, then one mapping and the brief.
+If the room is hostile, press V for the film instead.
+Transition: "But a count is not a decision."</aside>
+</section>
+
+<!-- 6. Decide and Update (beat 5) -->
+<section class="slide s-decide" data-title="Decide and Update">
+  <div class="slide-head">
+    <span class="chip live">Decide and Update</span>
+    <h2 class="title">People decide, and the decision leaves a record.</h2>
+  </div>
+  <div class="screens">
+    <figure class="shot"><img src="../docs/presentation/shot-decide.png" alt="The brief, its recipient Dr Rahman, and his decision to adopt the change with his reason, the term and the course version."><figcaption><img class="helper" src="../public/brand/mascots/steward-resting.svg" alt="">The brief, and the decision with its reason, its term and its version.</figcaption></figure>
+    <figure class="shot"><img src="../docs/presentation/shot-history.png" alt="The course history: the adopted version with its reason above the earlier version and the decision."><figcaption><img class="helper" src="../public/brand/mascots/quill-resting.svg" alt="">Update: the checked revision, adopted with its reason.</figcaption></figure>
+    <p class="aside-note">Formal approval stays in the university's own process; Lyceum keeps the decision that goes into it.</p>
+  </div>
+  <footer class="foot"><span>Real screens from the demo.</span><span class="slide-number"></span></footer>
+  <aside class="notes">4:15 to 5:00.
+"The brief goes to Dr Rahman, the programme owner. He records adopt, with his reason. The record names the brief, the term and the course version, and it never changes; an amendment is a new record. A decision by the brief's own author is labelled self-recorded and stays open until a second person confirms."
+Update: "Here the revision sharpens CLO5 and adds a dashboards topic within the existing hours. Quill checks it against the hours and the protected topics, and the adopted version keeps its reason."
+Transition: "But a course is not a class."</aside>
+</section>
+
+<!-- 7. Teach and Learn (beat 5) -->
+<section class="slide s-teach" data-title="Teach and Learn">
+  <div class="slide-head">
+    <span class="chip live">Teach and Learn</span>
+    <h2 class="title">Teach from the pack. Learn from the results.</h2>
+  </div>
+  <div class="screens">
+    <figure class="pack-frame">
+      <div class="bar"><span>Opened in PowerPoint</span><span data-ref>sample-CS310-week-6-teaching-pack.pptx</span></div>
+      <img src="../docs/presentation/pack/slide-03.png" alt="A slide of the teaching pack as PowerPoint renders it: what employers ask for, with the dashboards count and an exact quotation from the Stripe posting.">
+      <figcaption><img class="helper" src="../public/brand/mascots/prism-resting.svg" alt="">The downloaded file as PowerPoint draws it. Editable; no model text.</figcaption>
+    </figure>
+    <div class="side">
+      <figure class="shot"><img src="../docs/presentation/shot-learn.png" alt="Learn: the results file filed for the course version taught, with the mean mark for the outcome and n of N."><figcaption><img class="helper" src="../public/brand/mascots/lens-resting.svg" alt="">Sample results, synthetic marks, filed for the version taught, with n of N.</figcaption></figure>
+      <p class="track-a">No learning gain is claimed; the benchmark has not been run.</p>
+      <div class="planned-card">
+        <h3><span class="chip planned">Planned</span>Learn, after Amsterdam</h3>
+        <ul><li>Intervals and small-cohort pooling</li><li>Perception beside attainment</li><li>The benchmark against the CLO survey</li></ul>
+      </div>
+    </div>
+  </div>
+  <footer class="foot"><span>Real screens; the pack as PowerPoint renders it; the results are a synthetic sample file. Learn is descriptive only.</span><span class="slide-number"></span></footer>
+  <aside class="notes">5:00 to 5:45.
+Teach: "Prism builds the teaching pack from the saved session and the evidence linked to its outcomes. This is the downloaded file as PowerPoint opens it. It is editable, and no model wrote a word of it."
+Learn: "The term's results come back, here a synthetic sample file, matched to the course version taught, with n of N. We claim no learning gain; the benchmark has not been run. Intervals, pooling and perception are planned, in amber."
+Transition: "Next semester the loop runs again. So what here is real?"</aside>
+</section>
+
+<!-- 8. What is real (beat 6) -->
+<section class="slide forest s-real" data-title="What is real">
+  <p class="eyebrow">The proof</p>
+  <h2 class="title">What is real, and what is not yet.</h2>
+  <div class="real-grid">
+    <div class="real-card" data-claim="deck-trl">
+      <p class="eyebrow">Readiness, self-assessed</p>
+      <p class="big lime">TRL 6</p>
+      <p>“Prototype implementations of the software demonstrated on full-scale realistic problems.”</p>
+      <p class="quiet">NASA ESTO, software. Our relevant environment: real postings from a real public board, a sample course outline, a lecturer persona.</p>
+    </div>
+    <div class="real-card" data-claim="proof-checks">
+      <p class="eyebrow">Checks</p>
+      <p class="big">185</p>
+      <p>automated checks passed on 22 October 2026, plus four headless browser runs.</p>
+      <p class="quiet">One dataset for everything: the dated sample of a real board, restored before every run.</p>
+    </div>
+    <div class="planned-card">
+      <h3><span class="chip planned">Planned</span>Not built yet</h3>
+      <ul>
+        <li>Remote doors for ChatGPT, Copilot, Gemini</li>
+        <li>The LMS door for Canvas and Moodle</li>
+        <li>Learn's statistics and the benchmark run</li>
+        <li>Watching on a schedule</li>
+        <li>A shared workspace with sign-in</li>
+      </ul>
+    </div>
+  </div>
+  <p class="next-level"><span>Next level:</span> one department, one term, inside its LMS.</p>
+  <footer class="foot"><span>Self-assessed against NASA ESTO's software readiness levels.</span><span class="slide-number"></span></footer>
+  <aside class="notes">5:45 to 6:15. Say the limits slower than the claims.
+"Against NASA's software readiness levels we place Lyceum at TRL 6, self-assessed, on real postings from a real public board, a sample course outline and a lecturer persona. 185 automated checks pass, plus four browser runs; in amber, what is not built."
+"TRL 7 needs one department running it for a term inside its LMS: the step we are asking for."
+Transition: "And it has to live in the tools lecturers already use."</aside>
+</section>
+
+<!-- 9. The doors (beat 7) -->
+<section class="slide s-doors" data-title="The doors">
+  <img class="full" src="../docs/presentation/architecture.png" alt="Lyceum's architecture: people work through doors into one deterministic core. The web workspace is built and the local Claude door is built and read-only; the remote assistant doors, the LMS door and the office suite are planned. The core reads permitted job boards, taxonomies and references, and files results from institution systems.">
+  <footer class="foot"><span class="slide-number"></span></footer>
+  <aside class="notes">6:15 to 6:50.
+"One core, many doors. The web workspace is built. The local door is built: Claude reads an exported workspace through MCP, read-only. The remote doors for ChatGPT Edu, Copilot and Gemini, the LMS door for Canvas and Moodle, and the office suite are planned, and drawn dashed. No door confirms a quotation, adopts a revision or decides by itself; a person does."
+Transition: "So why would a department pay for it?"</aside>
+</section>
+
+<!-- 10. Why a department pays (beat 7) -->
+<section class="slide dots s-pays" data-title="Why a department pays">
+  <p class="eyebrow">Why a department pays</p>
+  <h2 class="title">The review happens anyway; the evidence is kept.</h2>
+  <div class="pays-grid">
+    <div class="ladder" aria-label="The ladder: free, department, institution">
+      <div class="tier inst"><h3>Institution <span class="chip planned">Planned</span></h3><p>Tenancy, audit, the office suite doors</p><p>Data agreements with the institution</p></div>
+      <div class="tier dept"><h3>Department <span class="chip planned">Planned</span></h3><p>Shared workspace, sign-in, the remote and LMS doors</p><p>The term's review pack, and support</p></div>
+      <div class="tier free"><h3>Free <span class="chip built">Built</span></h3><p>One course, on one laptop, no account</p><p>The whole loop, every export, the local assistant door</p></div>
+    </div>
+    <div>
+      <p class="clauses-head">Each step answers what reviewers already look for</p>
+      <ol class="clauses">
+        <li><strong>Watch</strong><span class="body" data-ref>AUN-QA Guide v4.0, 1.4</span><q data-clause="AUN-QA Guide v4.0, 1.4">the requirements of the stakeholders, especially the external stakeholders, are gathered</q></li>
+        <li><strong>Report</strong><span class="body" data-ref>MQA COPPA, 6.1.6</span><q data-clause="MQA COPPA, 2nd edition, 6.1.6">market needs and graduate employability analyses</q></li>
+        <li><strong>Decide</strong><span class="body" data-ref>ABET, Criterion 2</span><q data-clause="ABET, Criterion 2">for the periodic review of these program educational objectives</q></li>
+        <li><strong>Update</strong><span class="body" data-ref>ESG 2015, 1.9</span><q data-clause="ESG 2015, 1.9">monitor and periodically review their programmes</q></li>
+        <li><strong>Teach</strong><span class="body">Biggs, constructive alignment, a teaching principle</span><q data-clause="Biggs, constructive alignment, a teaching principle">the assessment tasks, are aligned to each other</q></li>
+        <li><strong>Learn</strong><span class="body" data-ref>ABET, Criterion 4</span><q data-clause="ABET, Criterion 4">systematically utilized as input for the program's continuous improvement actions</q></li>
+      </ol>
+    </div>
+  </div>
+  <footer class="foot"><span>Free: a local prototype today. The other tiers: planned. Clauses quoted from dated notes.</span><span class="slide-number"></span></footer>
+  <aside class="notes">6:50 to 7:20.
+"Every university already runs a periodic review, and each step of the loop is the working form of what reviewers already look for."
+"The review happens anyway; with Lyceum the evidence is already kept. One course is free and local. A department would pay for the shared workspace and the doors; the price is the hypothesis our pilot tests."
+If asked what the free tier costs: "Nothing to try: one course, one laptop, no account."
+Transition: "So here is what we ask."</aside>
+</section>
+
+<!-- 11. The ask and the close (beat 8) -->
+<section class="slide forest s-ask" data-title="The ask">
+  <div class="host-badge"><img src="../public/brand/mascots/host-celebrating.svg" alt="Tualang celebrating a closed loop"></div>
+  <svg class="closed-ring" viewBox="0 0 320 320" role="img" aria-label="The ring, closed for the term"><circle cx="160" cy="160" r="130"/><text x="160" y="152">closed for</text><text x="160" y="184">the term</text></svg>
+  <div class="ask-copy">
+    <p class="eyebrow">The ask</p>
+    <h2 class="title">One department, one term, inside its LMS.</h2>
+    <p class="measures-label">What the pilot measures</p>
+    <ul class="measures"><li>Task completion</li><li>Citation fidelity</li><li>Time to a brief</li><li>Repeat use</li></ul>
+    <p class="sentence">Lyceum turns real job postings into a course decision with receipts, every semester, inside the tools lecturers already use.</p>
+    <p class="big closing">Every semester adds a ring.</p>
+  </div>
+  <footer class="foot"><span>Pilot measures, not results. Lyceum, Universiti Teknologi PETRONAS.</span><span class="slide-number"></span></footer>
+  <aside class="notes">7:20 to 8:00. Restate the three points: receipts, people decide, the tools they already use.
+"We ask for one department, for one term, inside its LMS. We will measure task completion, citation fidelity, time to a brief and repeat use."
+"Three things: receipts, people decide, and the tools they already use."
+"Lyceum turns real job postings into a course decision with receipts, every semester, inside the tools lecturers already use. Every semester adds a ring."
+Rehearsed word for word. Where is the AI: "The numbers come from deterministic code on purpose. AI sits at the doors, where an assistant asks Lyceum for the evidence report (today Claude, through the local door), and in drafting, where a model may propose and a lecturer confirms; it never confirms a quotation, never moves a count and never decides."
+Why not ChatGPT with search: "A chat can draft text. It cannot refuse a quotation that is not in the source, keep the denominator honest, record who decided, or keep the version history. Lyceum does those four things; today an assistant reaches it through the local door, and the ChatGPT door is planned."</aside>
+</section>
+
+</main>
+<div class="deck-notes" hidden></div>
+<div class="deck-toast" hidden></div>
+<script src="deck.js"></script>
+</body>
+</html>
+
+===== FILE: docs/as-built.md (sections 1, 3 and 4, draft) =====
+# Lyceum: as built
+
+> **What this file is.** The system as built for the HACKaSTONE 2026 Grand Final, written from the code and the checks that ran, with the plan's mismatches named. Where it and [lyceum-upgrade-plan.md](lyceum-upgrade-plan.md) disagree about what exists, this file wins. Keep it current: change it with the code, add a line to the changelog, keep the stamp in step.
+
+**Stamp.**
+
+- Last updated: 22 October 2026, STAMP_TIME Kuala Lumpur time.
+- Reflects: `main` at the A8 commit, which follows `A7_HASH`; the base is `f5b26a4`, tagged `pre-overhaul`. Nothing is pushed; `amsterdam-2026` is the owner's tag at the freeze.
+- Project: Lyceum, Universiti Teknologi PETRONAS, for the Grand Final on 29 October 2026 in Amsterdam ([docs/competition/grand-final-2026.md](competition/grand-final-2026.md)).
+
+**Rollback.** `git checkout pre-overhaul` returns the tree as it stood before the overhaul: the whole October workspace, committed on 22 October 2026 at 03:25 as "Checkpoint before the overhaul".
+
+## Contents
+
+1. [What Lyceum is](#1-what-lyceum-is)
+2. [Plan versus built](#2-plan-versus-built)
+3. [Exact versions](#3-exact-versions)
+4. [Layout](#4-layout)
+5. [Verification](#5-verification-22-october-2026)
+6. [What needs a person](#6-what-needs-a-person)
+7. [Changelog: Track A, package by package](#7-changelog-track-a-package-by-package)
+
+## 1. What Lyceum is
+
+Lyceum turns real job postings into a course decision with receipts, every semester, inside the tools lecturers already use. A lecturer runs one loop per course and term: **Watch** (postings fetched on request from a permitted board, each with its link, date and fingerprint), **Report** (exact quotations beside their sources, the reviewed denominator, counts with Wilson intervals, a mapping to the outcomes, a brief), **Decide** (an immutable decision record by a person with the right to decide, bound to the brief, the version and the term), **Update** (a revision checked against the hours and the protected topics, adopted as a new version), **Teach** (sessions and an editable teaching pack with no model text) and **Learn** (results matched to the version taught, with n of N, and no learning gain claimed). The core is deterministic and needs no AI key; an assistant reaches it through the local, read-only door in `mcp/`. A host and seven helpers, drawn in code, make the steps visible; their moods follow records, never activity.
+
+## 3. Exact versions
+
+As installed on the build machine on 22 October 2026.
+
+| Part | Version |
+|:--|:--|
+| Node.js, npm | 24.14.1, 11.11.0 |
+| TypeScript, Vite, React | 5.9.3, 6.4.3, 18.3.1 |
+| puppeteer-core (the smokes, the shots, the generators) | 23.11.1, driving Chrome 155.0.8059.85 |
+| pptxgenjs (the packs, the brief deck, the pitch PPTX) | 4.0.1 |
+| @modelcontextprotocol/sdk, zod (the local door) | 1.32.1, 4.6.7 |
+| simple-icons (the diagram's marks) | 16.35.0 |
+| unpdf (reading the PDFs back) | 0.12.2 |
+| Fontsource variable faces: Bricolage Grotesque, Plus Jakarta Sans, JetBrains Mono | 5.3.0 each |
+| Remotion, in `video/remotion/` only | 4.0.537, pinned |
+| ffmpeg (the film's capture and checks) | 8.1 |
+
+## 4. Layout
+
+```text
+deck/                 the pitch: index.html, deck.css, deck.js, the generated theme; exports in deck/export (not committed)
+docs/
+  as-built.md  claims.md  decisions.md  demo-script.md  doors.md  brand-use.md  lecturer-guide.md  run-log.md
+  lyceum-upgrade-plan.md  lyceum-improvement-plan.md (execution records and W numbers)
+  presentation/       architecture.svg and .png, lyceum-brief.pdf, poster-a1.pdf, the shots, pack/ (the teaching pack as PowerPoint draws it)
+  research/           the dated notes
+  history/            superseded documents, screenshots and presentations
+mcp/                  the local door, its sample workspace and its try script
+skills/lyceum/        the skill folder
+video/                script, storyboard, style, capture/, the Remotion project in remotion/
+src/
+  theme/              tokens.ts (the source) and the generated global.css
+  ui/mascots/         the host, the seven helpers and the mark
+  ui/primitives/      the components
+  ui/screens/         one file per loop step plus Home, Courses, How it works, Evaluation, the landing page and the sandbox
+  app/                store, roles, the loop and its ring, routes, moods
+  lib/                the deterministic core
+  demo/               the self-driving tour
+  prove-*.ts          the checks
+scripts/              generators, the claims and contrast checks, the headless browser runs
+```
+
+===== FILE: docs/as-built.md (section 2, draft) =====
+## 2. Plan versus built
+
+Plan Section 17.1, package by package, against what this record and the code show. "Done" means built and verified on 22 October 2026; "partly" names what is missing; "not done" says why.
+
+| Package | The plan's acceptance | As built | Status |
+|:--|:--|:--|:--|
+| A0 Checkpoint and the branch | The tag exists; the snapshots suite is in prove:all; a schema 3 and a schema 4 backup restore | `pre-overhaul` on `f5b26a4`; the branch taken; the migration check restores schemas 3, 4 and 5 | Done |
+| A1 Theme and shell | Every screen in the new theme with no hand-written hex; the contrast table passes | `tokens.ts` the only source; generated CSS and bundled fonts; the loop rail; the contrast check | Done |
+| A3 Mascots v1 | PNGs for every character and mood; the mark as favicon and icon; prove:moods; nothing moves without a request | Eight characters in code, four poses each; 35 SVGs and 72 PNGs; the moods proof | Done |
+| A2a Watch, Report, Decide | The journey proof with the new done rules; a decision record and an event on the timeline; 320 px reflow | The Report sub-rail, the source pane, skill cards, the decision record, the event log, the ring per term | Done |
+| A2b The other loop screens, Home, How it works, Landing | No synthetic figure on the landing; every landing figure in claims.md; the integrity smoke | Learn matched to the version taught; the landing's figures and clauses registered and proved | Done; the doors strip keeps neutral icons until the owner decides on marks |
+| A4 Demo and checks | `npm run smoke` with the decision and both decks; the guide check | The tour in loop order, now setting the term first; four smokes and the walk updated | Done |
+| A5 The local door | Claude Desktop returns CS310's evidence report from a fresh export; no tool writes to the workspace | Six tools, five read-only; proofs over the real protocol; a stdio session with the official client | Partly: the Claude Desktop run needs the owner |
+| A6 Deck, diagram, brief, poster | The PPTX opens in PowerPoint with notes and the film plays; the diagram passes the C4 checklist; no dash | The deck, its PDF and PPTX opened in PowerPoint with every note; the diagram; the brief; the A1 poster | Partly: the playback test needs the presenting laptop; the poster's QR code needs a public page |
+| A7 The film | The 90-second cut rendered and reviewed; a second render diffed | Both cuts built and rendered from the real capture, the determinism check, captions and chapters | Partly: no voices yet (the team records them), no music bed, the phone review |
+| A8 Documentation and verification | Every claim traces to claims.md; the demo path by keyboard and NVDA; everything plays offline | This record, the claims register, the booth script, README, JUDGES.md, FEEDBACK.md, the guide; the full verification | Partly: the NVDA pass and the wifi-off run need a person at the machine |
+
+===== FILE: docs/as-built.md (section 6, draft) =====
+## 6. What needs a person
+
+What this run could not do on its own, with where each item stands. The owner's decisions are also at the top of [run-log.md](run-log.md), under Needs the owner.
+
+| Item | Why it needs a person | Where it stands |
+|:--|:--|:--|
+| The film's voices | The plan's voices are the team's own, recorded line by line | `video/script.md` holds every line; the renders are silent, with captions timed from the script, until the WAV files exist |
+| A music bed for the film | Only a track whose licence allows YouTube use | None chosen |
+| The Claude Desktop run of the local door | It needs the desktop app, an account and a change to a file outside the repository | A real stdio session with the official client is recorded in [doors.md](doors.md), with the steps for the desktop run |
+| Official marks beyond Claude, MCP and Greenhouse | Microsoft needs a licence, Google a request, Moodle permission; OpenAI's and Instructure's terms were not read | [brand-use.md](brand-use.md) lists each mark, its source and its terms |
+| The poster's QR code | It needs a public address for the landing page, and deploying sends the build off the machine | The slot is marked planned; `node scripts/gen-poster.mjs --qr <file>` places the code |
+| The PPTX and the film on the presenting laptop | Section 14.3 asks for the playback test on the venue's player | The PPTX opened in PowerPoint here with every note, and the film loads in Chrome on slide 5 |
+| The keyboard and NVDA pass, the offline run with wifi off | A person at the machine, with a screen reader | The smokes check keyboard focus and the 320 px layout; the tour runs on the saved sample offline |
+| The story review and the rehearsals | Plan Section 4.1 and 14.1: a teammate plays the sceptical judge | [demo-script.md](demo-script.md) for the booth, the deck's notes for the pitch |
+| Remotion's licence tier | Who owns Lyceum, the team or the university, decides which applies | Recorded in [video/README.md](../video/README.md); confirm before the film is published |
+| The README's banner and card | The art generator and the reference repositories are on GitHub | The README follows the house layout without them |
+
+===== FILE: docs/design/colour-scheme-audit-2026-10-22.md =====
+# Colour scheme audit: WCAG 2.2 and best practice
+
+Date: 22 October 2026. The poster `colour-scheme-2026-10-22.png` came from a teammate; this audit checks every pairing it implies against WCAG 2.2 (1.4.3 text contrast, 1.4.11 non-text contrast, 1.4.1 use of colour, 2.4.11 and 2.4.13 focus appearance, 2.5.8 target size, 1.4.10 reflow, 2.3.3 motion) and against the usual design practice for a professional product. Ratios were computed with the WCAG relative-luminance formula on 22 October. The verdict: the palette stands; nine rules and one added token make it compliant in use. The tokens in `docs/lyceum-upgrade-plan.md` Section 6 carry the result.
+
+## 1. What passes as the poster gives it
+
+| Pair | Ratio | Verdict |
+|:--|:--|:--|
+| Forest `#0F2A20` text on mint `#E9EFE7`, on white | 13.1, 15.3 | AAA |
+| Forest text on lime `#B8F23A` (the lime button) and lime text on forest | 11.5 | AAA |
+| Lime labels on the inner box `#173A2C` | 9.4 | AAA |
+| White text on forest; on-forest body `#B9CDBF` on forest and on `#173A2C` | 15.3, 9.1, 7.5 | AAA |
+| Body `#4E6258` on white, mint, `#EEF6EF`, `#DDEFE1`, `#CDE8D3` | 6.5, 5.6, 5.9, 5.5, 5.0 | AA on every light surface |
+| Small muted `#2F4A3D` on the same five | 9.7 to 7.4 | AAA |
+| White text on emerald `#1C7C54` (the primary button) | 5.2 | AA |
+| Emerald text on white | 5.2 | AA |
+| Warn `#8A5A00` on `#FCF0E0`, white, mint; white on warn | 5.3, 5.9, 5.1, 5.9 | AA (these two semantics are additions outside the poster, needed because it has no amber or red) |
+| Danger `#A33A2A` on `#FBE9E6`, white, mint; white on danger | 5.6, 6.6, 5.6, 6.6 | AA |
+| Emerald bars on white and on the `#DDEFE1` meter track | 5.2, 4.3 | pass the 3:1 non-text rule |
+| Prism rays `#4FA36F` and `#8BC34A` on forest and on `#173A2C` | 5.0, 7.3, 4.1, 6.0 | pass as data on dark cards |
+| Emerald focus ring on white, mint, `#DDEFE1`, `#CDE8D3` | 5.2, 4.4, 4.3, 4.0 | pass the 3:1 focus rule |
+| Lime focus ring on forest and on `#173A2C` | 11.5, 9.4 | pass |
+
+## 2. What fails, and the rule that fixes it
+
+| Finding | Ratio | Rule |
+|:--|:--|:--|
+| Lime on white or on mint | 1.33, 1.14 | Lime never carries text, a bar, a line or a chip on a light surface. The loop line, the active step and the highlights are lime on forest only; on mint and white they are forest (13.1) or emerald (4.4). |
+| Emerald text on mint, on `#DDEFE1`, on `#CDE8D3` | 4.4, 4.3, 4.0 | Emerald `#1C7C54` stays the fill, bar and button colour. Text and links in green on light surfaces use the added token `--emerald-text #176B4A` (6.5 on white, 5.6 on mint, 5.4 on `#DDEFE1`, 5.0 on `#CDE8D3`: AA everywhere, AAA on white). |
+| Emerald on forest | 2.96 | Below the 3:1 non-text rule. On dark cards, data and rings use `#4FA36F`, `#8BC34A` and lime, never emerald; the focus ring on forest surfaces is lime. |
+| The dark-card border `#2E5A46` on forest | 1.9 | Decorative only. An input on a dark card is bounded by `#B9CDBF` (9.1) and focused in lime. |
+| The light card border `#D3E0D6` on white | 1.4 | Decorative only. Inputs and controls are bounded by `--control-border #4E6258` (6.5 on white, 5.5 on `#DDEFE1`). |
+| The "coming next" dashed border `#8FB59E` on white and on mint | 2.3, 1.9 | Decorative only. A planned item always carries the word "Planned" in a tag; the dash never stands alone. |
+| Large-text allowance misread as 18 px | | The 3:1 allowance applies at 24 px regular or 19 px bold and above, never at 18 px regular. |
+| Uppercase mono labels at 11 px | | Minimum 12 px for JetBrains Mono labels, with 0.12 em tracking and `#4E6258` or `#2F4A3D`; eyebrow labels in green use `--emerald-text`. |
+| Status by colour (rising and falling, done and next, pass and fail) | | Never colour alone: every state carries a word and an icon. The palette is one green hue by luminance, which helps deuteranopia, but the red danger against green still needs the icon and the word. |
+
+## 3. Best practice beyond the ratios
+
+- One accent per screen: lime marks the one thing to look at, never two.
+- Links inside body text are underlined, not coloured alone.
+- Hover, active and pressed states are state layers on the same surface, not new colours; disabled controls sit at 38% opacity with the disabled attribute.
+- Focus is a 2 px solid ring offset 2 px with a gap in the surface colour, emerald on light surfaces and lime on forest, on every interactive element (2.4.11, 2.4.13).
+- Targets are 44 px on touch and never under 24 px (2.5.8); 8 px between adjacent targets.
+- Reflow to 320 px with no horizontal scroll (1.4.10); text spacing overrides must not clip (1.4.12); 200% zoom keeps every control reachable.
+- Motion respects `prefers-reduced-motion`; nothing moves in the workspace without a real request or a saved record.
+- Charts: one series, the count on each bar, the interval printed beside the percentage, gridlines `#DCE7DF` at low contrast, a table alternative in a disclosure, emerald on light cards and the rays on dark cards.
+- The dot grid is decorative and is masked away under dense tables so it never competes with data.
+- Working screens are white and mint with forest text; forest cards, lime and big numbers belong to the landing page, the header, the tools strip and the deck.
+
+## 4. The one token added
+
+`--emerald-text #176B4A`, used for green text and links on light surfaces. Everything else on the poster is kept as given, and the rules above govern where each colour may appear. The contrast check script (`scripts/contrast-check.mjs`, package A1) asserts every ratio in this audit on every build.
+
+===== FILE: docs/doors.md =====
+# Lyceum: the doors
+
+One core, many doors (plan Section 11): the same deterministic engines, reached from the tools lecturers already use. Today two doors exist. The **web workspace** is the app itself. The **local door** is a stdio MCP server in `mcp/` that reads one workspace backup exported from the app and answers from it, with the skill folder `skills/lyceum/` telling an assistant how to use it. Remote access and OAuth are planned.
+
+## What the local door does
+
+| Tool | Changes anything? | What it returns |
+|:--|:--|:--|
+| `lyceum_courses` | No (read-only) | Every course with its outcomes, kept and reviewed sources, and its loop for the term |
+| `lyceum_sources` | No (read-only) | The kept sources for a course, each with its link, publication date, retrieval time, review state and fingerprint |
+| `lyceum_evidence_report` | No (read-only) | Each skill's share of reviewed postings with its 95% Wilson interval, coverage against targets, and every quotation with its source |
+| `lyceum_course_outline` | No (read-only) | The current version's outcomes, topics, hours and reason |
+| `lyceum_brief_draft` | No (read-only) | A meeting brief drafted from the evidence; not saved, not sent, not a decision |
+| `lyceum_teaching_pack` | Writes one new file | The editable teaching pack (.pptx) for a saved session, written to a new absolute path; it never overwrites a file |
+
+The trust boundary (plan Section 11.3): read-only tools are annotated read-only; the pack tool is annotated as writing a new file and not destructive. No tool confirms a quotation, marks postings reviewed, records a decision, adopts a revision or sends a brief; those stay human actions in the workspace. Every call is logged to the server's stderr as one line with the time, the host that called, the tool, its arguments, the record ids it touched and whether it succeeded. The door reads the export again on every call, so a fresh export is what it answers from next, and removing the door from a host leaves the workspace and its exports as they were. Every reply starts with the time the workspace was exported, so the door and the screen can be compared.
+
+## Before a demo: one dataset for everything
+
+1. In Lyceum, open **Guide & progress** (or **Courses**, then **Backups**) and choose **Download workspace backup**. Do it immediately before the door is shown, so the door reads exactly what is on the screen (plan Section 15).
+2. Save it somewhere stable, for example `C:\Lyceum\lyceum-workspace-backup.json`. The door validates it exactly as the app's restore does and refuses a file that fails.
+3. Without the app, use `mcp/sample-workspace.json`: the self-driving tour's end state on CS310, built by `node mcp/sample.ts` from the dated saved sample of the Stripe board and the sample results in `public/demo`. Its timestamps are the seed clock's (1 July 2026), because the store's clock is pinned outside the browser; a real export carries real times.
+
+Node 24 or later runs the server directly (it strips the TypeScript types), after `npm install` in the repository.
+
+## Claude Desktop
+
+Open Settings, then Developer, then Edit Config, and add the server to `claude_desktop_config.json` (on Windows `%APPDATA%\Claude\claude_desktop_config.json`, on macOS `~/Library/Application Support/Claude/claude_desktop_config.json`). Use absolute paths; the server does not know the repository's folder.
+
+```json
+{
+  "mcpServers": {
+    "lyceum": {
+      "command": "node",
+      "args": ["C:\\path\\to\\lyceum\\mcp\\server.ts"],
+      "env": { "LYCEUM_WORKSPACE": "C:\\Lyceum\\lyceum-workspace-backup.json" }
+    }
+  }
+}
+```
+
+Restart Claude Desktop. The six tools appear under the lyceum server; Claude asks before each call.
+
+## Claude Code
+
+From any folder, with absolute paths:
+
+```text
+claude mcp add lyceum --env LYCEUM_WORKSPACE=/path/to/lyceum-workspace-backup.json -- node /path/to/lyceum/mcp/server.ts
+```
+
+To use the skill as well, copy `skills/lyceum/` into a skills folder the assistant reads (for Claude Code, `.claude/skills/` in a project or `~/.claude/skills/`). The folder follows the open Agent Skills specification: `SKILL.md` with its front matter and instructions.
+
+## Try it without a host
+
+`node mcp/try.ts [path/to/workspace.json]` starts the server as a child process and speaks MCP to it over stdio with the official SDK's client, as a desktop host does: it lists the tools and asks for CS310's evidence report. The run on 22 October 2026 against the sample workspace, first lines:
+
+```text
+Connected over stdio to lyceum 3.0.0, reading mcp\sample-workspace.json.
+Tools: lyceum_courses (read-only), lyceum_sources (read-only), lyceum_evidence_report (read-only), lyceum_course_outline (read-only), lyceum_brief_draft (read-only), lyceum_teaching_pack (writes a new file).
+
+lyceum_evidence_report { course: CS310 }, the first lines:
+
+From the Lyceum workspace exported at 2026-07-01T10:00:00Z. Read-only: nothing was changed in the workspace.
+
+# CS310 evidence report
+
+Course: Data Visualisation
+Generated: 2026-07-01T10:00:00Z
+Scope: 10 postings collected on request from Saved sample: real postings from the stripe Greenhouse board, retrieved 2026-10-09 and truncated for the demo, recorded in this workspace. Nothing is collected without a request.
+
+## Observed requirements
+
+Reviewed job postings in the denominator: 9
+Excluded: 0 unreviewed postings, 1 duplicate copies, 0 contextual documents (standards and advisory notes are listed, never counted as postings).
+
+| Skill | Postings | Share | 95% interval | Required | Preferred | Employers | Coverage stage | Target | Status |
+|---|---|---|---|---|---|---|---|---|---|
+| stakeholders | 6 of 9 | 66.7% | 35.4% to 87.9% | 0 | 0 | 1 | Unknown | Unknown | Not assessed |
+| dashboards | 5 of 9 | 55.6% | 26.7% to 81.1% | 0 | 0 | 1 | Introduced | Practised | Below target |
+```
+
+## The manual Claude Desktop run
+
+The plan asks for one recorded run in Claude Desktop (Section 17.1, A5). It needs the desktop app and the owner's account, so this session could not make it; it is on the run log's list for the owner. To make it:
+
+1. Export a fresh backup from the app, or use the sample workspace, and configure Claude Desktop as above.
+2. Ask: "What do employers ask for in CS310, with receipts?"
+3. Check the answer against the screen: the export time, the denominator (9 reviewed postings in the sample), each share with its interval, and the quotations with their employer, title, date and link. Then ask for the teaching pack for week 6 to a new path and open the file.
+4. Record the date, the Claude Desktop version, the question and the first lines of the answer here.
+
+Recorded runs: none yet.
+
+## Verification
+
+`node --test src/prove-mcp.ts` calls every tool through the MCP protocol against the sample workspace: the sample is current and validates; six tools, five annotated read-only; each read tool answers with its receipts and the export time; the pack tool writes one new PPTX, the same deck the app builds, and refuses to overwrite or to write to a relative path, a wrong extension or a missing folder; no tool changes the workspace file; unknown courses, tampered exports and missing exports are refused; every call is logged with the host and the records it touched. `node mcp/sample.ts --check` confirms the sample matches the tour's end state.
+</stdin>
+codex
+I’ll review only the embedded text, checking the rehearsed claims against the build records and marking anything unverified.
+
+codex
+The clearest weaknesses are unverified model drafting, no recorded Claude Desktop run, and an unsupported claim that ChatGPT cannot perform the four listed tasks. The deck does correct the older plan by marking the ChatGPT door as planned.
+
+codex
+## 1. The ten questions
+
+Implementation and test results below are reported facts from the embedded documents. Independent execution, omitted source material and rendered appearance are **unverified**.
+
+### 1.1 Is this scraping?
+
+- **Hardest follow-up:** Which source policy permits your actual collection, storage and reuse of these postings?
+- **Facts:** Collection runs on a lecturer's request through the documented Greenhouse or Lever API, with the source policy displayed. Postings retain links, dates and fingerprints. The saved sample contains real Stripe postings retrieved on 9 October 2026, truncated and labelled as a sample. (`docs/demo-script.md`, Watch and Questions; `JUDGES.md`, What is real and what is not.)
+- **Must not claim:** Permission to collect from arbitrary boards, LinkedIn collection, or independently verified compliance with source terms. The actual policy text is absent, so those permissions remain **unverified**.
+- **Show:** Watch's source policy and run log, including whether this run fetched live or used the saved sample; then a posting's provenance fields. (`docs/demo-script.md`, Questions and Watch.)
+
+### 1.2 Where is the AI?
+
+- **Hardest follow-up:** Show a model doing useful work today, and the boundary that prevents its output from becoming confirmed evidence or a decision.
+- **Facts:** The core is deterministic, requires no AI key, and its agents default to fixture mode. The MCP tools cannot confirm quotations, mark postings reviewed, record decisions or adopt revisions. Five tools are read-only; the sixth creates a teaching pack file without changing the workspace. (`docs/claims.md`, `proof-no-keys`; `docs/doors.md`, What the local door does.)
+- **Must not claim:** A verified model drafting run or a completed Claude Desktop demonstration. Both are **unverified** in the supplied record. (`docs/doors.md`, Recorded runs; `docs/as-built.md`, A5.)
+- **Show:** The evidence report, its export timestamp and its receipts. The booth specifies Claude Desktop, but the completed run documented here uses the official SDK client over stdio. Identify that distinction. (`docs/demo-script.md`, The door; `docs/doors.md`, Try it without a host.)
+
+### 1.3 Why not ChatGPT alone?
+
+- **Hardest follow-up:** What comparison establishes that ChatGPT cannot provide those controls, and what does rejecting one paraphrase actually prove?
+- **Facts:** Lyceum documents exact source matching, a reviewed denominator, decision records and retained course versions. Its checks report rejecting paraphrases. The ChatGPT door is planned. (`JUDGES.md`, The loop; `docs/claims.md`, `proof-no-paraphrase`; `deck/index.html`, slide 11 notes.)
+- **Must not claim:** That those capabilities are impossible in ChatGPT, or that Lyceum has beaten ChatGPT in a controlled comparison. No such comparison is supplied. Exact matching also does not establish that a quotation supports a sound curriculum decision.
+- **Show:** The refused paraphrase beside its saved source. Decision and History screens can substantiate the separate recordkeeping claims. (`docs/demo-script.md`, Report and Update.)
+
+### 1.4 How do we know the postings are representative?
+
+- **Hardest follow-up:** Who selected these nine postings, what was excluded, and why should one employer influence a university course?
+- **Facts:** The frozen demo keeps ten postings, excludes one duplicate and reviews nine. The evidence report identifies one employer and reports shares with 95% Wilson intervals. The separate figure of 727 refers to a live fetch from one employer, not the demo denominator. (`docs/claims.md`, `deck-receipt` and `proof-live-board`; `docs/doors.md`, example evidence report.)
+- **Must not claim:** Representative labour-market estimates or a general statement about what employers want. An interval does not establish that the selected postings represent a broader population. The files explicitly disclaim representative counts. (`JUDGES.md`, Never claimed; `docs/demo-script.md`, Report.)
+- **Show:** Count's n of N and interval, alongside the employer, exclusions and source dates. (`docs/demo-script.md`, Questions; `docs/doors.md`, example evidence report.)
+
+### 1.5 What breaks first at scale?
+
+- **Hardest follow-up:** How many postings can a lecturer review within the available time, and what happens when two people work concurrently?
+- **Facts:** Every posting used in a count requires human review. The booth script identifies review time as the expected bottleneck. The workspace currently lives in one browser; shared workspaces and sign-in are planned. (`docs/demo-script.md`, Questions; `JUDGES.md`, Planned.)
+- **Must not claim:** A measured first failure, demonstrated concurrent operation or a quantified capacity. The 727-posting fetch supplies no reviewer throughput or concurrency measurement. (`docs/claims.md`, `proof-live-board`.)
+- **Show:** Slide 8's planned shared workspace and sign-in, plus the actual Review step that creates the denominator. (`deck/index.html`, slide 8; `JUDGES.md`, hands-on Report.)
+
+### 1.6 Does it decide the syllabus?
+
+- **Hardest follow-up:** Can one operator switch personas and supply both approvals, and what makes the recorded approver an authorized university decision-maker?
+- **Facts:** Decisions record the person, time, reason, brief, version and term. A decision on one's own brief is labelled self-recorded and remains open pending confirmation. Personas and browser-local role switching are prototype features; formal approval remains in the university's process. (`JUDGES.md`, Decide and What is real and what is not; `docs/demo-script.md`, Decide.)
+- **Must not claim:** Authenticated separation of duties, verified institutional authority or formal university approval. The prototype records an attributed decision without establishing the real identity behind the selected persona.
+- **Show:** The decision record, its self-recorded status where applicable, and History linking the decision to the adopted revision. (`JUDGES.md`, hands-on Decide and Update; `deck/index.html`, slide 6.)
+
+### 1.7 Why another tool?
+
+- **Hardest follow-up:** Which existing workflow does it actually reach today, and how can the lecturer tell whether the assistant is reading current information?
+- **Facts:** The local MCP door reads an exported workspace backup, rereads that file on each call and returns its export time. Updating the app requires another export before the door reflects those changes. Editable PowerPoint packs exist; remote assistant, LMS and office suite doors are planned. (`docs/doors.md`, What the local door does and Before a demo; `deck/index.html`, slides 7 and 9.)
+- **Must not claim:** Automatic synchronization with the open app, completed LMS or office suite integration, or measured adoption benefits. Claude Desktop operation remains **unverified**. (`docs/doors.md`, Recorded runs.)
+- **Show:** Slide 9's built and planned boundaries, an actual downloaded PowerPoint pack, and the evidence report's export timestamp compared with the workspace. (`docs/demo-script.md`, Questions; `docs/doors.md`, Before a demo.)
+
+### 1.8 What does the free tier cost us?
+
+- **Hardest follow-up:** Is it free for the lecturer to try, or costless for the team to operate and support, and does using Claude require an account?
+- **Facts:** The deck offers one course on one laptop, with the whole loop, exports and local door. The core requires no model key or external account; live collection requires the local API and network access. The Claude Desktop run requires its app and an account. Paid tiers and pricing remain hypotheses. (`deck/index.html`, slide 10; `JUDGES.md`, opening; `docs/as-built.md`, section 6.)
+- **Must not claim:** Zero total cost, zero support cost, established unit economics or account-free use of Claude. Those are not established by a core that needs no AI key.
+- **Show:** Slide 10's ladder, including the local prototype qualification and planned labels on paid tiers. (`deck/index.html`, slide 10.)
+
+### 1.9 What is the benchmark?
+
+- **Hardest follow-up:** What is predicted, how is it scored, which baseline is used, and would winning demonstrate better learning?
+- **Facts:** The booth script describes predictions frozen before a semester and scored against the last cohort carried forward. Slide 7 also names a benchmark against the CLO survey. Neither has run; Learn currently displays descriptive results, and the demonstration marks are synthetic. (`docs/demo-script.md`, Questions and Learn; `deck/index.html`, slide 7.)
+- **Must not claim:** Benchmark results, learning gains or a fully specified evaluation protocol. Plan Section 9 is not embedded, and the relationship between the carried-forward cohort and CLO-survey descriptions is **unverified**. Software checks do not validate learning. (`JUDGES.md`, Checks.)
+- **Show:** Evaluation, with software checks identified as such, and Learn's synthetic-data notice and n of N. Keep the planned benchmark visibly distinct from results. (`docs/demo-script.md`, Questions; `deck/index.html`, slide 7.)
+
+### 1.10 Is lime readable?
+
+- **Hardest follow-up:** Do the colour calculations establish that the actual interface works with a projector, keyboard and screen reader?
+- **Facts:** The audit reports lime contrast of 11.5 on forest and 9.4 on the inner dark surface, both AAA. Lime on white or mint fails the stated rule. The as-built summary reports focus and 320 px layout checks, while the manual keyboard and NVDA pass remains pending. (`docs/design/colour-scheme-audit-2026-10-22.md`, sections 1 to 3; `docs/as-built.md`, section 6.)
+- **Must not claim:** Whole-product AAA accessibility, proven projection legibility or a completed screen-reader audit. Those remain **unverified**.
+- **Show:** The actual header and poster, with lime on the permitted dark surfaces, supported by the relevant contrast rows. Their rendered appearance was not supplied for this review. (`docs/demo-script.md`, Questions; colour audit, sections 1 and 2.)
+
+## 2. The two rehearsed answers
+
+### “Where is the AI?”
+
+Two passages invite a stronger interpretation than the evidence supports:
+
+- **“In drafting, where a model may propose.”** A judge could reasonably hear this as an implemented model drafting feature. The files establish a deterministic core, fixture-mode agents and a brief-draft tool, but provide no model execution record showing drafting. The tool's name alone does not establish model involvement. Model drafting is **unverified**. (`docs/claims.md`, `proof-no-keys`; `docs/as-built.md`, section 1; `docs/doors.md`, tool table.)
+- **“Today Claude, through the local door.”** The connector and protocol exercise are documented. The Claude Desktop run is explicitly unrecorded, and A5 is partly complete. This supports an implemented local interface with a pending host demonstration; it does not establish successful operation in Claude Desktop. (`docs/doors.md`, The manual Claude Desktop run; `docs/as-built.md`, A5.)
+
+The deterministic numbers and human confirmation boundary have documentary support. The “never” language should remain scoped to the implemented core and exposed MCP tools. The files do not demonstrate equivalent enforcement in planned remote doors. (`docs/doors.md`, trust boundary; `deck/index.html`, slide 9.)
+
+### “Why not ChatGPT with search?”
+
+- **“It cannot” perform the four listed functions** is the largest unsupported assertion. The files document Lyceum's controls, but contain no comparative evaluation establishing categorical limitations of ChatGPT. The refused paraphrase demonstrates Lyceum's validation rule. (`deck/index.html`, slide 11 notes; `docs/claims.md`, `proof-no-paraphrase`.)
+- **“Record who decided”** is supported as stored attribution within the prototype. It must not imply verified human identity or independently authenticated approval: browser-local role switching and personas are explicitly prototype features. (`JUDGES.md`, What is real and what is not.)
+- **“Keep the version history”** has support in the retained versions and amendment records. Broader claims of tamper-proof institutional audit would remain **unverified**. (`JUDGES.md`, Update; `deck/index.html`, slide 6 notes.)
+
+The deck's final qualification that the ChatGPT door is planned is accurate. The older plan's claim that Lyceum can already be used inside ChatGPT is unsupported and should not be carried into the spoken answer. (`docs/lyceum-upgrade-plan.md`, Section 14; `deck/index.html`, slides 8, 9 and 11.)
+
+## 3. Five questions not in the bank
+
+1. **What evidence qualifies this as TRL 6?**  
+   The level is explicitly self-assessed against NASA's software column. The stated environment contains real postings, a sample course outline and a lecturer persona. No lecturer pilot has run. The outline is generated by `scripts/gen-demo-files.mjs`; the older plan's description of a real syllabus conflicts with the claims register and actual deck wording. An external readiness assessment is **unverified**. (`docs/claims.md`, `deck-trl` and following clarification; `deck/index.html`, slide 8; `JUDGES.md`, Never claimed; plan Section 14.)
+
+2. **Which real lecturers have validated the problem, completed the workflow or agreed to pay?**  
+   The landing-page problem evidence is described as desk research pending lecturer interview quotations. No lecturer pilot has run. Task completion, citation fidelity, time to a brief and repeat use are proposed pilot measures; pricing is a hypothesis. Completed user validation and willingness to pay are **unverified**. (`docs/claims.md`, opening problem section; `JUDGES.md`, Never claimed; `deck/index.html`, slides 10 and 11.)
+
+3. **What happens to real student information when an assistant reads the workspace?**  
+   The local door reads a workspace backup and logs tool calls, arguments and touched record IDs. The demonstration results are synthetic. Remote OAuth, shared sign-in and institutional data agreements are planned. The files do not establish assistant-host retention, data-processing terms or protection of a real cohort's records; those are **unverified**. (`docs/doors.md`, trust boundary; `JUDGES.md`, Illustrative and Planned; `deck/index.html`, slide 10.)
+
+4. **What must be delivered before a department can run the LMS pilot being requested?**  
+   The ask is one department for one term inside its LMS. The LMS door, shared workspace and sign-in are all planned; the current app is local, and its assistant interface reads exports. No named pilot institution, delivery schedule or completed LMS acceptance test is supplied. Those commitments are **unverified**. (`deck/index.html`, slides 8 to 11; `docs/doors.md`, opening.)
+
+5. **Which demonstration fallbacks have actually been tested on the presenting laptop?**  
+   PowerPoint opening with notes and film loading in Chrome are documented. Playback on the presenting laptop and venue player, plus the manual wifi-off run, remain pending. Both film cuts are rendered with captions but without the team's voices. The booth script requires narrated recordings, whose readiness is **unverified**. (`docs/as-built.md`, A6 to A8 and section 6; `docs/demo-script.md`, Before each run and If something fails.)
+
+## 4. Gaps
+
+These questions require facts beyond the supplied record. Each remains **unverified**.
+
+| Question the files cannot settle today | Fact the team would need |
+|---|---|
+| What exactly permits collecting, retaining and displaying each source's content? | The applicable source-policy text and its relationship to the actual use. The booth script describes a displayed policy but does not reproduce it. (`docs/demo-script.md`, Watch and Questions.) |
+| How were the demo postings selected, and how much relevant evidence does the quotation process miss? | The selection procedure, complete source material, truncation effects and independently checked extraction results. The register supplies the sample counts and quotation-rejection claims, not sampling or recall validation. (`docs/claims.md`, `deck-receipt` and `proof-no-paraphrase`.) |
+| What precisely constitutes a benchmark win? | Prediction target, freeze record, scoring method, ground truth, success criterion and the relationship between the prior-cohort baseline and CLO survey. The referenced protocol is absent. (`docs/demo-script.md`, Questions; `deck/index.html`, slide 7.) |
+| Does using Lyceum improve learning or curriculum decisions? | Observed outcomes from real use and an evaluation capable of supporting the particular improvement claimed. Synthetic marks and software checks cannot establish that result. (`JUDGES.md`, Checks and Never claimed.) |
+| What is the actual workload and economic cost per course? | Measured review time, setup effort, support burden and service costs, with core use distinguished from assistant use. Free access and pricing hypotheses supply none of these measurements. (`docs/demo-script.md`, scale question; `deck/index.html`, slide 10.) |
+| At what volume does the implementation fail or become impractical? | Measured processing limits, browser-storage behavior and reviewer throughput. Concurrent behavior would require evidence from the planned shared implementation. (`docs/demo-script.md`, scale question; `JUDGES.md`, Planned.) |
+| Can an institution trust the identities, confidentiality and durability of these records? | Evidence of authentication, authorization, recovery guarantees and applicable data-processing arrangements. Prototype role switching, backups and planned institutional agreements do not establish those guarantees. (`JUDGES.md`, honesty labels; `deck/index.html`, slide 10.) |
+| Has a model actually drafted anything, and has Claude Desktop completed the intended workflow? | A recorded model drafting execution and the prescribed Desktop run, including host version, date, response and comparison with a fresh export. Neither record is supplied. (`docs/claims.md`, `proof-no-keys`; `docs/doors.md`, manual run.) |
+| Which exact build and event chronology support the demonstration? | A completed build stamp, the underlying verification records and a fresh export with actual event times. The as-built draft retains `STAMP_TIME` and `A7_HASH`; its verification section is not embedded. The sample export uses a 1 July 2026 seed clock despite containing postings retrieved on 9 October 2026, so it cannot establish actual activity chronology. (`docs/as-built.md`, Stamp; `docs/doors.md`, Before a demo.) |
+| Is the presentation operationally and accessibly ready? | Recorded presenting-laptop playback, wifi-off, keyboard and NVDA results, plus confirmation of the required narrated artifacts. These remain listed as human tasks or preparation requirements. (`docs/as-built.md`, section 6; `docs/demo-script.md`, Before each run.) |
+tokens used
+38,940
+## 1. The ten questions
+
+Implementation and test results below are reported facts from the embedded documents. Independent execution, omitted source material and rendered appearance are **unverified**.
+
+### 1.1 Is this scraping?
+
+- **Hardest follow-up:** Which source policy permits your actual collection, storage and reuse of these postings?
+- **Facts:** Collection runs on a lecturer's request through the documented Greenhouse or Lever API, with the source policy displayed. Postings retain links, dates and fingerprints. The saved sample contains real Stripe postings retrieved on 9 October 2026, truncated and labelled as a sample. (`docs/demo-script.md`, Watch and Questions; `JUDGES.md`, What is real and what is not.)
+- **Must not claim:** Permission to collect from arbitrary boards, LinkedIn collection, or independently verified compliance with source terms. The actual policy text is absent, so those permissions remain **unverified**.
+- **Show:** Watch's source policy and run log, including whether this run fetched live or used the saved sample; then a posting's provenance fields. (`docs/demo-script.md`, Questions and Watch.)
+
+### 1.2 Where is the AI?
+
+- **Hardest follow-up:** Show a model doing useful work today, and the boundary that prevents its output from becoming confirmed evidence or a decision.
+- **Facts:** The core is deterministic, requires no AI key, and its agents default to fixture mode. The MCP tools cannot confirm quotations, mark postings reviewed, record decisions or adopt revisions. Five tools are read-only; the sixth creates a teaching pack file without changing the workspace. (`docs/claims.md`, `proof-no-keys`; `docs/doors.md`, What the local door does.)
+- **Must not claim:** A verified model drafting run or a completed Claude Desktop demonstration. Both are **unverified** in the supplied record. (`docs/doors.md`, Recorded runs; `docs/as-built.md`, A5.)
+- **Show:** The evidence report, its export timestamp and its receipts. The booth specifies Claude Desktop, but the completed run documented here uses the official SDK client over stdio. Identify that distinction. (`docs/demo-script.md`, The door; `docs/doors.md`, Try it without a host.)
+
+### 1.3 Why not ChatGPT alone?
+
+- **Hardest follow-up:** What comparison establishes that ChatGPT cannot provide those controls, and what does rejecting one paraphrase actually prove?
+- **Facts:** Lyceum documents exact source matching, a reviewed denominator, decision records and retained course versions. Its checks report rejecting paraphrases. The ChatGPT door is planned. (`JUDGES.md`, The loop; `docs/claims.md`, `proof-no-paraphrase`; `deck/index.html`, slide 11 notes.)
+- **Must not claim:** That those capabilities are impossible in ChatGPT, or that Lyceum has beaten ChatGPT in a controlled comparison. No such comparison is supplied. Exact matching also does not establish that a quotation supports a sound curriculum decision.
+- **Show:** The refused paraphrase beside its saved source. Decision and History screens can substantiate the separate recordkeeping claims. (`docs/demo-script.md`, Report and Update.)
+
+### 1.4 How do we know the postings are representative?
+
+- **Hardest follow-up:** Who selected these nine postings, what was excluded, and why should one employer influence a university course?
+- **Facts:** The frozen demo keeps ten postings, excludes one duplicate and reviews nine. The evidence report identifies one employer and reports shares with 95% Wilson intervals. The separate figure of 727 refers to a live fetch from one employer, not the demo denominator. (`docs/claims.md`, `deck-receipt` and `proof-live-board`; `docs/doors.md`, example evidence report.)
+- **Must not claim:** Representative labour-market estimates or a general statement about what employers want. An interval does not establish that the selected postings represent a broader population. The files explicitly disclaim representative counts. (`JUDGES.md`, Never claimed; `docs/demo-script.md`, Report.)
+- **Show:** Count's n of N and interval, alongside the employer, exclusions and source dates. (`docs/demo-script.md`, Questions; `docs/doors.md`, example evidence report.)
+
+### 1.5 What breaks first at scale?
+
+- **Hardest follow-up:** How many postings can a lecturer review within the available time, and what happens when two people work concurrently?
+- **Facts:** Every posting used in a count requires human review. The booth script identifies review time as the expected bottleneck. The workspace currently lives in one browser; shared workspaces and sign-in are planned. (`docs/demo-script.md`, Questions; `JUDGES.md`, Planned.)
+- **Must not claim:** A measured first failure, demonstrated concurrent operation or a quantified capacity. The 727-posting fetch supplies no reviewer throughput or concurrency measurement. (`docs/claims.md`, `proof-live-board`.)
+- **Show:** Slide 8's planned shared workspace and sign-in, plus the actual Review step that creates the denominator. (`deck/index.html`, slide 8; `JUDGES.md`, hands-on Report.)
+
+### 1.6 Does it decide the syllabus?
+
+- **Hardest follow-up:** Can one operator switch personas and supply both approvals, and what makes the recorded approver an authorized university decision-maker?
+- **Facts:** Decisions record the person, time, reason, brief, version and term. A decision on one's own brief is labelled self-recorded and remains open pending confirmation. Personas and browser-local role switching are prototype features; formal approval remains in the university's process. (`JUDGES.md`, Decide and What is real and what is not; `docs/demo-script.md`, Decide.)
+- **Must not claim:** Authenticated separation of duties, verified institutional authority or formal university approval. The prototype records an attributed decision without establishing the real identity behind the selected persona.
+- **Show:** The decision record, its self-recorded status where applicable, and History linking the decision to the adopted revision. (`JUDGES.md`, hands-on Decide and Update; `deck/index.html`, slide 6.)
+
+### 1.7 Why another tool?
+
+- **Hardest follow-up:** Which existing workflow does it actually reach today, and how can the lecturer tell whether the assistant is reading current information?
+- **Facts:** The local MCP door reads an exported workspace backup, rereads that file on each call and returns its export time. Updating the app requires another export before the door reflects those changes. Editable PowerPoint packs exist; remote assistant, LMS and office suite doors are planned. (`docs/doors.md`, What the local door does and Before a demo; `deck/index.html`, slides 7 and 9.)
+- **Must not claim:** Automatic synchronization with the open app, completed LMS or office suite integration, or measured adoption benefits. Claude Desktop operation remains **unverified**. (`docs/doors.md`, Recorded runs.)
+- **Show:** Slide 9's built and planned boundaries, an actual downloaded PowerPoint pack, and the evidence report's export timestamp compared with the workspace. (`docs/demo-script.md`, Questions; `docs/doors.md`, Before a demo.)
+
+### 1.8 What does the free tier cost us?
+
+- **Hardest follow-up:** Is it free for the lecturer to try, or costless for the team to operate and support, and does using Claude require an account?
+- **Facts:** The deck offers one course on one laptop, with the whole loop, exports and local door. The core requires no model key or external account; live collection requires the local API and network access. The Claude Desktop run requires its app and an account. Paid tiers and pricing remain hypotheses. (`deck/index.html`, slide 10; `JUDGES.md`, opening; `docs/as-built.md`, section 6.)
+- **Must not claim:** Zero total cost, zero support cost, established unit economics or account-free use of Claude. Those are not established by a core that needs no AI key.
+- **Show:** Slide 10's ladder, including the local prototype qualification and planned labels on paid tiers. (`deck/index.html`, slide 10.)
+
+### 1.9 What is the benchmark?
+
+- **Hardest follow-up:** What is predicted, how is it scored, which baseline is used, and would winning demonstrate better learning?
+- **Facts:** The booth script describes predictions frozen before a semester and scored against the last cohort carried forward. Slide 7 also names a benchmark against the CLO survey. Neither has run; Learn currently displays descriptive results, and the demonstration marks are synthetic. (`docs/demo-script.md`, Questions and Learn; `deck/index.html`, slide 7.)
+- **Must not claim:** Benchmark results, learning gains or a fully specified evaluation protocol. Plan Section 9 is not embedded, and the relationship between the carried-forward cohort and CLO-survey descriptions is **unverified**. Software checks do not validate learning. (`JUDGES.md`, Checks.)
+- **Show:** Evaluation, with software checks identified as such, and Learn's synthetic-data notice and n of N. Keep the planned benchmark visibly distinct from results. (`docs/demo-script.md`, Questions; `deck/index.html`, slide 7.)
+
+### 1.10 Is lime readable?
+
+- **Hardest follow-up:** Do the colour calculations establish that the actual interface works with a projector, keyboard and screen reader?
+- **Facts:** The audit reports lime contrast of 11.5 on forest and 9.4 on the inner dark surface, both AAA. Lime on white or mint fails the stated rule. The as-built summary reports focus and 320 px layout checks, while the manual keyboard and NVDA pass remains pending. (`docs/design/colour-scheme-audit-2026-10-22.md`, sections 1 to 3; `docs/as-built.md`, section 6.)
+- **Must not claim:** Whole-product AAA accessibility, proven projection legibility or a completed screen-reader audit. Those remain **unverified**.
+- **Show:** The actual header and poster, with lime on the permitted dark surfaces, supported by the relevant contrast rows. Their rendered appearance was not supplied for this review. (`docs/demo-script.md`, Questions; colour audit, sections 1 and 2.)
+
+## 2. The two rehearsed answers
+
+### “Where is the AI?”
+
+Two passages invite a stronger interpretation than the evidence supports:
+
+- **“In drafting, where a model may propose.”** A judge could reasonably hear this as an implemented model drafting feature. The files establish a deterministic core, fixture-mode agents and a brief-draft tool, but provide no model execution record showing drafting. The tool's name alone does not establish model involvement. Model drafting is **unverified**. (`docs/claims.md`, `proof-no-keys`; `docs/as-built.md`, section 1; `docs/doors.md`, tool table.)
+- **“Today Claude, through the local door.”** The connector and protocol exercise are documented. The Claude Desktop run is explicitly unrecorded, and A5 is partly complete. This supports an implemented local interface with a pending host demonstration; it does not establish successful operation in Claude Desktop. (`docs/doors.md`, The manual Claude Desktop run; `docs/as-built.md`, A5.)
+
+The deterministic numbers and human confirmation boundary have documentary support. The “never” language should remain scoped to the implemented core and exposed MCP tools. The files do not demonstrate equivalent enforcement in planned remote doors. (`docs/doors.md`, trust boundary; `deck/index.html`, slide 9.)
+
+### “Why not ChatGPT with search?”
+
+- **“It cannot” perform the four listed functions** is the largest unsupported assertion. The files document Lyceum's controls, but contain no comparative evaluation establishing categorical limitations of ChatGPT. The refused paraphrase demonstrates Lyceum's validation rule. (`deck/index.html`, slide 11 notes; `docs/claims.md`, `proof-no-paraphrase`.)
+- **“Record who decided”** is supported as stored attribution within the prototype. It must not imply verified human identity or independently authenticated approval: browser-local role switching and personas are explicitly prototype features. (`JUDGES.md`, What is real and what is not.)
+- **“Keep the version history”** has support in the retained versions and amendment records. Broader claims of tamper-proof institutional audit would remain **unverified**. (`JUDGES.md`, Update; `deck/index.html`, slide 6 notes.)
+
+The deck's final qualification that the ChatGPT door is planned is accurate. The older plan's claim that Lyceum can already be used inside ChatGPT is unsupported and should not be carried into the spoken answer. (`docs/lyceum-upgrade-plan.md`, Section 14; `deck/index.html`, slides 8, 9 and 11.)
+
+## 3. Five questions not in the bank
+
+1. **What evidence qualifies this as TRL 6?**  
+   The level is explicitly self-assessed against NASA's software column. The stated environment contains real postings, a sample course outline and a lecturer persona. No lecturer pilot has run. The outline is generated by `scripts/gen-demo-files.mjs`; the older plan's description of a real syllabus conflicts with the claims register and actual deck wording. An external readiness assessment is **unverified**. (`docs/claims.md`, `deck-trl` and following clarification; `deck/index.html`, slide 8; `JUDGES.md`, Never claimed; plan Section 14.)
+
+2. **Which real lecturers have validated the problem, completed the workflow or agreed to pay?**  
+   The landing-page problem evidence is described as desk research pending lecturer interview quotations. No lecturer pilot has run. Task completion, citation fidelity, time to a brief and repeat use are proposed pilot measures; pricing is a hypothesis. Completed user validation and willingness to pay are **unverified**. (`docs/claims.md`, opening problem section; `JUDGES.md`, Never claimed; `deck/index.html`, slides 10 and 11.)
+
+3. **What happens to real student information when an assistant reads the workspace?**  
+   The local door reads a workspace backup and logs tool calls, arguments and touched record IDs. The demonstration results are synthetic. Remote OAuth, shared sign-in and institutional data agreements are planned. The files do not establish assistant-host retention, data-processing terms or protection of a real cohort's records; those are **unverified**. (`docs/doors.md`, trust boundary; `JUDGES.md`, Illustrative and Planned; `deck/index.html`, slide 10.)
+
+4. **What must be delivered before a department can run the LMS pilot being requested?**  
+   The ask is one department for one term inside its LMS. The LMS door, shared workspace and sign-in are all planned; the current app is local, and its assistant interface reads exports. No named pilot institution, delivery schedule or completed LMS acceptance test is supplied. Those commitments are **unverified**. (`deck/index.html`, slides 8 to 11; `docs/doors.md`, opening.)
+
+5. **Which demonstration fallbacks have actually been tested on the presenting laptop?**  
+   PowerPoint opening with notes and film loading in Chrome are documented. Playback on the presenting laptop and venue player, plus the manual wifi-off run, remain pending. Both film cuts are rendered with captions but without the team's voices. The booth script requires narrated recordings, whose readiness is **unverified**. (`docs/as-built.md`, A6 to A8 and section 6; `docs/demo-script.md`, Before each run and If something fails.)
+
+## 4. Gaps
+
+These questions require facts beyond the supplied record. Each remains **unverified**.
+
+| Question the files cannot settle today | Fact the team would need |
+|---|---|
+| What exactly permits collecting, retaining and displaying each source's content? | The applicable source-policy text and its relationship to the actual use. The booth script describes a displayed policy but does not reproduce it. (`docs/demo-script.md`, Watch and Questions.) |
+| How were the demo postings selected, and how much relevant evidence does the quotation process miss? | The selection procedure, complete source material, truncation effects and independently checked extraction results. The register supplies the sample counts and quotation-rejection claims, not sampling or recall validation. (`docs/claims.md`, `deck-receipt` and `proof-no-paraphrase`.) |
+| What precisely constitutes a benchmark win? | Prediction target, freeze record, scoring method, ground truth, success criterion and the relationship between the prior-cohort baseline and CLO survey. The referenced protocol is absent. (`docs/demo-script.md`, Questions; `deck/index.html`, slide 7.) |
+| Does using Lyceum improve learning or curriculum decisions? | Observed outcomes from real use and an evaluation capable of supporting the particular improvement claimed. Synthetic marks and software checks cannot establish that result. (`JUDGES.md`, Checks and Never claimed.) |
+| What is the actual workload and economic cost per course? | Measured review time, setup effort, support burden and service costs, with core use distinguished from assistant use. Free access and pricing hypotheses supply none of these measurements. (`docs/demo-script.md`, scale question; `deck/index.html`, slide 10.) |
+| At what volume does the implementation fail or become impractical? | Measured processing limits, browser-storage behavior and reviewer throughput. Concurrent behavior would require evidence from the planned shared implementation. (`docs/demo-script.md`, scale question; `JUDGES.md`, Planned.) |
+| Can an institution trust the identities, confidentiality and durability of these records? | Evidence of authentication, authorization, recovery guarantees and applicable data-processing arrangements. Prototype role switching, backups and planned institutional agreements do not establish those guarantees. (`JUDGES.md`, honesty labels; `deck/index.html`, slide 10.) |
+| Has a model actually drafted anything, and has Claude Desktop completed the intended workflow? | A recorded model drafting execution and the prescribed Desktop run, including host version, date, response and comparison with a fresh export. Neither record is supplied. (`docs/claims.md`, `proof-no-keys`; `docs/doors.md`, manual run.) |
+| Which exact build and event chronology support the demonstration? | A completed build stamp, the underlying verification records and a fresh export with actual event times. The as-built draft retains `STAMP_TIME` and `A7_HASH`; its verification section is not embedded. The sample export uses a 1 July 2026 seed clock despite containing postings retrieved on 9 October 2026, so it cannot establish actual activity chronology. (`docs/as-built.md`, Stamp; `docs/doors.md`, Before a demo.) |
+| Is the presentation operationally and accessibly ready? | Recorded presenting-laptop playback, wifi-off, keyboard and NVDA results, plus confirmation of the required narrated artifacts. These remain listed as human tasks or preparation requirements. (`docs/as-built.md`, section 6; `docs/demo-script.md`, Before each run.) |

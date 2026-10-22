@@ -68,7 +68,7 @@ export async function buildSampleBackup(): Promise<string> {
 
   // Learn: the sample results file, read and interpreted as the app does offline, matched to the version taught.
   const doc = parseSheet(readFileSync(new URL("public/demo/results.xlsx", ROOT)), "results.xlsx", "xlsx");
-  store.stagePendingIntake(doc, { ...interpretLocally(doc, S().subjects, S().clos), termGuess: "2026/2027 semester 1" }); // filed under this loop's term, as in the tour
+  store.stagePendingIntake({ ...doc, sample: true }, { ...interpretLocally(doc, S().subjects, S().clos), termGuess: "2026/2027 semester 1" }); // the tour's sample file, filed under this loop's term
   if (!store.confirmPendingIntake()) throw new Error("results: nothing was filed");
   return store.exportWorkspaceBackup();
 }

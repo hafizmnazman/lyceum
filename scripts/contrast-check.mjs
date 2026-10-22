@@ -76,7 +76,7 @@ const SCANNED = new Set([".ts", ".tsx", ".css", ".mjs", ".js", ".cjs", ".html", 
 const SKIP = [
   /^docs\/history\//, /^docs\/review\//, // kept as written
   /^src\/theme\/tokens\.ts$/, // the source
-  /^public\/brand\//, /^docs\/presentation\/.*\.svg$/, /\.generated\./, // generated outputs, checked in part 3
+  /^public\/brand\//, /^docs\/presentation\/.*\.svg$/, /^\.github\/readme\/.*\.svg$/, /\.generated\./, // generated outputs, checked in part 3
   /^scripts\/gen-demo-files\.mjs$/, // writes a stand-in for a lecturer's own Office file, with Office's default theme (docs/decisions.md)
 ];
 const listed = spawnSync("git", ["ls-files", "-z", "--cached", "--others", "--exclude-standard"], { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 28 });
@@ -114,7 +114,7 @@ for (const file of files) {
 const gen = spawnSync(process.execPath, [join(ROOT, "scripts/gen-theme-css.mjs"), "--check"], { cwd: ROOT, encoding: "utf8" });
 if (gen.status !== 0) problems.push((gen.stderr || gen.stdout).trim());
 const tokenHex = new Set(Object.values(C).map((h) => h.toUpperCase()));
-const generated = [...new Set(listed.stdout.split("\0").filter(Boolean))].filter((p) => /^(public\/brand\/.*\.svg|docs\/presentation\/.*\.svg|.*\.generated\.[a-z]+)$/.test(p) && existsSync(join(ROOT, p)));
+const generated = [...new Set(listed.stdout.split("\0").filter(Boolean))].filter((p) => /^(public\/brand\/.*\.svg|docs\/presentation\/.*\.svg|\.github\/readme\/.*\.svg|.*\.generated\.[a-z]+)$/.test(p) && existsSync(join(ROOT, p)));
 for (const file of generated) {
   const found = readFileSync(join(ROOT, file), "utf8").match(/#[0-9a-fA-F]{6}\b/g) ?? [];
   for (const hex of new Set(found)) if (!tokenHex.has(hex.toUpperCase())) problems.push("Generated " + file + " uses " + hex + ", which is not a token.");

@@ -53,7 +53,7 @@ test("the sample workspace is the tour's end state, built from public/demo, curr
   assert.equal(backup.schemaVersion, 5);
   assert.ok(d.evidenceSources.filter((s) => s.subjectId === "CS310" && s.provenance === "collected").length >= 3, "postings from the saved sample of the Stripe board");
   assert.ok(d.briefDecisions.some((x) => x.byPersonId === "P-RAHMAN" && x.outcome === "adopt" && x.note.trim()), "the programme owner's decision with its reason");
-  assert.ok(d.resultUploads.some((u) => u.subjectId === "CS310" && u.sourceFileName === "results.xlsx" && u.courseVersionId), "the sample results, matched to a version");
+  assert.ok(d.resultUploads.some((u) => u.subjectId === "CS310" && u.sourceFileName === "results.xlsx" && u.courseVersionId && u.sample === true), "the sample results, matched to a version and labelled a sample");
   assert.equal(loopState({ ...d, people: PEOPLE } as unknown as AppState, "CS310").closed, true, "the loop is closed for the term, as at the end of the tour");
 });
 

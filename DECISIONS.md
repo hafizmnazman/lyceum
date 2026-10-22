@@ -1,3 +1,5 @@
+> Decisions from 22 October 2026 on, the Track A build, are in [docs/decisions.md](docs/decisions.md), each with its options, the reason, what would reverse it and the files to touch. This file keeps the record before that.
+
 # Lyceum v3: Decisions log
 
 ## 22 October 2026: the upgrade plan, and the week to Amsterdam
