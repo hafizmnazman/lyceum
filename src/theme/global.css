@@ -1913,6 +1913,8 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; }
 @media (max-width: 760px) {
   .record-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .record-table:not(.plo-table), .record-table:not(.plo-table) tbody, .record-table:not(.plo-table) tr, .record-table:not(.plo-table) th, .record-table:not(.plo-table) td { display: block; width: 100%; }
+  /* A caption left as a table caption inside a table shown as a block shrinks to a letter a line. */
+  .record-table:not(.plo-table) caption { display: block; width: 100%; }
   .record-table:not(.plo-table) thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .record-table:not(.plo-table) tr { border: 1px solid var(--border); border-radius: var(--radius-input); margin-bottom: 10px; padding: 6px 0; }
   .record-table:not(.plo-table) th, .record-table:not(.plo-table) td { border-bottom: 0; padding: 4px 12px; }
@@ -2050,3 +2052,33 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; }
   .recap .redline-list li { padding: 5px 8px; }
   .recap-foot { margin-top: 12px; padding-top: 6px; font-size: 10px; }
 }
+/* The student's survey page (depth plan Section 7.2): one column, large targets, readable at 320 px on a phone. */
+.survey-page { max-width: 680px; margin: 0 auto; padding: 24px 16px 48px; background: var(--white); min-height: 100%; box-sizing: border-box; }
+.survey-head { display: flex; gap: 14px; align-items: center; margin-bottom: 12px; }
+.survey-head h1 { font-size: 24px; margin: 2px 0; }
+.survey-mark { height: 48px; width: auto; flex: none; }
+.survey-q { margin: 18px 0; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-input); }
+.survey-q legend, .survey-q > label { font-weight: 600; padding: 0 4px; }
+/* A long question as a legend would sit on the box's top edge; floated, it reads inside the box like the comment's label. */
+.survey-q legend { float: left; width: 100%; box-sizing: border-box; padding: 0; margin: 0; }
+.survey-q legend + * { clear: both; }
+.survey-scale { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 6px; margin-top: 8px; }
+.survey-scale label { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius-input); cursor: pointer; }
+.survey-scale label:has(input:checked) { border-color: var(--emerald); background: var(--tint-1); }
+.survey-q textarea { width: 100%; min-height: 96px; box-sizing: border-box; font: inherit; padding: 8px; border: 1px solid var(--control-border); border-radius: var(--radius-input); }
+.survey-done { margin-top: 18px; padding: 16px; border: 2px solid var(--emerald); border-radius: var(--radius-card); background: var(--tint-1); }
+@media (max-width: 480px) { .survey-scale { grid-template-columns: minmax(0, 1fr); } }
+/* The surveys on Learn: each survey a card; the booth's link and QR; last term's samples tinted. */
+.survey-card { margin-top: 14px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--white); }
+.survey-card.is-sample { background: var(--tint-1); }
+.survey-card h4 { margin: 0 0 2px; }
+.sample-surveys { margin-top: 22px; }
+.booth-open { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; }
+.booth-link { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: start; margin-top: 8px; }
+.booth-qr { width: 200px; height: 200px; image-rendering: pixelated; border: 1px solid var(--border); border-radius: 8px; }
+.booth-url { word-break: break-all; font-size: 13px; }
+.booth-responses { padding: 10px 12px; border-left: 4px solid var(--warn); background: var(--warn-soft); border-radius: 0 var(--radius-input) var(--radius-input) 0; }
+.survey-comments h5 { margin: 12px 0 2px; font-size: 14px; }
+.survey-comments ul { margin: 6px 0; padding-left: 20px; }
+.forms-import { margin-top: 10px; }
+@media (max-width: 760px) { .booth-link { grid-template-columns: minmax(0, 1fr); } }

@@ -16110,6 +16110,1294 @@
         }
       }
     ],
+    "surveys": [
+      {
+        "id": "SURV-CS310-COS-PRIOR",
+        "subjectId": "CS310",
+        "kind": "course-outcome",
+        "title": "CS310 Course Outcome Survey",
+        "term": "2025/2026 semester 2",
+        "versionId": "CS310-v1",
+        "scale": {
+          "min": 1,
+          "max": 5,
+          "target": 4,
+          "labels": [
+            "Strongly disagree",
+            "Disagree",
+            "Neither agree nor disagree",
+            "Agree",
+            "Strongly agree"
+          ]
+        },
+        "instrumentNote": null,
+        "classSize": 38,
+        "formToken": null,
+        "readerSecret": null,
+        "questions": [
+          {
+            "id": "Q1",
+            "kind": "scale",
+            "cloId": "CS310-1",
+            "text": "Q1. I can explain how data and task abstraction, marks and channels, and human perception decide whether a chart answers its question (CLO1)."
+          },
+          {
+            "id": "Q2",
+            "kind": "scale",
+            "cloId": "CS310-2",
+            "text": "Q2. I can construct charts for categorical, temporal and geospatial data with a reproducible tool chain, with the colour and accessibility choices recorded (CLO2)."
+          },
+          {
+            "id": "Q3",
+            "kind": "scale",
+            "cloId": "CS310-3",
+            "text": "Q3. I can analyse a published visualisation against perception, Gestalt, accessibility and ethics criteria to locate where it misleads (CLO3)."
+          },
+          {
+            "id": "Q4",
+            "kind": "scale",
+            "cloId": "CS310-4",
+            "text": "Q4. I can evaluate competing designs for a stakeholder question against evidence from a usability check (CLO4)."
+          },
+          {
+            "id": "Q5",
+            "kind": "scale",
+            "cloId": "CLO5",
+            "text": "Q5. I can use charts to tell a data story to a stakeholder audience (CLO5)."
+          },
+          {
+            "id": "Q6",
+            "kind": "comment",
+            "text": "Q6. Is there anything about these outcomes you want your lecturer to know?"
+          }
+        ],
+        "createdAt": "2026-05-25T00:00:00Z",
+        "createdBy": "P-SOBRI",
+        "sample": true,
+        "sampleReleasedAt": "2026-07-10T02:00:00Z"
+      },
+      {
+        "id": "SURV-CS310-SSRT-PRIOR",
+        "subjectId": "CS310",
+        "kind": "ssrt",
+        "title": "CS310 Student Self Reflection Tools Survey (SSRT, demo instrument)",
+        "term": "2025/2026 semester 2",
+        "versionId": "CS310-v1",
+        "scale": {
+          "min": 1,
+          "max": 5,
+          "target": 4,
+          "labels": [
+            "Strongly disagree",
+            "Disagree",
+            "Neither agree nor disagree",
+            "Agree",
+            "Strongly agree"
+          ]
+        },
+        "instrumentNote": "A demo instrument written for this prototype, unvalidated: not SEEQ and not UTP's instrument; a campus loads its own.",
+        "classSize": 38,
+        "formToken": null,
+        "readerSecret": null,
+        "questions": [
+          {
+            "id": "Q1",
+            "kind": "scale",
+            "dimension": "learning",
+            "text": "Q1. This course challenged me to think, not only to remember."
+          },
+          {
+            "id": "Q2",
+            "kind": "scale",
+            "dimension": "learning",
+            "text": "Q2. I learned things in this course that I value."
+          },
+          {
+            "id": "Q3",
+            "kind": "scale",
+            "dimension": "learning",
+            "text": "Q3. My interest in the subject grew during the course."
+          },
+          {
+            "id": "Q4",
+            "kind": "scale",
+            "dimension": "organisation",
+            "text": "Q4. The explanations in class were clear."
+          },
+          {
+            "id": "Q5",
+            "kind": "scale",
+            "dimension": "organisation",
+            "text": "Q5. The course materials were well prepared and easy to follow."
+          },
+          {
+            "id": "Q6",
+            "kind": "scale",
+            "dimension": "organisation",
+            "text": "Q6. Each class had a purpose I could see."
+          },
+          {
+            "id": "Q7",
+            "kind": "scale",
+            "dimension": "breadth",
+            "text": "Q7. The course showed how the subject connects to work outside the classroom."
+          },
+          {
+            "id": "Q8",
+            "kind": "scale",
+            "dimension": "breadth",
+            "text": "Q8. The course showed more than one way to approach a problem."
+          },
+          {
+            "id": "Q9",
+            "kind": "scale",
+            "dimension": "assessment",
+            "text": "Q9. The assessments tested what the course taught."
+          },
+          {
+            "id": "Q10",
+            "kind": "scale",
+            "dimension": "assessment",
+            "text": "Q10. Feedback on my work helped me improve."
+          },
+          {
+            "id": "Q11",
+            "kind": "scale",
+            "dimension": "workload",
+            "text": "Q11. The workload was reasonable for the credit hours."
+          },
+          {
+            "id": "Q12",
+            "kind": "scale",
+            "dimension": "workload",
+            "text": "Q12. The pace of the course let me keep up."
+          },
+          {
+            "id": "Q13",
+            "kind": "comment",
+            "text": "Q13. What helped you learn most in this course?"
+          },
+          {
+            "id": "Q14",
+            "kind": "comment",
+            "text": "Q14. What one change would most improve this course?"
+          }
+        ],
+        "createdAt": "2026-05-25T00:00:00Z",
+        "createdBy": "P-SOBRI",
+        "sample": true,
+        "sampleReleasedAt": "2026-07-10T02:00:00Z"
+      }
+    ],
+    "surveyResponses": [
+      {
+        "id": "SR-CS310-COS-PRIOR-01",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": "cannot-say",
+          "Q3": 4,
+          "Q5": 4,
+          "Q6": "The dashboard project made the outcomes feel real."
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-02",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 2,
+          "Q3": 3,
+          "Q4": 3,
+          "Q5": 3,
+          "Q6": "I can make the charts, but explaining them to a client is still hard."
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-03",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": "cannot-say",
+          "Q2": 5,
+          "Q3": 1,
+          "Q4": 4,
+          "Q5": 4,
+          "Q6": "More practice with messy data before the project, please."
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-04",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 4,
+          "Q3": 4,
+          "Q4": 4,
+          "Q5": 3,
+          "Q6": "The critique essay helped me see how a chart can mislead."
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-05",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 3,
+          "Q2": 4,
+          "Q3": 2,
+          "Q4": 4,
+          "Q5": 4,
+          "Q6": "The week 7 quiz came too soon after the lab."
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-06",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 2,
+          "Q3": 5,
+          "Q4": 4,
+          "Q5": "cannot-say",
+          "Q6": "I would like an example of a finished stakeholder report."
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-07",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 1,
+          "Q2": 4,
+          "Q3": 2,
+          "Q4": 4,
+          "Q5": 1
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-08",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 3,
+          "Q2": 5,
+          "Q3": 3,
+          "Q4": 5,
+          "Q5": 4
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-09",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 4,
+          "Q3": 3,
+          "Q4": 5,
+          "Q5": 1
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-10",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 3,
+          "Q4": 4,
+          "Q5": 4
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-11",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 4,
+          "Q3": 5,
+          "Q4": 2,
+          "Q5": 2
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-12",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 2,
+          "Q2": 3,
+          "Q3": 2,
+          "Q4": 5,
+          "Q5": 2
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-13",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 3,
+          "Q2": 4,
+          "Q3": 3,
+          "Q4": 3,
+          "Q5": 4
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-14",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 3,
+          "Q3": 3,
+          "Q4": 3,
+          "Q5": 2
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-15",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 3,
+          "Q3": 5,
+          "Q5": 3
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-16",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 2,
+          "Q2": 4,
+          "Q3": 1,
+          "Q4": "cannot-say",
+          "Q5": 1
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-17",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": "cannot-say",
+          "Q3": "cannot-say",
+          "Q4": 5,
+          "Q5": 1
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-18",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 5,
+          "Q3": 3,
+          "Q4": 2,
+          "Q5": 3
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-19",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 5,
+          "Q3": 4,
+          "Q4": 4,
+          "Q5": 4
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-20",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 3,
+          "Q2": 4,
+          "Q3": 4,
+          "Q4": "cannot-say",
+          "Q5": 2
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-21",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 5,
+          "Q3": 2,
+          "Q4": 2,
+          "Q5": 4
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-22",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 2,
+          "Q3": 2,
+          "Q4": 5,
+          "Q5": 3
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-23",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 3,
+          "Q3": 4,
+          "Q4": 3,
+          "Q5": 5
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-24",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 4,
+          "Q3": 5,
+          "Q4": 3,
+          "Q5": 1
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-25",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 2,
+          "Q2": "cannot-say",
+          "Q3": 4,
+          "Q4": 2,
+          "Q5": 3
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-26",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 4,
+          "Q3": 4,
+          "Q4": "cannot-say",
+          "Q5": 5
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-27",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 3,
+          "Q2": 2,
+          "Q3": 4,
+          "Q4": 1,
+          "Q5": 4
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-28",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 3,
+          "Q3": 4,
+          "Q4": 5,
+          "Q5": 3
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-29",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 4,
+          "Q3": 4,
+          "Q4": 4,
+          "Q5": 5
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-30",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 3,
+          "Q3": 4,
+          "Q4": 4,
+          "Q5": 3
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-COS-PRIOR-31",
+        "formId": "SURV-CS310-COS-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 4,
+          "Q3": 2,
+          "Q4": 2,
+          "Q5": 2
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-01",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 4,
+          "Q3": 4,
+          "Q4": 4,
+          "Q5": 1,
+          "Q6": 2,
+          "Q7": 3,
+          "Q8": 3,
+          "Q9": 5,
+          "Q10": 2,
+          "Q11": 4,
+          "Q12": 2,
+          "Q13": "The weekly labs with real datasets.",
+          "Q14": "Release the project brief earlier."
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-02",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 3,
+          "Q3": 4,
+          "Q4": "cannot-say",
+          "Q5": 3,
+          "Q6": 4,
+          "Q7": 5,
+          "Q8": 4,
+          "Q9": 2,
+          "Q10": 5,
+          "Q11": 1,
+          "Q12": 3,
+          "Q13": "Feedback on the first draft of the report.",
+          "Q14": "Fewer slides and more time in the lab."
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-03",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 5,
+          "Q3": 1,
+          "Q4": 1,
+          "Q5": 5,
+          "Q6": 3,
+          "Q7": 4,
+          "Q8": 5,
+          "Q9": 4,
+          "Q10": 1,
+          "Q11": 3,
+          "Q12": 4,
+          "Q13": "Seeing weak charts redrawn in class.",
+          "Q14": "Explain how the rubric is applied before the defence."
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-04",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 5,
+          "Q3": 2,
+          "Q4": 5,
+          "Q5": 3,
+          "Q6": 5,
+          "Q7": 4,
+          "Q8": 3,
+          "Q9": 5,
+          "Q10": 3,
+          "Q11": 3,
+          "Q12": 5
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-05",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 3,
+          "Q2": 4,
+          "Q3": 4,
+          "Q4": 4,
+          "Q5": 4,
+          "Q6": 2,
+          "Q7": 4,
+          "Q8": "cannot-say",
+          "Q9": 4,
+          "Q10": 3,
+          "Q11": 5,
+          "Q12": 4
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-06",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": "cannot-say",
+          "Q3": 3,
+          "Q4": 2,
+          "Q5": 4,
+          "Q6": 3,
+          "Q7": 4,
+          "Q8": 4,
+          "Q9": 3,
+          "Q11": 3,
+          "Q12": 1
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-07",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 4,
+          "Q3": 4,
+          "Q4": 2,
+          "Q5": 5,
+          "Q6": 5,
+          "Q7": 3,
+          "Q8": 3,
+          "Q9": 4,
+          "Q10": 3,
+          "Q11": 3,
+          "Q12": 4
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-08",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 3,
+          "Q2": 3,
+          "Q3": 4,
+          "Q4": 4,
+          "Q5": 5,
+          "Q6": "cannot-say",
+          "Q7": 3,
+          "Q8": 2,
+          "Q9": 4,
+          "Q10": 1,
+          "Q11": 4,
+          "Q12": 4
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-09",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 3,
+          "Q2": 4,
+          "Q3": 4,
+          "Q4": 4,
+          "Q5": 4,
+          "Q6": 2,
+          "Q7": 4,
+          "Q8": 5,
+          "Q9": 2,
+          "Q10": 4,
+          "Q11": 3,
+          "Q12": 2
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-10",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 4,
+          "Q3": 4,
+          "Q4": 4,
+          "Q5": "cannot-say",
+          "Q6": 4,
+          "Q7": 4,
+          "Q8": 4,
+          "Q9": 5,
+          "Q10": 4,
+          "Q11": 3,
+          "Q12": 5
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-11",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 5,
+          "Q3": 5,
+          "Q4": 3,
+          "Q5": 5,
+          "Q6": 3,
+          "Q7": 3,
+          "Q8": "cannot-say",
+          "Q9": 3,
+          "Q10": 4,
+          "Q11": 2,
+          "Q12": 3
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-12",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 4,
+          "Q3": 3,
+          "Q4": 3,
+          "Q5": 2,
+          "Q6": 5,
+          "Q7": 4,
+          "Q8": 4,
+          "Q9": 5,
+          "Q10": 1,
+          "Q11": 4,
+          "Q12": 5
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-13",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 3,
+          "Q2": 4,
+          "Q3": 3,
+          "Q4": 3,
+          "Q5": 5,
+          "Q6": 4,
+          "Q7": 4,
+          "Q8": 4,
+          "Q9": 4,
+          "Q10": 2,
+          "Q11": 3,
+          "Q12": 4
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-14",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 2,
+          "Q3": 2,
+          "Q4": 4,
+          "Q5": 4,
+          "Q6": 4,
+          "Q7": 4,
+          "Q8": 3,
+          "Q9": 4,
+          "Q10": 4,
+          "Q11": 4,
+          "Q12": 5
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-15",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 3,
+          "Q2": 4,
+          "Q3": "cannot-say",
+          "Q4": 2,
+          "Q5": 4,
+          "Q6": 5,
+          "Q7": 3,
+          "Q8": 4,
+          "Q10": 4,
+          "Q11": 4,
+          "Q12": 5
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-16",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 1,
+          "Q2": 4,
+          "Q3": 5,
+          "Q4": 4,
+          "Q5": 2,
+          "Q6": 4,
+          "Q7": 4,
+          "Q8": 4,
+          "Q9": 2,
+          "Q10": 5,
+          "Q11": 1,
+          "Q12": 4
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-17",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 2,
+          "Q3": 4,
+          "Q4": "cannot-say",
+          "Q5": 4,
+          "Q6": 2,
+          "Q7": 5,
+          "Q8": 4,
+          "Q9": 3,
+          "Q10": 3,
+          "Q11": 4,
+          "Q12": 4
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-18",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 2,
+          "Q3": 4,
+          "Q4": 5,
+          "Q5": 2,
+          "Q6": 4,
+          "Q7": 5,
+          "Q8": 3,
+          "Q9": 4,
+          "Q10": 4,
+          "Q11": 4,
+          "Q12": 1
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-19",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 4,
+          "Q3": 4,
+          "Q4": "cannot-say",
+          "Q5": 2,
+          "Q6": 5,
+          "Q7": 3,
+          "Q8": 3,
+          "Q9": 5,
+          "Q10": 3,
+          "Q11": 4,
+          "Q12": 4
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-20",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 1,
+          "Q3": 5,
+          "Q4": 4,
+          "Q5": 4,
+          "Q6": "cannot-say",
+          "Q7": 4,
+          "Q8": 4,
+          "Q9": 4,
+          "Q10": 5,
+          "Q11": 5,
+          "Q12": 4
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-21",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 4,
+          "Q3": 4,
+          "Q4": 3,
+          "Q5": 4,
+          "Q6": 4,
+          "Q7": 4,
+          "Q8": 4,
+          "Q9": 4,
+          "Q10": 5,
+          "Q11": 4,
+          "Q12": 3
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-22",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 3,
+          "Q3": 5,
+          "Q4": 5,
+          "Q5": 2,
+          "Q7": 4,
+          "Q8": 4,
+          "Q9": 5,
+          "Q10": 4,
+          "Q11": 3,
+          "Q12": 3
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-23",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 2,
+          "Q2": 3,
+          "Q3": 4,
+          "Q4": 4,
+          "Q6": 4,
+          "Q7": 5,
+          "Q8": 3,
+          "Q9": 4,
+          "Q10": 4,
+          "Q11": 5,
+          "Q12": 5
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-24",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 5,
+          "Q3": 4,
+          "Q4": 3,
+          "Q5": 3,
+          "Q6": 4,
+          "Q7": 3,
+          "Q8": 4,
+          "Q9": 2,
+          "Q10": 3,
+          "Q11": 4,
+          "Q12": 3
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-25",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 3,
+          "Q2": 3,
+          "Q3": 4,
+          "Q4": 5,
+          "Q5": 3,
+          "Q6": 3,
+          "Q7": 3,
+          "Q8": 3,
+          "Q9": 5,
+          "Q10": 3,
+          "Q11": 3
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-26",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 2,
+          "Q2": 3,
+          "Q3": 1,
+          "Q4": 4,
+          "Q5": 5,
+          "Q6": 4,
+          "Q7": 3,
+          "Q8": 5,
+          "Q9": 4,
+          "Q10": 4,
+          "Q11": 2,
+          "Q12": 3
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-27",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 5,
+          "Q2": 4,
+          "Q3": 4,
+          "Q4": 4,
+          "Q5": 4,
+          "Q6": 5,
+          "Q7": 3,
+          "Q8": 3,
+          "Q9": 4,
+          "Q10": 1,
+          "Q11": 4,
+          "Q12": 2
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-28",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 4,
+          "Q3": 4,
+          "Q4": 4,
+          "Q5": 3,
+          "Q6": 2,
+          "Q7": 3,
+          "Q8": 4,
+          "Q9": 5,
+          "Q10": "cannot-say",
+          "Q11": 4,
+          "Q12": 3
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      },
+      {
+        "id": "SR-CS310-SSRT-PRIOR-29",
+        "formId": "SURV-CS310-SSRT-PRIOR",
+        "term": "2025/2026 semester 2",
+        "answers": {
+          "Q1": 4,
+          "Q2": 3,
+          "Q3": 3,
+          "Q4": 4,
+          "Q5": 4,
+          "Q6": 5,
+          "Q7": 2,
+          "Q8": 4,
+          "Q9": 1,
+          "Q10": 3,
+          "Q11": 5,
+          "Q12": 5
+        },
+        "collectedAt": "2026-06-05T00:00:00Z",
+        "clientId": null,
+        "source": "sample"
+      }
+    ],
     "skillLexicon": {
       "CS310": [
         "SQL",

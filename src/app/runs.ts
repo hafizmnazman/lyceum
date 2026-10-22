@@ -53,6 +53,9 @@ export function runTimeline(state: AppState, subjectId: string | null): RunEvent
     }
     else if (e.kind === "version-adopted") out.push({ at: e.at, role: "quill", title: "Version adopted: " + (e.refs.versionId ?? "a new version"), detail: "By " + name(e.byPersonId) + " · the previous version is kept", step: "history", derived: false });
     else if (e.kind === "term-set") out.push({ at: e.at, role: "folio", title: "Teaching term set to " + (e.refs.term || "none"), detail: e.refs.previousTerm ? "Was " + e.refs.previousTerm + "; a new loop starts for the new term" : "The first term stated for this course", step: "teach", derived: false });
+    else if (e.kind === "grades-released") out.push({ at: e.at, role: "people", title: "Grades released for " + (e.refs.term || "the term"), detail: "Recorded by " + name(e.byPersonId) + " · the term's survey results open from now, never before", step: "learn", derived: false });
+    else if (e.kind === "survey-opened") { const f = state.surveys.find((x) => x.id === e.refs.formId); out.push({ at: e.at, role: "lens", title: "Survey opened for collection" + (f ? ": " + f.title : ""), detail: "By " + name(e.byPersonId) + " · a link and a code for students; nothing that identifies a student is kept", step: "learn", derived: false }); }
+    else if (e.kind === "survey-collected") { const f = state.surveys.find((x) => x.id === e.refs.formId); out.push({ at: e.at, role: "lens", title: (e.refs.count ?? 0) + (e.refs.count === 1 ? " survey response" : " survey responses") + " collected" + (f ? " for " + f.title : ""), detail: "By " + name(e.byPersonId) + " · counted toward the floor; results wait for the release", step: "learn", derived: false }); }
   }
 
   // ---- derived from the records: no event exists for these ----

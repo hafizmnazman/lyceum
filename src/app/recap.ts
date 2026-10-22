@@ -2,7 +2,8 @@
 // the records it reads, so prove-judge can check every number against them: what employers asked for (the top skills over
 // the reviewed postings, with their intervals), what was decided (the decision behind the version in use), what changed
 // (the summary of that version against the one it replaced), what was taught (the lecturer's own sessions and their packs)
-// and what came back (the results filed for the term, as filed, or "not filed").
+// and what came back (the results filed for the term, as filed, or "not filed", and the Course Outcome Survey under its rules,
+// booth responses never among them).
 
 import { SEED_RESULT_UPLOADS } from "../data/seed.ts";
 import { DEMO_LINE } from "../data/sample-course/index.ts";
@@ -12,6 +13,7 @@ import { evidenceReport } from "../lib/evidence.ts";
 import { attainment } from "../lib/learn.ts";
 import { brandFor, packUnderVersion } from "../lib/slides.ts";
 import { changedOutcomeWeek, sessionInWeek } from "../lib/teachingPlan.ts";
+import { surveyReleased, surveySummary } from "../lib/surveys.ts";
 import type { BriefDecision, CourseDefinition, SubjectVersion } from "../types.ts";
 import { termWindow } from "./loop.ts";
 import type { AppState } from "./store.ts";
@@ -25,7 +27,8 @@ export interface Recap {
   taught: Array<{ id: string; week: number; topic: string; slides: number; versionId: string | null }>;
   samples: number;
   results: { file: string; term: string; N: number; versionId: string | null; sample: boolean; rows: Array<{ label: string; mean: number; n: number }> } | null;
-  surveys: number;
+  survey: { title: string; respondents: number; rate: string | null; open: boolean; released: boolean; required: number; booth: number;
+    items: Array<{ label: string; n: number; atTarget: number; share: number | null }>; target: number } | null;
   builtAt: string;
 }
 
@@ -74,7 +77,15 @@ export function recapFor(state: AppState, subjectId: string, at: string): Recap 
     samples: sessions.filter((s) => s.sample).length,
     results: upload && filed ? { file: upload.sourceFileName ?? "Results", term: upload.term, N: filed.N, versionId: upload.courseVersionId ?? null, sample: Boolean(upload.sample),
       rows: filed.rows.map((r) => ({ label: r.clo?.label ?? r.cloId, mean: r.meanScore, n: r.n })) } : null,
-    surveys: state.dataSources.filter((d) => d.subjectId === subjectId && (d.kind === "clo-survey" || d.kind === "ssrt") && (!window.term || d.term === window.term)).length,
+    survey: (() => {
+      const form = state.surveys.find((x) => x.subjectId === subjectId && x.kind === "course-outcome" && !x.sample && x.term === window.term);
+      if (!form || !window.term) return null;
+      const mine = state.surveyResponses.filter((r) => r.formId === form.id);
+      // By rule, booth responses demonstrate the collector and never count as the course's evidence.
+      const s = surveySummary(form, mine.filter((r) => r.source !== "booth"), state.institution, surveyReleased(form, state.events));
+      return { title: form.title, respondents: s.respondents, rate: s.rate, open: s.open, released: s.released, required: s.floor.required, booth: mine.filter((r) => r.source === "booth").length, target: form.scale.target,
+        items: s.items.map((it) => ({ label: clos.find((c) => c.id === it.cloId)?.label ?? it.id, n: it.n, atTarget: it.atTarget, share: it.share })) };
+    })(),
     builtAt: at,
   };
 }

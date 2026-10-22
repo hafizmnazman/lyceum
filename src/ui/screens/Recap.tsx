@@ -74,7 +74,12 @@ export function RecapScreen() {
         <table className="record-table recap-table"><thead><tr><th scope="col">Outcome</th><th scope="col">Mean mark</th><th scope="col">n of N</th></tr></thead>
           <tbody>{recap.results.rows.map((r) => <tr key={r.label}><th scope="row" data-label="Outcome">{r.label}</th><td data-label="Mean mark">{Math.round(r.mean * 1000) / 10} of 100</td><td data-label="n of N">{r.n} of {recap.results!.N}</td></tr>)}</tbody></table>
       </> : <p>Not filed.</p>}
-      <p className="muted">{recap.surveys ? recap.surveys + " surveys filed; perception beside attainment is planned." : "No survey filed."} The OBE report against a stated threshold is planned. {LEARN_CLAIM}</p>
+      {recap.survey ? <div data-demo-id="recap-survey">
+        <p className="muted">{recap.survey.title}: {recap.survey.respondents} {recap.survey.respondents === 1 ? "response" : "responses"}{recap.survey.rate ? " (" + recap.survey.rate + ")" : ""}{recap.survey.open ? ", the share at " + recap.survey.target + " or higher on each outcome, over the students who chose a point." : !recap.survey.released ? "; the results wait for grades to be released." : "; below the floor of " + recap.survey.required + ", so no result shows."}{recap.survey.booth ? " " + recap.survey.booth + " booth responses are a demonstration of the collector and are not counted." : ""}</p>
+        {recap.survey.open ? <table className="record-table recap-table"><thead><tr><th scope="col">Outcome</th><th scope="col">{recap.survey.target} or higher</th></tr></thead>
+          <tbody>{recap.survey.items.map((it) => <tr key={it.label}><th scope="row" data-label="Outcome">{it.label}</th><td data-label={recap.survey!.target + " or higher"}>{it.atTarget} of {it.n}{it.share === null ? "" : ", " + Math.round(it.share * 100) + "%"}</td></tr>)}</tbody></table> : null}
+      </div> : <p className="muted">No Course Outcome Survey this term.</p>}
+      <p className="muted">The survey beside the marks, never averaged with them, and the OBE report against a stated threshold are planned. {LEARN_CLAIM}</p>
     </section>
 
     <footer className="recap-foot">{recap.demoLine ? recap.demoLine + " " : ""}Every number on this page is read from a record in this workspace; nothing is estimated. This recap does not attest institutional approval.</footer>

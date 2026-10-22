@@ -1347,3 +1347,113 @@ Chosen: (b), because they render on Update, Teach, History and the recap, three 
 Reverse it if: a slow-network test on the venue's wifi shows the first load too slow, or the gzipped main chunk passes 300 kB.
 
 To reverse: import the views with `React.lazy` in `CurriculumWorkspace.tsx`, `CourseWorkspace.tsx` and `Recap.tsx`.
+
+## 2026-10-22 21:28, D3a: a QR for the survey's link
+
+Options: (a) a plain link only, as the plan allows without a decision: a judge types an address of about sixty characters into a phone. (b) The `qrcode` package (1.5.4, MIT) with `@types/qrcode` as a development dependency, loaded only when the lecturer shows the link, in its own chunk of 25.78 kB. (c) A QR encoder written by hand for the prototype.
+
+Chosen: (b), because a judge scans in a second what they would otherwise type with a stranger watching, and the package is the common one, under the MIT licence, drawn in the forest token on white. It adds nothing to the main chunk, and npm's audit at install named no advisory against it or what it pulls in.
+
+Reverse it if: an advisory lands against the package, or the booth shows the link some other way, such as printed on a card.
+
+To reverse: `qrcode` and `@types/qrcode` in `package.json`, and the QR in `BoothCollector` (`src/ui/screens/SurveysPanel.tsx`).
+
+## 2026-10-22 21:34, D3a: the sample term's release
+
+Options: (a) seed a `grades-released` event for the prior term into the event log. (b) Carry `sampleReleasedAt` on the two sample surveys and let the release rule read it, keeping the log for what happened in this workspace.
+
+Chosen: (b), because a seeded event would show in History and the run's timeline as if someone in this workspace had recorded it, and it moved the event order that earlier proofs pin. The sample's release is a fact of a labelled fixture, so it lives on the fixture.
+
+Reverse it if: the sample term gains its own decisions and versions in the log.
+
+To reverse: `sampleReleasedAt` in `src/types.ts` and `src/data/sample-course/surveys.ts`, and `surveyReleased` in `src/lib/surveys.ts`.
+
+## 2026-10-22 21:36, D3a: the class size behind the floor and the rate
+
+Options: (a) leave the class size blank until the lecturer types it, so the floor's share and the rate stay unknown. (b) Prefill it from the term's results file, the N it records, editable, and blank when nothing is filed.
+
+Chosen: (b), because the results file is the workspace's own count of the class, and the lecturer sees it in a field labelled "Class size, the students listed" with the reason beside it. A blank field still works: the floor then applies the count alone and says so.
+
+Reverse it if: the results file's N differs from the enrolment the survey went to, for instance after withdrawals.
+
+To reverse: `createCourseSurveys` in `src/app/store.ts` and the class size field in `BoothCollector`.
+
+## 2026-10-22 21:37, D3a: what the collector keeps of the reader secret
+
+Options: (a) the lecturer's workspace sends the reader secret with the form, and the collector keeps it to compare when responses are read. (b) The token in the student's link is the first 22 characters of the secret's SHA-256, so the collector keeps no secret and a reader proves itself by hashing to the token.
+
+Chosen: (b), because the collector then holds nothing worth taking, and the token every phone carries can post an answer but never read one. `prove-surveys` checks the app's token against the server's hash.
+
+Reverse it if: a campus deployment must revoke a reader without changing the link.
+
+To reverse: `tokenOf` in `server/index.ts` and `formTokenFor` in `src/lib/surveys.ts`.
+
+## 2026-10-22 21:39, D3a: what the QR carries
+
+Options: (a) the long link the plan names, the whole form compressed into the fragment: 1,406 characters for the Course Outcome Survey and 1,585 for the SSRT, a QR of version 31 or 33, about 145 modules a side, under 1.5 px a module at 200 px on screen. (b) A short link, `#/survey/t/<token>`, 59 characters and a version 4 QR of 33 modules, whose form the collector holds, left there by the lecturer's workspace with the reader secret; the long link stays beside it.
+
+Chosen: (b), because a phone held at a booth does not read a QR of 145 modules from a laptop screen, and one of 33 it reads at once. The long link stays for copying into a message on the booth's network, and its length is still proved under 2,000 characters.
+
+Reverse it if: the booth shows the link on a screen large enough for the dense QR, or the collector cannot hold forms.
+
+To reverse: `publishSurveyForm` in `src/app/store.ts`, the form routes in `server/index.ts`, `shortSurveyLink` in `src/lib/surveys.ts` and the short route in `src/ui/screens/SurveyPage.tsx`.
+
+## 2026-10-22 21:43, D3a: what the booth panel shows
+
+Options: (a) the booth responses' answers in their own panel. (b) Their count from distinct devices, marked "Not course evidence", and never their answers.
+
+Chosen: (b), because a booth's handful of answers sits below every floor and its term's grades are not released, so showing them would break, in the very panel meant to demonstrate them, the two rules the plan puts on screen. The plan's own line for the moment is a count: "3 responses from 3 devices; the floor is 5 and 25% of the class; results open when grades are released".
+
+Reverse it if: the owner wants the judges to see their own answers at the booth, labelled.
+
+To reverse: `SurveyCard` in `src/ui/screens/SurveysPanel.tsx`.
+
+## 2026-10-22 22:02, D3a: which of the laptop's addresses the QR carries
+
+Options: (a) the first address the operating system lists, which on the build laptop is the WSL virtual adapter that no phone reaches. (b) The collector names each adapter and ranks them, Wi-Fi first, then the adapter Windows' mobile hotspot runs on, then wired, with virtual adapters last and marked, and the lecturer can pick another when there are several.
+
+Chosen: (b), because the booth's phones join the laptop's Wi-Fi or its hotspot, never a virtual switch, and the name beside each address lets the person at the booth check it against the network the phones are on. On the build laptop it picks Wi-Fi and marks the WSL adapter.
+
+Reverse it if: the booth runs on a fixed address the team sets by hand.
+
+To reverse: `rankOf` and the address route in `server/index.ts`, and the address field in `BoothCollector`.
+
+## 2026-10-22 22:09, D3a: what the booth's network can reach
+
+Options: (a) `vite --host` with the whole API behind its proxy, the way `npm run dev` has it. (b) The built app served by `vite preview --host`, the proxy forwarding only a phone's two routes (posting an answer, reading a form by its token), and the API answering every other route only to the laptop itself, its check running before CORS. (c) A separate small server for phones.
+
+Chosen: (b), because with (a) anyone on the booth's network could call the model route, which spends from a key in `.env` when one is set, parse files or read the collector, and the dev server serves the source. (b) closes that with two small checks and no new dependency, and a test from the laptop's own Wi-Fi address shows each route refused.
+
+Reverse it if: a campus deployment puts the collector behind its own server and sign-in.
+
+To reverse: the guard in `server/index.ts`, `bypass` in `vite.config.ts` and the `booth` script in `package.json`.
+
+## 2026-10-22 22:14, D3a: answers for a form the collector does not hold
+
+Options: (a) take answers for any well-formed token, which the plan's long link would allow without the collector holding the form. (b) Take answers only for a form the lecturer's workspace left with the collector, checked against its question ids, kinds and scale.
+
+Chosen: (b), because the booth always leaves the form before the QR shows, and otherwise a junk token from the network could fill the collector's 200 forms. An answer the form cannot hold is refused on the phone, where the student sees why, rather than dropped later at Collect.
+
+Reverse it if: the collector must take answers after a restart before the lecturer shows the link again.
+
+To reverse: the `published` check in the answer route of `server/index.ts`.
+
+## 2026-10-22 22:16, D3a: the advisories against hono
+
+Options: (a) upgrade hono to 4.13.11 or later during the run. (b) Keep 4.12.32, keep the booth's network off every route but a phone's two, and ask the owner.
+
+Chosen: (b), because the upgrade changes the framework under every route of the local API mid-run, for nine advisories none of which the booth's network can reach once the checks of 22:09 are in: the CORS ReDoS needs a preflight request, which the guard refuses to other machines before CORS runs; the query parser serves only routes the network cannot reach; and `parseBody`, `serveStatic`, `toSSG`, `memo`, the JSX renderer, the proxy helper and the language middleware are not used. The plan names no such change, so it is the owner's call (Needs the owner 3), first noted at 21:29.
+
+Reverse it if: the owner says upgrade, or an advisory lands on `c.req.json()` or on the routing itself.
+
+To reverse: `npm install hono@^4.13.11`, then the full verification.
+
+## 2026-10-22 22:17, D3a: the API's port when another program holds it
+
+Options: (a) keep 8787 fixed in the proxy. (b) Let the proxy follow `PORT`, which the API already reads, so one variable moves both.
+
+Chosen: (b), because on the build laptop Docker Desktop holds 127.0.0.1:8787 while Lyceum's API answers on ::1, so a call that falls back to IPv4 reaches Docker, as one did while the dev API restarted. With (b) the booth runs with `PORT` set on any laptop where 8787 is taken.
+
+Reverse it if: the API's port moves into a configuration file both read.
+
+To reverse: the proxy's `target` in `vite.config.ts`.

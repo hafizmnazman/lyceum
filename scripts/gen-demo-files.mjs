@@ -3,6 +3,8 @@
 //   clo-survey.csv        CS220 per-student CLO mastery survey export
 //   syllabus.pdf          the CS220 official syllabus (supply-side truth)
 //   lecture-slides.pptx   five slides of CS220 lecture content
+//   course-outcome-survey-forms.xlsx  CS310's prior-term Course Outcome Survey as
+//                         a Microsoft Forms export: sample, synthetic (depth plan 7.4)
 //
 // All four are real files built with Node built-ins only: the OOXML zips are
 // STORED archives with genuine CRC32s (zlib.crc32, Node 22.2+); the pdf is
@@ -13,6 +15,8 @@
 
 import { writeFileSync, mkdirSync } from "node:fs";
 import { crc32 } from "node:zlib";
+import { PRIOR_COS, PRIOR_SURVEY_RESPONSES } from "../src/data/sample-course/surveys.ts";
+import { SCALE_LABELS } from "../src/lib/surveys.ts";
 
 const OUT = "public/demo";
 mkdirSync(OUT, { recursive: true });
@@ -129,6 +133,42 @@ const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
   ]);
   writeFileSync(`${OUT}/results.xlsx`, zip);
   console.log(`Wrote ${OUT}/results.xlsx (${zip.length} bytes)`);
+}
+
+// ---------------------------------------------------------------- course-outcome-survey-forms.xlsx
+// The prior term's Course Outcome Survey for CS310 (sample, synthetic) as Microsoft Forms exports it: ID, Start time,
+// Completion time, Email and Name, then one column per question, headed by the question's text with its id ("Q1.").
+// Email and Name are blank, as an anonymous form leaves them; one row is repeated, as a double submission would be, so
+// the importer's duplicate rule has something to drop.
+{
+  const questions = PRIOR_COS.questions;
+  const header = ["ID", "Start time", "Completion time", "Email", "Name", ...questions.map((q) => q.text)];
+  const answer = (v) => v === undefined ? "" : v === "cannot-say" ? "Cannot say" : typeof v === "number" ? SCALE_LABELS[v - 1] : v;
+  const responses = PRIOR_SURVEY_RESPONSES.filter((r) => r.formId === PRIOR_COS.id);
+  const time = (k, extra) => "2026-06-0" + (1 + (k % 5)) + " " + String(9 + (k % 8)).padStart(2, "0") + ":" + String((k * 7) % 60).padStart(2, "0") + ":" + String(extra).padStart(2, "0");
+  const rows = responses.map((r, k) => [k + 1, time(k, 0), time(k, 41), "", "", ...questions.map((q) => answer(r.answers[q.id]))]);
+  rows.push([rows.length + 1, ...rows[4].slice(1)]); // a double submission: the same times and answers, a new ID
+  const colRef = (c) => String.fromCharCode(65 + c);
+  const cell = (c, r, v) =>
+    typeof v === "number"
+      ? `<c r="${colRef(c)}${r}"><v>${v}</v></c>`
+      : v === "" ? "" : `<c r="${colRef(c)}${r}" t="inlineStr"><is><t>${esc(v)}</t></is></c>`;
+  const row = (vals, r) => `<row r="${r}">${vals.map((v, i) => cell(i, r, v)).join("")}</row>`;
+  const sheetXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${[row(header, 1), ...rows.map((v, i) => row(v, i + 2))].join("")}</sheetData></worksheet>`;
+  const zip = storedZip([
+    { name: "[Content_Types].xml", data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>` },
+    { name: "_rels/.rels", data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>` },
+    { name: "xl/workbook.xml", data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Sheet1" sheetId="1" r:id="rId1"/></sheets></workbook>` },
+    { name: "xl/_rels/workbook.xml.rels", data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>` },
+    { name: "xl/worksheets/sheet1.xml", data: sheetXml },
+  ]);
+  writeFileSync(`${OUT}/course-outcome-survey-forms.xlsx`, zip);
+  console.log(`Wrote ${OUT}/course-outcome-survey-forms.xlsx (${zip.length} bytes, ${rows.length} rows, one of them repeated)`);
 }
 
 // ---------------------------------------------------------------- clo-survey.csv

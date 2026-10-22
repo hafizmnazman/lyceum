@@ -3,7 +3,7 @@
 // #/course/<id>/<step> inside a course's loop) so refresh, back and deep links
 // work like a real app.
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { navAllows, subjectsForPerson } from "./app/roles.ts";
 import { stepDef } from "./app/loop.ts";
 import { hashFor, parseRoute, type CourseRoute } from "./app/routes.ts";
@@ -14,6 +14,10 @@ import { DemoOverlay } from "./demo/DemoOverlay.tsx";
 import { LandingScreen } from "./ui/screens/Landing.tsx";
 import { JudgeScreen } from "./ui/screens/Judge.tsx";
 import { WalkOverlay } from "./demo/WalkOverlay.tsx";
+import { SurveyPage } from "./ui/screens/SurveyPage.tsx";
+
+/** The survey route's reference (the encoded form, or t/<token>), or null on every other address. */
+const surveyOf = (hash: string) => { const route = parseRoute(hash); return route && "survey" in route ? route.survey : null; };
 
 /** A course route is honoured only for a course this person may open in the workspace. */
 function mayOpen(route: CourseRoute): boolean {
@@ -34,13 +38,14 @@ export default function App() {
   const initialSync = useRef(true);
   useEffect(() => {
     if (initialSync.current) { initialSync.current = false; if (parseRoute(window.location.hash)) return; }
+    if (surveyOf(window.location.hash) !== null) return; // a student's page keeps its own address
     if (window.location.hash !== wanted) window.history.pushState(null, "", wanted);
   }, [wanted]);
 
   useEffect(() => {
     function onHashChange() {
       const route = parseRoute(window.location.hash);
-      if (!route) return;
+      if (!route || "survey" in route) return;
       const s = getState();
       const person = currentPerson();
       if (!person) {
@@ -70,6 +75,12 @@ export default function App() {
       window.removeEventListener("popstate", onHashChange);
     };
   }, []);
+
+  // The student's survey page renders on its own, outside the workspace and without the tour or the walk.
+  const [hash, setHash] = useState(() => window.location.hash);
+  useEffect(() => { const on = () => setHash(window.location.hash); window.addEventListener("hashchange", on); return () => window.removeEventListener("hashchange", on); }, []);
+  const survey = surveyOf(hash);
+  if (survey !== null) return <div style={{ height: "100%", overflowY: "auto" }}><SurveyPage reference={survey} /></div>;
 
   const ScreenComponent = SCREENS[state.screen];
 

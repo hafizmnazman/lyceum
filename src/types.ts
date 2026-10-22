@@ -649,11 +649,36 @@ export interface BriefDecision {
   id: string; briefId: string; subjectId: SubjectId; courseVersionId: string; term: string;
   byPersonId: PersonId; at: string; outcome: DecisionOutcome; note: string;
 }
-export type LoopEventKind = "brief-prepared" | "brief-sent" | "brief-read" | "decision-recorded" | "snapshot-frozen" | "version-adopted" | "term-set";
+export type LoopEventKind = "brief-prepared" | "brief-sent" | "brief-read" | "decision-recorded" | "snapshot-frozen" | "version-adopted" | "term-set"
+  | "grades-released" | "survey-opened" | "survey-collected"; // Track C (depth plan Sections 7 and 11)
 /** An append-only record of what happened and when. The How it works timeline reads these first. */
 export interface LoopEvent {
   id: string; at: string; byPersonId: PersonId; kind: LoopEventKind;
-  refs: { subjectId: SubjectId; briefId?: string; decisionId?: string; snapshotId?: string; versionId?: string; draftId?: string; term?: string; previousTerm?: string };
+  refs: { subjectId: SubjectId; briefId?: string; decisionId?: string; snapshotId?: string; versionId?: string; draftId?: string; term?: string; previousTerm?: string; formId?: string; count?: number };
+}
+
+// ---------- the two student surveys (depth plan Section 7) ----------
+export type SurveyKind = "course-outcome" | "ssrt";
+/** One question. Its id is also printed at the start of its text ("Q3."), so an import matches on the id, not the wording. */
+export interface SurveyQuestion { id: string; text: string; kind: "scale" | "comment"; cloId?: string; dimension?: string }
+/** A scale point, "cannot-say" (excluded from means, counted), or a comment's text. A missing key is an unanswered item. */
+export type SurveyAnswer = number | "cannot-say" | string;
+export interface SurveyDefinition {
+  id: string; subjectId: SubjectId; kind: SurveyKind; title: string; term: string; versionId: string | null;
+  scale: { min: number; max: number; target: number; labels: string[] };
+  questions: SurveyQuestion[];
+  instrumentNote: string | null; // the SSRT's label: a demo instrument, unvalidated
+  classSize: number | null;      // the class the floor's share and the response rate are over, when it is known
+  formToken: string | null;      // set when the form opens for the booth collector: it can post, never read
+  readerSecret: string | null;   // held only here; the token is the first 22 characters of its SHA-256
+  createdAt: string; createdBy: PersonId; sample?: boolean;
+  sampleReleasedAt?: string;     // a sample term's grades, recorded as released with the sample; a real term's release is an event
+}
+/** One student's answers, keyed by question id. Nothing in it identifies a student: a booth response keeps the random id
+ *  its device drew, so one device answers once; an imported one keeps nothing of the export's identity columns. */
+export interface SurveyResponse {
+  id: string; formId: string; term: string; answers: Record<string, SurveyAnswer>;
+  collectedAt: string; clientId: string | null; source: "booth" | "pasted" | "imported" | "sample";
 }
 
 // ---------- the institution profile (depth plan Section 3.1) ----------

@@ -7,11 +7,11 @@ import { DEMO_PLOS } from "../data/sample-course/cs310.ts";
 
 export const WORKSPACE_DATA_KEYS = ["programme", "assignments", "subjects", "clos", "survey", "institution", "proposals",
   "notifications", "predictions", "resultUploads", "dataSources", "subjectVersions", "testDrafts", "teachingPlans",
-  "courseDefinitions", "rubrics", "curriculumDrafts", "evidenceSources", "skillMentions", "skillMappings", "evidenceBriefs", "evidenceSnapshots", "briefDecisions", "events", "skillLexicon", "relevanceRatings", "idSeq"] as const;
+  "courseDefinitions", "rubrics", "curriculumDrafts", "evidenceSources", "skillMentions", "skillMappings", "evidenceBriefs", "evidenceSnapshots", "briefDecisions", "events", "surveys", "surveyResponses", "skillLexicon", "relevanceRatings", "idSeq"] as const;
 /** Records added after schema version 1 (2: evidence, 3: briefs and lexicon, 4: evidence snapshots, 5: the decision record and
  *  the event log, 6: Track C's institution profile and course records). A backup without one restores with its default; Track C
  *  adds its records to schema 6 package by package, so a schema 6 file from an earlier package restores the same way. */
-const LATER_DEFAULTS: Partial<Record<typeof WORKSPACE_DATA_KEYS[number], unknown>> = { evidenceSources: [], skillMentions: [], skillMappings: [], evidenceBriefs: [], evidenceSnapshots: [], briefDecisions: [], events: [], skillLexicon: {}, institution: DEMO_INSTITUTION, rubrics: [] };
+const LATER_DEFAULTS: Partial<Record<typeof WORKSPACE_DATA_KEYS[number], unknown>> = { evidenceSources: [], skillMentions: [], skillMappings: [], evidenceBriefs: [], evidenceSnapshots: [], briefDecisions: [], events: [], skillLexicon: {}, institution: DEMO_INSTITUTION, rubrics: [], surveys: [], surveyResponses: [] };
 export const BACKUP_SCHEMA_VERSION = 6;
 export type WorkspaceData = Pick<AppState, typeof WORKSPACE_DATA_KEYS[number]>;
 export interface WorkspaceBackup { application: "Lyceum"; schemaVersion: 1 | 2 | 3 | 4 | 5 | 6; exportedAt: string; data: WorkspaceData }
@@ -94,8 +94,17 @@ const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
   briefDecisions: array(shape({ id, briefId: id, subjectId: id, courseVersionId: id, term: str, byPersonId: id, at: str,
     outcome: one("adopt", "retain", "defer", "return"), note: str }), 100000),
   events: array(shape({ id, at: str, byPersonId: id,
-    kind: one("brief-prepared", "brief-sent", "brief-read", "decision-recorded", "snapshot-frozen", "version-adopted", "term-set"),
-    refs: shape({ subjectId: id, briefId: opt(id), decisionId: opt(id), snapshotId: opt(id), versionId: opt(id), draftId: opt(id), term: opt(str), previousTerm: opt(str) }) }), 100000),
+    kind: one("brief-prepared", "brief-sent", "brief-read", "decision-recorded", "snapshot-frozen", "version-adopted", "term-set", "grades-released", "survey-opened", "survey-collected"),
+    refs: shape({ subjectId: id, briefId: opt(id), decisionId: opt(id), snapshotId: opt(id), versionId: opt(id), draftId: opt(id), term: opt(str), previousTerm: opt(str), formId: opt(id), count: opt(integer) }) }), 100000),
+  // The two student surveys (depth plan Section 7): every answer fits its question, and nothing identifies a student.
+  surveys: array(shape({ id, subjectId: id, kind: one("course-outcome", "ssrt"), title: str, term: str, versionId: x => x === null || id(x),
+    scale: shape({ min: integer, max: integer, target: integer, labels: array(str, 20) }),
+    questions: array(shape({ id, text: str, kind: one("scale", "comment"), cloId: opt(id), dimension: opt(str) }), 60),
+    instrumentNote: x => x === null || str(x), classSize: x => x === null || integer(x), formToken: x => x === null || (typeof x === "string" && /^[A-Za-z0-9_-]{22}$/.test(x)),
+    readerSecret: x => x === null || (typeof x === "string" && /^[A-Za-z0-9_-]{16,64}$/.test(x)), createdAt: str, createdBy: id, sample: opt(boolean), sampleReleasedAt: opt(str) }), 1000),
+  surveyResponses: array(shape({ id, formId: id, term: str, collectedAt: str, clientId: x => x === null || (typeof x === "string" && /^[A-Za-z0-9-]{8,64}$/.test(x)),
+    source: one("booth", "pasted", "imported", "sample"), answers: x => record(x) && Object.keys(x).length <= 60 &&
+      Object.values(x).every(v => v === "cannot-say" || (typeof v === "number" && Number.isInteger(v)) || (typeof v === "string" && v.length <= 2000)) }), 100000),
   skillLexicon: dict(array(str, 100)),
   relevanceRatings: array(shape({ subjectId: id, score: num, band: one("aligned","drifting","misaligned","unrated"),
     perCLO: array(shape({ cloId: id, score: num, movedBy: array(str) })),
@@ -130,7 +139,7 @@ export function parseWorkspaceBackup(raw: string, knownPersonIds: string[]): { o
   for (const key of WORKSPACE_DATA_KEYS) if (!predicates[key](data[key])) return fail("Invalid workspace data in " + key + ".");
   const backup = parsed as unknown as WorkspaceBackup;
   const d = backup.data;
-  if (![d.subjects,d.clos,d.proposals,d.notifications,d.resultUploads,d.subjectVersions,d.testDrafts,d.curriculumDrafts,d.evidenceSources,d.skillMentions,d.evidenceBriefs,d.evidenceSnapshots,d.briefDecisions,d.events,d.rubrics].every(uniqueIds))
+  if (![d.subjects,d.clos,d.proposals,d.notifications,d.resultUploads,d.subjectVersions,d.testDrafts,d.curriculumDrafts,d.evidenceSources,d.skillMentions,d.evidenceBriefs,d.evidenceSnapshots,d.briefDecisions,d.events,d.rubrics,d.surveys,d.surveyResponses].every(uniqueIds))
     return fail("The backup contains duplicate record identities.");
   const subjects = new Set(d.subjects.map(s => s.id)), people = new Set(knownPersonIds);
   if (!people.has(d.programme.departmentOwnerId)) return fail("The programme owner is unknown to this local workspace.");
@@ -236,6 +245,18 @@ export function parseWorkspaceBackup(raw: string, knownPersonIds: string[]): { o
     if (!subjects.has(e.refs.subjectId) || !people.has(e.byPersonId) || (e.refs.briefId !== undefined && !briefIds.has(e.refs.briefId)) ||
       (e.refs.decisionId !== undefined && !decisionIds.has(e.refs.decisionId)))
       return fail("An event refers to an unknown course, person, brief or decision.");
+  }
+  for (const form of d.surveys)
+    if (!subjects.has(form.subjectId) || !people.has(form.createdBy) || form.scale.min >= form.scale.max || form.scale.target < form.scale.min || form.scale.target > form.scale.max
+      || new Set(form.questions.map(q => q.id)).size !== form.questions.length) return fail("A survey refers to an unknown course or person, or its scale or question ids are invalid.");
+  for (const response of d.surveyResponses) {
+    const form = d.surveys.find(x => x.id === response.formId);
+    if (!form || response.term !== form.term) return fail("A survey response refers to an unknown survey.");
+    for (const [qid, v] of Object.entries(response.answers)) {
+      const q = form.questions.find(x => x.id === qid);
+      if (!q || (q.kind === "scale" && v !== "cannot-say" && !(typeof v === "number" && v >= form.scale.min && v <= form.scale.max)) || (q.kind === "comment" && typeof v !== "string"))
+        return fail("A survey response has an answer that fits no question.");
+    }
   }
   const mappingKeys = new Set<string>();
   for (const mapping of d.skillMappings) {

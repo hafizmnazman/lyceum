@@ -13,12 +13,14 @@ export const HASH_SCREENS: Screen[] = [
 ];
 
 export interface CourseRoute { subjectId: string; step: CourseStep; reportTab?: ReportTab }
-export type Route = { screen: Screen } | { course: CourseRoute } | { recap: string };
+export type Route = { screen: Screen } | { course: CourseRoute } | { recap: string } | { survey: string };
 
 const isReportTab = (x: string): x is ReportTab => (REPORT_TABS as string[]).includes(x);
 
 export function parseRoute(hash: string): Route | null {
   const path = hash.replace(/^#\/?/, "");
+  // A student's survey page (depth plan Section 7.2): the form in the fragment, or t/<token> for one the collector holds.
+  if (path.startsWith("survey/") && path.length > 7) return { survey: path.slice(7) };
   const course = /^course\/([^/]+)(?:\/([a-z]+))?(?:\/([a-z]+))?\/?$/.exec(path);
   if (course && course[2] === "recap" && course[3] === undefined) return { recap: decodeURIComponent(course[1]) };
   if (course) {

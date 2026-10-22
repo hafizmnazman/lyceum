@@ -17,6 +17,7 @@ import { Button, Disclosure, EmptyState, Tag } from "../primitives/index.tsx";
 import { Handoff, Meter } from "../primitives/loop.tsx";
 import { Mascot } from "../mascots/index.tsx";
 import { IntakePanel } from "./Upload.tsx";
+import { SurveysPanel } from "./SurveysPanel.tsx";
 import { StepFrame, courseContext } from "./StepFrame.tsx";
 
 
@@ -78,6 +79,8 @@ export function LearnScreen() {
       </ul> : <p className="muted">Nothing filed for this course yet.</p>}
       <p className="muted">Surveys are listed, not yet set beside the marks: perception beside attainment is planned.</p>
     </section>
+
+    <SurveysPanel state={state} person={person} subject={subject} />
 
     <section className="workspace-panel" aria-labelledby="learn-planned">
       <div className="section-heading"><h2 id="learn-planned">Planned for the pilot</h2><Tag tone="warn">Planned</Tag></div>

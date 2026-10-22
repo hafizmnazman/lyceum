@@ -23,6 +23,8 @@
 
 import { useSyncExternalStore } from "react";
 import type {
+  SurveyDefinition,
+  SurveyResponse,
   AgentName,
   AgentRun,
   AssessmentBlueprint,
@@ -103,6 +105,9 @@ import { hashFor, type CourseRoute } from "./routes.ts";
 import { ITEMS, itemsForCLOs } from "../data/items.ts";
 import { DEMO_INSTITUTION } from "../data/institution.ts";
 import { institutionError } from "../lib/institution.ts";
+import { boothAnswers, courseOutcomeSurvey, formTokenFor, gradesReleased, importFormsRows, newReaderSecret, ssrtSurvey, studentForm, type ImportResult } from "../lib/surveys.ts";
+import { DEMO_LINE } from "../data/sample-course/index.ts";
+import { PRIOR_SURVEYS, PRIOR_SURVEY_RESPONSES } from "../data/sample-course/surveys.ts";
 import {
   CANONICAL_PROPOSAL,
   CLOS,
@@ -194,6 +199,8 @@ export interface AppState {
   evidenceSnapshots: EvidenceSnapshot[]; // frozen evidence windows, compared to watch change over time
   briefDecisions: BriefDecision[]; // the decision record on briefs (plan Section 4); never edited
   events: LoopEvent[]; // append-only: decisions, snapshots, adoptions, briefs prepared, sent and read, term changes
+  surveys: SurveyDefinition[]; // the two student surveys per course and term (depth plan Section 7)
+  surveyResponses: SurveyResponse[]; // answers keyed by question id; nothing that identifies a student
   skillLexicon: Record<string, string[]>; // per course: the terms the lecturer scans for
   relevanceRatings: RelevanceRating[];
 
@@ -272,6 +279,8 @@ function seedState(): AppState {
     evidenceSnapshots: [],
     briefDecisions: [],
     events: [],
+    surveys: structuredClone(PRIOR_SURVEYS),
+    surveyResponses: structuredClone(PRIOR_SURVEY_RESPONSES),
     skillLexicon: {},
     relevanceRatings: computeRelevanceRatings(SUBJECTS, CLOS, SEED_NOW),
 
@@ -332,6 +341,8 @@ const PERSISTED_KEYS = [
   "evidenceSnapshots",
   "briefDecisions",
   "events",
+  "surveys",
+  "surveyResponses",
   "skillLexicon",
   "relevanceRatings",
   "idSeq",
@@ -2011,6 +2022,107 @@ export function restoreSampleWorkspace(raw: string, personId: PersonId): SaveRes
   recoveryBackup = recovery;
   state = next;
   emit();
+  return { ok: true };
+}
+
+// ---------- the two student surveys (depth plan Section 7) ----------
+
+/** The term's two instruments for a course, built from its course record and the institution profile: the Course
+ *  Outcome Survey (one item per outcome) and the SSRT (a demo instrument). Once per course and term. */
+export function createCourseSurveys(subjectId: SubjectId): SaveResult {
+  if (!mayPlan(subjectId)) return { ok: false, error: "Only an assigned lecturer or coordinator can prepare this course's surveys." };
+  const subject = subjectById(subjectId)!;
+  const term = termWindow(state, subjectId).term;
+  if (!term) return { ok: false, error: "Set the term this loop runs for first, on the Course step; a survey belongs to a term." };
+  if (state.surveys.some((x) => x.subjectId === subjectId && x.term === term && !x.sample)) return { ok: false, error: "This term's surveys already exist." };
+  const at = nowIso(), by = currentPerson()!.id;
+  const definition = definitionForCourse(subjectId)!;
+  const upload = state.resultUploads.filter((u) => u.subjectId === subjectId && u.term === term).at(-1);
+  const classSize = upload ? Math.max(0, ...upload.rows.map((r) => r.n)) || null : null;
+  const common = { subject, institution: state.institution, term, versionId: subject.currentVersionId, classSize, at, by };
+  set((s) => ({ surveys: [...s.surveys,
+    courseOutcomeSurvey({ ...common, id: nextId("SURV-" + subjectId), outcomes: definition.outcomes }),
+    ssrtSurvey({ ...common, id: nextId("SURV-" + subjectId) })], toast: "The term's two surveys are ready to open." }));
+  return { ok: true };
+}
+
+/** Open a survey for the booth collector: a reader secret held only here, and the submission token derived from it. */
+export async function openSurveyForCollection(formId: string, classSize: number | null): Promise<SaveResult> {
+  const form = state.surveys.find((x) => x.id === formId);
+  if (!form || form.sample) return { ok: false, error: "Choose one of this term's surveys." };
+  if (!mayPlan(form.subjectId)) return { ok: false, error: "Only an assigned lecturer or coordinator can open this survey." };
+  if (classSize !== null && !(Number.isInteger(classSize) && classSize > 0 && classSize <= 5000)) return { ok: false, error: "The class size is a whole number of students, or left blank." };
+  const readerSecret = form.readerSecret ?? newReaderSecret();
+  const formToken = await formTokenFor(readerSecret);
+  set((s) => ({ surveys: s.surveys.map((x) => (x.id === formId ? { ...x, readerSecret, formToken, classSize } : x)) }));
+  if (!form.formToken) logEvent("survey-opened", { subjectId: form.subjectId, formId, term: form.term });
+  return { ok: true };
+}
+
+/** Leave the student's form with the booth collector, so the QR can carry the short link; the long link carries the form itself. */
+export async function publishSurveyForm(formId: string): Promise<SaveResult> {
+  const form = state.surveys.find((x) => x.id === formId);
+  if (!form?.formToken || !form.readerSecret) return { ok: false, error: "Open the survey for collection first." };
+  const subject = subjectById(form.subjectId)!;
+  const demoLine = state.courseDefinitions[form.subjectId]?.sample ? DEMO_LINE : null;
+  try {
+    const res = await fetch("/api/survey/" + form.formToken + "/form", { method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ reader: form.readerSecret, form: studentForm(form, subject, state.institution, demoLine) }) });
+    return res.ok ? { ok: true } : { ok: false, error: "The collector answered " + res.status + "." };
+  } catch {
+    return { ok: false, error: "The collector on this laptop could not be reached, so only the long link works; it carries the whole form." };
+  }
+}
+
+/** Collect the booth's responses: one per device, each checked against the questions, stored as booth responses, which
+ *  are a demonstration of the collector and never course evidence. */
+export async function collectBoothResponses(formId: string): Promise<SaveResult & { added?: number }> {
+  const form = state.surveys.find((x) => x.id === formId);
+  if (!form?.formToken || !form.readerSecret) return { ok: false, error: "Open the survey for collection first." };
+  if (!mayPlan(form.subjectId)) return { ok: false, error: "Only an assigned lecturer or coordinator can collect this survey." };
+  let body: { responses?: Array<{ clientId?: unknown; answers?: unknown }> };
+  try {
+    const res = await fetch("/api/survey/" + form.formToken + "/responses?reader=" + encodeURIComponent(form.readerSecret));
+    if (!res.ok) return { ok: false, error: res.status === 403 ? "The collector refused the reader secret." : "The collector answered " + res.status + "." };
+    body = await res.json();
+  } catch {
+    return { ok: false, error: "The collector on this laptop could not be reached. Start the local API (npm run booth, or npm run dev) and collect again." };
+  }
+  const known = new Set(state.surveyResponses.filter((r) => r.formId === formId && r.clientId).map((r) => r.clientId));
+  const fresh: SurveyResponse[] = [];
+  for (const r of body.responses ?? []) {
+    const clientId = typeof r.clientId === "string" && /^[A-Za-z0-9-]{8,64}$/.test(r.clientId) ? r.clientId : null;
+    const answers = boothAnswers(form, r.answers);
+    if (!clientId || !answers || known.has(clientId)) continue;
+    known.add(clientId);
+    fresh.push({ id: nextId("SR-" + form.subjectId), formId, term: form.term, answers, collectedAt: nowIso(), clientId, source: "booth" });
+  }
+  if (fresh.length) {
+    set((s) => ({ surveyResponses: [...s.surveyResponses, ...fresh] }));
+    logEvent("survey-collected", { subjectId: form.subjectId, formId, term: form.term, count: fresh.length });
+  }
+  return { ok: true, added: fresh.length };
+}
+
+/** Import a Microsoft Forms export (its rows, the header first), matched on the question ids. */
+export function importSurveyRows(formId: string, rows: unknown[][]): SaveResult & { result?: ImportResult } {
+  const form = state.surveys.find((x) => x.id === formId);
+  if (!form || form.sample) return { ok: false, error: "Choose one of this term's surveys to import into." };
+  if (!mayPlan(form.subjectId)) return { ok: false, error: "Only an assigned lecturer or coordinator can import into this survey." };
+  const result = importFormsRows(rows, form, nowIso(), () => nextId("SR-" + form.subjectId));
+  if (!result.responses.length) return { ok: false, error: "No response in the file matched this survey's question ids (Q1., Q2., ...).", result };
+  set((s) => ({ surveyResponses: [...s.surveyResponses, ...result.responses] }));
+  logEvent("survey-collected", { subjectId: form.subjectId, formId, term: form.term, count: result.responses.length });
+  return { ok: true, result };
+}
+
+/** The coordinator records that the term's grades are released: from then on, never before, the term's survey results show. */
+export function recordGradesReleased(subjectId: SubjectId, term: string): SaveResult {
+  if (!mayAdopt(subjectId)) return { ok: false, error: "Only the course coordinator records that grades are released." };
+  if (!term.trim()) return { ok: false, error: "Set the term first." };
+  if (gradesReleased(state.events, subjectId, term)) return { ok: false, error: "Grades are already recorded as released for " + term + "." };
+  logEvent("grades-released", { subjectId, term });
+  set({ toast: "Grades recorded as released for " + term + ". The term's survey results open." });
   return { ok: true };
 }
 

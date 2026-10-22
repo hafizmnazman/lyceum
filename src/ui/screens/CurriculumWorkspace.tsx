@@ -286,6 +286,8 @@ export function CurriculumHistoryPanel({ state, subject }: { state: AppState; su
   const entries = [
     ...versions.map((v, i) => ({ at: v.changedAt, order: i, kind: "version" as const, seq: seq.get(v.id), v })),
     ...decisions.map((d, i) => ({ at: d.at, order: i, kind: "decision" as const, seq: seq.get(d.id), d })),
+    // The coordinator's record that a term's grades are released (depth plan Section 7.3), which opens its survey results.
+    ...state.events.filter(ev => ev.kind === "grades-released" && ev.refs.subjectId === subject.id).map((r, i) => ({ at: r.at, order: i, kind: "release" as const, seq: state.events.indexOf(r), r })),
   ].sort((a, b) => b.at.localeCompare(a.at)
     || (a.seq !== undefined && b.seq !== undefined ? b.seq - a.seq : a.kind !== b.kind ? (a.kind === "version" ? -1 : 1) : b.order - a.order));
   // Before and after for each version against the one it replaced (depth plan Section 6.2), with the week's pack built
@@ -327,6 +329,11 @@ export function CurriculumHistoryPanel({ state, subject }: { state: AppState; su
             </details>
           </div>
         </li>; }
+        if (e.kind === "release") return <li key={"r" + e.r.id} className="history-entry" data-demo-id="history-release">
+          <span className="history-time mono">{e.at.slice(0, 16).replace("T", " ")}</span>
+          <div className="history-body"><div className="button-row"><Tag tone="ok">Grades released</Tag><span className="muted">{e.r.refs.term} · {name(e.r.byPersonId)}</span></div>
+            <p>The term's survey results open from this record, never before it.</p></div>
+        </li>;
         return <li key={"d" + e.d.id} id={"decision-" + e.d.id} tabIndex={-1} className="history-entry">
           <span className="history-time mono">{e.at.slice(0, 16).replace("T", " ")}</span>
           <div className="history-body">
