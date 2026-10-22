@@ -21,9 +21,9 @@
 <text class="fg" x="566" y="254" xml:space="preserve"><tspan class="acc" x="460">report</tspan><tspan x="566">exact quotes, reviewed postings</tspan></text>
 <text class="fg" x="566" y="274" xml:space="preserve"><tspan class="acc" style="fill:#FFFFFF" x="460">decide</tspan><tspan x="566">a person, a reason, a record</tspan></text>
 <text class="fg" x="566" y="294" xml:space="preserve"><tspan class="acc" x="460">update</tspan><tspan x="566">checked against the hours</tspan></text>
-<text class="fg" x="566" y="314" xml:space="preserve"><tspan class="acc" x="460">teach</tspan><tspan x="566">an editable pack, no model text</tspan></text>
+<text class="fg" x="566" y="314" xml:space="preserve"><tspan class="acc" x="460">teach</tspan><tspan x="566">editable pack, adds no ai text</tspan></text>
 <text class="fg" x="566" y="334" xml:space="preserve"><tspan class="acc" x="460">learn</tspan><tspan x="566">results matched to the version</tspan></text>
-<text class="fg" x="566" y="394" xml:space="preserve"><tspan class="acc" x="460">checks</tspan><tspan x="566">185 passing, 17 suites</tspan></text>
+<text class="fg" x="566" y="394" xml:space="preserve"><tspan class="acc" x="460">checks</tspan><tspan x="566">259 passing, 24 suites</tspan></text>
 <text class="fg" x="566" y="414" xml:space="preserve"><tspan class="acc" x="460">sample</tspan><tspan x="566">stripe's board, 9 oct 2026</tspan></text>
 <text class="fg" x="566" y="434" xml:space="preserve"><tspan class="acc" x="460">key</tspan><tspan x="566">none needed</tspan></text>
 <rect x="460" y="480" width="16" height="10" rx="2" fill="#EEF6EF"/>

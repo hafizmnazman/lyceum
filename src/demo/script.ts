@@ -28,7 +28,7 @@ export const SCRIPT: DemoStep[] = [
   // ---- Course: what the course promises today ----
   { caption: "Dr Sobri coordinates CS310. One afternoon, the whole loop.", action: "switchUser", value: "P-SOBRI", settleMs: 2400 },
   { caption: "His courses, each with its loop for the term.", target: "nav-courses", action: "click", settleMs: 1600 },
-  { caption: "Course: what CS310 promises today. One outcome, visualisation; no employer evidence yet.", target: "course-open-CS310", action: "click", settleMs: 3200 },
+  { caption: "Course: what CS310 promises today. Five outcomes and a fourteen-week outline; no employer evidence yet.", target: "course-open-CS310", action: "click", settleMs: 3200 },
   { caption: "First, the term this loop runs for. Every record in it will carry the term.", target: "course-term", action: "type", value: "2026/2027 semester 1", settleMs: 900 },
   { caption: "", target: "course-term-save", action: "click", settleMs: 1200 },
 
@@ -118,7 +118,7 @@ export const SCRIPT: DemoStep[] = [
   { caption: "Ready to teach requires an outcome, an activity and a check.", target: "session-status", action: "select", value: "ready", settleMs: 900 },
   { caption: "", target: "session-save", action: "click", settleMs: 800 },
   { caption: "Saved. One click more: an editable slide pack for the class.", action: "wait", value: "session-saved", settleMs: 1600 },
-  { caption: "Outcomes, the employer evidence behind them with exact quotations, the activity and the check. Editable in PowerPoint; no AI text.", target: "session-slides-*", action: "click", settleMs: 4400 },
+  { caption: "Outcomes, the employer evidence behind them with exact quotations, the activity and the check. Editable in PowerPoint; Lyceum adds no AI text.", target: "session-slides-*", action: "click", settleMs: 4400 },
 
   // ---- 6. Learn: did it work, as far as we can honestly tell ----
   { caption: "Learn: a class is not proof. He files the term's results.", target: "rail-learn", action: "click", settleMs: 1800 },

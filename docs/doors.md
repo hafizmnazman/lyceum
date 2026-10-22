@@ -27,7 +27,7 @@ Node 24 or later runs the server directly (it strips the TypeScript types), afte
 
 ## Claude Desktop
 
-Open Settings, then Developer, then Edit Config, and add the server to `claude_desktop_config.json` (on Windows `%APPDATA%\Claude\claude_desktop_config.json`, on macOS `~/Library/Application Support/Claude/claude_desktop_config.json`). Use absolute paths; the server does not know the repository's folder.
+Open Settings, then Developer, then Edit Config, and add the server to `claude_desktop_config.json` (on Windows `%APPDATA%\Claude\claude_desktop_config.json`, on macOS `~/Library/Application Support/Claude/claude_desktop_config.json`). The Microsoft Store version keeps its files elsewhere, so open the file through Edit Config rather than by its path. Use absolute paths, the node binary's included if the app does not find `node` on its own; the server does not know the repository's folder.
 
 ```json
 {

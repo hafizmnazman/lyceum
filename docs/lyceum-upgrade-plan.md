@@ -558,12 +558,12 @@ One presenter speaks; a second person drives the screen. At most five numbers in
 | Minute | Slide | On screen | Spoken line (the gist) |
 |:--|:--|:--|:--|
 | 0:00 | 1. A receipt | The host holding one real posting sentence, its employer, its date, and "1 of N reviewed postings" with N the real denominator of the frozen demo state; the wordmark beside it | "This is a receipt. By the end of this talk you will have seen a course decision made of them." The sentence from Section 2.3. |
-| 0:30 | 2. The latency | A calendar strip (approval, 12 to 18 months) beside a churn figure (39% by 2030): two different measures as two different graphics, never one chart | The world problem, one figure, one caveat ("they describe different populations") |
-| 1:15 | 3. Who it lands on | Dr Aisyah's desk: tabs, a syllabus, a message asking what to change | Fictional lecturer, real workflow |
+| 0:30 | 2. Who it lands on | Dr Aisyah's desk: tabs, a syllabus, a message asking what to change | Fictional lecturer, real workflow |
+| 1:00 | 3. The latency | A calendar strip (approval, 12 to 18 months) beside a churn figure (39% by 2030): two different measures as two different graphics, never one chart | The world problem, one figure, one caveat ("they describe different populations") |
 | 1:45 | 4. The loop | The six steps with the host introducing the seven helpers | Watch, Report, Decide, Update, Teach, Learn: the same names in the app you are about to see |
 | 2:15 | 5. Live: Watch and Report | The app (or the 90-second film if the room is hostile): fetch, confirm a quotation, watch a paraphrase fail, the count with its denominator | "Nothing invented, nothing pasted. A paraphrase is rejected." |
 | 4:15 | 6. Decide and Update | The brief with receipts, the decision record, the checked revision | "The decision stays with people, and it leaves a record" |
-| 5:00 | 7. Teach and Learn | The teaching pack opened in PowerPoint; the Learn screen with n of N and the gap | "No model wrote a word of this pack" |
+| 5:00 | 7. Teach and Learn | The teaching pack opened in PowerPoint; the Learn screen with n of N and the gap | "Lyceum adds no model text to this pack" |
 | 5:45 | 8. What is real | Our assessment against NASA's software column, TRL 6, with the relevant environment named (real postings from a real board, a real syllabus, a lecturer persona); the checks; the sample; what is not built, in amber | Honest limits; the TRL 7 step named: one department, one term, inside its LMS |
 | 6:15 | 9. The doors | The architecture diagram | "One core; the assistants, the LMS and the office suite they already run; local read-only door built, remote planned" |
 | 6:50 | 10. Why a department pays | The ladder and the accreditor clauses | "The review happens anyway; the pack writes itself" |

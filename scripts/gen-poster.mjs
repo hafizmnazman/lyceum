@@ -180,7 +180,7 @@ img { display: block; }
         <div class="real">
           <div class="real-box" data-claim="deck-trl"><div class="num lime">TRL 6</div><p>Self-assessed against NASA ESTO's software column: “Prototype implementations of the software demonstrated on full-scale realistic problems.” On real postings from a real public board, a sample course outline and a lecturer persona.</p></div>
           <div class="real-box" data-claim="proof-checks"><div class="num">${checks.value}</div><p>${checks.label}.</p></div>
-          <div class="planned-box"><p><span class="pill planned">Planned</span>Not built yet</p><ul><li>Remote assistant doors</li><li>The LMS door</li><li>Learn's statistics</li><li>The benchmark run</li><li>Scheduled watching</li><li>Shared workspace, sign-in</li></ul></div>
+          <div class="planned-box"><p><span class="pill planned">Planned</span>Not built yet</p><ul><li>Remote assistant doors</li><li>The LMS door</li><li>Pooling and predictions</li><li>The benchmark run</li><li>Scheduled watching</li><li>Shared workspace, sign-in</li></ul></div>
         </div>
       </div>
       <div class="ask">

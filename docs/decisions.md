@@ -1881,3 +1881,107 @@ Chosen: (a), because the condition D8a set has not arrived, and splitting the sc
 Reverse it if: the gzipped main chunk passes 300 kB, or loading on the presenting laptop is slow enough to see.
 
 To reverse: lazy-load the views in `src/ui/screens/CurriculumWorkspace.tsx`, `CourseWorkspace.tsx`, `Learn.tsx` and `Recap.tsx`, as D8a's decision says.
+
+## 2026-10-23 01:30, the owner's items: the session decides the open Needs the owner items
+
+The owner asked the session, on 23 October 2026 at about 01:27, to do the items waiting on the owner. The decisions below take each open item from the run log's two Needs the owner lists and the depth plan's Section 18, in the shape of the others; D9, the capture and the render, is not among them, because the owner gated it in writing and the request did not name it.
+
+## 2026-10-23 01:33, the owner's items: the tour's Course caption (Track C, item 1)
+
+Options: (a) keep the frozen caption, "One outcome, visualisation", which contradicts the five-outcome record the step now opens on. (b) The replacement the run log proposed, same step and same order: "Course: what CS310 promises today. Five outcomes and a fourteen-week outline; no employer evidence yet."
+
+Chosen: (b), on the owner's word, because a caption that contradicts its own screen fails the honesty rule the freeze was meant to protect. The film is cut on captions by their openings (`video/remotion/scripts/sync.mjs` matches with `startsWith`), no anchor uses this caption, and the next capture at D9 takes the new words; the new caption carries no digits, which the film's sync would check against the register.
+
+Reverse it if: the owner prefers the old wording kept until after the final; the film needs no change either way.
+
+To reverse: the step's caption in `src/demo/script.ts`.
+
+## 2026-10-23 01:33, the owner's items: "no AI text" where the sample's wording was written by the build session (Track C, item 2)
+
+Options: (a) keep "no AI text", "no model text" and "no model wrote a word of it", which stopped being literally true of the demo course once the build session wrote its wording as labelled fixtures. (b) Say what stays true, that Lyceum adds no model text: the tour's Teach caption ("Editable in PowerPoint; Lyceum adds no AI text.", its opening unchanged, which the film anchors on), the deck's Teach figure and note, the brief's caption, the booth script's line, the diagram's Pack renderer and the README card.
+
+Chosen: (b), on the owner's word, because the generator's property is the claim worth making and it holds for a lecturer's own pack and the sample alike. The deck, the brief and the film take the new words at D9; the diagram and the README card were regenerated now (`scripts/gen-architecture.mjs`, `.github/readme/build.py`), and the card's check line now reads 259 passing, 24 suites.
+
+Reverse it if: the owner wants the shorter wording back on a surface that shows only the lecturer's own pack.
+
+To reverse: `src/demo/script.ts`, `deck/index.html`, `scripts/gen-brief-pdf.mjs`, `docs/demo-script.md`, `scripts/gen-architecture.mjs` and `.github/readme/build.py`, then their generators.
+
+## 2026-10-23 01:36, the owner's items: hono's advisories (Track C, item 3)
+
+Options: (a) keep hono 4.12.32 behind the booth's network fence, which already keeps every affected feature unreachable from the hotspot. (b) Upgrade to the fixed line, `npm install hono@^4.13.11`, which installed 4.13.13 for the API, `@hono/node-server` and the MCP SDK alike, then the full verification with the booth's and the curl round trips.
+
+Chosen: (b), on the owner's word, because the fence is a second line, not a reason to keep a known flaw; by this morning the audit also listed a high-severity advisory against hono up to 4.13.10. After the upgrade `npm audit` lists none against hono, and every check passed, the curl round trip with the same answers as before.
+
+Reverse it if: a later hono release breaks the API; pin 4.13.13.
+
+To reverse: `hono` in `package.json` and `package-lock.json`.
+
+## 2026-10-23 01:38, the owner's items: vite's advisories, found while checking hono's
+
+Options: (a) leave vite 6.4.3, whose five advisories reach the development server (the open-in-editor route, one of them high on Windows) but not `vite preview`, which the booth serves. (b) The patch release in the same minor, 6.4.5, which fixes all five.
+
+Chosen: (b), because the owner's `npm run dev` runs on this Windows laptop and a patch within the minor carries little risk; the build, the smokes and the walk passed on it, and the main chunk moved by 0.02 kB gzipped. The tree's other advisories (concurrently and shell-quote, tar through node-pre-gyp, xlsx, pptxgenjs and image-size, puppeteer-core and its proxy chain, nanoid, source-map-js) need major versions or have no fix on npm, so they stay, and the owner has the list.
+
+Reverse it if: vite 6.4.5 changes the build's output in a way a check misses.
+
+To reverse: `vite` in `package.json` and `package-lock.json`.
+
+## 2026-10-23 01:40, the owner's items: the doors strip's marks (Track A, item 1)
+
+Options: (a) the official marks of Claude, ChatGPT, Copilot, Gemini, Teams and the LMS on the landing page's strip, whose usage terms are still unread or ask for a licence, a request or a permission (docs/brand-use.md). (b) Keep the neutral icons, each door's name and its Planned tag, with marks only where Lyceum really connects, as the diagram already does (Claude and MCP on the built local door, Greenhouse on the board it reads).
+
+Chosen: (b), because a brand's mark beside a door that is not built reads as an endorsement or an integration, and no permission is on file for any of them. Nothing changes.
+
+Reverse it if: the owner gathers each brand's permission or confirms its press-kit terms; the strip and docs/brand-use.md then change together.
+
+To reverse: `DOORS` in `src/ui/screens/Landing.tsx` and `docs/brand-use.md`.
+
+## 2026-10-23 01:40, the owner's items: TRL 6 or TRL 5 (Track A, item 4)
+
+Options: (a) present TRL 5. (b) Keep software TRL 6, self-assessed, in NASA ESTO's software wording, with the relevant environment named as it is (real postings from a real public board, a sample course outline, a lecturer persona). (c) Run one real syllabus with one lecturer before the final.
+
+Chosen: (b), because it is the research note's own placement ("Honest placement for Lyceum: software TRL 6") and the claims audit's advice ("Keep self-assessed"), and every surface already names the environment beside the level. Track C made the full-scale problem fuller, a fourteen-week course record with its results and surveys; option (c) stays open to the team and would make the environment the one the note proposes.
+
+Reverse it if: the team cannot run a real syllabus and the judges' briefing defines TRL 6's environment more strictly than NASA's software column does.
+
+To reverse: the `deck-trl` row in `docs/claims.md` and the surfaces it lists.
+
+## 2026-10-23 01:43, the owner's items: the pitch's opening order and its commercial line (Track A, item 5)
+
+Options for the order: (a) Section 14's receipt, why now, person, which the pitch review scored as beats 3, 2, 1. (b) Section 4.1's person, why now, receipt, which loses the opening on the receipt that Section 14.1 asks for. (c) The receipt as a cold open, as the film opens, then the spine from its first beat: person, why now, the loop. Options for the money: (d) keep "the price is the hypothesis our pilot tests"; (e) name the buyer and the purchase the pilot tests, with no price invented.
+
+Chosen: (c) and (e). The receipt keeps its place as the hook, and after it the story runs in the spine's order with "but" and "therefore" between the slides; slide 10's notes now say the department that owns the review would pay and the pilot tests that purchase (does it renew for a second term?), support is counted in hours per lecturer, and slide 11 gains "A second term renewed" among the measures. The deck check passed on it; the export waits for D9.
+
+Reverse it if: the Story lane's rehearsal on Monday finds the old order runs better.
+
+To reverse: the order of slides 2 and 3 and the notes of slides 1, 2, 3, 10 and 11 in `deck/index.html`, the rows of Section 14's table in `docs/lyceum-upgrade-plan.md`, the slide column in `docs/claims.md` and the comment in `scripts/gen-deck.mjs`.
+
+## 2026-10-23 01:44, the owner's items: the GitHub repository's description (Track A, item 6)
+
+Options: (a) leave the description, which described an earlier version of the project ("Rasch-tested changes, self-scoring predictions"). (b) The house style's one plain sentence: "Lyceum turns real job postings into a course decision with receipts, every semester."
+
+Chosen: (b), on the owner's word, set with `gh repo edit` on hafizmnazman/lyceum and read back; a description that promises what the code does not do is the kind of claim the honesty rule forbids. Only the description changed; nothing was pushed.
+
+Reverse it if: the owner wants other words; it is one command.
+
+To reverse: `gh repo edit hafizmnazman/lyceum --description "..."`.
+
+## 2026-10-23 01:45, the owner's items: deck slides 6 and 7 at D9 (depth plan Section 18, item 6)
+
+Options: (a) keep slides 6 and 7 as they are and show Track C's screens only at the booth. (b) Carry the before and after on slide 6 and the OBE table on slide 7, from two new captures; the receipt on slide 1 and the five figures do not change.
+
+Chosen: (b), because those two slides are where the pitch speaks of Update and Learn, and the new screens are the evidence for what it says. `scripts/presentation-shots.mjs` now makes `shot-update-change.png` (the change in use down to the dumbbell's second row) and `shot-learn-obe.png` (the OBE report down to its table), both tried on the built app; the slides take them at D9, after `npm run shots`, because the deck's check refuses an image that does not load.
+
+Reverse it if: the owner prefers the deck unchanged; skip the two edits at D9.
+
+To reverse: the two captures in `scripts/presentation-shots.mjs`.
+
+## 2026-10-23 01:46, the owner's items: CS310's recent references (depth plan Section 18, item 8)
+
+Options: (a) the session adds two recent references to the sample record, labelled sample. (b) Leave them to the team's lecturer, as the plan asks, with the record flagging the gap until then.
+
+Chosen: (b), because a reading list is a lecturer's choice and the record's own rule exists to show who supplied it; the flagged gap is honest and is itself checked. The final report names two candidates for the lecturer to confirm.
+
+Reverse it if: the team's lecturer sends the references; they go into `CS310_BEFORE.references` and the gap line comes out.
+
+To reverse: `src/data/sample-course/cs310.ts` and its proofs.

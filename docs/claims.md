@@ -41,7 +41,7 @@ The relevant environment says a sample course outline, not a real syllabus: the 
 
 ## The film
 
-Package A7. The film shows the same four rows as the deck, and only those: `deck-receipt` (1 of 9, counting up beside the receipt in both cuts), `world-skills-and-approval` (12 to 18 months and 39%, Afternoon's second scene), `deck-trl` (TRL 6) and `proof-checks` (185, counting up), both in Afternoon's proof scene. `video/remotion/scripts/sync.mjs` reads them from this file, checks the receipt's sentence, posting and denominator against `mcp/sample-workspace.json`, and fails on any digit in a caption that these rows do not hold. The app footage shows the app's own numbers from the dated saved sample, and its chip says "saved sample".
+Package A7. The film shows the same four rows as the deck, and only those: `deck-receipt` (1 of 9, counting up beside the receipt in both cuts), `world-skills-and-approval` (12 to 18 months and 39%, Afternoon's second scene), `deck-trl` (TRL 6) and `proof-checks` (the check total, counting up), both in Afternoon's proof scene. `video/remotion/scripts/sync.mjs` reads them from this file, checks the receipt's sentence, posting and denominator against `mcp/sample-workspace.json`, and fails on any digit in a caption that these rows do not hold. The app footage shows the app's own numbers from the dated saved sample, and its chip says "saved sample".
 
 ## The landing page: clauses quoted beside the loop
 
@@ -62,7 +62,7 @@ Each quotation is word for word from the note named, which quotes the document a
 
 | Claim | Landing page | Deck | Brief | Poster | Film | README | Checked by |
 |:--|:--|:--|:--|:--|:--|:--|:--|
-| `world-skills-and-approval` | yes | slide 2 | page 1 | yes | Afternoon, beat 2 | yes | `src/prove-journey.ts` (landing), `scripts/gen-deck.mjs` (slides and the PDF read back), `scripts/gen-brief-pdf.mjs`, `scripts/gen-poster.mjs`, `video/remotion/scripts/sync.mjs` (captions and the counting graphics) |
+| `world-skills-and-approval` | yes | slide 3 | page 1 | yes | Afternoon, beat 2 | yes | `src/prove-journey.ts` (landing), `scripts/gen-deck.mjs` (slides and the PDF read back), `scripts/gen-brief-pdf.mjs`, `scripts/gen-poster.mjs`, `video/remotion/scripts/sync.mjs` (captions and the counting graphics) |
 | `asia-talent-shortage` | yes | no | page 1 | no | no | no | `src/prove-journey.ts`, `scripts/gen-brief-pdf.mjs` |
 | `malaysia-underemployment` | yes | no | page 1 | no | no | no | `src/prove-journey.ts`, `scripts/gen-brief-pdf.mjs` |
 | `deck-receipt` | no | slide 1 | page 1 | yes | both cuts, beat 3 | no | `scripts/gen-deck.mjs` and `video/remotion/scripts/sync.mjs` check the sentence, its posting and the denominator against `mcp/sample-workspace.json` |
