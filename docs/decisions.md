@@ -1985,3 +1985,63 @@ Chosen: (b), because a reading list is a lecturer's choice and the record's own 
 Reverse it if: the team's lecturer sends the references; they go into `CS310_BEFORE.references` and the gap line comes out.
 
 To reverse: `src/data/sample-course/cs310.ts` and its proofs.
+
+## 2026-10-23 03:11, the poster: every logo, planned ones too
+
+Options: (a) the rule of 22 October: monochrome Simple Icons marks only where Lyceum really connects, and names in text elsewhere. (b) Every integration's own mark in its owner's colours, built and planned, each beside its full product name and its status, from the owner's own file where one is published.
+
+Chosen: (b), the owner's answer of 23 October ("Every logo, planned ones too"), with downloads from official brand pages approved and the brand risk for print accepted. Microsoft's six icons come from its product icon set under the Microsoft Fabric Assets License and are used as its lineup rule allows: each labelled with its full product name, in full colour, unmodified, never larger than Lyceum's name, never in a corner. Lever's wordmark comes from the header of lever.co, which publishes no brand kit. The other marks are Simple Icons 16.35.0 paths in each brand's colour. OpenAI's brand page refused an automated read and was not worked around, so ChatGPT Edu is named in text. Microsoft 365 Copilot has no icon in the set, so it is named in text beside the Microsoft 365 icon. Every file sits in `public/brand/partners/logos/`, the folder whose files keep their owners' colours, with its source, fingerprint and terms in the manifest; `node scripts/gen-partner-logos.mjs --check` holds them to it.
+
+Reverse it if: an owner objects, or the owner prefers the 22 October rule for print.
+
+To reverse: name the products in text in `scripts/gen-poster.mjs` and remove `public/brand/partners/logos/` and `scripts/gen-partner-logos.mjs`.
+
+## 2026-10-23 03:38, the poster: portrait, one story down one thread
+
+Options: (a) keep A6's landscape A1 and refresh its figures. (b) A portrait A1 in the manner of the teammate's poster the owner likes: the chapters in the spine's order down one thread, each joined to the next by the transition rule's "but" or "therefore", the journey folded into the loop, and the thread closing into the host's growth rings at the ask. (c) The teammate's grid of separate facts with the content brought up to date.
+
+Chosen: (b). The owner asked for a poster that tells a story rather than placing facts at random, in the manner of the teammate's portrait poster and the finalized banner, without repeating the banner. The spine (plan Section 4.1) gives the order, and the poster carries beats 1 to 4 and 6 to 8, as the plan's table asks, with beat 5 inside the loop as the thing each step leaves behind. The helpers appear only as small discs on the loop, so the banner's grid of agents is not repeated.
+
+Reverse it if: the booth's board is landscape, or the owner prefers the earlier layout.
+
+To reverse: restore `scripts/gen-poster.mjs` from the commit before this one.
+
+## 2026-10-23 03:38, the poster: the UTP mark in the footer, beside the demo line
+
+Options: (a) no UTP mark on the poster, with the university named in text. (b) The mark in the footer beside the demo line, never in the title, as on the pack and the screens.
+
+Chosen: (b). The owner's finalized banner carries the mark, and the owner approved its use on published surfaces when labelled demo (docs/brand-use.md). The footer is where the demo line already sits.
+
+Reverse it if: the owner wants the mark only beside the team's name (depth plan Section 13), or not at all.
+
+To reverse: remove the footer's image in `scripts/gen-poster.mjs`. The demo line stays, because CS310 is still the demo course.
+
+## 2026-10-23 03:38, the poster: previews only, until D9
+
+Options: (a) run `node scripts/gen-poster.mjs`, which writes `docs/presentation/poster-a1.pdf`. (b) Render previews into the session's scratchpad through the exported `renderPoster()`, and leave the D9 command until the owner says go.
+
+Chosen: (b). The owner answered "Not yet" to D9, and the depth plan's recording gate names the poster command. The preview PDF is the same sheet D9 would write, so the owner can judge it or print it from there.
+
+Reverse it if: the owner says go.
+
+To reverse: run `node scripts/gen-poster.mjs`.
+
+## 2026-10-23 03:47, the poster: as full as the sheet allows
+
+Options: (a) a calm sheet with room around each chapter. (b) Every chapter filled: the plan's three why-now reasons (the latency, the accreditor's clause, the assistants already on campus), the clause each step answers inside the loop, the readiness ladder, the system as built (people, doors, the core's engines, job boards, files in and out, references and taxonomies), and the ask with the pilot's measures and why a department pays.
+
+Chosen: (b), on the owner's word that a poster should "maximize the space as much as possible". Every addition comes from a registered row, a dated research note, the architecture generator or the deck's slides 10 and 11, so the poster claims nothing the other surfaces do not. One planned item from the diagram was left off for room: the sync with the SIS and the gradebook. The poster claims nothing about that sync, so dropping it makes no statement untrue.
+
+Reverse it if: the owner finds the sheet too dense to read from the aisle. Remove the people row and the references panel first.
+
+To reverse: remove those blocks in `scripts/gen-poster.mjs`. The gaps between chapters grow by themselves.
+
+## 2026-10-23 03:47, the poster: the readiness ladder says TRL 6, not 5 to 6
+
+Options: (a) show "TRL 5 to 6", as the owner wrote in passing. (b) Show NASA's nine levels with 6 filled and marked self-assessed, and 7 dashed as next. This is what the claims register's `deck-trl` row says, and what the owner's items of 23 October kept.
+
+Chosen: (b). The register and that decision both say software TRL 6, and a range would contradict the deck and the brief. The ladder still shows the distance to 7, which is the ask: one department, for one term.
+
+Reverse it if: the owner decides the self-assessment is 5 to 6.
+
+To reverse: change the claims row first (`docs/claims.md`, `deck-trl`), then the deck, the brief and the poster.

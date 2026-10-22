@@ -4,7 +4,7 @@
 
 **Stamp.**
 
-- Last updated: 23 October 2026, 01:55 Kuala Lumpur time, after the owner's items that followed Track C.
+- Last updated: 23 October 2026, 04:13 Kuala Lumpur time, after the portrait poster that followed the owner's items, published to the team.
 - Reflects: `main` after Track C's D0, D1, D2, D5a, D6a, D8a, D3a and D4a (`87d585d`, `81072d1`, `5715efc`, `02f5c73`, `963b0f2`, `54d400f`, `78aed88`, `6c0b262`), D8b (`b7597b1`), D7 (`4dc0650`), D5b (`4ddefd6`), D6b (`e79fd18`), D3b (`8ef1f87`), D8c (`3e9e59a`) and the owner's items that followed; Track A ended at `b4bfdc4`, with the owner's follow-ups committed as `ba980e7`; the base is `f5b26a4`, tagged `pre-overhaul`. Nothing is pushed; `amsterdam-2026` is the owner's tag at the freeze. Sections 1 to 5 describe Track A's build and its run of 22 October, afternoon; Track C's additions and their verification are in Section 8.
 - Project: Lyceum, Universiti Teknologi PETRONAS, for the Grand Final on 29 October 2026 in Amsterdam ([docs/competition/grand-final-2026.md](competition/grand-final-2026.md)).
 
@@ -671,3 +671,36 @@ The full run after D7, D5b, D6b and D3b, on the build machine between 01:18 and 
 - Checks, 01:48 to 01:53: typecheck; prove:all 259 passed, twenty-four suites; the build, main chunk 1,005.38 kB (298.86 kB gzipped); `video/remotion` typecheck; `smoke` 19 of 19; `smoke:integrity` 3 of 3; `smoke:workspace` 11 of 11; `smoke:curriculum` 6 of 6; the walk, 30 checks; the curl round trip on the new hono; the guide, contrast, dash, migration, sample, partner-mark, theme, mascot, diagram, kiosk-film and deck checks; the door's stdio run.
 
 **The D9 commands, waiting for the owner's written go**, in order, as they now stand: `npm run build`; `npm run shots` (now also `shot-update-change.png` and `shot-learn-obe.png`; the README's seven copied); `npm run gen:sample-decks` with PowerPoint (also the pack's clipping check); the deck's slide 6 takes `shot-update-change.png` in place of `shot-history.png` and slide 7 takes `shot-learn-obe.png` in place of `shot-learn.png`, with their captions and alt text (Section 18 item 6, decided 23 October), and the brief's masthead date is set to the day of the run; `npm run deck`; `node scripts/gen-brief-pdf.mjs`; `node scripts/gen-poster.mjs`; `node video/capture/capture.mjs`; in `video/remotion`, `npm run render:loop90`, `npm run render:afternoon` and `npm run check:determinism`; the film copied into `deck/media/` and `npm run deck` again; `node scripts/kiosk-film.mjs` and its `--check`.
+
+### The poster, portrait: 23 October 2026
+
+- **The sheet.** `scripts/gen-poster.mjs` now draws a portrait A1, 594 by 841 mm, that tells the story down one thread. It has seven chapters: a question after class, why now, exact words, the loop, the proof, the wider world and the ask. Each is joined to the next by the transition rule's "but" or "therefore", and the thread closes into the host's growth rings at the ask. It carries beats 1 to 4 and 6 to 8, with beat 5 inside the loop as what each step leaves behind. On the owner's word that a poster should use its space, it also carries:
+  - the plan's three why-now reasons;
+  - the clause each step answers;
+  - NASA's readiness ladder, with TRL 6 filled and 7 next;
+  - the system as built: its people, doors, ten engines, job boards, files in and out, references and taxonomies;
+  - the pilot's measures, and why a department pays.
+
+  Each comes from a registered row, a research note, the architecture generator or the deck's slides 10 and 11 (docs/decisions.md).
+- **The marks.** `scripts/gen-partner-logos.mjs` writes ten Simple Icons marks into `public/brand/partners/logos/`, in their brands' colours, and checks the seven official files beside them: Microsoft's six product icons under its assets licence, and Lever's header wordmark. Each file is in the manifest with its source, fingerprint and terms; `--check` fails on drift. ChatGPT Edu and Microsoft 365 Copilot are named in text (docs/brand-use.md).
+- **The poster's checks.** The sheet fails if:
+  - a number is neither in the register nor a reference;
+  - it carries a dash;
+  - the ownership line is missing, or the UTP mark appears without the demo line;
+  - a block leaves its chapter or touches another;
+  - two of the loop's labels touch;
+  - the chapters fall out of order or reach the footer.
+
+  `posterHtml()` and `renderPoster()` are exported, so the previews rendered into the session's scratchpad and `docs/presentation/poster-a1.pdf` was not written; that file is D9's.
+- **The preview.** The ninth render passed every check, and its PDF was read back at A1 with the thread, the rings, the faces and the marks intact.
+- **Checks, 04:02 to 04:05.**
+  - `npm run typecheck` passed.
+  - `npm run prove:all`: 259 passed, twenty-four suites. The journey proof ran again after the claims table changed: 9 of 9.
+  - `npm run build` passed; main chunk 1,005.38 kB (298.86 kB gzipped).
+  - The smokes: `smoke` 19 of 19, `smoke:integrity` 3 of 3, `smoke:workspace` 11 of 11, `smoke:curriculum` 6 of 6. The curriculum smoke's two screenshots were restored.
+  - CONTRAST CHECK OK (238 files, 41 generated SVGs); no en or em dash in 349 text files.
+  - The integration marks, the partner mark, the diagram and the guide all match.
+
+The D9 command for the poster is unchanged, `node scripts/gen-poster.mjs`; it now writes the portrait sheet, and `node scripts/gen-partner-logos.mjs --check` joins the checks run beside it. Until it runs, `docs/presentation/poster-a1.pdf` is the landscape poster of A6.
+
+Published to the team's main as `fdb3cbb` (23 October, 04:12), with `docs/lyceum-depth-plan.md` now left out of team snapshots by `scripts/team.mjs`, as the owner's rule for plans asks.

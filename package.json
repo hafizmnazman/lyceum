@@ -59,7 +59,8 @@
     "gen:brief": "node scripts/gen-brief-pdf.mjs",
     "gen:poster": "node scripts/gen-poster.mjs",
     "gen:sample-decks": "node scripts/gen-sample-decks.mjs",
-    "gen:partner-marks": "node scripts/gen-partner-marks.mjs"
+    "gen:partner-marks": "node scripts/gen-partner-marks.mjs",
+    "gen:partner-logos": "node scripts/gen-partner-logos.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

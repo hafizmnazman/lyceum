@@ -65,12 +65,12 @@ Each quotation is word for word from the note named, which quotes the document a
 | `world-skills-and-approval` | yes | slide 3 | page 1 | yes | Afternoon, beat 2 | yes | `src/prove-journey.ts` (landing), `scripts/gen-deck.mjs` (slides and the PDF read back), `scripts/gen-brief-pdf.mjs`, `scripts/gen-poster.mjs`, `video/remotion/scripts/sync.mjs` (captions and the counting graphics) |
 | `asia-talent-shortage` | yes | no | page 1 | no | no | no | `src/prove-journey.ts`, `scripts/gen-brief-pdf.mjs` |
 | `malaysia-underemployment` | yes | no | page 1 | no | no | no | `src/prove-journey.ts`, `scripts/gen-brief-pdf.mjs` |
-| `deck-receipt` | no | slide 1 | page 1 | yes | both cuts, beat 3 | no | `scripts/gen-deck.mjs` and `video/remotion/scripts/sync.mjs` check the sentence, its posting and the denominator against `mcp/sample-workspace.json` |
+| `deck-receipt` | no | slide 1 | page 1 | yes | both cuts, beat 3 | no | `scripts/gen-deck.mjs` and `video/remotion/scripts/sync.mjs` check the sentence, its posting and the denominator against `mcp/sample-workspace.json`; `scripts/gen-poster.mjs` checks the figure against this row |
 | `deck-trl` | no | slide 8 | page 2 | yes | Afternoon, beat 6 | no | `scripts/gen-deck.mjs`, `scripts/gen-brief-pdf.mjs`, `scripts/gen-poster.mjs`, `video/remotion/scripts/sync.mjs` |
 | `proof-checks` | yes | slide 8 | page 2 | yes | Afternoon, beat 6 | yes | `src/prove-journey.ts` (the figure equals the suites' total), the generators above |
-| `proof-live-board` | yes | no | no | no | no | no | `src/prove-journey.ts` |
-| `proof-no-keys` | yes | no | no | no | no | no | `src/prove-journey.ts` |
-| `proof-no-paraphrase` | yes | no | no | no | no | no | `src/prove-journey.ts` |
+| `proof-live-board` | yes | no | no | yes | no | no | `src/prove-journey.ts`, `scripts/gen-poster.mjs` |
+| `proof-no-keys` | yes | no | no | yes | no | no | `src/prove-journey.ts`, `scripts/gen-poster.mjs` |
+| `proof-no-paraphrase` | yes | no | no | yes | no | no | `src/prove-journey.ts`, `scripts/gen-poster.mjs` |
 | `tour-length` | yes | no | no | no | no | yes | `src/prove-journey.ts` (the figure equals `tourMinutes()`) |
 
-A digit on the deck, the brief or the poster that is not one of these figures sits in an element marked as a reference (a date, an id, a clause), and the generators fail on any other. The film's sync fails on any digit in a caption that the four film rows do not hold. Screenshots show the app's own numbers from the dated saved sample, labelled as the sample; they are records, not claims.
+A digit on the deck, the brief or the poster that is not one of these figures sits in an element marked as a reference (a date, an id, a clause, a product's name, the numbers of NASA's readiness scale), and the generators fail on any other. The film's sync fails on any digit in a caption that the four film rows do not hold. Screenshots show the app's own numbers from the dated saved sample, labelled as the sample; they are records, not claims.

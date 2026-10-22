@@ -1,6 +1,6 @@
 # Brand use: the marks Lyceum shows, and where each came from
 
-Written 22 October 2026 (package A6), with the UTP mark added the same evening (Track C, package D0, from `docs/lyceum-depth-plan.md` Section 3.2), from plan Section 12, the design note `docs/research/design-and-video-references-2026-10-22.md` Section 6 and the data in the installed `simple-icons` package (16.35.0). Nothing here was fetched: this run sends nothing off the machine, so every brand page below is named with its link and marked as not read where that matters.
+Written 22 October 2026 (package A6), with the UTP mark added the same evening (Track C, package D0, from `docs/lyceum-depth-plan.md` Section 3.2), from plan Section 12, the design note `docs/research/design-and-video-references-2026-10-22.md` Section 6 and the data in the installed `simple-icons` package (16.35.0). Nothing in that first version was fetched, so each brand page was named with its link and marked as not read where that mattered. On 23 October 2026, with the owner's approval, the session read Microsoft's icon licence and downloaded the poster's official files from their owners' sites (the poster section below).
 
 ## The rule
 
@@ -11,6 +11,21 @@ Simple Icons is CC0 as a project, but each icon keeps its brand's own licence an
 ## The partner mark: the team's own university
 
 The UTP mark is not an integration mark and follows its own rule. It identifies the demo institution, Universiti Teknologi PETRONAS, the team's own university, on sample material. It keeps its owner's colours, the blue `#004A84` and the gold `#BC893A` of the owner's file, and is never recoloured, cropped, redrawn or inlined into a component; it is never combined with Lyceum's own lockup and never placed in a poster title or a booth banner headline. Every surface that shows it carries the demo line, `DEMO_LINE` in `src/data/sample-course/index.ts`: "A demo course at UTP, written for this prototype. CS310 is not a UTP course outline, and these marks, responses and slides are synthetic." The pack and the screens place a PNG with the alt text "Universiti Teknologi PETRONAS mark, demo course". The contrast check leaves `public/brand/partners/` alone by the one exception the owner approved on 22 October 2026 (CLAUDE.md); a hex anywhere else still fails. A campus that must not show a mark turns `showMark` off in the institution profile on the Guide page.
+
+## The poster's marks: the owner's decision of 23 October 2026
+
+On 23 October the owner chose every logo, planned ones too, for the A1 poster, and accepted the brand risk for print. The poster's sixth chapter shows the system with each integration's own mark in its owner's colours. Every mark sits on a neutral tile at one size, beside its full product name in body text and its status: built, local and read-only, or planned. The ownership line is in the footer. No mark is larger than Lyceum's name, in the title, in a corner or combined with Lyceum's lockup. The files live in `public/brand/partners/logos/`, the folder whose files keep their owners' colours. Its `manifest.json` gives each file's product, source, fingerprint and terms, and `node scripts/gen-partner-logos.mjs --check` fails when a file drifts from the package or from its downloaded fingerprint (docs/decisions.md).
+
+| Mark | Source | Terms on record | On the poster as |
+|:--|:--|:--|:--|
+| Microsoft PowerPoint, Word, Excel, Forms, Teams, Microsoft 365 | Microsoft's product icon set, `res-1.cdn.office.net/files/fabric-cdn-prod_20251008.001/assets/brand-icons/product/svg/`, downloaded 23 October 2026, committed byte for byte | The Microsoft Fabric Assets License (November 2019, <https://aka.ms/fluentui-assets-license>), read on 23 October. Icons may illustrate that an application integrates with Microsoft products. In a lineup that is not clickable, each icon is labelled with the full product name in body copy. Icons are full colour and unmodified, never more prominent than the application's name, never used as a logo or in a decorative corner, and imply no endorsement | Files in and out (built): results and rubrics in Excel, survey exports from Forms, the teaching pack in PowerPoint, the course file in Word. A planned door: Microsoft 365 Copilot and Teams. Copilot has no icon in the set, so it is named in text |
+| Lever | The wordmark in the header of lever.co (`lever.co/images/lever-only-logo.png`), downloaded 23 October 2026 | No brand kit or usage page was found; the wordmark is used referentially and unmodified | A job board Lyceum reads through its public API (built) |
+| Claude, Model Context Protocol, Greenhouse | Simple Icons 16.35.0, now in their brands' colours | As in the table below | The local door (local, read-only) and a job board (built) |
+| Google Forms, Google Gemini | Simple Icons 16.35.0 | Simple Icons records no guidelines; Google's own terms apply, and Google asks for a brand request (the table below), which the owner accepted as a risk for print | Survey exports read (built); a planned remote door, Gemini Enterprise |
+| Moodle, Canvas | Simple Icons 16.35.0 | Moodle's trademark page (<https://moodle.com/trademarks>); Instructure's media resources page (<https://www.instructure.com/about/brand-guide/media-resources>); neither read in this run | Moodle: Feedback exports read and quiz items written as Moodle XML, built and not yet tried on a Moodle site. Both: the LMS door, planned |
+| TypeScript, React, Node.js | Simple Icons 16.35.0 | TypeScript's and Node.js's branding pages, named by Simple Icons; React's own terms | "Built with", inside the core |
+
+OpenAI's brand page (<https://openai.com/brand/>) refused an automated read on 23 October, and the session did not work around it. So ChatGPT Edu, a planned door, is named in text and never drawn. If the owner downloads the mark by hand from that page, it can join the folder and the manifest.
 
 ## Marks shown
 
@@ -23,6 +38,8 @@ The UTP mark is not an integration mark and follows its own rule. It identifies 
 | Lyceum | Every surface | Lyceum's own mark, from the host's silhouette (`public/brand/mark.svg`, package A3) | Ours | Never combined with a third-party mark. |
 
 ## Named in text, and why
+
+Everywhere but the poster, these stay in text. The poster section above says which of them the poster now draws, under the owner's decision of 23 October.
 
 | Product | Why text and not a mark |
 |:--|:--|
@@ -38,7 +55,8 @@ The UTP mark is not an integration mark and follows its own rule. It identifies 
 ## Where each surface stands
 
 - **The architecture diagram** (`scripts/gen-architecture.mjs`): the three marks above, the ownership line in its footer. The deck, the brief and the poster reuse it.
-- **The deck, the brief and the poster** (`deck/`, `scripts/gen-brief-pdf.mjs`, `scripts/gen-poster.mjs`): no marks of their own beyond the diagram's.
+- **The deck and the brief** (`deck/`, `scripts/gen-brief-pdf.mjs`): no marks of their own beyond the diagram's.
+- **The poster** (`scripts/gen-poster.mjs`, portrait since 23 October): its own marks in the system chapter, from `public/brand/partners/logos/` under the owner's decision of 23 October, with the ownership line, and the UTP mark only in the footer, beside the demo line.
 - **The sample material** (the pack, the survey page, the course file, the OBE report, the term recap): the UTP mark with the demo line, as each Track C package builds the surface; `showMark` in the institution profile turns it off everywhere at once.
 - **The landing page's doors strip** (`DOORS` in `src/ui/screens/Landing.tsx`): neutral icons and the door names, each labelled built or planned, until the owner answers item 1 of Needs the owner in `docs/run-log.md`.
 
