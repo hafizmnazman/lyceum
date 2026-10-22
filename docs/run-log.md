@@ -1,8 +1,46 @@
-# Track A run log
+# Run log
 
-The autonomous run of Track A (docs/lyceum-upgrade-plan.md Section 17.5). Times are Kuala Lumpur time (GMT+8). To resume after an interruption, start at the first package below that has no "ended" line, and re-read Section 17.5 and this file first.
+Two autonomous runs: Track C (docs/lyceum-depth-plan.md Section 16), the current one, and Track A (docs/lyceum-upgrade-plan.md Section 17.5) below it, kept as written. Times are Kuala Lumpur time (GMT+8).
 
-## Needs the owner
+## Track C
+
+To resume after an interruption, start at the first package below that has no "ended" line, and re-read the depth plan's Section 16 and this file first. The order: D0, D1, D2, D5a, D6a, D8a (Tier 1); D3a, D4a, D8b (Tier 2); D7, D5b, D6b, D3b, D8c (Tier 3, until Monday 26 October ends). A tier starts only after the previous tier's D8 run is green.
+
+### Needs the owner (Track C)
+
+None yet.
+
+### Packages
+
+#### Before D0: the baseline and the base commit
+
+- 2026-10-22 18:07 read CLAUDE.md, the depth plan in full, `docs/as-built.md` Sections 1, 2, 5 and 6, `docs/decisions.md` from "12:00, after Track A" to the end, the competition file, the Codex review of the depth plan, the four research notes of the plan's Section 20, and, as CLAUDE.md's read order asks, the master plan's Sections 0, 4 to 4.2, 6, 7 and 17.5, the palette poster and its audit, DECISIONS.md and the improvement plan's Section 30.
+- 18:09 baseline check: `npm run typecheck` passed; `npm run prove:all` 185 passed, 0 failed, seventeen suites.
+- 18:12 baseline check: `npm run build` passed; `npm run smoke` 19 of 19, `smoke:integrity` 2 of 2, `smoke:workspace` 7 of 7, `smoke:curriculum` 6 of 6; `node scripts/walk.mjs` WALK OK (21 checks); the guide check matches; no en or em dash in 286 text files; BACKUP MIGRATION OK; the sample workspace matches the tour's end state.
+- 18:12 baseline check: `node scripts/contrast-check.mjs` FAILED: the owner's `utp.svg` at the repository root is untracked, so the check's file list includes it, and it carries the mark's own colours (`#004A84`, `#BC893A`) as hand-written hex values. D0's partner exception resolves it.
+- 18:13 committed the owner's uncommitted follow-ups of 22 October, with the depth plan, its four notes and its review, as `ba980e7`, so each Track C commit holds one package (docs/decisions.md). Left out: `utp.svg` (D0 places it) and the stale `docs/presentation/shot-update-hours.png`, which the Track A log also kept out.
+
+#### D0, the institution and the mark
+
+- 18:14 started; re-read Section 16 and this log; read Sections 0, 3 and 11, `docs/brand-use.md`, `tokens.ts`, `contrast-check.mjs`, `workspaceBackup.ts`, `check-backup-migration.mjs`, `seed.ts`, `types.ts`, the store and the Guide page.
+- 18:15 `scripts/gen-partner-marks.mjs` written: the owner's `utp.svg` copied byte for byte into `public/brand/partners/` and rasterised to `utp-1024.png` and `utp-256.png` (looked at: the whole mark, uncropped, in its own colours), with a manifest fingerprint tying the PNGs to the copy; `--check` matches.
+- 18:16 the contrast check's partner exception (parts 2 and 3 leave `public/brand/partners/` alone, the reason in the script); the root `utp.svg` ignored by git (docs/decisions.md). Check: CONTRAST CHECK OK. Negative test: the mark's blue planted in `src/zz-planted-check.ts` and the mark copied to `public/brand/zz-planted-mark.svg`: CONTRAST CHECK FAILED on all three colours, as it should; both removed, OK again.
+- 18:17 `InstitutionProfile` in `src/types.ts`; the demo values and where each default comes from in `src/data/institution.ts`; one check in `src/lib/institution.ts`; the store (the seed, persistence, `saveInstitutionProfile` for a coordinator); the backup at schema 6.
+- 18:18 check: `node scripts/check-backup-migration.mjs` BACKUP MIGRATION OK, 28 checks: schema 6 keeps a saved pass mark and refuses an impossible one, schema 5 takes the demo profile, schemas 4 and 3 restore, and a schema 3 workspace re-exports at 6.
+- 18:19 the Guide page's Institution panel: the settings that shape figures, and behind a disclosure the form (a coordinator edits, everyone else reads) with where each default comes from; the mark is not shown. Looked at in the built app at 1440 and 320 px: no horizontal scroll.
+- 18:19 CLAUDE.md: the depth plan and its four notes in the read order, and the two clauses the owner approved; `docs/brand-use.md`: the UTP row and the partner mark's rule; `DEMO_LINE` in `src/data/sample-course/index.ts`.
+- 18:20 check: `npm run typecheck` passed; `npm run prove:all` failed: four proofs and the curriculum smoke pinned the backup at schema 5. Moved to 6 (prove-evidence's schema 1 case now also drops the profile and expects the demo default back); `node mcp/sample.ts` regenerated the sample workspace at schema 6.
+- 18:21 check: `npm run prove:all` 185 passed, 0 failed, seventeen suites; `npm run build` passed; `npm run smoke:workspace` 7 of 7; `npm run smoke:curriculum` 6 of 6; the sample workspace, the guide, the partner mark and the dash scan (292 files) match or pass. The tracked capture the smokes rewrote was restored (docs/decisions.md).
+- 18:23 five decisions logged (docs/decisions.md).
+- 18:24 ended; committed as "D0: the institution profile at schema 6, the partner mark and its contrast exception, the brand row, the honesty line and the two CLAUDE.md clauses" (the hash is in `git log`).
+
+### What is left
+
+D1 to D8c, in the order above. For D8a: claims rows for the sourced examples in the institution's help lines (UTHM's 50% at 55, McGill's floor by class size, McLennan's five), if the register's scope covers settings' help text.
+
+## Track A
+
+### Needs the owner (Track A)
 
 1. **The doors strip: official marks or neutral icons?** (raised 2026-10-22 06:16, A2b) Plan Section 17.1 asks for the landing page's doors strip "with the official marks" and a `docs/brand-use.md` listing each mark and its source. A2b shipped neutral Lucide icons with each door's name and a Planned tag, because the third-party marks (Claude, ChatGPT, Copilot, Gemini, Teams, the LMS) carry usage terms nobody has checked, and showing them beside doors that are not built could read as an endorsement or an integration. To switch: approve the marks and their sources (from each brand's press or brand page), and the strip and `docs/brand-use.md` follow in one change (`DOORS` in `src/ui/screens/Landing.tsx`). Nothing else waits on this. *Update, A6 (07:45):* the architecture diagram, and so the deck, the brief and the poster, now carry three Simple Icons marks where Lyceum really connects (Claude and MCP on the built local door, Greenhouse on the board it reads), with the ownership line; every other product is named in text, because Microsoft needs a licence, Google a request that takes up to two weeks, Moodle permission, and the OpenAI and Instructure terms were not read in a run that sends nothing off the machine. `docs/brand-use.md` lists each mark, its source and its terms. The landing strip is unchanged until you answer.
 
@@ -20,7 +58,7 @@ The autonomous run of Track A (docs/lyceum-upgrade-plan.md Section 17.5). Times 
 
 8. **The sample's dates** (raised 2026-10-22 10:18, A8) Records built outside the browser take the seed clock, 1 July 2026, so the sample workspace and the screenshots restored from it show a brief, a decision and results dated before the postings they cite were retrieved (9 October 2026). Moving the clock to 22 October fails two journey proofs whose term windows are anchored to July, so this run left it (docs/decisions.md). The live demo uses the browser's real clock. Say if the screenshots' dates should be consistent before the final; it is one change with those two proofs re-anchored. *Resolved 11:08:* the owner asked for the fix; the seed clock is now 22 October 2026 and the proofs build their moments from it (docs/decisions.md).
 
-## Codex queue
+### Codex queue
 
 The owner's Codex limit was reached on 22 October and resets within hours. A Codex run also sends the embedded files to OpenAI, which this run's rules forbid without the owner's go-ahead, so no package here waits on Codex. Reviews worth running once the limit resets and the owner approves are listed here with their files and question; each is `codex exec --sandbox read-only` with the files on stdin and the report saved under `docs/review/`.
 
@@ -30,9 +68,9 @@ At 09:18 the owner reported the limit reset; the owner's earlier message asked f
 2. **The claims audit** (09:18, returned 09:28): `docs/claims.md` row by row against the six research notes, with the landing page. Report: `docs/review/astra-claims-audit-2026-10-22.md`.
 3. **The question bank** (10:01, returned 10:11): a sceptical judge's rehearsal of plan Section 14's ten questions against `JUDGES.md`, the booth script, the deck, the claims register, the as-built drafts, the colour audit and `docs/doors.md`. Report: `docs/review/astra-question-bank-2026-10-22.md`.
 
-## Packages
+### Packages
 
-### A0, checkpoint and the branch
+#### A0, checkpoint and the branch
 
 - 2026-10-22 03:25 started.
 - 03:25 checkpoint: committed `f5b26a4` "Checkpoint before the overhaul" and tagged `pre-overhaul`.
@@ -47,7 +85,7 @@ At 09:18 the owner reported the limit reset; the owner's earlier message asked f
 - 03:32 ended; committed `1c1cdd3` "A0: take the evidence snapshots branch and prove the backup migration".
 - 03:36 check after the commit: the dash scan (new `scripts/dash-scan.mjs`) found no en or em dash in 164 text files, apart from five em dashes inside one verbatim Stripe posting in the saved sample, which stays as published (docs/decisions.md). The script is committed with A1.
 
-### A1, theme and shell
+#### A1, theme and shell
 
 - 2026-10-22 03:37 started.
 - 03:40 installed `@fontsource-variable/bricolage-grotesque`, `plus-jakarta-sans` and `jetbrains-mono` 5.3.0 (dev dependencies; the plan names Fontsource).
@@ -64,7 +102,7 @@ At 09:18 the owner reported the limit reset; the owner's earlier message asked f
 - 04:13 check: `npm run prove:all` 166 passed; `npm run smoke` 14 of 14; `smoke:integrity` 2 of 2; `smoke:curriculum` 5 of 5; guide check matches; dash scan clean.
 - 04:15 ended; committed `1849d25` "A1: tokens as the source, bundled fonts, restyled primitives, the loop rail and the contrast check".
 
-### A3, mascots v1
+#### A3, mascots v1
 
 - 2026-10-22 04:16 started; read the Kancil SVG in the Shenzhen intro (`submission/production/intro/intro.html`) for the layered approach.
 - 04:18 host's working name chosen: Tualang (docs/decisions.md).
@@ -79,7 +117,7 @@ At 09:18 the owner reported the limit reset; the owner's earlier message asked f
 - 04:34 check: `npm run build` passed; the four smokes 14, 2, 7 and 5 of 5 passed; guide check matches; dash scan clean.
 - 04:37 ended; committed `13c9851` "A3: the host and seven helpers in code, moods from records, the mark as favicon and app icon".
 
-### A2a, Watch, Report, Decide
+#### A2a, Watch, Report, Decide
 
 - 2026-10-22 04:37 started, right after the A3 commit; read Sections 4, 4.1, 4.2, 5 and 8, `EvidenceResearch.tsx`, `EvidenceWorkspace.tsx`, `journey.ts`, `runs.ts`, `types.ts` and the store.
 - 04:45 decision logged: the term window by time (docs/decisions.md).
@@ -98,7 +136,7 @@ At 09:18 the owner reported the limit reset; the owner's earlier message asked f
 - 05:45 check: `npm run prove:all` passed; `npm run build` passed; `npm run smoke` 15 of 15, `smoke:integrity` 2 of 2, `smoke:workspace` 7 of 7, `smoke:curriculum` 6 of 6.
 - 05:46 ended; committed `c4dd51d` "A2a: Watch and Report with its sub-rail, the decision record and Decide, the event log, and the receipts ring scoped to the term".
 
-### A2b, the remaining loop screens, Home, How it works, Landing
+#### A2b, the remaining loop screens, Home, How it works, Landing
 
 - 2026-10-22 05:46 started; re-read Section 17.5 and this log, then Sections 2, 4, 5, 6 and 9.8. `docs/claims.md` does not exist yet; A2b creates it from the dated research notes.
 - Before 06:12, built and checked as it went: Learn as its own screen with results bound to the taught version, Course, Update, Teach, History, Home, How it works with the loop graphic, the landing page and `docs/claims.md`. Found and fixed: the teaching proof wanted a guide for Learn (added); a visual pass showed the ring crossing the station labels, a seeded outcome shown as removed on a session card, and the filing toast speaking of the sandbox cohort (all fixed).
@@ -113,7 +151,7 @@ At 09:18 the owner reported the limit reset; the owner's earlier message asked f
 
 - 06:16 repaired this log: in A2a a replacement string holding a dollar and a backtick had pasted the log's opening into the A2a entry; the pasted copy was removed by slicing, and the scratch scripts were checked for the same pattern.
 
-### A4, demo and checks
+#### A4, demo and checks
 
 - 2026-10-22 06:16 started; re-read Section 17.5 and this log, then Sections 4, 15 and 17.
 - Before 06:23: the tour rewritten in loop order (91 steps) with a `decision-recorded` wait; the demo smoke now ends on Home with the closed ring and asserts the decision, the event order and the results matched to the version taught; the walk updated for the rail and Learn; the tour length computed and registered in `docs/claims.md`.
@@ -124,7 +162,7 @@ At 09:18 the owner reported the limit reset; the owner's earlier message asked f
 - 06:23 three decisions logged (docs/decisions.md).
 - 06:26 ended; committed `8beb1fe` "A4: the tour follows the loop and closes the ring, the demo smoke asserts the decision record, and the walk visits every step".
 
-### A5, the local door
+#### A5, the local door
 
 - 2026-10-22 06:26 started, right after the A4 commit; re-read Section 17.5 and this log, then Section 11, `workspaceBackup.ts`, `evidence.ts`, `curriculum.ts` and `slides.ts`.
 - Before 06:37: installed `@modelcontextprotocol/sdk` 1.32.1 and zod 4.6.7 (its required peer); wrote `mcp/workspace.ts`, `mcp/server.ts`, `mcp/sample.ts`, `mcp/try.ts`, `skills/lyceum/SKILL.md`, `docs/doors.md` and `src/prove-mcp.ts`. Found and fixed: the exported evidence report claimed nothing was collected from the web when postings had been (the sample check caught the knock-on change in the stored brief); a proof compared annotations against a key they never carry.
@@ -137,7 +175,7 @@ At 09:18 the owner reported the limit reset; the owner's earlier message asked f
 - 06:42 ended; committed `78d351d` "A5: the local door, a read-only MCP server over an exported workspace, with the skill, the sample and its proofs".
 - 06:43 after the commit: git here converts line ends (core.autocrlf, no .gitattributes), so a fresh Windows clone holds generated files with CRLF and the byte comparisons in `generate-guide.mjs --check`, `mcp/sample.ts --check` and the first door proof would fail. They now compare content with line ends normalised, as the theme and mascot checks already did; all three passed against CRLF copies of the files.
 
-### A6, deck, diagram, brief, poster
+#### A6, deck, diagram, brief, poster
 
 - 2026-10-22 06:44 started, right after the line-end commit; re-read Section 17.5 and this log, then Sections 12, 13 and 14 and the design note's Sections 5 and 6.
 - 06:44 installed `simple-icons` 16.35.0 (dev dependency) for the monochrome marks in the diagram; its licence terms are recorded in `docs/brand-use.md`.
@@ -164,7 +202,7 @@ At 09:18 the owner reported the limit reset; the owner's earlier message asked f
 - 07:44 check: `npm run smoke` 19 of 19, `smoke:integrity` 2 of 2, `smoke:workspace` 7 of 7, `smoke:curriculum` 6 of 6; `node scripts/walk.mjs` WALK OK (21 checks).
 - 07:45 ended; committed `34203fb` "A6: the HTML deck with every figure checked against the claims register and its PDF and PPTX, the architecture diagram, the brief on the tokens and the six steps, the A1 poster, and one term across the demo's records".
 
-### A7, the video (the parts that need no human voice)
+#### A7, the video (the parts that need no human voice)
 
 - 2026-10-22 07:46 started, right after the A6 commit; re-read Section 17.5 and this log, then Section 16 and the Dataworks pipeline.
 - 07:47 read the Dataworks pipeline (README.md, style.md, avatars.json, remotion/scripts/sync.mjs, Captions.tsx, anim.ts, Badge.tsx, Root.tsx, timeline.ts) as reference; no third-party skill installed, so none needed a scan (docs/decisions.md).
@@ -200,7 +238,7 @@ At 09:18 the owner reported the limit reset; the owner's earlier message asked f
 - 09:43 Afternoon rendered: 3:26 (206.2 s), 30,147,578 bytes, 64 captions and 12 chapters; four frames pulled from it show the latency pair, Report's helpers beside the footage, the proof scene counting up to 185 and the ring at the close.
 - 09:45 ended; committed `7f9b926` "A7: the film's two cuts from one Remotion project, built on a capture of the real app, with captions and numbers from the claims register, a render diffed frame by frame, and the first two Codex reviews".
 
-### A8, documentation and the full verification
+#### A8, documentation and the full verification
 
 - 2026-10-22 09:46 started; re-read Section 17.5 and this log, then Sections 18 and 19 and the Amanah as-built record (the stamp, the known-mismatches table, the verification tables).
 - 09:48 the film: Afternoon's second scene scoped to its sources (employers expect the 39%; the approval time is at the US universities we checked), the proof line names the sample outline and the persona, and the loop scene has nine stations, Lens at Report and again at Learn. A still of the first, round ring showed the labels at Decide overlapping; the ring is now 430 by 300 and every label clears.
@@ -228,7 +266,7 @@ At 09:18 the owner reported the limit reset; the owner's earlier message asked f
 - 10:53 `docs/as-built.md` restructured and stamped: the Amanah front (what Lyceum is, plan versus built with fourteen known mismatches, exact versions, the layout, the dated verification table, what needs a person) and the package sections A0 to A8 as the changelog; ten A8 decisions logged (docs/decisions.md).
 - 10:55 ended; committed as "A8: the as-built record, the claims register checked by a Codex audit, the deck after the pitch review, synthetic samples labelled, the loop in order on every ring, the README in the house style, and the full verification" (the hash is in `git log`).
 
-### After Track A: the owner's follow-ups
+#### After Track A: the owner's follow-ups
 
 - 2026-10-22 10:56 the owner asked: explain the doors' marks, the Claude Desktop run and TRL 6; the poster's QR code by a Vercel deploy; the opening order and the repository description later; delete the kept files; fix the sample's dates; show the new UI.
 - 10:58 the kept files deleted (about 4 GB): the render experiments in the ignored `video/out/` and the frame folders in the system temp folder. The Blast Radius hook could not resolve the Git Bash paths, so the delete ran through PowerShell with Windows paths.
@@ -265,6 +303,6 @@ At 09:18 the owner reported the limit reset; the owner's earlier message asked f
 - 15:03 the final build deployed: <https://lyceum-rho.vercel.app> serves `index-235_z167.js`, the same file as `dist/`. Published `d8ca740` to the team's main: the help pill and three refreshed captures.
 - 15:05 `docs/as-built.md` stamped and its verification section brought to this run. Nothing is committed; the owner commits.
 
-## What is left
+### What is left
 
 Track A is done, apart from the Needs the owner list at the top of this file and the parts that need a person (`docs/as-built.md`, section 6: the voices, the music bed, the Claude Desktop run, the playback test on the presenting laptop, the NVDA and wifi-off passes, the rehearsals). Track B follows in pilot order (plan Section 17.2).

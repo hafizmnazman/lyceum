@@ -1,4 +1,5 @@
 import { WorkspaceBackupPanel } from "./WorkspaceBackup.tsx";
+import { InstitutionPanel } from "./InstitutionPanel.tsx";
 import { useState } from "react";
 import { navAllows } from "../../app/roles.ts";
 import { REMAINING_WORK, SECTION_GUIDES } from "../../app/sectionGuides.ts";
@@ -27,6 +28,7 @@ export function GuideScreen() {
         </ol>
       </section>
       <WorkspaceBackupPanel />
+      <InstitutionPanel />
       <div className="section-heading"><h2>Section-by-section guide</h2></div>
       <div className="filter-bar">
         <Field label="Find a section or function"><Input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search outcomes, upload, review…" /></Field>

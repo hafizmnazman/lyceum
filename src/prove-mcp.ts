@@ -50,7 +50,7 @@ test("the sample workspace is the tour's end state, built from public/demo, curr
   assert.equal(readFileSync(SAMPLE_PATH, "utf8").replace(/\r\n/g, "\n"), await buildSampleBackup(), "mcp/sample-workspace.json matches a fresh build; run node mcp/sample.ts if not");
   const { backup } = sampleCopy();
   const d = backup.data;
-  assert.equal(backup.schemaVersion, 5);
+  assert.equal(backup.schemaVersion, 6);
   assert.ok(d.evidenceSources.filter((s) => s.subjectId === "CS310" && s.provenance === "collected").length >= 3, "postings from the saved sample of the Stripe board");
   assert.ok(d.briefDecisions.some((x) => x.byPersonId === "P-RAHMAN" && x.outcome === "adopt" && x.note.trim()), "the programme owner's decision with its reason");
   assert.ok(d.resultUploads.some((u) => u.subjectId === "CS310" && u.sourceFileName === "results.xlsx" && u.courseVersionId && u.sample === true), "the sample results, matched to a version and labelled a sample");

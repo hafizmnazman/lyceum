@@ -12,3 +12,6 @@ video/remotion/public/
 video/remotion/src/generated/
 video/out/
 video/install.log
+
+# The owner's UTP mark, supplied on 22 October 2026: scripts/gen-partner-marks.mjs copies it into public/brand/partners/, the tracked copy the build uses.
+/utp.svg

@@ -957,3 +957,53 @@ Chosen: (b). Junk here means a sentence that repeats the helper's line, the head
 Reverse it if: a tester misses an explanation; it comes back in that screen's How to use panel rather than on the screen.
 
 To reverse: the copy is in `src/ui/screens/` (Inbox, Watch, EvidenceResearch, EvidenceWatch, EvidenceWorkspace, Report, CurriculumWorkspace, CourseWorkspace, Studio, Decide, Learn, Guide, Courses, Office, Evaluation, Landing, Login), `src/ui/shell/Shell.tsx`, `src/ui/primitives/PrototypeNotice.tsx` and `src/ui/primitives/loop.tsx`.
+
+## 2026-10-22 18:13, before Track C's D0: the owner's uncommitted follow-ups
+
+Options: (a) commit them first as their own commit, so each Track C commit holds one package. (b) Fold them into D0's commit, which mixes the follow-ups of the day with the institution profile in one change. (c) Stash them, which removes the tree the depth plan was written over.
+
+Chosen: (a), as `ba980e7`, because the driver asks for one commit per package and the depth plan is written over `main` plus these follow-ups, so they are its base. The commit is local, nothing is pushed, and the run log names what it holds and what it leaves out.
+
+Reverse it if: the owner wanted to commit the follow-ups under another message.
+
+To reverse: reword `ba980e7` before pushing; its content stays the base either way.
+
+## 2026-10-22 18:16, D0: where the owner's utp.svg lives
+
+Options: (a) track the root `utp.svg` and widen the contrast check's exception to cover it, which makes the exception two places instead of the one folder the owner approved. (b) Move the file into `public/brand/partners/` and delete the root copy, which removes the file from where the owner put it. (c) Keep the owner's file at the root, ignored by git, and copy it byte for byte into `public/brand/partners/`, the tracked copy the build uses, with `--check` comparing the two and a manifest fingerprint tying the PNGs to the copy.
+
+Chosen: (c), because the exception stays exactly the folder the owner approved and the owner's file stays where it was supplied, while a fresh clone still has the tracked copy and its PNGs. The baseline contrast check failed only because the untracked root file was in its file list.
+
+Reverse it if: the owner wants the root file tracked as well.
+
+To reverse: remove `/utp.svg` from `.gitignore` and add `^utp\.svg$` to `PARTNER_MARKS` in `scripts/contrast-check.mjs`, which part 2 would then also need to skip.
+
+## 2026-10-22 18:18, D0: one backup schema for the whole of Track C
+
+Options: (a) bump the schema with every package that adds a record (6 for the profile, 7 for the course record, and so on), which multiplies the migration paths the check must restore. (b) One schema 6 for Track C, as the plan's Section 11 says, with a missing record taking its default whatever the file's version, so a schema 6 file exported after D0 still restores after D3a adds the surveys.
+
+Chosen: (b), because the plan names schema 6 for the track and no build ships between packages. The defaults only ever add an empty collection or the demo profile, never change a record that is present.
+
+Reverse it if: a Track C build is handed to someone before the track ends, so two shapes of schema 6 exist; then the later records take schema 7.
+
+To reverse: `LATER_DEFAULTS` and `BACKUP_SCHEMA_VERSION` in `src/lib/workspaceBackup.ts`, and `scripts/check-backup-migration.mjs`.
+
+## 2026-10-22 18:19, D0: who may change the institution's settings
+
+Options: (a) a person who coordinates any course, as the plan's Section 3.1 says ("coordinator only"). (b) The programme owner only. (c) Both.
+
+Chosen: (a): a coordinator edits, and everyone else, the programme owner included, reads the settings with where each default comes from. Positions as data and an `assign-positions` capability are Track B's (master plan Section 4.2), and until then the plan's word stands.
+
+Reverse it if: the owner wants the programme owner to hold the settings.
+
+To reverse: `mayEditInstitution` in `src/app/store.ts`.
+
+## 2026-10-22 18:20, D0: the captures the walk and the smokes refresh
+
+Options: (a) let the walk and the smokes overwrite the tracked captures in `docs/screenshots/` as they run, and commit the new screens with each package. (b) Restore the tracked captures after every verification run, so each stays a record of the 22 October build until D9, as the plan's Section 13.1 says of the stale screenshots. (c) Stop the walk and the smokes writing captures.
+
+Chosen: (b), because the plan's Section 0.3 lists `docs/screenshots/` among the screenshots rebuilt only at D9, while the driver puts the walk and the smokes in every D8 run; restoring keeps both. (c) would change the checks' evidence trail for no gain.
+
+Reverse it if: the owner wants the captures to follow the build between packages.
+
+To reverse: stop running `git checkout -- docs/screenshots/` after the checks; no code changes.

@@ -61,13 +61,14 @@ import type {
   EvidenceBrief,
   EvidenceSnapshot,
   EvidenceSource,
+  InstitutionProfile,
   SkillMapping,
   SkillMention,
   VerdictReport,
 } from "../types.ts";
 import type { Screen } from "./roles.ts";
 import { confirmLeaveEditor } from "./unsaved.ts";
-import { can, landingScreen, navAllows, hatsOn } from "./roles.ts";
+import { can, landingScreen, navAllows, hatsOn, isCoordinatorAnywhere } from "./roles.ts";
 import type { SimState } from "./sim.ts";
 import { initSim, SIM_TICK_MS, stepSim } from "./sim.ts";
 import type { SignalSimState } from "./signalSim.ts";
@@ -99,6 +100,8 @@ import { courseVersionIds, stepDef, stepForTab, taughtVersionId, termWindow, typ
 export { REPORT_TABS, type ReportTab } from "./loop.ts";
 import { hashFor, type CourseRoute } from "./routes.ts";
 import { ITEMS, itemsForCLOs } from "../data/items.ts";
+import { DEMO_INSTITUTION } from "../data/institution.ts";
+import { institutionError } from "../lib/institution.ts";
 import {
   CANONICAL_PROPOSAL,
   CLOS,
@@ -155,6 +158,7 @@ export interface AppState {
   subjects: Subject[];
   clos: CLO[];
   survey: SurveyRecord[];
+  institution: InstitutionProfile; // the campus and every setting that shapes a figure (depth plan Section 3.1)
 
   // session
   currentPersonId: PersonId | null;
@@ -233,6 +237,7 @@ function seedState(): AppState {
     subjects: [...SUBJECTS],
     clos: [...CLOS],
     survey: SURVEY,
+    institution: structuredClone(DEMO_INSTITUTION),
 
     currentPersonId: null,
     screen: "login",
@@ -296,6 +301,7 @@ const PERSISTED_KEYS = [
   "subjects",
   "clos",
   "survey",
+  "institution",
   "currentPersonId",
   "screen",
   "selectedSubjectId",
@@ -641,6 +647,19 @@ export function dismissToast() {
 }
 export function showToast(message: string) {
   set({ toast: message });
+}
+
+// ---------- the institution profile (depth plan Section 3.1) ----------
+/** May this person change the institution's settings? A course coordinator, as the plan's Guide panel says. */
+export function mayEditInstitution(person = currentPerson()): boolean {
+  return !!person && person.orgRole === "academic" && isCoordinatorAnywhere(person.id, state.assignments);
+}
+export function saveInstitutionProfile(profile: InstitutionProfile): SaveResult {
+  if (!mayEditInstitution()) return { ok: false, error: "Only a course coordinator can change the institution's settings." };
+  const error = institutionError(profile);
+  if (error) return { ok: false, error };
+  set({ institution: structuredClone(profile), toast: "Institution settings saved." });
+  return { ok: true };
 }
 
 // ---------- notifications ----------

@@ -19,6 +19,7 @@
 5. [Verification](#5-verification-22-october-2026)
 6. [What needs a person](#6-what-needs-a-person)
 7. [Changelog: Track A, package by package](#7-changelog-track-a-package-by-package)
+8. [Changelog: Track C, package by package](#8-changelog-track-c-package-by-package)
 
 ## 1. What Lyceum is
 
@@ -456,3 +457,14 @@ Accepted by: the Code lane (owner to sign).
 - **The team repository.** On the owner's word, the team's main carries the working code and what its checks and generators read, without the plans, the run records, the reviews, the history or the booth script (`scripts/team.mjs`), and its README is cut to running, checking, the code map, the UI rules and how the team works. A fresh install of the exact snapshot passed every check and smoke, after a fix to the theme check that every Windows clone would have failed (docs/decisions.md, 13:47).
 - **The text people see.** Repeated lines, filler subtitles, duplicate buttons and per-row repeats cut; every honesty label, number, receipt and checked string kept; count grammar and raw timestamps fixed, and the Guide's out-of-date first card rewritten. Visible words across the 25 screens fell from 7,911 to 7,065 (docs/decisions.md, 14:00).
 - The full verification ran again on the change; section 5 has the results.
+
+## 8. Changelog: Track C, package by package
+
+The depth plan's packages ([lyceum-depth-plan.md](lyceum-depth-plan.md)), each with what it built and its checks; the dated verification table follows each tier's D8 run. Decisions are in [decisions.md](decisions.md), the run in [run-log.md](run-log.md).
+
+### D0, the institution and the mark: 22 October 2026
+
+- `InstitutionProfile` (plan Section 3.1) in the store and the backup at schema 6, with the demo values (UTP, labelled demo; the KPI 50% of students at 55 or above; the survey scale 1 to 5, target 4; the floor 5 responses and 25% of the class, the stricter applied; results after grades; Moodle; the controller line), each with where its default comes from; edited by a coordinator in the Guide page's Institution panel.
+- The partner mark: `scripts/gen-partner-marks.mjs` copies the owner's `utp.svg` into `public/brand/partners/` and rasterises it; the contrast check's one exception for that folder, approved by the owner, with a negative test showing a planted hex elsewhere still fails; `docs/brand-use.md` records the advisor's confirmation as the permission on file. The mark is shown nowhere yet.
+- CLAUDE.md gains the depth plan in its read order and the owner's two clauses (sample fixtures; partner marks); `DEMO_LINE` holds the honesty line of Section 3.3.
+- Checks: typecheck; prove:all 185 passed, seventeen suites; the migration check restores schemas 3 to 6 (28 checks); the contrast check OK; the build; `smoke:workspace` 7 of 7; `smoke:curriculum` 6 of 6.

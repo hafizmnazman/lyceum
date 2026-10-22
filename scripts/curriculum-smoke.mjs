@@ -170,7 +170,7 @@ try {
   console.log("PASS reload, linked teaching session, changed-outcome impact, explicit assessment review, version history and the decision on record");
   await click("nav-guide");await click("backup-export");const backup=await waitDownload("lyceum-workspace-backup.json");
   const saved=JSON.parse(readFileSync(backup,"utf8"));assert.equal(saved.application,"Lyceum");assert.ok(saved.data.courseDefinitions.BUS205);
-  assert.equal(saved.schemaVersion,5);assert.equal(saved.data.briefDecisions.length,1);
+  assert.equal(saved.schemaVersion,6);assert.equal(saved.data.briefDecisions.length,1);
   await click("nav-courses");await click("course-create-open");await fill(selector("new-course-code"),"TEMP101");await fill(selector("new-course-title"),"Temporary recovery example");await click("new-course-create");
   await click("nav-guide");await (await page.$(selector("backup-file"))).uploadFile(backup);await page.waitForSelector(selector("backup-preview"),{visible:true});
   await click("backup-ack");await click("backup-restore");await text("Workspace restored");

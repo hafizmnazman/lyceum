@@ -1,6 +1,6 @@
 {
   "application": "Lyceum",
-  "schemaVersion": 5,
+  "schemaVersion": 6,
   "exportedAt": "2026-10-22T10:00:00Z",
   "data": {
     "programme": {
@@ -11420,6 +11420,35 @@
         }
       }
     ],
+    "institution": {
+      "name": "Universiti Teknologi PETRONAS (demo)",
+      "shortName": "UTP",
+      "showMark": true,
+      "mark": {
+        "svg": "/brand/partners/utp.svg",
+        "png": "/brand/partners/utp-1024.png",
+        "pngSmall": "/brand/partners/utp-256.png",
+        "alt": "Universiti Teknologi PETRONAS mark, demo course"
+      },
+      "kpi": {
+        "passMark": 55,
+        "studentShare": 0.5,
+        "method": "share-above-mark"
+      },
+      "surveyScale": {
+        "min": 1,
+        "max": 5,
+        "target": 4
+      },
+      "surveyFloor": 5,
+      "surveyFloorShare": 0.25,
+      "releaseRule": "all-results-after-grades",
+      "lms": "Moodle (ULearn)",
+      "controller": "This prototype is run by the Lyceum team at UTP for a demonstration; a campus deployment names its own data controller.",
+      "privacyNoticeUrl": "https://www.utp.edu.my/sites/Publishing/PublishingContent/privacy-notice-general.pdf",
+      "termPattern": "2026/2027 semester 1",
+      "demo": true
+    },
     "proposals": [
       {
         "id": "CP-CS220-001",

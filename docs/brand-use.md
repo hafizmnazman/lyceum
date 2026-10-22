@@ -1,12 +1,16 @@
 # Brand use: the marks Lyceum shows, and where each came from
 
-Written 22 October 2026 (package A6), from plan Section 12, the design note `docs/research/design-and-video-references-2026-10-22.md` Section 6 and the data in the installed `simple-icons` package (16.35.0). Nothing here was fetched: this run sends nothing off the machine, so every brand page below is named with its link and marked as not read where that matters.
+Written 22 October 2026 (package A6), with the UTP mark added the same evening (Track C, package D0, from `docs/lyceum-depth-plan.md` Section 3.2), from plan Section 12, the design note `docs/research/design-and-video-references-2026-10-22.md` Section 6 and the data in the installed `simple-icons` package (16.35.0). Nothing here was fetched: this run sends nothing off the machine, so every brand page below is named with its link and marked as not read where that matters.
 
 ## The rule
 
 Marks are used referentially, the way a tutorial or a product page uses them: to identify a product Lyceum reaches. A mark is shown unmodified, in one colour (the Simple Icons path filled with the forest token, the monochrome form the project provides), at one height, beside the product's name and its status (built, local and read-only, or planned). Every surface that shows a mark carries one line: "Product names and logos belong to their owners and identify integrations; no partnership or endorsement is implied." No third-party mark appears inside Lyceum's own lockup, a poster title or a booth banner headline. Where a brand's terms ask for a licence or a request, or where they have not been read, the product is named in text instead.
 
 Simple Icons is CC0 as a project, but each icon keeps its brand's own licence and terms (its `DISCLAIMER.md`), so the package is where a path came from, not a permission.
+
+## The partner mark: the team's own university
+
+The UTP mark is not an integration mark and follows its own rule. It identifies the demo institution, Universiti Teknologi PETRONAS, the team's own university, on sample material. It keeps its owner's colours, the blue `#004A84` and the gold `#BC893A` of the owner's file, and is never recoloured, cropped, redrawn or inlined into a component; it is never combined with Lyceum's own lockup and never placed in a poster title or a booth banner headline. Every surface that shows it carries the demo line, `DEMO_LINE` in `src/data/sample-course/index.ts`: "A demo course at UTP, written for this prototype. CS310 is not a UTP course outline, and these marks, responses and slides are synthetic." The pack and the screens place a PNG with the alt text "Universiti Teknologi PETRONAS mark, demo course". The contrast check leaves `public/brand/partners/` alone by the one exception the owner approved on 22 October 2026 (CLAUDE.md); a hex anywhere else still fails. A campus that must not show a mark turns `showMark` off in the institution profile on the Guide page.
 
 ## Marks shown
 
@@ -15,6 +19,7 @@ Simple Icons is CC0 as a project, but each icon keeps its brand's own licence an
 | Claude | The architecture diagram (the local door's tile), so also deck slide 9, the brief's page 3 and the poster | Simple Icons `claude`, source <https://claude.ai> | Simple Icons records no licence or guidelines; the design note records that Anthropic has a press kit but no public usage page | The local door is built and runs on this machine (`mcp/`, package A5); the mark identifies the assistant it serves. The owner checks the press kit before print. |
 | Model Context Protocol | The same tile, beside Claude | Simple Icons `modelcontextprotocol`, source the logo in the protocol's documentation repository on GitHub | Simple Icons records no licence or guidelines | The door speaks MCP over stdio; the mark names the protocol, not a vendor. |
 | Greenhouse | The diagram's sources band, beside the board Lyceum reads | Simple Icons `greenhouse`, source <https://brand.greenhouse.io/brand-portal/p/6> | Greenhouse publishes guidelines at <https://brand.greenhouse.io/brand-portal/p/5>; not read in this run | Lyceum reads Greenhouse job boards through their documented public API (the Stripe board in the demo); the mark identifies that source. |
+| UTP (Universiti Teknologi PETRONAS) | Sample material, each time with the demo line: the teaching pack's masters, the survey's student page, the course file's cover sheet, the OBE course report's header and the term recap's header, so also screenshots of those screens; not shown anywhere until the package that builds each surface | The owner's `utp.svg`, supplied at the repository root on 22 October 2026, copied byte for byte to `public/brand/partners/utp.svg` and rasterised to `utp-1024.png` and `utp-256.png` by `scripts/gen-partner-marks.mjs` | UTP publishes no brand kit (`docs/research/slides-items-and-surveys-tech-2026-10-22.md`, Section 6). The permission on file: on 22 October 2026 the team's advisor confirmed that the team represents the university and that an earlier student team used the mark the same way, and the owner approved its use in the app, the pack and the published surfaces, labelled demo | The demo institution is the team's own; the mark appears on sample material inside the app, in the pack and on published surfaces, labelled demo |
 | Lyceum | Every surface | Lyceum's own mark, from the host's silhouette (`public/brand/mark.svg`, package A3) | Ours | Never combined with a third-party mark. |
 
 ## Named in text, and why
@@ -34,6 +39,7 @@ Simple Icons is CC0 as a project, but each icon keeps its brand's own licence an
 
 - **The architecture diagram** (`scripts/gen-architecture.mjs`): the three marks above, the ownership line in its footer. The deck, the brief and the poster reuse it.
 - **The deck, the brief and the poster** (`deck/`, `scripts/gen-brief-pdf.mjs`, `scripts/gen-poster.mjs`): no marks of their own beyond the diagram's.
+- **The sample material** (the pack, the survey page, the course file, the OBE report, the term recap): the UTP mark with the demo line, as each Track C package builds the surface; `showMark` in the institution profile turns it off everywhere at once.
 - **The landing page's doors strip** (`DOORS` in `src/ui/screens/Landing.tsx`): neutral icons and the door names, each labelled built or planned, until the owner answers item 1 of Needs the owner in `docs/run-log.md`.
 
 ## Before print or publication

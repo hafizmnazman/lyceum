@@ -1858,3 +1858,14 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; }
   .form-grid-wide-first { grid-template-columns: minmax(0, 1fr); }
   .landing-bar .btn-ghost { display: none; } /* the hero repeats it just below */
 }
+
+/* ---------- Track C: the depth plan's screens (docs/lyceum-depth-plan.md) ---------- */
+/* The institution's settings on the Guide page: where each default comes from. */
+.institution-form { display: grid; gap: 16px; margin-top: 12px; }
+.institution-help { margin: 0; }
+.institution-help > div { display: grid; grid-template-columns: minmax(120px, 1fr) 4fr; gap: 16px; border-top: 1px solid var(--border); padding: 12px 0; font-size: 13px; }
+.institution-help dt { font-weight: 600; color: var(--ink); }
+.institution-help dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 760px) {
+  .institution-help > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+}

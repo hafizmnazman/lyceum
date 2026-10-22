@@ -596,3 +596,23 @@ export interface LoopEvent {
   id: string; at: string; byPersonId: PersonId; kind: LoopEventKind;
   refs: { subjectId: SubjectId; briefId?: string; decisionId?: string; snapshotId?: string; versionId?: string; draftId?: string; term?: string; previousTerm?: string };
 }
+
+// ---------- the institution profile (depth plan Section 3.1) ----------
+/** The campus the workspace runs for, and every setting that shapes a figure. Each value is printed beside the
+ *  figure it shapes, because attainment and survey conventions differ by institution and no national method exists. */
+export interface InstitutionProfile {
+  name: string; // "Universiti Teknologi PETRONAS (demo)": a demo profile keeps the word demo in its name
+  shortName: string;
+  showMark: boolean; // false for a campus that must not show its mark on sample material
+  mark: { svg: string; png: string; pngSmall: string; alt: string }; // served from public/brand/partners/
+  kpi: { passMark: number; studentShare: number; method: "share-above-mark" }; // a mark out of 100; a share from 0 to 1
+  surveyScale: { min: number; max: number; target: number }; // the agreement scale and the "target or higher" point
+  surveyFloor: number; // the fewest responses before any aggregate is shown
+  surveyFloorShare: number; // and the smallest share of the class; the stricter of the two applies
+  releaseRule: "all-results-after-grades";
+  lms: string;
+  controller: string; // the privacy line the student page shows
+  privacyNoticeUrl: string; // linked as the demo's example, never as the operator's notice
+  termPattern: string;
+  demo: boolean;
+}

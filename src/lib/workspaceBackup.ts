@@ -1,16 +1,19 @@
 import type { AppState } from "../app/store.ts";
 import { draftStructureError } from "./curriculum.ts";
 import { COVERAGE_STAGES, EVIDENCE_KINDS, REQUIREMENT_LEVELS, locateExcerpt, skillKey, textFingerprint } from "./evidence.ts";
+import { institutionError } from "./institution.ts";
+import { DEMO_INSTITUTION } from "../data/institution.ts";
 
-export const WORKSPACE_DATA_KEYS = ["programme", "assignments", "subjects", "clos", "survey", "proposals",
+export const WORKSPACE_DATA_KEYS = ["programme", "assignments", "subjects", "clos", "survey", "institution", "proposals",
   "notifications", "predictions", "resultUploads", "dataSources", "subjectVersions", "testDrafts", "teachingPlans",
   "courseDefinitions", "curriculumDrafts", "evidenceSources", "skillMentions", "skillMappings", "evidenceBriefs", "evidenceSnapshots", "briefDecisions", "events", "skillLexicon", "relevanceRatings", "idSeq"] as const;
-/** Collections added after schema version 1 (2: evidence, 3: briefs and lexicon, 4: evidence snapshots, 5: the decision record and
- *  the event log). Older backups restore with these empty. */
-const LATER_DEFAULTS: Partial<Record<typeof WORKSPACE_DATA_KEYS[number], unknown>> = { evidenceSources: [], skillMentions: [], skillMappings: [], evidenceBriefs: [], evidenceSnapshots: [], briefDecisions: [], events: [], skillLexicon: {} };
-export const BACKUP_SCHEMA_VERSION = 5;
+/** Records added after schema version 1 (2: evidence, 3: briefs and lexicon, 4: evidence snapshots, 5: the decision record and
+ *  the event log, 6: Track C's institution profile and course records). A backup without one restores with its default; Track C
+ *  adds its records to schema 6 package by package, so a schema 6 file from an earlier package restores the same way. */
+const LATER_DEFAULTS: Partial<Record<typeof WORKSPACE_DATA_KEYS[number], unknown>> = { evidenceSources: [], skillMentions: [], skillMappings: [], evidenceBriefs: [], evidenceSnapshots: [], briefDecisions: [], events: [], skillLexicon: {}, institution: DEMO_INSTITUTION };
+export const BACKUP_SCHEMA_VERSION = 6;
 export type WorkspaceData = Pick<AppState, typeof WORKSPACE_DATA_KEYS[number]>;
-export interface WorkspaceBackup { application: "Lyceum"; schemaVersion: 1 | 2 | 3 | 4 | 5; exportedAt: string; data: WorkspaceData }
+export interface WorkspaceBackup { application: "Lyceum"; schemaVersion: 1 | 2 | 3 | 4 | 5 | 6; exportedAt: string; data: WorkspaceData }
 export const MAX_BACKUP_BYTES = 20 * 1024 * 1024;
 type Check = (value: unknown) => boolean;
 const record = (x: unknown): x is Record<string, unknown> => typeof x === "object" && x !== null && !Array.isArray(x);
@@ -39,6 +42,7 @@ const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
     workspaceOnly: opt(boolean), syllabusSourceUrl: opt(str), syllabusVerifiedAt: opt(str) }), 10000),
   clos: array(clo),
   survey: array(shape({ studentId: id, subjectId: id, term: str, cloRatings: dict(x => num(x) && (x as number) >= 1 && (x as number) <= 10) })),
+  institution: x => institutionError(x) === null,
   proposals: array(shape({ id, subjectId: id, kind: one("update", "new-subject"), authorId: id,
     draft: shape({ topics: opt(array(str, 1000)), cloChanges: opt(array(shape({ cloId: opt(id), text: str, bloomLevel: bloom, op: one("add", "edit", "remove") }), 1000)),
       testDraft: opt(str), labDraft: opt(str), testDraftId: opt(id) }),
@@ -114,7 +118,7 @@ export function parseWorkspaceBackup(raw: string, knownPersonIds: string[]): { o
     !Number.isFinite(Date.parse(parsed.exportedAt)) || !record(parsed.data)) return fail("Unsupported backup format or schema version.");
   const data = parsed.data;
   if (Object.keys(data).some(k => !WORKSPACE_DATA_KEYS.includes(k as typeof WORKSPACE_DATA_KEYS[number]))) return fail("The backup contains unsupported workspace fields.");
-  if (parsed.schemaVersion < BACKUP_SCHEMA_VERSION) for (const [key, value] of Object.entries(LATER_DEFAULTS)) if (data[key] === undefined) data[key] = structuredClone(value);
+  for (const [key, value] of Object.entries(LATER_DEFAULTS)) if (data[key] === undefined) data[key] = structuredClone(value);
   for (const key of WORKSPACE_DATA_KEYS) if (!predicates[key](data[key])) return fail("Invalid workspace data in " + key + ".");
   const backup = parsed as unknown as WorkspaceBackup;
   const d = backup.data;
