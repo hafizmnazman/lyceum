@@ -150,6 +150,7 @@ test("the course file lists its parts, and the manifest marks what is sample, no
   const zip = await JSZip.loadAsync(built.bytes);
   const names = Object.values(zip.files).filter((f) => !f.dir).map((f) => f.name).sort();
   assert.deepEqual(names, ["MANIFEST.md", "course-information.md", "decisions-and-versions.md", "final-examination-outline.md", MARK_FILE, "rubrics/CS310-R1.md", "rubrics/CS310-R2.md",
+    "rubrics/CS310-R1.xlsx", "rubrics/CS310-R2.xlsx", "items/CS310-week-7-items.xml", "items/CS310-week-7-items.md",
     "lab-sheets/CS310-week-1-lab-sheet.md", "lab-sheets/CS310-week-6-lab-sheet.md", "lab-sheets/CS310-week-7-lab-sheet.md", "project/CS310-week-8-project-brief.md"].sort());
   const manifest = await zip.file("MANIFEST.md")!.async("string");
   for (const m of built.manifest) assert.ok(manifest.includes(m.item) && manifest.includes(m.status), m.item);
@@ -158,8 +159,8 @@ test("the course file lists its parts, and the manifest marks what is sample, no
   assert.equal(status(/project brief/), "sample", "the week 8 brief, written for the prototype");
   assert.equal(status(/lab sheets/), "sample");
   assert.equal(built.manifest.find((m) => /lab sheets/.test(m.item))!.files.length, 3, "lab sheets for weeks 1, 6 and 7");
-  assert.equal(status(/week 7 quiz/), "not yet built", "naming the package that builds it");
-  assert.match(built.manifest.find((m) => /week 7 quiz/.test(m.item))!.detail, /D7/);
+  assert.equal(status(/quiz items/), "sample", "the week 7 quiz, drafted for the prototype");
+  assert.match(built.manifest.find((m) => /quiz items/.test(m.item))!.detail, /10 items for week 7 \(drafted, not reviewed by a person\)/);
   assert.equal(status(/OBE course report/), "not included", "no report saved yet, and it says so");
   assert.match(built.manifest.find((m) => /OBE course report/.test(m.item))!.detail, /No OBE report is saved/);
   assert.equal(status(/^Graded examination papers/), "not included");

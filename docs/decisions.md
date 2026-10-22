@@ -1607,3 +1607,63 @@ Chosen: (b), because an assistant asked how a class did should get what the lect
 Reverse it if: a campus wants only saved reports to leave the workspace.
 
 To reverse: `attainmentText` in `mcp/workspace.ts`.
+
+## 2026-10-22 23:27, D7: what an item template writes
+
+Options: (a) templates that write each key, which would need a true statement about the topic that the course record does not hold, so model text or an invented fact. (b) Templates that write the stem from the outcome's words and the topic, take the distractors from the course's recorded misconceptions and the essay's guidance from the outcome, and leave each key and accepted answer to the lecturer, with the lint saying what is left and a small editor to write it.
+
+Chosen: (b), because a deterministic generator cannot know what is true, and a lecturer's own artefacts never carry model text. The editor is the least that makes the templates usable; the plan's prompt did not name it, and without it every template's key would stay blank.
+
+Reverse it if: a reviewed source of true statements per topic enters the course record, or the pilot allows model drafts reviewed sentence by sentence.
+
+To reverse: `templateItems` in `src/lib/items.ts` and `ItemEditor` in `src/ui/screens/SessionItems.tsx`.
+
+## 2026-10-22 23:27, D7: where the items live
+
+Options: (a) a separate item bank per course. (b) On the session, as the check for understanding the plan turns into items, kept through the session's own edits and changed only by the item actions.
+
+Chosen: (b), because the plan puts the items on the session card under the check, and the session already carries the outcomes, the week and the topic the templates read. The sandbox's test-draft flow and its item bank stay as they are, labelled illustrative.
+
+Reverse it if: items come to be shared across sessions or terms.
+
+To reverse: `items` on `TeachingSession` in `src/types.ts`, the item actions in `src/app/store.ts` and the session predicate in `src/lib/workspaceBackup.ts`.
+
+## 2026-10-22 23:29, D7: the lint's thresholds
+
+Options: (a) Haladyna's rules taken literally, equal lengths and no absolute anywhere. (b) Thresholds a rule can apply to real items without false alarms: the stem six words or more and no "not", "except" or "never"; three or four options; one key, written; the longest option no more than three times the shortest, and the key no more than half again the longest distractor; no all or none of the above; no absolute word in the options; an "a" or "an" ending the stem agreeing with every option; every distractor a recorded misconception; short answers of four words or fewer; once three or more items are keyed, no position holding more than half the keys.
+
+Chosen: (b), because "equal length" cannot be met by real options, while the cue a judge would spot, the longest option being the key, can be caught exactly. Each rule is named on screen with the reason it failed, and the line beside them says what no rule can judge.
+
+Reverse it if: a lecturer's review finds a rule flagging good items, or missing a cue it should catch.
+
+To reverse: `lintItem`, `lintSet` and `RULES` in `src/lib/items.ts`.
+
+## 2026-10-22 23:30, D7: the sample quiz's review
+
+Options: (a) mark the week 7 quiz reviewed by the person Section 18 item 1 names, as the plan's Section 10 says. (b) Ship it drafted and not reviewed, as the D7 prompt says, until a person on the team marks it reviewed in the app.
+
+Chosen: (b), because the owner's answer to item 1 names the build session as the writer of sample fixtures and names no reviewer, and a review the app recorded on a person's behalf would be a false record. Any assigned person can mark it reviewed; the record names them and the date.
+
+Reverse it if: the owner names a reviewer who has read the ten items.
+
+To reverse: `reviewedBy` and `reviewedAt` in `src/data/sample-course/quiz.ts`.
+
+## 2026-10-22 23:32, D7: what the exports carry, and a review after a change
+
+Options: (a) export every item, and keep a review through later edits. (b) Export only the items that pass the lint, with the count shown; name a reviewer in the Moodle file's comment and tags only once a person has marked the items; and clear an item's review when its content changes.
+
+Chosen: (b), because Moodle would refuse a multiple-choice item with an empty key, and a review is of what was there when the person read it. Saving an item unchanged keeps its review.
+
+Reverse it if: a lecturer wants drafts exported to finish in Moodle itself.
+
+To reverse: the export buttons in `src/ui/screens/SessionItems.tsx`, `moodleXml` and `reviewLine` in `src/lib/items.ts`, and `saveSessionItem` in `src/app/store.ts`.
+
+## 2026-10-22 23:34, D7: the items and the rubrics in the course file
+
+Options: (a) keep the manifest's line "the week 7 quiz", marked not yet built. (b) Name it "the quiz items" and carry every session's items: the Moodle XML of those that pass the lint and a readable listing with each item's lint; carry each rubric as a spreadsheet beside its Markdown, as the manifest promised since D1.
+
+Chosen: (b), because items can sit on any session, not only week 7, and a course file should hold what was built; the line marks them sample on the demo course, with their review state. The XLSX is built in the browser through SheetJS, loaded on demand like jszip.
+
+Reverse it if: a campus wants only the quiz week's items in the course file.
+
+To reverse: `files`, `courseFileManifest` and `buildCourseFile` in `src/lib/courseFile.ts`.

@@ -273,6 +273,22 @@ export interface TeachingSession {
   projectBrief?: string; // markdown
   topicId?: string; // the course topic this session teaches
   sample?: boolean; // a labelled fixture written for the prototype; never counted as this term's teaching
+  items?: DraftItem[]; // D7 (depth plan Section 10): the check for understanding as items, drafted for the lecturer's review
+}
+
+// ---------- assessment items (depth plan Section 10) ----------
+export type ItemKind = "multichoice" | "shortanswer" | "essay";
+export interface ItemOption { text: string; correct: boolean; feedback?: string }
+/** An item drafted for a lecturer's review. The app never marks one approved; a person's review is a record, cleared when
+ *  the item changes. A verb in a stem does not make an item test that level. */
+export interface DraftItem {
+  id: string; kind: ItemKind; cloId: string; bloomLevel: BloomLevel; stem: string; marks: number;
+  options?: ItemOption[]; // multichoice: three or four, one keyed
+  answers?: string[]; // shortanswer: the accepted answers
+  graderInfo?: string; // essay: what the marker looks for
+  responseLines?: number; // essay: the answer box's height
+  source: "template" | "sample"; // drafted by Lyceum's templates, or a sample written for this prototype
+  reviewedBy: PersonId | null; reviewedAt: string | null;
 }
 /** One slide a lecturer wrote: a title, bullets and speaker notes, with an optional second column or figure. */
 export interface SlideDraft {

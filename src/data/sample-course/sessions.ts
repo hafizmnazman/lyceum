@@ -6,6 +6,7 @@
 
 import type { SlideDraft, TeachingPlan, TeachingSession } from "../../types.ts";
 import { CS310_BEFORE } from "./cs310.ts";
+import { WEEK_7_QUIZ } from "./quiz.ts";
 
 const PREPARED_AT = "2026-09-01T00:00:00Z"; // before the term, so the sessions are the plan the term starts from
 const BY = "P-SOBRI";
@@ -284,6 +285,8 @@ export const CS310_SESSIONS: TeachingSession[] = CS310_BEFORE.topics.map((t) => 
     ...(FULL[week] ? { slides: FULL[week] } : {}),
     ...(LAB[week] ? { labSheet: LAB[week] } : {}),
     ...(week === 8 ? { projectBrief: PROJECT_BRIEF } : {}),
+    // The mid-semester quiz as ten drafted items, not reviewed (depth plan Section 10).
+    ...(week === 7 ? { items: structuredClone(WEEK_7_QUIZ) } : {}),
   };
 });
 

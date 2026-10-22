@@ -15,7 +15,7 @@
 </div>
 
 <p align="center">
-  <a href="#hafizlyceum-npm-run-proveall"><img src="https://img.shields.io/badge/checks-241_passing-8BC34A?style=for-the-badge&labelColor=161b22" alt="checks: 241 passing"></a>
+  <a href="#hafizlyceum-npm-run-proveall"><img src="https://img.shields.io/badge/checks-250_passing-8BC34A?style=for-the-badge&labelColor=161b22" alt="checks: 250 passing"></a>
   <a href="#hafizlyceum-open-report"><img src="https://img.shields.io/badge/evidence-real_postings_with_receipts-B8F23A?style=for-the-badge&labelColor=161b22" alt="evidence: real postings with receipts"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/licence-proprietary-B9CDBF?style=for-the-badge&labelColor=161b22" alt="licence: proprietary"></a>
 </p>
@@ -140,7 +140,8 @@ The core needs no AI key and no account: work is saved in this browser. Live boa
 | The judge's way through | 5 | every walk stop rendered by its screen, captions within twenty words with their labels, the host at the two ends only, the not-built list word for word, the sample workspace restored with the current one kept, and the recap's numbers against their records |
 | The two student surveys | 8 | the instruments from the record and the profile, the link under 2,000 characters with no secret in it, the collector's token against its own hash, the floor and the release showing nothing early, one response per device and booth responses never as evidence, the Microsoft Forms importer on its fixture, backups, and the sample's counts |
 | Attainment against a stated threshold | 10 | the direct line against a hand-computed fixture with missing marks, no interval at a census and the finite-population interval below it, the recomputation after a change to the pass mark with the saved report keeping its own, the survey beside the marks never averaged and never from the booth, the programme outcomes listed with no index, marks without identifiers, the CQI note, Lens's moods, and backups |
-| **total** | **241** | twenty-three suites |
+| Assessment items and exports | 9 | every Bloom level's Arkansas verbs, templates that leave each key to the lecturer, each lint rule failing alone on its fixture, the week 7 sample quiz passing with its distractors from the record, Moodle XML and QTI 2.1 well-formed with their documented elements and labels, the rubric read back as a spreadsheet, reviews as a person's record cleared on a change, and backups |
+| **total** | **250** | twenty-four suites |
 
 After `npm run build`, four headless browser runs drive the built app: `npm run smoke` (the whole tour, the decision record, both downloads, the closed ring), `smoke:integrity` (the landing page carries no synthetic figure; the judge's page shows the register's figures and the not-built list word for word), `smoke:workspace` (save, reload, export, keyboard and 320 px layouts; the judge's walk by keyboard and the course file with its manifest; the survey's booth round trip from a 320 px phone) and `smoke:curriculum` (Watch to Update with real downloads and a restore; the before and after at 320 px). `npm run deck` checks every figure in the pitch against the claims register; `node scripts/generate-guide.mjs --check`, `node scripts/contrast-check.mjs` and `node scripts/dash-scan.mjs` keep the guide, the palette and the prose honest. These are software checks, not learning validation. Results with dates: [docs/as-built.md](docs/as-built.md).
 

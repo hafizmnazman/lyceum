@@ -36,6 +36,10 @@ const bloom = one("Remember", "Understand", "Apply", "Analyse", "Evaluate", "Cre
 const clo = shape({ id, subjectId: id, text: str, bloomLevel: bloom, label: opt(str), demandSignal: opt(num) });
 const event = shape({ at: str, byPersonId: id, action: id, note: opt(str) });
 const item = shape({ id, text: str, targetCLO: id, bloomLevel: bloom, difficulty: num, marks: nonnegative, source: one("agent", "human"), modelAnswer: opt(str) });
+// A check's item (depth plan Section 10): drafted for a lecturer's review; a review names a person and a date.
+const draftItem = shape({ id, kind: one("multichoice", "shortanswer", "essay"), cloId: id, bloomLevel: bloom, stem: str, marks: nonnegative,
+  options: opt(array(shape({ text: str, correct: boolean, feedback: opt(str) }), 10)), answers: opt(array(str, 20)), graderInfo: opt(str), responseLines: opt(integer),
+  source: one("template", "sample"), reviewedBy: x => x === null || id(x), reviewedAt: x => x === null || str(x) });
 const blueprint = shape({ subjectId: id, totalMarks: num, cloWeights: array(shape({ cloId: id, weight: num }), 1000), bloomMix: dict(num) });
 const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
   programme: shape({ id, title: str, departmentOwnerId: id, subjectIds: strings, plos: opt(array(shape({ id, text: str, cluster: str }), 100)) }),
@@ -75,7 +79,7 @@ const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
       needsReview: opt(boolean), courseVersionId: opt(id),
       slides: opt(array(shape({ title: str, bullets: array(str, 100), notes: str, right: opt(array(str, 100)), section: opt(boolean),
         figure: opt(x => record(x) && ((x.kind === "table" && array(str, 20)(x.header) && array(array(str, 20), 100)(x.rows) && str(x.alt)) || (x.kind === "placeholder" && str(x.label)))) }), 100)),
-      labSheet: opt(str), projectBrief: opt(str), topicId: opt(id), sample: opt(boolean) })) })),
+      labSheet: opt(str), projectBrief: opt(str), topicId: opt(id), sample: opt(boolean), items: opt(array(draftItem, 200)) })) })),
   courseDefinitions: dict(x => record(x)),
   rubrics: array(shape({ id, subjectId: id, componentId: id, title: str, sample: opt(boolean),
     criteria: array(shape({ name: str, marks: nonnegative, cloIds: strings, levels: x => Array.isArray(x) && x.length === 4 && x.every(str) }), 100) }), 1000),
@@ -197,6 +201,8 @@ export function parseWorkspaceBackup(raw: string, knownPersonIds: string[]): { o
     if (!subjects.has(plan.subjectId) || !people.has(plan.updatedBy) || !uniqueIds(plan.sessions) ||
       plan.sessions.some(s => s.week < 1 || s.week > 52 || s.minutes < 5 || s.minutes > 600 || !people.has(s.updatedBy)))
       return fail("Invalid teaching plan or session.");
+    if (plan.sessions.some(s => s.items && (!uniqueIds(s.items) || s.items.some(i => i.reviewedBy !== null && !people.has(i.reviewedBy)))))
+      return fail("A session's items repeat an id or name an unknown reviewer.");
     // Removed outcome links are retained only when a saved course change flagged the session for review.
     if (plan.sessions.some(s => !s.needsReview && s.cloIds.some(id => !d.clos.some(c => c.id === id && c.subjectId === plan.subjectId))))
       return fail("A teaching session contains an unacknowledged broken outcome link.");

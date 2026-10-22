@@ -8,6 +8,7 @@ import type { BriefDecision, CourseDefinition, CqiNote, EvidenceBrief, Instituti
 import { NON_RESPONSE_LABEL, PLO_LINE, constructsLine, methodLine, pctText } from "./attainment.ts";
 import { assessmentOf, capitalise, learningTime, listText, tableOfSpecifications, topicHours } from "./curriculum.ts";
 import { LEARN_CLAIM } from "./learn.ts";
+import { courseMisconceptions, itemsMarkdown, lintItem, moodleXml, passes, reviewLine, rubricRows, type ItemContext } from "./items.ts";
 
 export type ManifestStatus = "present" | "sample" | "not yet built" | "not included";
 export interface ManifestEntry { item: string; status: ManifestStatus; detail: string; files: string[] }
@@ -29,6 +30,10 @@ const rubricFile = (r: Rubric) => "rubrics/" + r.id + ".md";
 const labFile = (subject: Subject, s: TeachingSession) => "lab-sheets/" + subject.id + "-week-" + s.week + "-lab-sheet.md";
 const briefFile = (subject: Subject, s: TeachingSession) => "project/" + subject.id + "-week-" + s.week + "-project-brief.md";
 export const OBE_FILE = "obe-course-report.md";
+const rubricSheet = (r: Rubric) => "rubrics/" + r.id + ".xlsx";
+const itemsFile = (subject: Subject, s: TeachingSession, ext: string) => "items/" + subject.id + "-week-" + s.week + "-items." + ext;
+const itemContext = (input: CourseFileInput, s: TeachingSession): ItemContext => ({ subjectId: input.subject.id, week: s.week, topic: s.topic,
+  labels: (id) => input.definition.outcomes.find((o) => o.id === id)?.label ?? id, people: input.people, demoLine: input.demoLine });
 const count = (n: number, noun: string) => n + " " + noun + (n === 1 ? "" : "s");
 
 /** The files the zip holds, by path. */
@@ -38,6 +43,13 @@ function files(input: CourseFileInput): Map<string, string | Uint8Array> {
   const exams = (input.definition.assessment ?? []).filter((a) => a.kind === "exam");
   if (exams.length) out.set("final-examination-outline.md", examMarkdown(input));
   for (const r of input.rubrics) out.set(rubricFile(r), rubricMarkdown(input, r));
+  // Each session's items: the Moodle XML of those that pass the lint, and every item listed with its lint (depth plan Section 10).
+  const misconceptions = courseMisconceptions(input.definition);
+  for (const s of (input.sessions ?? []).filter((x) => x.items?.length)) {
+    const ctx = itemContext(input, s);
+    out.set(itemsFile(input.subject, s, "xml"), moodleXml(s.items!.filter((i) => passes(lintItem(i, misconceptions))), ctx));
+    out.set(itemsFile(input.subject, s, "md"), itemsMarkdown(s.items!, ctx, misconceptions));
+  }
   if (input.obeReport) out.set(OBE_FILE, obeReportMarkdown({ title: input.definition.title, demoLine: input.demoLine, people: input.people, cqiNote: input.cqiNote ?? null, institution: input.institution, saved: true }, input.obeReport));
   out.set("decisions-and-versions.md", decisionsMarkdown(input));
   for (const p of input.packs) out.set("packs/" + p.fileName, p.bytes);
@@ -59,13 +71,16 @@ export function courseFileManifest(input: CourseFileInput): ManifestEntry[] {
   const labs = (input.sessions ?? []).filter((s) => s.labSheet), briefs = (input.sessions ?? []).filter((s) => s.projectBrief);
   const samplePacks = input.packs.filter((p) => p.sample), ownPacks = input.packs.filter((p) => !p.sample);
   const fromSample = (list: TeachingSession[]) => (list.some((s) => s.sample) ? "sample" : "present") as ManifestStatus;
+  const withItems = (input.sessions ?? []).filter((s) => s.items?.length);
   return [
     { item: "Course learning outcomes", status: have(d.outcomes.length > 0), files: info, detail: d.outcomes.length + " outcomes, each with its Bloom level" + (d.outcomes.some((o) => o.mqfCluster) ? ", MQF cluster" : "") + " and the assessment that evidences it" },
     { item: "The matrix linking course outcomes to programme outcomes", status: have(linked), files: linked ? info : [], detail: linked ? "A level, H, M or L, in every linked cell; the levels are strengths, not scores" : "No programme outcome mapping is recorded for this course" },
     { item: "Course synopsis and syllabus", status: have(Boolean(d.synopsis) || d.topics.length > 0), files: info, detail: [d.synopsis ? "the synopsis" : "", d.topics.length ? "a " + d.topics.length + "-topic schedule" : "", d.slt ? "student learning time" : "", d.assessment?.length ? "the assessment plan and its table of specifications" : ""].filter(Boolean).join(", ") || "Not recorded" },
     { item: "List of references", status: have((d.references ?? []).length > 0), files: (d.references ?? []).length ? info : [], detail: count((d.references ?? []).length, "reference") + (d.referencesGap ? "; " + d.referencesGap.charAt(0).toLowerCase() + d.referencesGap.slice(1) : "") },
     { item: "Examination papers with marking schemes: the final examination's outline", status: have(exams.length > 0), files: exams.length ? ["final-examination-outline.md"] : [], detail: exams.length ? "Its sections, marks by outcome and Bloom level, and the marking scheme" : "No examination is recorded" },
-    { item: "Examination papers with marking schemes: the week 7 quiz", status: "not yet built", files: [], detail: "Drafted items with the surface lint and a Moodle export come with D7" },
+    { item: "Examination papers with marking schemes: the quiz items", status: withItems.length ? fromSample(withItems) : "not included", files: withItems.flatMap((s) => [itemsFile(input.subject, s, "xml"), itemsFile(input.subject, s, "md")]),
+      detail: withItems.length ? withItems.map((s) => count(s.items!.length, "item") + " for week " + s.week + " (" + reviewLine(s.items!, input.people).replace(/\.$/, "").toLowerCase() + ")").join("; ")
+        + ", each listed with the surface lint, and as Moodle XML of the items that pass it, not yet imported into a Moodle" : "No session carries items yet; the templates draft them on Teach" },
     { item: "Graded examination papers at low, medium and high grades", status: "not included", files: [], detail: "Synthetic student work would be one step too far from honest" },
     { item: "Projects: the project brief", status: briefs.length ? fromSample(briefs) : "not included", files: briefs.map((s) => briefFile(input.subject, s)),
       detail: briefs.length ? "Released in week " + briefs.map((s) => s.week).join(", ") + ": the task, what is handed in, the defence, the dates and the marking" : "No project brief is saved" },
@@ -75,7 +90,7 @@ export function courseFileManifest(input: CourseFileInput): ManifestEntry[] {
       detail: input.packs.length ? [samplePacks.length ? count(samplePacks.length, "sample pack") + " (" + samplePacks.filter((p) => p.full).length + " with full slides, the rest outline packs that say the lecturer's slides are not written yet)" : "",
         ownPacks.length ? count(ownPacks.length, "pack") + " from the lecturer's own sessions" : ""].filter(Boolean).join(" and ") : "No session is saved yet" },
     { item: "Samples of projects at low, medium and high grades", status: "not included", files: [], detail: "Synthetic student work would be one step too far from honest" },
-    { item: "Assessment rubrics", status: have(input.rubrics.length > 0), files: input.rubrics.map(rubricFile), detail: input.rubrics.length ? count(input.rubrics.length, "rubric") + " with marks per criterion and the outcomes each evidences; the spreadsheet export comes with D7" : "No rubric is recorded" },
+    { item: "Assessment rubrics", status: have(input.rubrics.length > 0), files: input.rubrics.flatMap((r) => [rubricFile(r), rubricSheet(r)]), detail: input.rubrics.length ? count(input.rubrics.length, "rubric") + " with marks per criterion and the outcomes each evidences, as Markdown and as a spreadsheet" : "No rubric is recorded" },
     { item: "The OBE course report with its CQI note", status: input.obeReport ? (input.obeReport.sample || sample ? "sample" : "present") : "not included", files: input.obeReport ? [OBE_FILE] : [],
       detail: input.obeReport ? "Saved on " + input.obeReport.printedAt.slice(0, 10) + " for " + input.obeReport.term + " at a pass mark of " + input.obeReport.passMark + " and a KPI of " + pctText(input.obeReport.studentShare)
         + " of students, on " + (input.obeReport.versionId ?? "a version not recorded") + (input.cqiNote ? ", with its CQI note" : "; no CQI note was saved with it")
@@ -196,6 +211,16 @@ export async function buildCourseFile(input: CourseFileInput): Promise<{ bytes: 
   const zip = new JSZip();
   const manifest = courseFileManifest(input);
   const all = new Map<string, string | Uint8Array>([["MANIFEST.md", manifestMarkdown(input, manifest)], ...files(input)]);
+  // Each rubric as a spreadsheet through SheetJS, loaded on demand like jszip.
+  if (input.rubrics.length) {
+    const XLSX = await import("xlsx");
+    const label = (id: string) => input.definition.outcomes.find((o) => o.id === id)?.label ?? id;
+    for (const r of input.rubrics) {
+      const book = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(book, XLSX.utils.aoa_to_sheet(rubricRows(r, label, input.demoLine)), "Rubric");
+      all.set(rubricSheet(r), new Uint8Array(XLSX.write(book, { type: "array", bookType: "xlsx" }) as ArrayBuffer));
+    }
+  }
   // A fixed date on every entry, so the same record always makes the same zip.
   const date = new Date(Date.parse(input.generatedAt) || 0);
   for (const [path, content] of all) zip.file(path, content, { date });

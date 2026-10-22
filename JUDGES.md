@@ -66,7 +66,7 @@ Then open **How it works** for the record of the afternoon by role, and **Evalua
 
 ## Checks
 
-`npm run prove:all` runs 241 checks in twenty-three suites. After `npm run build`, `npm run smoke`, `smoke:integrity`, `smoke:workspace` and `smoke:curriculum` drive the built app in a headless browser: the first plays the whole tour, and the workspace smoke walks the judge's ten stops by keyboard at desktop and phone width and answers the survey from a 320 px phone through the booth collector. [docs/as-built.md](docs/as-built.md) records every run with its date. These are software checks, not learning validation.
+`npm run prove:all` runs 250 checks in twenty-four suites. After `npm run build`, `npm run smoke`, `smoke:integrity`, `smoke:workspace` and `smoke:curriculum` drive the built app in a headless browser: the first plays the whole tour, and the workspace smoke walks the judge's ten stops by keyboard at desktop and phone width and answers the survey from a 320 px phone through the booth collector. [docs/as-built.md](docs/as-built.md) records every run with its date. These are software checks, not learning validation.
 
 ## What is real and what is not
 

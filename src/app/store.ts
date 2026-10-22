@@ -27,6 +27,8 @@ import type {
   SurveyResponse,
   CqiNote,
   ObeReport,
+  DraftItem,
+  TeachingSession,
   AgentName,
   AgentRun,
   AssessmentBlueprint,
@@ -110,6 +112,7 @@ import { institutionError } from "../lib/institution.ts";
 import { boothAnswers, courseOutcomeSurvey, formTokenFor, gradesReleased, importFormsRows, newReaderSecret, ssrtSurvey, studentForm, type ImportResult } from "../lib/surveys.ts";
 import { DEMO_LINE } from "../data/sample-course/index.ts";
 import { listedStudents, obeReport } from "../lib/attainment.ts";
+import { templateItems } from "../lib/items.ts";
 import { PRIOR_SURVEYS, PRIOR_SURVEY_RESPONSES } from "../data/sample-course/surveys.ts";
 import {
   CANONICAL_PROPOSAL,
@@ -507,15 +510,89 @@ export function saveTeachingSession(subjectId: SubjectId, input: SessionInput): 
   const issues = sessionIssues(input, state.clos.filter((c) => c.subjectId === subjectId));
   if (issues.length) return { ok: false, error: issues.join(" ") };
   // The slides, lab sheets and brief in this build are sample fixtures; a lecturer's own session never carries their text (CLAUDE.md).
-  const { sample: _sample, slides: _slides, labSheet: _labSheet, projectBrief: _projectBrief, ...own } = input;
+  const { sample: _sample, slides: _slides, labSheet: _labSheet, projectBrief: _projectBrief, items: _items, ...own } = input as SessionInput & { items?: unknown };
   const session = {
     ...own, id: input.id ?? nextId("TS"), topic: input.topic.trim(),
     cloIds: [...new Set(input.cloIds)], activity: input.activity.trim(),
     learningCheck: input.learningCheck.trim(), resources: input.resources.trim(),
     updatedAt: nowIso(), updatedBy: state.currentPersonId!,
     courseVersionId: subjectById(subjectId)?.currentVersionId, needsReview: false,
+    // The session's items are kept as they are; they change only through the item actions below.
+    ...(target?.items ? { items: target.items } : {}),
   };
   updateTeachingPlan(subjectId, (plan) => ({ ...plan, sessions: [...plan.sessions.filter((s) => s.id !== session.id), session] }));
+  return { ok: true };
+}
+
+// ---------- the check's items (depth plan Section 10) ----------
+
+function sessionOf(subjectId: SubjectId, sessionId: string): TeachingSession | undefined {
+  return state.teachingPlans.find((p) => p.subjectId === subjectId)?.sessions.find((s) => s.id === sessionId);
+}
+function setSessionItems(subjectId: SubjectId, sessionId: string, items: DraftItem[]) {
+  updateTeachingPlan(subjectId, (plan) => ({ ...plan, sessions: plan.sessions.map((s) => (s.id === sessionId ? { ...s, items } : s)) }));
+}
+function itemError(item: DraftItem): string | null {
+  if (!item.stem.trim() || item.stem.length > 2000) return "Write the stem, under 2,000 characters.";
+  if (!(item.marks > 0 && item.marks <= 100)) return "Give the item a mark above 0 and up to 100.";
+  if (item.kind === "multichoice" && ((item.options ?? []).length < 2 || (item.options ?? []).length > 6 || (item.options ?? []).some((o) => o.text.length > 500)))
+    return "A multiple-choice item has two to six options, each under 500 characters.";
+  if (item.kind === "shortanswer" && ((item.answers ?? []).length > 10 || (item.answers ?? []).some((a) => a.length > 100))) return "Up to ten accepted answers, each under 100 characters.";
+  if (item.kind === "essay" && ((item.graderInfo ?? "").length > 4000 || !((item.responseLines ?? 15) >= 3 && (item.responseLines ?? 15) <= 40))) return "Keep the marker's guidance under 4,000 characters and the answer box between 3 and 40 lines.";
+  return null;
+}
+const ownSession = (subjectId: SubjectId, sessionId: string): TeachingSession | string => {
+  if (!mayPlan(subjectId)) return "Only an assigned lecturer or coordinator can change this course's items.";
+  const session = sessionOf(subjectId, sessionId);
+  if (!session) return "This session no longer exists.";
+  if (session.sample) return "Sample sessions stay as written for the prototype; a person can mark their items reviewed.";
+  return session;
+};
+
+/** Draft items for one of the lecturer's own sessions from Lyceum's templates; each key and accepted answer is theirs to write. */
+export function draftSessionItems(subjectId: SubjectId, sessionId: string): SaveResult {
+  const session = ownSession(subjectId, sessionId);
+  if (typeof session === "string") return { ok: false, error: session };
+  const definition = definitionForCourse(subjectId);
+  const outcomes = definition?.outcomes ?? [];
+  if (!session.cloIds.some((id) => outcomes.some((o) => o.id === id))) return { ok: false, error: "Link the session to an outcome first; the templates write from it." };
+  const drafted = templateItems(definition, session, outcomes, () => nextId("ITEM-" + subjectId));
+  setSessionItems(subjectId, sessionId, [...(session.items ?? []), ...drafted]);
+  set({ toast: drafted.length + " items drafted for your review. Write each key and accepted answer; the lint shows what is left." });
+  return { ok: true };
+}
+
+/** Save one item of the lecturer's own session. A change clears its review: a person reviews what is there now. */
+export function saveSessionItem(subjectId: SubjectId, sessionId: string, item: DraftItem): SaveResult {
+  const session = ownSession(subjectId, sessionId);
+  if (typeof session === "string") return { ok: false, error: session };
+  const current = (session.items ?? []).find((i) => i.id === item.id);
+  if (!current) return { ok: false, error: "This item no longer exists." };
+  const error = itemError(item);
+  if (error) return { ok: false, error };
+  const content = (i: DraftItem) => JSON.stringify({ ...i, reviewedBy: null, reviewedAt: null });
+  const next: DraftItem = { ...item, kind: current.kind, source: current.source };
+  const saved = content(next) === content(current) ? current : { ...next, reviewedBy: null, reviewedAt: null };
+  setSessionItems(subjectId, sessionId, (session.items ?? []).map((i) => (i.id === item.id ? saved : i)));
+  return { ok: true };
+}
+
+export function removeSessionItem(subjectId: SubjectId, sessionId: string, itemId: string): SaveResult {
+  const session = ownSession(subjectId, sessionId);
+  if (typeof session === "string") return { ok: false, error: session };
+  if (!(session.items ?? []).some((i) => i.id === itemId)) return { ok: false, error: "This item no longer exists." };
+  setSessionItems(subjectId, sessionId, (session.items ?? []).filter((i) => i.id !== itemId));
+  return { ok: true };
+}
+
+/** A person on the course marks a session's items reviewed: a record of who and when, never the app's approval. */
+export function markItemsReviewed(subjectId: SubjectId, sessionId: string): SaveResult {
+  if (!mayPlan(subjectId)) return { ok: false, error: "Only an assigned lecturer or coordinator can review this course's items." };
+  const session = sessionOf(subjectId, sessionId);
+  if (!session?.items?.length) return { ok: false, error: "This session has no items to review." };
+  const at = nowIso(), person = currentPerson()!;
+  setSessionItems(subjectId, sessionId, session.items.map((i) => ({ ...i, reviewedBy: person.id, reviewedAt: at })));
+  set({ toast: session.items.length + " items marked reviewed by " + person.name + ". The app records the review; it approves nothing." });
   return { ok: true };
 }
 

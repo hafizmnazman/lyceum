@@ -4,7 +4,10 @@
 
 import type { CourseDefinition, ProgrammeOutcome, Rubric, TeachingSession } from "../../types.ts";
 import type { DeckSpec } from "../../lib/slides.ts";
-import { downloadText } from "../../lib/download.ts";
+import { Download } from "lucide-react";
+import { downloadBytes, downloadText } from "../../lib/download.ts";
+import { rubricRows } from "../../lib/items.ts";
+import { DEMO_LINE } from "../../data/sample-course/index.ts";
 import { DeckThumb } from "../primitives/DeckPreview.tsx";
 import { assessmentOf, capitalise, learningTime, listText, tableOfSpecifications, topicHours, type LearningTime } from "../../lib/curriculum.ts";
 import { Button, Disclosure, Tag } from "../primitives/index.tsx";
@@ -125,21 +128,29 @@ export function AssessmentPanel({ definition: d, rubrics }: { definition: Course
       </Disclosure>
       {plan.map((a) => <Disclosure key={a.id} summary={a.title + ": what students do"}>
         <p>{a.description}</p>
-        {rubrics.filter((r) => r.id === a.rubricId).map((r) => <RubricTable key={r.id} rubric={r} label={label} />)}
+        {rubrics.filter((r) => r.id === a.rubricId).map((r) => <RubricTable key={r.id} rubric={r} label={label} demoLine={d.sample ? DEMO_LINE : null} />)}
       </Disclosure>)}
     </> : <p className="muted">No assessment plan recorded.</p>}
   </section>;
 }
 
-function RubricTable({ rubric, label }: { rubric: Rubric; label: (id: string) => string }) {
-  return <table className="record-table rubric-table">
+function RubricTable({ rubric, label, demoLine }: { rubric: Rubric; label: (id: string) => string; demoLine: string | null }) {
+  // The grid as a spreadsheet through SheetJS, loaded on demand (depth plan Section 10).
+  async function download() {
+    const XLSX = await import("xlsx");
+    const book = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(book, XLSX.utils.aoa_to_sheet(rubricRows(rubric, label, demoLine)), "Rubric");
+    downloadBytes(rubric.id + "-rubric.xlsx", new Uint8Array(XLSX.write(book, { type: "array", bookType: "xlsx" }) as ArrayBuffer), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  }
+  return <><table className="record-table rubric-table">
     <caption>{rubric.title}: four levels in the grid shape of the VALUE rubrics, with descriptors written for this course. {rubric.criteria.reduce((n, c) => n + c.marks, 0)} marks.</caption>
     <thead><tr><th scope="col">Criterion</th><th scope="col">Capstone</th><th scope="col">Milestone 2</th><th scope="col">Milestone 1</th><th scope="col">Benchmark</th></tr></thead>
     <tbody>{rubric.criteria.map((c) => <tr key={c.name}>
       <th scope="row" data-label="Criterion">{c.name}<span className="muted"> · {c.marks} marks · {c.cloIds.map(label).join(", ")}</span></th>
       {c.levels.map((text, i) => <td key={i} data-label={["Capstone", "Milestone 2", "Milestone 1", "Benchmark"][i]}>{text}</td>)}
     </tr>)}</tbody>
-  </table>;
+  </table>
+  <Button onClick={() => void download()} data-demo-id={"rubric-xlsx-" + rubric.id}><Download size={15} /> The rubric as a spreadsheet (.xlsx)</Button></>;
 }
 
 /** The sessions that teach a topic: the session saved against it, or failing that a session in its week. */

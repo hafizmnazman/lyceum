@@ -14192,7 +14192,223 @@
                 "notes": "The workshop sheet has the three charts and four questions per chart. Close by asking two pairs to show a redesign."
               }
             ],
-            "labSheet": "# Critique workshop: misleading charts\n\nSample, synthetic: written for this prototype. Week 7, not marked: practice for the critique essay due in week 9.\n\n## In pairs\n\nYou have three published charts on the workshop sheet. For each one, answer:\n\n1. What question is this chart trying to answer?\n2. Which mark or channel misleads, exactly?\n3. What would a reader wrongly conclude?\n4. What one change would make it honest? Sketch it.\n\n## Before you leave\n\nPick your best redesign and be ready to show it in two minutes. The essay follows the same four questions.\n"
+            "labSheet": "# Critique workshop: misleading charts\n\nSample, synthetic: written for this prototype. Week 7, not marked: practice for the critique essay due in week 9.\n\n## In pairs\n\nYou have three published charts on the workshop sheet. For each one, answer:\n\n1. What question is this chart trying to answer?\n2. Which mark or channel misleads, exactly?\n3. What would a reader wrongly conclude?\n4. What one change would make it honest? Sketch it.\n\n## Before you leave\n\nPick your best redesign and be ready to show it in two minutes. The essay follows the same four questions.\n",
+            "items": [
+              {
+                "source": "sample",
+                "reviewedBy": null,
+                "reviewedAt": null,
+                "id": "CS310-W07-Q01",
+                "kind": "multichoice",
+                "cloId": "CS310-1",
+                "bloomLevel": "Understand",
+                "marks": 1,
+                "stem": "Which statement about how people read marks and channels is accurate?",
+                "options": [
+                  {
+                    "text": "Angle and area are read as accurately as position.",
+                    "correct": false,
+                    "feedback": "A misconception recorded for week 3."
+                  },
+                  {
+                    "text": "Position on a common scale is read more accurately than angle.",
+                    "correct": true,
+                    "feedback": "Position along a common scale is read most accurately; angle and area less so."
+                  },
+                  {
+                    "text": "Hue can show an order.",
+                    "correct": false,
+                    "feedback": "A misconception recorded for week 3."
+                  }
+                ]
+              },
+              {
+                "source": "sample",
+                "reviewedBy": null,
+                "reviewedAt": null,
+                "id": "CS310-W07-Q02",
+                "kind": "multichoice",
+                "cloId": "CS310-1",
+                "bloomLevel": "Understand",
+                "marks": 1,
+                "stem": "Which statement about colour and accessibility in a chart is accurate?",
+                "options": [
+                  {
+                    "text": "A sequential colour map suits a quantity ordered from low to high.",
+                    "correct": true,
+                    "feedback": "Lightness that rises with the value reads as an order; a rainbow adds bands the data does not have."
+                  },
+                  {
+                    "text": "A rainbow colour map is neutral.",
+                    "correct": false,
+                    "feedback": "A misconception recorded for week 4."
+                  },
+                  {
+                    "text": "Accessibility is a final check rather than a design choice.",
+                    "correct": false,
+                    "feedback": "A misconception recorded for week 4."
+                  }
+                ]
+              },
+              {
+                "source": "sample",
+                "reviewedBy": null,
+                "reviewedAt": null,
+                "id": "CS310-W07-Q03",
+                "kind": "multichoice",
+                "cloId": "CS310-3",
+                "bloomLevel": "Analyse",
+                "marks": 1,
+                "stem": "A colleague wants to compare eight departments' budgets on one chart. Which advice holds?",
+                "options": [
+                  {
+                    "text": "A pie chart compares many parts well.",
+                    "correct": false,
+                    "feedback": "A misconception recorded for week 5."
+                  },
+                  {
+                    "text": "A bar chart's axis can start anywhere.",
+                    "correct": false,
+                    "feedback": "A misconception recorded for week 5."
+                  },
+                  {
+                    "text": "Use bars on a common axis that starts at zero.",
+                    "correct": true,
+                    "feedback": "Bar length encodes the value, so the axis starts at zero and the bars share it."
+                  }
+                ]
+              },
+              {
+                "source": "sample",
+                "reviewedBy": null,
+                "reviewedAt": null,
+                "id": "CS310-W07-Q04",
+                "kind": "multichoice",
+                "cloId": "CS310-3",
+                "bloomLevel": "Analyse",
+                "marks": 1,
+                "stem": "Two monthly sales series share one time axis. Which design lets a reader compare them fairly?",
+                "options": [
+                  {
+                    "text": "Two series on two y-axes are easy to compare.",
+                    "correct": false,
+                    "feedback": "A misconception recorded for week 6."
+                  },
+                  {
+                    "text": "One y-axis for both series, or small multiples on one scale.",
+                    "correct": true,
+                    "feedback": "A shared scale lets the eye compare heights; two axes invite a false crossing."
+                  },
+                  {
+                    "text": "Small multiples need different scales to be fair.",
+                    "correct": false,
+                    "feedback": "A misconception recorded for week 6."
+                  }
+                ]
+              },
+              {
+                "source": "sample",
+                "reviewedBy": null,
+                "reviewedAt": null,
+                "id": "CS310-W07-Q05",
+                "kind": "multichoice",
+                "cloId": "CS310-1",
+                "bloomLevel": "Understand",
+                "marks": 1,
+                "stem": "Which statement about designing a chart from a table of data is accurate?",
+                "options": [
+                  {
+                    "text": "Design starts from the question the chart has to answer.",
+                    "correct": true,
+                    "feedback": "The question decides the task, and the task decides the chart."
+                  },
+                  {
+                    "text": "A chart is decoration added once the analysis is finished.",
+                    "correct": false,
+                    "feedback": "A misconception recorded for week 1."
+                  },
+                  {
+                    "text": "A spreadsheet's layout is the data's structure.",
+                    "correct": false,
+                    "feedback": "A misconception recorded for week 2."
+                  }
+                ]
+              },
+              {
+                "source": "sample",
+                "reviewedBy": null,
+                "reviewedAt": null,
+                "id": "CS310-W07-Q06",
+                "kind": "shortanswer",
+                "cloId": "CS310-1",
+                "bloomLevel": "Remember",
+                "marks": 1,
+                "stem": "Which visual channel do people read most accurately when they compare quantities? Answer in one or two words.",
+                "answers": [
+                  "position",
+                  "position on a scale",
+                  "aligned position"
+                ]
+              },
+              {
+                "source": "sample",
+                "reviewedBy": null,
+                "reviewedAt": null,
+                "id": "CS310-W07-Q07",
+                "kind": "shortanswer",
+                "cloId": "CS310-1",
+                "bloomLevel": "Remember",
+                "marks": 1,
+                "stem": "Name the kind of colour map that suits a quantity ordered from low to high.",
+                "answers": [
+                  "sequential",
+                  "sequential colour map",
+                  "sequential color map"
+                ]
+              },
+              {
+                "source": "sample",
+                "reviewedBy": null,
+                "reviewedAt": null,
+                "id": "CS310-W07-Q08",
+                "kind": "shortanswer",
+                "cloId": "CS310-1",
+                "bloomLevel": "Remember",
+                "marks": 1,
+                "stem": "Name the arrangement of small charts that share one scale so that a reader can compare them.",
+                "answers": [
+                  "small multiples",
+                  "small multiple",
+                  "trellis"
+                ]
+              },
+              {
+                "source": "sample",
+                "reviewedBy": null,
+                "reviewedAt": null,
+                "id": "CS310-W07-Q09",
+                "kind": "essay",
+                "cloId": "CS310-3",
+                "bloomLevel": "Analyse",
+                "marks": 3,
+                "responseLines": 12,
+                "stem": "Break down the chart your group was given in the critique workshop: where it misleads, the mark involved, and the criterion it breaks.",
+                "graderInfo": "Marked against CLO3. Credit the misleading element named on the chart, the wrong conclusion it invites, and the criterion it breaks: perception, accessibility or ethics. A truncated axis misleads when it exaggerates a difference; it is not dishonest in itself."
+              },
+              {
+                "source": "sample",
+                "reviewedBy": null,
+                "reviewedAt": null,
+                "id": "CS310-W07-Q10",
+                "kind": "essay",
+                "cloId": "CS310-3",
+                "bloomLevel": "Analyse",
+                "marks": 3,
+                "responseLines": 10,
+                "stem": "Classify each misleading chart from this week's critique workshop by the error it makes, and give one sentence of evidence for each.",
+                "graderInfo": "Marked against CLO3: each chart classified by its error (a truncated axis, a dual axis, a rainbow colour map or another named error), with one sentence of evidence from the chart. A chart can carry more than one error; credit either when the evidence is given."
+              }
+            ]
           },
           {
             "id": "CS310-S08",

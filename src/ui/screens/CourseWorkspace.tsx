@@ -22,6 +22,8 @@ import type { ChangeProposal, CourseDefinition, Person, Subject, TeachingPlan, T
 import { Button, Disclosure, Field, Input, Select, Tag, Textarea } from "../primitives/index.tsx";
 import { Meter } from "../primitives/loop.tsx";
 import { useUnsavedEditor } from "../useUnsavedEditor.ts";
+import { SessionItems } from "./SessionItems.tsx";
+import { courseMisconceptions } from "../../lib/items.ts";
 
 type CourseProps = { state: AppState; person: Person; subject: Subject };
 
@@ -186,6 +188,7 @@ export function TeachingPlanPanel({ state, person, subject }: CourseProps) {
   const own = filtered.filter((s) => !s.sample), samples = filtered.filter((s) => s.sample);
   const weeks = [...new Set(all.map((s) => s.week))].sort((a, b) => a - b);
   const cardProps = { subject, clos, mayEdit, editorOpen, deleting, deckFor, priorPack, priorLabel: priorVersion?.id ?? "", currentLabel: subject.currentVersionId, markSrc: state.institution.mark.wide ?? state.institution.mark.png,
+    misconceptions: courseMisconceptions(definition), people: state.people, demoLine: definition?.sample ? DEMO_LINE : null,
     onEdit: (session: TeachingSession) => { setEditor({ ...session, cloIds: [...session.cloIds] }); setError(""); setMessage(""); },
     onAskRemove: (id: string | null) => setDeleting(id),
     onRemove: (id: string) => { const result = deleteTeachingSession(subject.id, id); setMessage(result.ok ? "Session removed." : result.error); setDeleting(null); } };
@@ -254,8 +257,9 @@ export function TeachingPlanPanel({ state, person, subject }: CourseProps) {
 
 /** One session's card (depth plan Section 5.4): the week, the topic and its status, a thumbnail of the pack, the outcomes, the
  *  activity and the check, the pack with its filmstrip, and the lab sheet or the project brief where the session has one. */
-function SessionCard({ session, subject, clos, mayEdit, editorOpen, deleting, deckFor, priorPack, priorLabel, currentLabel, markSrc, onEdit, onAskRemove, onRemove }: {
+function SessionCard({ session, subject, clos, mayEdit, editorOpen, deleting, deckFor, priorPack, priorLabel, currentLabel, markSrc, misconceptions, people, demoLine, onEdit, onAskRemove, onRemove }: {
   session: TeachingSession; subject: Subject; clos: AppState["clos"]; mayEdit: boolean; editorOpen: boolean; deleting: string | null; markSrc: string;
+  misconceptions: string[]; people: Person[]; demoLine: string | null;
   deckFor: (session: TeachingSession) => DeckSpec; priorPack: (session: TeachingSession) => DeckSpec | null; priorLabel: string; currentLabel: string; onEdit: (session: TeachingSession) => void; onAskRemove: (id: string | null) => void; onRemove: (id: string) => void;
 }) {
   const spec = deckFor(session);
@@ -274,6 +278,7 @@ function SessionCard({ session, subject, clos, mayEdit, editorOpen, deleting, de
         <div className="session-content"><div><h4>Learning activity</h4><p className="preserve-lines">{session.activity || "Add an activity students will take part in."}</p></div><div><h4>Check for understanding</h4><p className="preserve-lines">{session.learningCheck || "Add how you will check their learning."}</p></div></div>
       </div>
     </div>
+    <SessionItems subject={subject} session={session} labels={(id) => clos.find((c) => c.id === id)?.label ?? id} misconceptions={misconceptions} mayEdit={mayEdit} people={people} demoLine={demoLine} />
     {session.resources ? <details><summary>Resources & slide brief</summary><p className="preserve-lines">{session.resources}</p></details> : null}
     <Disclosure summary="Preview the pack" count={spec.slides.length + " slides"} data-demo-id={"session-preview-" + session.id}><DeckFilmstrip spec={spec} markSrc={markSrc} /></Disclosure>
     {prior && changes.length ? <Disclosure summary={"What changed in this pack since " + priorLabel} count={plural(changes.length, "slide", "slides")} data-demo-id={"session-changes-" + session.id}>

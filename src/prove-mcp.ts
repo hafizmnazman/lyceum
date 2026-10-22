@@ -114,8 +114,8 @@ test("the course record and attainment answer from the export: the course file's
   const { call, close } = await door(path);
   const record = await call("lyceum_course_record", { course: "cs310" });
   assert.ok(!record.isError && record.text.startsWith("From the Lyceum workspace exported at " + backup.exportedAt + "."), "stamped with the export time");
-  assert.ok(record.text.includes("# Course file manifest: CS310") && record.text.includes("the week 7 quiz | not yet built |") && record.text.includes("The OBE course report with its CQI note | not included |"),
-    "the manifest as the app's zip carries it: the quiz not yet built, no report saved in the sample");
+  assert.ok(record.text.includes("# Course file manifest: CS310") && record.text.includes("the quiz items | sample |") && record.text.includes("The OBE course report with its CQI note | not included |"),
+    "the manifest as the app's zip carries it: the sample quiz's items, no report saved in the sample");
   assert.ok(record.text.includes("-sample-teaching-pack.pptx") && record.text.includes("A demo course at UTP"), "the packs named as the zip names them, and the honesty line");
   const now = await call("lyceum_attainment", { course: "CS310" });
   assert.ok(!now.isError && now.text.includes("The report as the records stand; nobody has saved it.") && now.text.includes("Not saved"), "an unsaved report says so");
