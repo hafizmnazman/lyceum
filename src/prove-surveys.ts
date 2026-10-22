@@ -164,6 +164,13 @@ test("backups carry the surveys, and refuse a response whose answer fits no ques
   delete older.data.surveys; delete older.data.surveyResponses;
   const restored = parseWorkspaceBackup(JSON.stringify(older), people);
   assert.deepEqual(restored.ok && [restored.backup.data.surveys.length, restored.backup.data.surveyResponses.length], [0, 0], "an earlier schema 6 file restores without them");
+  // A response read from a pasted code, with its device id, and the event that records it, restore like any other (D3b).
+  const pasted = JSON.parse(raw);
+  pasted.data.surveyResponses.push({ id: "SR-PASTE-1", formId: PRIOR_COS.id, term: PRIOR_COS.term, answers: { Q1: 4, Q2: "cannot-say" }, collectedAt: "2026-10-23T01:00:00Z", clientId: "1a2b3c4d-5e6", source: "pasted" });
+  pasted.data.events.push({ id: "EV-PASTE-1", at: "2026-10-23T01:00:00Z", byPersonId: PEOPLE_IDS.sobri, kind: "survey-collected", refs: { subjectId: "CS310", formId: PRIOR_COS.id, term: PRIOR_COS.term, count: 1, source: "pasted" } });
+  const withPasted = parseWorkspaceBackup(JSON.stringify(pasted), people);
+  assert.ok(withPasted.ok && withPasted.backup.data.surveyResponses.some((r) => r.source === "pasted" && r.clientId === "1a2b3c4d-5e6")
+    && withPasted.backup.data.events.some((e) => e.refs.source === "pasted"), "a pasted response restores with its device id, and its event with its source");
 });
 
 test("the sample: last term's two surveys, 31 and 29 of 38, released with the sample, and nothing in them identifies anyone", () => {

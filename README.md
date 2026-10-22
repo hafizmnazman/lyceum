@@ -169,7 +169,7 @@ docs/               the plan, the as-built record, the claims, the decisions, th
 
 ### <samp>hafiz@lyceum:~$ cat ./decisions</samp>
 
-1. **Deterministic core, AI at the doors.** Counts, quotations and decisions come from code, so a number never depends on a model; an assistant reaches Lyceum through the door and may draft, never confirm or decide. The cost: no model writes slides or quiz items yet, so the lecturer writes them.
+1. **Deterministic core, AI at the doors.** Counts, quotations and decisions come from code, so a number never depends on a model; an assistant reaches Lyceum through the door and may draft, never confirm or decide. The cost: no model writes slides or quiz items yet; the templates draft items from the course record, and the lecturer writes every key.
 2. **Exact quotations or nothing.** A requirement is a substring of its saved source, or it is refused; reviewed postings form the denominator. The cost: a lecturer confirms every quotation and reviews every posting a count uses.
 3. **One decision record.** Adopt, retain, defer or return, immutable, bound to the brief, the version and the term; a decision on one's own brief is self-recorded and stays open until a second person confirms. The cost: a second person, which a small department may not have.
 4. **Local first.** One course runs in the browser with no account, and backups are validated JSON. The cost: no shared workspace, no sign-in and no server-side permissions until the department tier.

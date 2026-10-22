@@ -4,8 +4,8 @@
 
 **Stamp.**
 
-- Last updated: 23 October 2026, 01:16 Kuala Lumpur time, after Track C's D3b.
-- Reflects: `main` after Track C's D0, D1, D2, D5a, D6a, D8a, D3a and D4a (`87d585d`, `81072d1`, `5715efc`, `02f5c73`, `963b0f2`, `54d400f`, `78aed88`, `6c0b262`), D8b (`b7597b1`), D7 (`4dc0650`), D5b (`4ddefd6`), D6b (`e79fd18`) and D3b's ways in to the surveys; Track A ended at `b4bfdc4`, with the owner's follow-ups committed as `ba980e7`; the base is `f5b26a4`, tagged `pre-overhaul`. Nothing is pushed; `amsterdam-2026` is the owner's tag at the freeze. Sections 1 to 5 describe Track A's build and its run of 22 October, afternoon; Track C's additions and their verification are in Section 8.
+- Last updated: 23 October 2026, 01:25 Kuala Lumpur time, after Track C's D8c.
+- Reflects: `main` after Track C's D0, D1, D2, D5a, D6a, D8a, D3a and D4a (`87d585d`, `81072d1`, `5715efc`, `02f5c73`, `963b0f2`, `54d400f`, `78aed88`, `6c0b262`), D8b (`b7597b1`), D7 (`4dc0650`), D5b (`4ddefd6`), D6b (`e79fd18`), D3b (`8ef1f87`) and D8c's verification; Track A ended at `b4bfdc4`, with the owner's follow-ups committed as `ba980e7`; the base is `f5b26a4`, tagged `pre-overhaul`. Nothing is pushed; `amsterdam-2026` is the owner's tag at the freeze. Sections 1 to 5 describe Track A's build and its run of 22 October, afternoon; Track C's additions and their verification are in Section 8.
 - Project: Lyceum, Universiti Teknologi PETRONAS, for the Grand Final on 29 October 2026 in Amsterdam ([docs/competition/grand-final-2026.md](competition/grand-final-2026.md)).
 
 **Rollback.** `git checkout pre-overhaul` returns the tree as it stood before the overhaul: the whole October workspace, committed on 22 October 2026 at 03:25 as "Checkpoint before the overhaul".
@@ -627,3 +627,33 @@ The full run after D3a and D4a, on the build machine between 23:16 and 23:19 Kua
 - `scripts/gen-demo-files.mjs` writes `public/demo/course-outcome-survey-google.csv`, last term's sample responses as Google Forms downloads them, synthetic, with one row repeated.
 - Not built in D3b: Google Forms through its API, Qualtrics and EvaSys, a Quick Import tried in Forms, and a Moodle export to try the importer on.
 - Checks: typecheck; prove:all 259 passed, twenty-four suites (`prove-surveys` 12, four new); the build, main chunk 1,005.35 kB (298.84 kB gzipped); `smoke` 19 of 19; `smoke:integrity` 3 of 3; `smoke:workspace` 11 of 11, the campus ways from a 320 px phone; `smoke:curriculum` 6 of 6; the walk; the curl round trip against the local API; the contrast, dash, guide, migration, sample, partner-mark and kiosk-film checks.
+
+### Verification after Tier 3 (D8c): 23 October 2026
+
+The full run after D7, D5b, D6b and D3b, on the build machine between 01:18 and 01:24 Kuala Lumpur time, on the code committed as D8c. D8c added Tier 3's surfaces to the walk (the week 7 sample quiz on Teach, the programme wall, the kiosk and leaving it) and a pasted response's restore to the survey backup test, corrected the README's line on who writes quiz items, and checked the course file's manifest against what has shipped (no item is marked not yet built). Each Tier 3 package brought its own smokes, guides and counts as it went. No gated command ran.
+
+| Command | Result |
+|:--|:--|
+| `npm run typecheck` | Passed |
+| `npm run prove:all` | 259 passed, 0 failed, twenty-four suites (Tier 3's: assessment items and exports 9, new in D7; before and after 10, the judge's way through 8 and the two student surveys 12, each extended) |
+| `npm run build` | Passed; the sizes below |
+| `npm run smoke` | 19 of 19, DEMO SMOKE OK: the whole tour, unchanged by Tier 3 |
+| `npm run smoke:integrity` | 3 of 3: the landing page; the judge's page with the register's figures, the exact values for a screen reader at once and the shown ones when the count ends, and the not-built list word for word; the notice only on the sandbox screens |
+| `npm run smoke:workspace` | 11 of 11: the earlier nine; a campus's ways in (the Forms document downloaded, a Google Forms CSV imported with its repeat dropped, a paste code made on a 320 px phone and read once from two pastes); and the kiosk signed out (its film paused, a touch walking the loop without a question, back at the kiosk after thirty idle seconds with the warning first, the register's figures counted to their values, the programme wall at 1440 and 320 px) |
+| `npm run smoke:curriculum` | 6 of 6 |
+| `node scripts/walk.mjs` | WALK OK, 30 checks: the earlier 26, the week 7 sample quiz's ten items on Teach, the programme wall with every course and the matrix with the one recorded outline, the kiosk rendering bare with its film, and leaving kiosk mode |
+| `node scripts/generate-guide.mjs --check` | The lecturer guide matches the in-app section catalogue, now with the Kiosk guide, the wall, the count and the surveys step |
+| `node scripts/contrast-check.mjs` | CONTRAST CHECK OK: 61 ratios against `tokens.ts`, 237 files scanned for hand-written colours, 41 generated SVGs; `public/brand/partners/` by its exception |
+| `node scripts/dash-scan.mjs` | No en or em dash in 331 text files (`docs/history` and `docs/review` kept as written; the saved postings kept verbatim) |
+| `node scripts/check-backup-migration.mjs` | BACKUP MIGRATION OK, 28 checks: schemas 3, 4, 5 and 6 restore; a pasted response with its device id, and its event with its source, restore, proved in `prove-surveys` |
+| `node mcp/sample.ts --check` | The sample workspace matches the tour's end state, in `mcp/` and in `public/demo/`; Tier 3 changed nothing the tour writes, so it was not regenerated |
+| `node scripts/gen-partner-marks.mjs --check` | The partner mark matches: the copy, 3 PNGs and the manifest |
+| `node scripts/gen-theme-css.mjs --check`, `gen-mascots.mjs --check`, `gen-architecture.mjs --check` | All match: the theme outputs and the three fonts, 35 SVGs and 72 PNGs, the diagram |
+| `node scripts/kiosk-film.mjs --check` | The kiosk's film matches the render of 22 October 2026 (`public/media/`, ignored by git) |
+| `node mcp/try.ts` | The door over stdio lists its read-only tools and answers the evidence report, unchanged since D8b |
+
+**The bundle.** The main chunk is 1,005.35 kB (298.84 kB gzipped), against 936.73 kB (277.36 kB) after Tier 2: D7's items and their exports, D5b's views, D6b's wall, kiosk and count, and D3b's importers and paste code. The stylesheet is 99.89 kB (18.74 kB gzipped). The QR library (25.78 kB), pptxgenjs (275.35 kB), SheetJS (429.53 kB) and jszip (97.54 kB, now also the Forms document's) load only when they are used. The gzipped main chunk is 1.16 kB below the 300 kB at which D8a's decision on the comparison views would be reopened; it stays as D8a decided (docs/decisions.md). Vite's warning about chunks over 500 kB stands.
+
+**Stale until D9** (plan Section 13.1). Each is a true record of the 22 October build before Track C and says so where it shows a date: the screenshots of Course, Teach, Update, Learn, History and Courses and the judge's page (`docs/screenshots/`, `docs/presentation/shot-*.png`, the README's seven in `.github/readme/shots/`), which show none of Track C's screens: the course record, the packs' previews, the items, the before and after with its dumbbell, swipe and scrubber, the surveys and their campus ways, the OBE report, the slopegraph, the programme wall and the count; the film's capture and both renders (`video/out/`, `deck/media/loop90.mp4`, and the kiosk's copy in `public/media/`, whose line gives its render date); the deck's slides 6 and 7 if the owner takes Section 18 item 6, and the deck's Teach line (Needs the owner 2); the brief's page with the pack and its Learn picture; the poster's screenshots; the pack as PowerPoint draws it (`docs/presentation/pack/`) and the two sample decks; the README's card, which says "no model text" (Needs the owner 2). Nothing in the list was regenerated.
+
+**The D9 commands, waiting for the owner's written go**, in order (plan Section 13.2): `npm run build`; `npm run shots` (the README's seven copied); `npm run gen:sample-decks` with PowerPoint (also the pack's clipping check); if Section 18 item 6 says so, the deck's slides 6 and 7, then `npm run deck`; `node scripts/gen-brief-pdf.mjs`; `node scripts/gen-poster.mjs`; `node video/capture/capture.mjs`; in `video/remotion`, `npm run render:loop90`, `npm run render:afternoon` and `npm run check:determinism`; the film copied into `deck/media/` and `npm run deck` again; `node scripts/kiosk-film.mjs` (and its `--check`), so the kiosk plays the new film with its date.

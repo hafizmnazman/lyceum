@@ -184,6 +184,29 @@ try {
   await page.evaluate(() => (window.location.hash = "#/course/" + window.__lyceum.getState().selectedSubjectId + "/learn"));
   await sleep(450);
 
+  // Tier 3: the week 7 sample quiz on Teach, the programme wall on Courses, and the booth's kiosk, signed in, left again so
+  // its idle return does not follow the rest of the walk.
+  await page.evaluate(() => (window.location.hash = "#/course/CS310/teach"));
+  await page.waitForSelector('[data-demo-id^="session-items-list-"]', { timeout: 8000 });
+  check("the week 7 sample quiz shows its ten items on Teach", await page.evaluate(() => [...document.querySelectorAll('[data-demo-id^="session-items-list-"]')]
+    .some((list) => list.querySelectorAll('[data-demo-id^="item-"]:not([data-demo-id^="item-editor-"])').length === 10)));
+  await page.evaluate(() => (window.location.hash = "#/courses"));
+  await page.waitForSelector('[data-demo-id="programme-heat"]', { timeout: 8000 });
+  check("the programme wall shows every course of the programme, and the matrix only the recorded outline", await page.evaluate(() =>
+    document.querySelectorAll('[data-demo-id="wall-rings"] > li').length === window.__lyceum.getState().programme.subjectIds.length
+    && document.querySelectorAll('[data-demo-id="programme-heat"] td.heat-none').length === window.__lyceum.getState().programme.subjectIds.length - 1));
+  await page.evaluate(() => (window.location.hash = "#/kiosk"));
+  await page.waitForSelector('[data-demo-id="kiosk"]', { timeout: 8000 });
+  await page.waitForFunction(() => document.querySelector('[data-demo-id="kiosk-film"]') || /not on this laptop/.test(document.querySelector('[data-demo-id="kiosk-film-missing"]')?.textContent ?? ""), { timeout: 8000 });
+  await shot("23-kiosk");
+  check("the kiosk renders bare, Tualang resting, with its film or the line saying it is not on this laptop", await page.evaluate(() => !document.querySelector(".app-header")
+    && Boolean(document.querySelector('[data-demo-id="kiosk-touch"]')) && sessionStorage.getItem("lyceum.kiosk") === "on"));
+  await click("kiosk-leave");
+  await page.waitForSelector('[data-demo-id="judge-greeting"]', { timeout: 8000 });
+  check("leaving kiosk mode ends it", await page.evaluate(() => sessionStorage.getItem("lyceum.kiosk") === null));
+  await page.evaluate(() => (window.location.hash = "#/course/CS310/learn"));
+  await sleep(450);
+
   // Persistence: reload and confirm we are still signed in on the same screen.
   await page.reload({ waitUntil: "networkidle0" });
   await sleep(500);

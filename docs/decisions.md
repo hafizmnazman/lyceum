@@ -1871,3 +1871,13 @@ Chosen: (b), because a device id is what lets the count stay one per student wit
 Reverse it if: a campus wants pasted codes to stay out of the counts; then exclude source pasted as the booth is excluded.
 
 To reverse: `pasteCode` and `readPasteCodes` in `src/lib/surveys.ts`, `readPastedSurveyCodes` in `src/app/store.ts`, the paste mode in `src/ui/screens/SurveyPage.tsx` and `PasteWay` in `src/ui/screens/SurveysPanel.tsx`.
+
+## 2026-10-23 01:22, D8c: the bundle after Tier 3, 1.16 kB under the line
+
+Options: (a) keep the comparison views in the main chunk, as D8a decided, since the gzipped main chunk (298.84 kB) has not passed the 300 kB that decision set. (b) Load D5b's views, the item editor and the campus ways on demand now, ahead of the line, which puts loading fallbacks on Update, History, Teach and Learn, the screens the walk and the tour stop on, before the recording.
+
+Chosen: (a), because the condition D8a set has not arrived, and splitting the screens a judge walks now risks a fault no check has seen. The margin is small, so the next change that adds code measures it again.
+
+Reverse it if: the gzipped main chunk passes 300 kB, or loading on the presenting laptop is slow enough to see.
+
+To reverse: lazy-load the views in `src/ui/screens/CurriculumWorkspace.tsx`, `CourseWorkspace.tsx`, `Learn.tsx` and `Recap.tsx`, as D8a's decision says.

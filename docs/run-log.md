@@ -291,9 +291,21 @@ To resume after an interruption, start at the first package below that has no "e
 - 01:16 five decisions logged (docs/decisions.md).
 - 01:16 ended; committed as "D3b: a campus's ways in to the surveys (the document for Microsoft Forms Quick Import, one importer for Microsoft Forms, Google Forms and Moodle Feedback exports, the paste code labelled not anonymous, the Google Forms sample CSV, and their proofs)" (the hash is in `git log`). Tier 3's packages are done; D8c is next.
 
+#### D8c, checks and documentation after Tier 3
+
+- 01:16 started; re-read Section 16 and this log; read the plan's Sections 12 and 13, D8's prompt, and `docs/as-built.md`'s Tier 2 table, its stale list and the D9 commands.
+- 01:17 checked: every `src/prove-*.ts` file is in `prove:all`, 24 of 24; the course file's manifest marks no item not yet built, so it matches what has shipped; the README, JUDGES, the booth script and the guides were brought up to each Tier 3 package as it ended. The README's line that the lecturer writes the quiz items now says the templates draft them and the lecturer writes every key.
+- 01:18 the walk gains Tier 3's surfaces: the week 7 sample quiz's ten items on Teach, the programme wall with every course and the one recorded outline, the kiosk rendering bare with its film, and leaving kiosk mode.
+- 01:18 check: `npm run typecheck` passed; `npm run prove:all` 259 passed, 0 failed, twenty-four suites; `npm run build` passed, main chunk 1,005.35 kB (298.84 kB gzipped).
+- 01:20 check: `npm run smoke` 19 of 19; `smoke:integrity` 3 of 3; `smoke:workspace` 11 of 11; `smoke:curriculum` 6 of 6; `node scripts/walk.mjs` WALK OK, 30 checks.
+- 01:21 check: the guide check matches; CONTRAST CHECK OK (61 ratios, 237 files, 41 generated SVGs); no en or em dash in 331 text files; BACKUP MIGRATION OK, 28 checks; the sample workspace matches in both places; the partner mark, the theme outputs, the mascots, the diagram and the kiosk's film match; `node mcp/try.ts` lists the door's read-only tools and answers the evidence report. Captures restored.
+- 01:23 found while writing the table: nothing proved that a pasted response restores from a backup; the survey backup test now restores one with its device id, and its event with its source. Check: `prove-surveys` 12 of 12; `npm run prove:all` 259 passed, 0 failed, twenty-four suites (01:24).
+- 01:25 one decision logged (the bundle, docs/decisions.md); the dated table, the bundle, the stale list and the D9 commands written into `docs/as-built.md`, Section 8.
+- 01:25 ended; committed as "D8c: checks and documentation after Tier 3 (Tier 3's surfaces in the walk, a pasted response's restore proved, the README's line on quiz items, and the dated verification table with the bundle, the stale list and the D9 commands)" (the hash is in `git log`). Tier 3 is green: Track C's packages are done on Friday 23 October.
+
 ### What is left
 
-D8c, the verification after Tier 3 (D7, D5b, D6b and D3b done): the full verification, the dated table with the stale list, the documentation and the bundle's decision. The D9 commands wait for the owner's written go (`docs/as-built.md`, Section 8), with `node scripts/kiosk-film.mjs` after the render.
+Track C's packages are done: Tier 1, Tier 2 and Tier 3, each with its verification green. What waits is the owner's: D9, the capture and the render, on the written go (the commands in `docs/as-built.md`, Section 8, with `node scripts/kiosk-film.mjs` after the render), and the answers to Needs the owner 1 to 3 above.
 
 ## Track A
 
