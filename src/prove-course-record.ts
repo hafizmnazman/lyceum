@@ -11,8 +11,8 @@ import { DEMO_INSTITUTION } from "./data/institution.ts";
 import { DEMO_LINE } from "./data/sample-course/index.ts";
 import { CLO5, CLO5_TOUR_APPEND, CS310_BEFORE, CS310_RUBRICS, DASHBOARD_TOPIC_TITLE, DEMO_PLOS, cs310After } from "./data/sample-course/cs310.ts";
 import { PEOPLE_IDS } from "./data/seed.ts";
-import { adoptCurriculumRevision, checkCurriculumRevision, definitionForCourse, getState, login, resetDemoState, saveCurriculumRevision, startCurriculumRevision } from "./app/store.ts";
-import { buildCourseFile, courseFileManifest, MARK_FILE, type CourseFileInput } from "./lib/courseFile.ts";
+import { adoptCurriculumRevision, checkCurriculumRevision, definitionForCourse, getState, login, obeReportFor, resetDemoState, saveCurriculumRevision, startCurriculumRevision } from "./app/store.ts";
+import { buildCourseFile, courseFileManifest, MARK_FILE, OBE_FILE, type CourseFileInput } from "./lib/courseFile.ts";
 import { curriculumChanges, learningTime, nextFreeSlot, splitForSlot, tableOfSpecifications, validateCourseDefinition, withDerivedFields } from "./lib/curriculum.ts";
 import { institutionError } from "./lib/institution.ts";
 import { parseWorkspaceBackup } from "./lib/workspaceBackup.ts";
@@ -160,7 +160,8 @@ test("the course file lists its parts, and the manifest marks what is sample, no
   assert.equal(built.manifest.find((m) => /lab sheets/.test(m.item))!.files.length, 3, "lab sheets for weeks 1, 6 and 7");
   assert.equal(status(/week 7 quiz/), "not yet built", "naming the package that builds it");
   assert.match(built.manifest.find((m) => /week 7 quiz/.test(m.item))!.detail, /D7/);
-  assert.match(built.manifest.find((m) => /OBE course report/.test(m.item))!.detail, /D4/);
+  assert.equal(status(/OBE course report/), "not included", "no report saved yet, and it says so");
+  assert.match(built.manifest.find((m) => /OBE course report/.test(m.item))!.detail, /No OBE report is saved/);
   assert.equal(status(/^Graded examination papers/), "not included");
   assert.equal(status(/external examiner/), "not included");
   assert.ok(built.manifest.every((m) => (m.status === "not yet built" || m.status === "not included") === (m.files.length === 0) || m.item === "Decisions and versions"), "a listed file exists exactly when the item is in the zip");
@@ -174,7 +175,7 @@ test("the course file lists its parts, and the manifest marks what is sample, no
   assert.deepEqual(again.bytes, built.bytes, "the same record makes the same zip");
 });
 
-test("the course file follows the institution: no mark when showMark is off, and the manifest grows with the packs", async () => {
+test("the course file follows the institution: no mark when showMark is off, and the manifest grows with the packs and a saved OBE report", async () => {
   const off = await buildCourseFile(input({ institution: { ...DEMO_INSTITUTION, showMark: false } }));
   const zip = await JSZip.loadAsync(off.bytes);
   assert.ok(!zip.file(MARK_FILE), "no mark in the zip");
@@ -182,6 +183,14 @@ test("the course file follows the institution: no mark when showMark is off, and
   const withPack = courseFileManifest(input({ packs: [{ fileName: "CS310-week-6-teaching-pack.pptx", week: 6, bytes: new Uint8Array([1]) }] }));
   assert.equal(withPack.find((m) => /teaching packs/.test(m.item))!.status, "present");
   assert.deepEqual(withPack.find((m) => /teaching packs/.test(m.item))!.files, ["packs/CS310-week-6-teaching-pack.pptx"]);
+  // A saved OBE report (depth plan Section 8.3) goes into the zip as printed, and the manifest says so.
+  const base = input(), st = getState(), prior = st.resultUploads.find((u) => u.subjectId === "CS310" && u.sample)!;
+  const report = { ...obeReportFor(st, "CS310", prior.term, prior, "2026-10-22T10:00:00Z", PEOPLE_IDS.sobri), id: "OBE-CS310-1" };
+  const withReport = await buildCourseFile({ ...base, obeReport: report });
+  const entry = withReport.manifest.find((m) => /OBE course report/.test(m.item))!;
+  assert.deepEqual([entry.status, entry.files], ["sample", [OBE_FILE]], "synthetic marks make the report a sample");
+  const text = await (await JSZip.loadAsync(withReport.bytes)).file(OBE_FILE)!.async("string");
+  assert.ok(text.includes("Pass mark and KPI | 55, and 50% of students") && text.includes("No learning gain is claimed") && text.includes(DEMO_LINE), "the settings it was printed with, the sentence that stays, the honesty line");
 });
 
 test("the demo institution says demo, and the honesty line is the plan's", () => {

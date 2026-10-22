@@ -64,9 +64,10 @@ export const SECTION_GUIDES: SectionGuide[] = [
   {
     screen: "learn", title: "Learn", audience: "Assigned lecturers and coordinators",
     purpose: "See what came back for each outcome, as far as we can honestly tell.", status: "Partial",
-    steps: ["Read attainment per outcome from the latest results file: the mean mark as filed, its spread, and n of N, where N is the most students the file records for any one outcome.", "File the term's results or a CLO survey. You see what was read beside what it was taken to mean, and you confirm the course version the results are for; by default it is the version this term's sessions were saved on.", "Check the results and surveys filed for the course. A seeded example is labelled and never counts.", "Open the benchmark protocol and its status, and read what is planned for the pilot."],
-    output: "A results file matched to the version taught, and attainment per outcome with n of N.",
-    limitation: "No learning gain is claimed; the benchmark has not been run. Intervals, response adequacy, pooling, perception beside attainment and scored predictions are planned. N is read from the file, not from an enrolment record.",
+    steps: ["Read attainment per outcome from the latest results file: the students at or above the institution's pass mark over n, the KPI, the mean and its spread, and n of N, where N is the students the file lists; an interval shows only when some have no mark.",
+      "Read the OBE course report: the Course Outcome Survey's share beside the marks, never averaged with them, and the programme outcomes listed with no index. Write the CQI note, save the report as printed, and print it at A4.", "File the term's results or a CLO survey. You see what was read beside what it was taken to mean, and you confirm the course version the results are for; by default it is the version this term's sessions were saved on.", "Check the results and surveys filed for the course. A seeded example is labelled and never counts.", "Open the benchmark protocol and its status, and read what is planned for the pilot."],
+    output: "A results file matched to the version taught, attainment per outcome against a stated threshold with n of N, and the OBE course report saved as printed.",
+    limitation: "No learning gain is claimed; the benchmark has not been run. Pooling, frozen predictions, comment themes and the programme's PLO figure are planned. N is read from the file, not from an enrolment record.",
   },
   {
     screen: "upload", title: "Upload", audience: "Assigned lecturers and coordinators",
@@ -171,7 +172,7 @@ export const SECTION_GUIDES: SectionGuide[] = [
     purpose: "One page per course and term from the records: what employers asked for, what was decided, what changed, what was taught and what came back.", status: "Working locally",
     steps: ["Open it from History, or from Home once the ring closes.", "Read each part: every number is read from a record in this workspace, and the sample course says it is synthetic.", "Print it, or save it as a PDF, at A4."],
     output: "A printable A4 recap with the sample line and the honesty line.",
-    limitation: "The OBE report against a stated threshold and the surveys beside the marks are planned. The recap does not attest institutional approval.",
+    limitation: "The OBE report shows here once it is saved on Learn, as printed. The recap does not attest institutional approval.",
   },
 ];
 

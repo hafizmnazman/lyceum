@@ -2082,3 +2082,52 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; }
 .survey-comments ul { margin: 6px 0; padding-left: 20px; }
 .forms-import { margin-top: 10px; }
 @media (max-width: 760px) { .booth-link { grid-template-columns: minmax(0, 1fr); } }
+/* The OBE course report (depth plan Section 8.3): a document inside Learn, its facts in two columns, each interval under
+   its share, the CQI note quoted; printed alone, the shell's header and sidebar already off the page. */
+.obe-report { margin-top: 10px; padding: 16px 18px; border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--white); }
+.obe-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+.obe-head h3 { margin: 2px 0 8px; font-size: 20px; }
+.obe-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 18px; margin: 0; }
+.obe-facts div { min-width: 0; }
+.obe-facts dt { font-size: 12px; color: var(--ink-2); }
+.obe-facts dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.obe-table thead th { white-space: nowrap; }
+.obe-interval { display: block; font-size: 12px; color: var(--ink-2); }
+.attainment-interval { color: var(--ink-2); }
+.obe-report h4 { margin: 14px 0 4px; font-size: 15px; }
+.obe-plos { margin: 4px 0; padding-left: 20px; }
+.obe-plos li { margin: 3px 0; }
+.obe-cqi { display: grid; gap: 8px; justify-items: start; margin-top: 14px; }
+.obe-cqi .form-field { width: 100%; }
+.obe-cqi-text { margin: 4px 0; padding: 8px 12px; border-left: 4px solid var(--emerald); background: var(--tint-1); }
+.obe-cqi-text footer { margin-top: 4px; font-size: 12px; color: var(--ink-2); }
+.obe-foot { margin-top: 10px; font-size: 12px; color: var(--ink-2); }
+.obe-saved, .obe-sample { margin-top: 16px; }
+.obe-saved summary, .obe-sample summary { cursor: pointer; font-weight: 600; }
+@media (max-width: 760px) { .obe-head { flex-direction: column; } .obe-facts { grid-template-columns: minmax(0, 1fr); } }
+@media print {
+  /* A4's content width (about 688 px) is under the phone breakpoint, so without this every record table would print as
+     stacked cards; on paper a table stays a table. */
+  .record-table:not(.plo-table) { display: table !important; }
+  .record-table:not(.plo-table) caption { display: table-caption !important; }
+  .record-table:not(.plo-table) thead { display: table-header-group !important; position: static !important; width: auto !important; height: auto !important; overflow: visible !important; clip: auto !important; }
+  .record-table:not(.plo-table) tbody { display: table-row-group !important; }
+  .record-table:not(.plo-table) tr { display: table-row !important; border: 0 !important; margin: 0 !important; padding: 0 !important; }
+  .record-table:not(.plo-table) th, .record-table:not(.plo-table) td { display: table-cell !important; width: auto !important; padding: 3px 8px !important; border-bottom: 1px solid var(--border) !important; }
+  .record-table:not(.plo-table) td[data-label]::before { content: none !important; }
+  .obe-head { flex-direction: row !important; }
+  .obe-facts { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .toast { display: none !important; }
+  /* One A4 sheet for the report: smaller type and tighter spacing than on screen, the same content. */
+  .obe-print .obe-report { border: 0; padding: 0; font-size: 10.5px; line-height: 1.35; }
+  .obe-print .obe-head h3 { font-size: 17px; margin: 0 0 4px; }
+  .obe-print .recap-mark img { height: 30px; }
+  .obe-print .obe-report p { margin: 4px 0; }
+  .obe-print .obe-report h4 { margin: 8px 0 2px; font-size: 12.5px; }
+  .obe-print .record-table { font-size: 10.5px; margin: 6px 0; }
+  .obe-print .record-table .tag { padding: 0 6px; font-size: 10px; }
+  .obe-print .obe-plos li { margin: 1px 0; }
+  .obe-print .obe-cqi-text { padding: 4px 10px; }
+  .obe-report h4 { break-after: avoid; }
+  .obe-report tr { break-inside: avoid; }
+}

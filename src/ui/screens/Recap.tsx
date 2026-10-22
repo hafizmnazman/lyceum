@@ -6,6 +6,7 @@ import { Printer } from "lucide-react";
 import { recapFor } from "../../app/recap.ts";
 import { currentPerson, nowIso, openStep, useStore } from "../../app/store.ts";
 import { LEARN_CLAIM } from "../../lib/learn.ts";
+import { pctText } from "../../lib/attainment.ts";
 import { OUTCOME_LABEL } from "../../lib/decisions.ts";
 import { dayOf } from "../../lib/slides.ts";
 import { Mascot } from "../mascots/index.tsx";
@@ -69,8 +70,13 @@ export function RecapScreen() {
 
     <section className="recap-part" aria-labelledby="recap-back" data-demo-id="recap-results">
       <h2 id="recap-back">What came back</h2>
-      {recap.results ? <>
-        <p className="muted">{recap.results.file}, filed for {recap.results.term}{recap.results.versionId ? ", matched to version " + recap.results.versionId : ""}. As filed: the mean mark and n of N, N = {recap.results.N}.{recap.results.sample ? " Synthetic marks." : ""}</p>
+      {recap.obe ? <div data-demo-id="recap-obe">
+        <p className="muted">The OBE course report saved on {dayOf(recap.obe.savedAt)} by {recap.obe.by}{recap.obe.versionId ? ", on version " + recap.obe.versionId : ""}, at a pass mark of {recap.obe.passMark} and a KPI of {pctText(recap.obe.studentShare)} of students{recap.results?.sample ? "; synthetic marks" : ""}.</p>
+        <table className="record-table recap-table"><thead><tr><th scope="col">Outcome</th><th scope="col">n of N</th><th scope="col">Mean</th><th scope="col">At {recap.obe.passMark} or above</th><th scope="col">KPI</th></tr></thead>
+          <tbody>{recap.obe.rows.map((r) => <tr key={r.label}><th scope="row" data-label="Outcome">{r.label}</th><td data-label="n of N">{r.n} of {r.N}</td><td data-label="Mean">{r.mean === null ? "not filed" : r.mean.toFixed(1)}</td>
+            <td data-label={"At " + recap.obe!.passMark + " or above"}>{r.share === null ? "not computed" : r.atOrAbove + ", " + pctText(r.share)}</td><td data-label="KPI">{r.kpiMet === null ? "not computed" : r.kpiMet ? "met" : "not met"}</td></tr>)}</tbody></table>
+      </div> : recap.results ? <>
+        <p className="muted">{recap.results.file}, filed for {recap.results.term}{recap.results.versionId ? ", matched to version " + recap.results.versionId : ""}. As filed: the mean mark and n of N, N = {recap.results.N}.{recap.results.sample ? " Synthetic marks." : ""} No OBE report is saved for this term yet.</p>
         <table className="record-table recap-table"><thead><tr><th scope="col">Outcome</th><th scope="col">Mean mark</th><th scope="col">n of N</th></tr></thead>
           <tbody>{recap.results.rows.map((r) => <tr key={r.label}><th scope="row" data-label="Outcome">{r.label}</th><td data-label="Mean mark">{Math.round(r.mean * 1000) / 10} of 100</td><td data-label="n of N">{r.n} of {recap.results!.N}</td></tr>)}</tbody></table>
       </> : <p>Not filed.</p>}
@@ -79,7 +85,7 @@ export function RecapScreen() {
         {recap.survey.open ? <table className="record-table recap-table"><thead><tr><th scope="col">Outcome</th><th scope="col">{recap.survey.target} or higher</th></tr></thead>
           <tbody>{recap.survey.items.map((it) => <tr key={it.label}><th scope="row" data-label="Outcome">{it.label}</th><td data-label={recap.survey!.target + " or higher"}>{it.atTarget} of {it.n}{it.share === null ? "" : ", " + Math.round(it.share * 100) + "%"}</td></tr>)}</tbody></table> : null}
       </div> : <p className="muted">No Course Outcome Survey this term.</p>}
-      <p className="muted">The survey beside the marks, never averaged with them, and the OBE report against a stated threshold are planned. {LEARN_CLAIM}</p>
+      <p className="muted">{LEARN_CLAIM}</p>
     </section>
 
     <footer className="recap-foot">{recap.demoLine ? recap.demoLine + " " : ""}Every number on this page is read from a record in this workspace; nothing is estimated. This recap does not attest institutional approval.</footer>

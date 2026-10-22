@@ -112,7 +112,10 @@ export interface ResultUpload {
   subjectId: SubjectId;
   uploadedBy: PersonId;
   term: string;
-  rows: Array<{ cloId: CLOId; meanScore: number; sd: number; n: number }>;
+  rows: Array<{ cloId: CLOId; meanScore: number; sd: number; n: number;
+    // D4a (depth plan Section 8.2): the valid marks out of 100, sorted and never with an identifier, the listed students
+    // without a mark, and the pass mark the profile held at filing. A row from an older backup or an aggregated file has none.
+    marks?: number[]; missing?: number; passMarkAtFiling?: number }>;
   filedAt: string; // ISO
   // v3: which file this came from, for provenance in the Data room.
   sourceFileName?: string;
@@ -650,11 +653,35 @@ export interface BriefDecision {
   byPersonId: PersonId; at: string; outcome: DecisionOutcome; note: string;
 }
 export type LoopEventKind = "brief-prepared" | "brief-sent" | "brief-read" | "decision-recorded" | "snapshot-frozen" | "version-adopted" | "term-set"
-  | "grades-released" | "survey-opened" | "survey-collected"; // Track C (depth plan Sections 7 and 11)
+  | "grades-released" | "survey-opened" | "survey-collected" | "cqi-noted"; // Track C (depth plan Sections 7, 8 and 11)
 /** An append-only record of what happened and when. The How it works timeline reads these first. */
 export interface LoopEvent {
   id: string; at: string; byPersonId: PersonId; kind: LoopEventKind;
-  refs: { subjectId: SubjectId; briefId?: string; decisionId?: string; snapshotId?: string; versionId?: string; draftId?: string; term?: string; previousTerm?: string; formId?: string; count?: number };
+  refs: { subjectId: SubjectId; briefId?: string; decisionId?: string; snapshotId?: string; versionId?: string; draftId?: string; term?: string; previousTerm?: string; formId?: string; count?: number; noteId?: string; source?: "booth" | "imported" };
+}
+
+// ---------- attainment against a stated threshold (depth plan Section 8) ----------
+/** The lecturer's continuous quality improvement note for a course and term, a saved record History shows. */
+export interface CqiNote { id: string; subjectId: SubjectId; term: string; versionId: string | null; text: string; at: string; byPersonId: PersonId }
+/** One outcome's direct line as printed: n of N, the mean, the count and share at or above the pass mark, the KPI. */
+export interface ObeDirectRow {
+  cloId: CLOId; label: string; text: string; N: number; n: number; missing: number; filed: boolean;
+  mean: number | null; sd: number | null; atOrAbove: number | null; share: number | null; kpiMet: boolean | null;
+  interval: { low: number; high: number } | null;
+}
+/** The Course Outcome Survey's line for an outcome: the share at the target or higher over those who chose a point. */
+export interface ObeIndirectRow { cloId: CLOId; n: number; atTarget: number; share: number | null }
+/** Per programme outcome, the linked course outcomes with their strength and direct share, listed: no index. */
+export interface ObePloRow { ploId: string; text: string; links: Array<{ cloId: CLOId; label: string; level: "H" | "M" | "L"; share: number | null }> }
+/** The OBE course report as printed (depth plan Section 8.3): a snapshot of the figures and of the settings that shaped them,
+ *  so a later change to the profile cannot relabel it. */
+export interface ObeReport {
+  id: string; subjectId: SubjectId; term: string; versionId: string | null; uploadId: string; sourceFileName: string | null; sample: boolean;
+  passMark: number; studentShare: number; method: "share-above-mark";
+  surveyId: string | null; surveyTitle: string | null; surveyVersionId: string | null; surveyTarget: number | null;
+  respondents: number | null; classSize: number | null; rate: string | null; floorRequired: number | null; surveyOpen: boolean; surveyNote: string | null;
+  direct: ObeDirectRow[]; indirect: ObeIndirectRow[]; plos: ObePloRow[];
+  cqiNoteId: string | null; printedAt: string; printedBy: PersonId;
 }
 
 // ---------- the two student surveys (depth plan Section 7) ----------

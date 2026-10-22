@@ -1,5 +1,7 @@
 // Generate the sample intake files (spec Section 10) into public/demo/:
-//   results.xlsx          CS310 term results, slightly messy real-world headers
+//   results.xlsx          CS310 term results for 38 students, five outcomes, three
+//                         without a mark on CLO3: sample, synthetic (depth plan 8.4)
+//   results-prior.xlsx    CS310's results for the prior term, the same shape
 //   clo-survey.csv        CS220 per-student CLO mastery survey export
 //   syllabus.pdf          the CS220 official syllabus (supply-side truth)
 //   lecture-slides.pptx   five slides of CS220 lecture content
@@ -17,6 +19,7 @@ import { writeFileSync, mkdirSync } from "node:fs";
 import { crc32 } from "node:zlib";
 import { PRIOR_COS, PRIOR_SURVEY_RESPONSES } from "../src/data/sample-course/surveys.ts";
 import { SCALE_LABELS } from "../src/lib/surveys.ts";
+import { RESULTS_HEADER, RESULTS_NOW, RESULTS_PRIOR } from "../src/data/sample-course/results.ts";
 
 const OUT = "public/demo";
 mkdirSync(OUT, { recursive: true });
@@ -84,31 +87,21 @@ function storedZip(files) {
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-// ---------------------------------------------------------------- results.xlsx
-// CS310 Data Visualisation, one row per student, headers a lecturer would
-// actually write (percent scores, a remarks column the agent must ignore).
-{
-  const header = ["Student ID", "CLO5 mark (%)", "Remarks"];
-  const students = [
-    ["A19001", 62, ""], ["A19004", 71, "late submission"], ["A19011", 55, ""],
-    ["A19013", 68, ""], ["A19017", 47, "resit"], ["A19020", 74, ""],
-    ["A19022", 59, ""], ["A19025", 66, ""], ["A19031", 52, ""],
-    ["A19034", 70, ""], ["A19036", 63, ""], ["A19040", 58, ""],
-    ["A19041", 76, ""], ["A19047", 49, ""], ["A19052", 65, ""],
-    ["A19055", 61, ""], ["A19058", 69, ""], ["A19060", 54, ""],
-    ["A19063", 72, ""], ["A19067", 60, ""], ["A19070", 57, ""],
-    ["A19074", 64, ""], ["A19077", 51, ""], ["A19081", 67, ""],
-  ];
+// ---------------------------------------------------------------- results.xlsx, results-prior.xlsx
+// CS310 Data Visualisation, one row per student, headers a lecturer would actually write (percent marks, a remarks column
+// the intake ignores), from src/data/sample-course/results.ts. A student without a mark has a blank or "ABS" in the cell;
+// a blank is written as no cell at all, as a spreadsheet saves it.
+function resultsWorkbook(sheetName, header, rows) {
   const colRef = (c) => String.fromCharCode(65 + c);
   const cell = (c, r, v) =>
     typeof v === "number"
       ? `<c r="${colRef(c)}${r}"><v>${v}</v></c>`
-      : `<c r="${colRef(c)}${r}" t="inlineStr"><is><t>${esc(v)}</t></is></c>`;
+      : v === "" ? "" : `<c r="${colRef(c)}${r}" t="inlineStr"><is><t>${esc(v)}</t></is></c>`;
   const row = (vals, r) => `<row r="${r}">${vals.map((v, i) => cell(i, r, v)).join("")}</row>`;
-  const sheetRows = [row(header, 1), ...students.map((s, i) => row(s, i + 2))].join("");
+  const sheetRows = [row(header, 1), ...rows.map((v, i) => row(v, i + 2))].join("");
   const sheetXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${sheetRows}</sheetData></worksheet>`;
-  const zip = storedZip([
+  return storedZip([
     {
       name: "[Content_Types].xml",
       data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -122,7 +115,7 @@ const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
     {
       name: "xl/workbook.xml",
       data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="CS310 results 2025 S1" sheetId="1" r:id="rId1"/></sheets></workbook>`,
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="${esc(sheetName)}" sheetId="1" r:id="rId1"/></sheets></workbook>`,
     },
     {
       name: "xl/_rels/workbook.xml.rels",
@@ -131,8 +124,11 @@ const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
     },
     { name: "xl/worksheets/sheet1.xml", data: sheetXml },
   ]);
-  writeFileSync(`${OUT}/results.xlsx`, zip);
-  console.log(`Wrote ${OUT}/results.xlsx (${zip.length} bytes)`);
+}
+for (const file of [RESULTS_NOW, RESULTS_PRIOR]) {
+  const zip = resultsWorkbook(file.sheetName, RESULTS_HEADER, file.rows);
+  writeFileSync(`${OUT}/${file.fileName}`, zip);
+  console.log(`Wrote ${OUT}/${file.fileName} (${zip.length} bytes, ${file.rows.length} students)`);
 }
 
 // ---------------------------------------------------------------- course-outcome-survey-forms.xlsx

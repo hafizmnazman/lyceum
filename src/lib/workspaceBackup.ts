@@ -7,11 +7,11 @@ import { DEMO_PLOS } from "../data/sample-course/cs310.ts";
 
 export const WORKSPACE_DATA_KEYS = ["programme", "assignments", "subjects", "clos", "survey", "institution", "proposals",
   "notifications", "predictions", "resultUploads", "dataSources", "subjectVersions", "testDrafts", "teachingPlans",
-  "courseDefinitions", "rubrics", "curriculumDrafts", "evidenceSources", "skillMentions", "skillMappings", "evidenceBriefs", "evidenceSnapshots", "briefDecisions", "events", "surveys", "surveyResponses", "skillLexicon", "relevanceRatings", "idSeq"] as const;
+  "courseDefinitions", "rubrics", "curriculumDrafts", "evidenceSources", "skillMentions", "skillMappings", "evidenceBriefs", "evidenceSnapshots", "briefDecisions", "events", "surveys", "surveyResponses", "obeReports", "cqiNotes", "skillLexicon", "relevanceRatings", "idSeq"] as const;
 /** Records added after schema version 1 (2: evidence, 3: briefs and lexicon, 4: evidence snapshots, 5: the decision record and
  *  the event log, 6: Track C's institution profile and course records). A backup without one restores with its default; Track C
  *  adds its records to schema 6 package by package, so a schema 6 file from an earlier package restores the same way. */
-const LATER_DEFAULTS: Partial<Record<typeof WORKSPACE_DATA_KEYS[number], unknown>> = { evidenceSources: [], skillMentions: [], skillMappings: [], evidenceBriefs: [], evidenceSnapshots: [], briefDecisions: [], events: [], skillLexicon: {}, institution: DEMO_INSTITUTION, rubrics: [], surveys: [], surveyResponses: [] };
+const LATER_DEFAULTS: Partial<Record<typeof WORKSPACE_DATA_KEYS[number], unknown>> = { evidenceSources: [], skillMentions: [], skillMappings: [], evidenceBriefs: [], evidenceSnapshots: [], briefDecisions: [], events: [], skillLexicon: {}, institution: DEMO_INSTITUTION, rubrics: [], surveys: [], surveyResponses: [], obeReports: [], cqiNotes: [] };
 export const BACKUP_SCHEMA_VERSION = 6;
 export type WorkspaceData = Pick<AppState, typeof WORKSPACE_DATA_KEYS[number]>;
 export interface WorkspaceBackup { application: "Lyceum"; schemaVersion: 1 | 2 | 3 | 4 | 5 | 6; exportedAt: string; data: WorkspaceData }
@@ -30,6 +30,8 @@ const strings = array(id, 1000);
 const one = (...values: unknown[]): Check => x => values.includes(x);
 const shape = (fields: Record<string, Check>): Check => x => record(x) && Object.entries(fields).every(([k,c]) => c(x[k]));
 const dict = (c: Check): Check => x => record(x) && Object.values(x).every(c);
+const mark: Check = x => num(x) && (x as number) >= 0 && (x as number) <= 100;
+const share: Check = x => x === null || (num(x) && (x as number) >= 0 && (x as number) <= 1);
 const bloom = one("Remember", "Understand", "Apply", "Analyse", "Evaluate", "Create");
 const clo = shape({ id, subjectId: id, text: str, bloomLevel: bloom, label: opt(str), demandSignal: opt(num) });
 const event = shape({ at: str, byPersonId: id, action: id, note: opt(str) });
@@ -59,7 +61,7 @@ const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
     subjectId: opt(id), proposalId: opt(id), agentFindings: opt(str), briefId: opt(id), read: boolean, createdAt: str })),
   predictions: array(shape({ proposalId: id, subjectId: id, predictedMastery: num, madeAt: str, actualMastery: opt(num), residual: opt(num) })),
   resultUploads: array(shape({ id, subjectId: id, uploadedBy: id, term: str, filedAt: str, sourceFileName: opt(str), courseVersionId: opt(id), sample: opt(boolean),
-    rows: array(shape({ cloId: id, meanScore: num, sd: nonnegative, n: integer })) })),
+    rows: array(shape({ cloId: id, meanScore: num, sd: nonnegative, n: integer, marks: opt(array(mark, 100000)), missing: opt(integer), passMarkAtFiling: opt(mark) })) })),
   dataSources: array(shape({ kind: one("clo-survey","ssrt","results","syllabus","material"), subjectId: id, term: str,
     recordCount: integer, ingestedAt: str, verified: opt(boolean), sourceFileName: opt(str), sample: opt(boolean) })),
   subjectVersions: array(shape({ id, subjectId: id, snapshot: shape({ title: str, cloIds: strings, prerequisiteSubjectIds: strings }),
@@ -94,8 +96,8 @@ const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
   briefDecisions: array(shape({ id, briefId: id, subjectId: id, courseVersionId: id, term: str, byPersonId: id, at: str,
     outcome: one("adopt", "retain", "defer", "return"), note: str }), 100000),
   events: array(shape({ id, at: str, byPersonId: id,
-    kind: one("brief-prepared", "brief-sent", "brief-read", "decision-recorded", "snapshot-frozen", "version-adopted", "term-set", "grades-released", "survey-opened", "survey-collected"),
-    refs: shape({ subjectId: id, briefId: opt(id), decisionId: opt(id), snapshotId: opt(id), versionId: opt(id), draftId: opt(id), term: opt(str), previousTerm: opt(str), formId: opt(id), count: opt(integer) }) }), 100000),
+    kind: one("brief-prepared", "brief-sent", "brief-read", "decision-recorded", "snapshot-frozen", "version-adopted", "term-set", "grades-released", "survey-opened", "survey-collected", "cqi-noted"),
+    refs: shape({ subjectId: id, briefId: opt(id), decisionId: opt(id), snapshotId: opt(id), versionId: opt(id), draftId: opt(id), term: opt(str), previousTerm: opt(str), formId: opt(id), count: opt(integer), noteId: opt(id), source: opt(one("booth", "imported")) }) }), 100000),
   // The two student surveys (depth plan Section 7): every answer fits its question, and nothing identifies a student.
   surveys: array(shape({ id, subjectId: id, kind: one("course-outcome", "ssrt"), title: str, term: str, versionId: x => x === null || id(x),
     scale: shape({ min: integer, max: integer, target: integer, labels: array(str, 20) }),
@@ -105,6 +107,17 @@ const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
   surveyResponses: array(shape({ id, formId: id, term: str, collectedAt: str, clientId: x => x === null || (typeof x === "string" && /^[A-Za-z0-9-]{8,64}$/.test(x)),
     source: one("booth", "pasted", "imported", "sample"), answers: x => record(x) && Object.keys(x).length <= 60 &&
       Object.values(x).every(v => v === "cannot-say" || (typeof v === "number" && Number.isInteger(v)) || (typeof v === "string" && v.length <= 2000)) }), 100000),
+  // Attainment against a stated threshold (depth plan Section 8): the OBE report as printed, and the CQI notes.
+  obeReports: array(shape({ id, subjectId: id, term: str, versionId: x => x === null || id(x), uploadId: id, sourceFileName: x => x === null || str(x), sample: boolean,
+    passMark: mark, studentShare: x => num(x) && (x as number) >= 0 && (x as number) <= 1, method: one("share-above-mark"),
+    surveyId: x => x === null || id(x), surveyTitle: x => x === null || str(x), surveyVersionId: x => x === null || id(x), surveyTarget: x => x === null || integer(x),
+    respondents: x => x === null || integer(x), classSize: x => x === null || integer(x), rate: x => x === null || str(x), floorRequired: x => x === null || integer(x), surveyOpen: boolean, surveyNote: x => x === null || str(x),
+    direct: array(shape({ cloId: id, label: str, text: str, N: integer, n: integer, missing: integer, filed: boolean, mean: x => x === null || mark(x), sd: x => x === null || nonnegative(x),
+      atOrAbove: x => x === null || integer(x), share, kpiMet: x => x === null || boolean(x), interval: x => x === null || (record(x) && share(x.low) && share(x.high)) }), 200),
+    indirect: array(shape({ cloId: id, n: integer, atTarget: integer, share }), 200),
+    plos: array(shape({ ploId: id, text: str, links: array(shape({ cloId: id, label: str, level: one("H", "M", "L"), share }), 200) }), 200),
+    cqiNoteId: x => x === null || id(x), printedAt: str, printedBy: id }), 10000),
+  cqiNotes: array(shape({ id, subjectId: id, term: str, versionId: x => x === null || id(x), text: x => str(x) && (x as string).trim().length > 0 && (x as string).length <= 2000, at: str, byPersonId: id }), 10000),
   skillLexicon: dict(array(str, 100)),
   relevanceRatings: array(shape({ subjectId: id, score: num, band: one("aligned","drifting","misaligned","unrated"),
     perCLO: array(shape({ cloId: id, score: num, movedBy: array(str) })),
@@ -139,7 +152,7 @@ export function parseWorkspaceBackup(raw: string, knownPersonIds: string[]): { o
   for (const key of WORKSPACE_DATA_KEYS) if (!predicates[key](data[key])) return fail("Invalid workspace data in " + key + ".");
   const backup = parsed as unknown as WorkspaceBackup;
   const d = backup.data;
-  if (![d.subjects,d.clos,d.proposals,d.notifications,d.resultUploads,d.subjectVersions,d.testDrafts,d.curriculumDrafts,d.evidenceSources,d.skillMentions,d.evidenceBriefs,d.evidenceSnapshots,d.briefDecisions,d.events,d.rubrics,d.surveys,d.surveyResponses].every(uniqueIds))
+  if (![d.subjects,d.clos,d.proposals,d.notifications,d.resultUploads,d.subjectVersions,d.testDrafts,d.curriculumDrafts,d.evidenceSources,d.skillMentions,d.evidenceBriefs,d.evidenceSnapshots,d.briefDecisions,d.events,d.rubrics,d.surveys,d.surveyResponses,d.obeReports,d.cqiNotes].every(uniqueIds))
     return fail("The backup contains duplicate record identities.");
   const subjects = new Set(d.subjects.map(s => s.id)), people = new Set(knownPersonIds);
   if (!people.has(d.programme.departmentOwnerId)) return fail("The programme owner is unknown to this local workspace.");
@@ -258,6 +271,14 @@ export function parseWorkspaceBackup(raw: string, knownPersonIds: string[]): { o
         return fail("A survey response has an answer that fits no question.");
     }
   }
+  // A report reads a results file of its course that the backup holds; a note belongs to a known course and person.
+  for (const report of d.obeReports)
+    if (!subjects.has(report.subjectId) || !people.has(report.printedBy) || !d.resultUploads.some(u => u.id === report.uploadId && u.subjectId === report.subjectId)
+      || (report.cqiNoteId !== null && !d.cqiNotes.some(n => n.id === report.cqiNoteId && n.subjectId === report.subjectId))) return fail("An OBE report refers to an unknown course, person, results file or CQI note.");
+  if (d.cqiNotes.some(n => !subjects.has(n.subjectId) || !people.has(n.byPersonId))) return fail("A CQI note refers to an unknown course or person.");
+  // The marks a results row kept are its n, sorted; nothing else is kept with them.
+  if (d.resultUploads.some(u => u.rows.some(r => r.marks !== undefined && (r.marks.length !== r.n || r.marks.some((m, i) => i > 0 && m < r.marks![i - 1])))))
+    return fail("A results row's marks do not match its count.");
   const mappingKeys = new Set<string>();
   for (const mapping of d.skillMappings) {
     const mappingKey = mapping.subjectId + "\n" + skillKey(mapping.skill);

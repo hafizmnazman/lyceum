@@ -25,6 +25,8 @@ import { useSyncExternalStore } from "react";
 import type {
   SurveyDefinition,
   SurveyResponse,
+  CqiNote,
+  ObeReport,
   AgentName,
   AgentRun,
   AssessmentBlueprint,
@@ -107,6 +109,7 @@ import { DEMO_INSTITUTION } from "../data/institution.ts";
 import { institutionError } from "../lib/institution.ts";
 import { boothAnswers, courseOutcomeSurvey, formTokenFor, gradesReleased, importFormsRows, newReaderSecret, ssrtSurvey, studentForm, type ImportResult } from "../lib/surveys.ts";
 import { DEMO_LINE } from "../data/sample-course/index.ts";
+import { listedStudents, obeReport } from "../lib/attainment.ts";
 import { PRIOR_SURVEYS, PRIOR_SURVEY_RESPONSES } from "../data/sample-course/surveys.ts";
 import {
   CANONICAL_PROPOSAL,
@@ -201,6 +204,8 @@ export interface AppState {
   events: LoopEvent[]; // append-only: decisions, snapshots, adoptions, briefs prepared, sent and read, term changes
   surveys: SurveyDefinition[]; // the two student surveys per course and term (depth plan Section 7)
   surveyResponses: SurveyResponse[]; // answers keyed by question id; nothing that identifies a student
+  obeReports: ObeReport[]; // the OBE course report as printed, a snapshot (depth plan Section 8.3)
+  cqiNotes: CqiNote[]; // the lecturer's continuous quality improvement notes, per course and term
   skillLexicon: Record<string, string[]>; // per course: the terms the lecturer scans for
   relevanceRatings: RelevanceRating[];
 
@@ -281,6 +286,8 @@ function seedState(): AppState {
     events: [],
     surveys: structuredClone(PRIOR_SURVEYS),
     surveyResponses: structuredClone(PRIOR_SURVEY_RESPONSES),
+    obeReports: [],
+    cqiNotes: [],
     skillLexicon: {},
     relevanceRatings: computeRelevanceRatings(SUBJECTS, CLOS, SEED_NOW),
 
@@ -343,6 +350,8 @@ const PERSISTED_KEYS = [
   "events",
   "surveys",
   "surveyResponses",
+  "obeReports",
+  "cqiNotes",
   "skillLexicon",
   "relevanceRatings",
   "idSeq",
@@ -856,7 +865,7 @@ export function confirmPendingIntake(): string | null {
       subjectId,
       uploadedBy: person.id,
       term,
-      rows: interp.mappedRows,
+      rows: interp.mappedRows.map((r) => (r.marks ? { ...r, passMarkAtFiling: state.institution.kpi.passMark } : r)),
       filedAt: at,
       sourceFileName: doc.fileName,
       ...(courseVersionId ? { courseVersionId } : {}),
@@ -866,7 +875,7 @@ export function confirmPendingIntake(): string | null {
       kind: "results",
       subjectId,
       term,
-      recordCount: upload.rows.reduce((m, r) => Math.max(m, r.n), 0),
+      recordCount: listedStudents(upload),
       ingestedAt: at,
       verified: false,
       sourceFileName: doc.fileName,
@@ -2038,7 +2047,7 @@ export function createCourseSurveys(subjectId: SubjectId): SaveResult {
   const at = nowIso(), by = currentPerson()!.id;
   const definition = definitionForCourse(subjectId)!;
   const upload = state.resultUploads.filter((u) => u.subjectId === subjectId && u.term === term).at(-1);
-  const classSize = upload ? Math.max(0, ...upload.rows.map((r) => r.n)) || null : null;
+  const classSize = upload ? listedStudents(upload) || null : null;
   const common = { subject, institution: state.institution, term, versionId: subject.currentVersionId, classSize, at, by };
   set((s) => ({ surveys: [...s.surveys,
     courseOutcomeSurvey({ ...common, id: nextId("SURV-" + subjectId), outcomes: definition.outcomes }),
@@ -2099,7 +2108,7 @@ export async function collectBoothResponses(formId: string): Promise<SaveResult 
   }
   if (fresh.length) {
     set((s) => ({ surveyResponses: [...s.surveyResponses, ...fresh] }));
-    logEvent("survey-collected", { subjectId: form.subjectId, formId, term: form.term, count: fresh.length });
+    logEvent("survey-collected", { subjectId: form.subjectId, formId, term: form.term, count: fresh.length, source: "booth" });
   }
   return { ok: true, added: fresh.length };
 }
@@ -2112,7 +2121,7 @@ export function importSurveyRows(formId: string, rows: unknown[][]): SaveResult 
   const result = importFormsRows(rows, form, nowIso(), () => nextId("SR-" + form.subjectId));
   if (!result.responses.length) return { ok: false, error: "No response in the file matched this survey's question ids (Q1., Q2., ...).", result };
   set((s) => ({ surveyResponses: [...s.surveyResponses, ...result.responses] }));
-  logEvent("survey-collected", { subjectId: form.subjectId, formId, term: form.term, count: result.responses.length });
+  logEvent("survey-collected", { subjectId: form.subjectId, formId, term: form.term, count: result.responses.length, source: "imported" });
   return { ok: true, result };
 }
 
@@ -2123,6 +2132,56 @@ export function recordGradesReleased(subjectId: SubjectId, term: string): SaveRe
   if (gradesReleased(state.events, subjectId, term)) return { ok: false, error: "Grades are already recorded as released for " + term + "." };
   logEvent("grades-released", { subjectId, term });
   set({ toast: "Grades recorded as released for " + term + ". The term's survey results open." });
+  return { ok: true };
+}
+
+// ---------- attainment against a stated threshold (depth plan Section 8) ----------
+
+/** The results file a course's report for a term reads: the latest filed for that term, never a seeded example. */
+export function reportUpload(s: AppState, subjectId: SubjectId, term: string): ResultUpload | null {
+  const seeded = new Set(SEED_RESULT_UPLOADS.map((u) => u.id));
+  return s.resultUploads.filter((u) => u.subjectId === subjectId && u.term === term && !seeded.has(u.id))
+    .sort((a, b) => a.filedAt.localeCompare(b.filedAt)).at(-1) ?? null;
+}
+
+/** The OBE course report for a course and term, built from records and the profile as they stand: the term's results
+ *  file, its Course Outcome Survey (booth responses never counted) and the term's latest CQI note. */
+export function obeReportFor(s: AppState, subjectId: SubjectId, term: string, upload: ResultUpload, at: string, by: PersonId, id = "OBE-preview"): ObeReport {
+  const definition = s.courseDefinitions[subjectId];
+  return obeReport({ id, subjectId, term, upload, at, by,
+    clos: s.clos.filter((c) => c.subjectId === subjectId), outcomes: definition?.outcomes ?? [], plos: s.programme.plos ?? [],
+    institution: s.institution, survey: s.surveys.find((x) => x.subjectId === subjectId && x.term === term && x.kind === "course-outcome") ?? null,
+    responses: s.surveyResponses, events: s.events,
+    cqiNoteId: s.cqiNotes.filter((n) => n.subjectId === subjectId && n.term === term).at(-1)?.id ?? null });
+}
+
+/** Save the term's OBE course report as printed: a snapshot of its figures and of the version, threshold, method and
+ *  survey they were printed with, so a later setting change cannot relabel it. */
+export function saveObeReport(subjectId: SubjectId): SaveResult {
+  if (!mayPlan(subjectId)) return { ok: false, error: "Only an assigned lecturer or coordinator can save this course's report." };
+  const term = termWindow(state, subjectId).term;
+  if (!term) return { ok: false, error: "Set the term this loop runs for first, on the Course step." };
+  const upload = reportUpload(state, subjectId, term);
+  if (!upload) return { ok: false, error: "File this term's results first; the report reads them." };
+  if (!upload.rows.some((r) => r.marks)) return { ok: false, error: "This results file kept no distribution; file the results again to compute the shares." };
+  const report = obeReportFor(state, subjectId, term, upload, nowIso(), currentPerson()!.id, nextId("OBE-" + subjectId));
+  set((s) => ({ obeReports: [...s.obeReports, report], toast: "The OBE course report is saved as printed, at a pass mark of " + report.passMark + "." }));
+  return { ok: true };
+}
+
+/** The lecturer's continuous quality improvement note for the course and term, a saved record History shows. */
+export function saveCqiNote(subjectId: SubjectId, text: string): SaveResult {
+  if (!mayPlan(subjectId)) return { ok: false, error: "Only an assigned lecturer or coordinator can write this course's CQI note." };
+  const term = termWindow(state, subjectId).term;
+  if (!term) return { ok: false, error: "Set the term this loop runs for first, on the Course step." };
+  const note = text.trim();
+  if (!note) return { ok: false, error: "Write what will change next term, and why." };
+  if (note.length > NOTE_MAX) return { ok: false, error: "Keep the note under " + NOTE_MAX + " characters." };
+  const at = nowIso(), id = nextId("CQI-" + subjectId);
+  const upload = reportUpload(state, subjectId, term);
+  const cqi: CqiNote = { id, subjectId, term, versionId: upload?.courseVersionId ?? taughtVersionId(state, subjectId) ?? null, text: note, at, byPersonId: currentPerson()!.id };
+  set((s) => ({ cqiNotes: [...s.cqiNotes, cqi], toast: "The CQI note is saved for " + term + "." }));
+  logEvent("cqi-noted", { subjectId, term, noteId: id }, at);
   return { ok: true };
 }
 

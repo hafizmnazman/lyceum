@@ -1457,3 +1457,103 @@ Chosen: (b), because on the build laptop Docker Desktop holds 127.0.0.1:8787 whi
 Reverse it if: the API's port moves into a configuration file both read.
 
 To reverse: the proxy's `target` in `vite.config.ts`.
+
+## 2026-10-22 22:36, D4a: which outcome a results column belongs to
+
+Options: (a) keep the intake's match on the global outcome id, which files a CS310 column headed "CLO1" under CS101's outcome CLO1, since outcome ids are global and CS310's own are CS310-1 to CS310-4 and CLO5. (b) Once the file's course is known, match a column on that course's own outcome labels, and leave a column that matches none unread, with a note in the preview.
+
+Chosen: (b), because a results file is about one course and a column can only mean one of its outcomes; (a) would have put four of the five new columns on other courses' outcomes without a word. Without a course the match on the id stays as it was, so the other sample files read the same.
+
+Reverse it if: a campus files one results sheet across several courses.
+
+To reverse: `cloForHeader` in `src/agents/intakeLocal.ts`.
+
+## 2026-10-22 22:37, D4a: what the saved report keeps
+
+Options: (a) keep only the settings it was printed with (the version, the pass mark, the KPI, the method, the survey's id) and recompute its figures from the results file when it is opened. (b) Keep the figures as printed as well: every direct and indirect line, the PLO listing, the response rate and the floor.
+
+Chosen: (b), because a survey's responses can grow after printing (an import, a collection), so recomputing would let a later record change a report that says it was printed; a snapshot of the figures cannot drift. It adds `obeReports` to the backup at schema 6 beside the `cqiNotes` the plan names, with a check that each report reads a results file the backup holds.
+
+Reverse it if: saved reports grow large, or a campus wants reports regenerated on demand.
+
+To reverse: `ObeReport` in `src/types.ts`, `saveObeReport` in `src/app/store.ts` and the `obeReports` predicate in `src/lib/workspaceBackup.ts`.
+
+## 2026-10-22 22:39, D4a: the sample results' numbers
+
+Options: (a) marks from a seeded generator, with whatever counts fall out. (b) Marks from a seeded generator around one ability per student, with each outcome's count at or above 55 set: CLO1 31, CLO2 29 (the plan's own example line), CLO3 22 of the 35 with a mark, CLO4 17 (below the KPI) and CLO5 24 of 38; last term 28, 27, 24, 15 and 21.
+
+Chosen: (b), because the plan's example sentence then reads true on the screen, and one outcome below the KPI shows "not met" as plainly as "met", which a judge should see the report do. The marks stay synthetic and labelled; setting the counts decides nothing a lecturer's own file would.
+
+Reverse it if: the owner prefers another pattern for the sample.
+
+To reverse: `RESULTS_NOW` and `RESULTS_PRIOR` in `src/data/sample-course/results.ts`, then `npm run gen:demo` and `node mcp/sample.ts`.
+
+## 2026-10-22 22:41, D4a: telling a booth collection from an import in the timeline
+
+Options: (a) two event kinds. (b) One `survey-collected` event with an optional `source`, booth or imported, so the timeline says a booth collection never counts and an import counts toward the floor.
+
+Chosen: (b), because D3a's timeline line called every collection "counted toward the floor", which was false for the booth, and a source on the event fixes it without a second kind every reader must learn. An older event without a source reads as an import did before.
+
+Reverse it if: more sources arrive (the paste code in D3b) and a kind for each reads better.
+
+To reverse: `refs.source` in `src/types.ts`, the two `logEvent` calls in `src/app/store.ts`, the event predicate in `src/lib/workspaceBackup.ts` and the line in `src/app/runs.ts`.
+
+## 2026-10-22 22:42, D4a: when Lens waits for survey responses
+
+Options: (a) never, since the workspace cannot see the collector without asking it. (b) While a survey of the course is open for the collector and nothing has been collected for it since, read from the records: a form token and no `survey-collected` event.
+
+Chosen: (b), because the plan asks Lens to wait while responses await collection, and an open survey with nothing collected is exactly that, in records a mood can read. After the first collection Lens rests, since more responses arriving is not yet a record.
+
+Reverse it if: the workspace comes to poll the collector for a count.
+
+To reverse: `surveyAwaiting` in `src/app/moods.ts`.
+
+## 2026-10-22 22:43, D4a: how the report prints
+
+Options: (a) a route of its own, like the recap's, with its own screen, guide and links. (b) Learn shows the report alone while the print dialog is open, and returns when printing ends; the shell's print styles already take the header and the sidebar off the page.
+
+Chosen: (b), because it prints exactly the report the panel shows (the term's as it stands, or a saved one) without a new screen in the catalogue, and the browser's afterprint event brings Learn back. A "Back to Learn" button covers a browser that does not send the event.
+
+Reverse it if: the report needs a link of its own, from the course file or an email.
+
+To reverse: the `printing` state in `LearnScreen` (`src/ui/screens/Learn.tsx`).
+
+## 2026-10-22 22:43, D4a: last term's report on Learn
+
+Options: (a) show only this term's report, whose survey column reads "not open" in the demo, since the tour neither releases grades nor collects responses. (b) Also show last term's report, built as the records stand from the seeded sample results and the sample survey, labelled sample, never counted and never saved.
+
+Chosen: (b), because it shows the report with both columns open from records already in the workspace and labelled synthetic, so a judge sees direct and indirect side by side without anyone inventing a survey for this term. It sits in a closed section under the term's own report.
+
+Reverse it if: a judge reads last term's sample as this term's result.
+
+To reverse: the `obe-sample` section of `ObePanel` (`src/ui/screens/ObeReport.tsx`).
+
+## 2026-10-22 22:45, D4a: the recap's results once a report is saved
+
+Options: (a) keep the recap's as-filed table (the mean and n of N) and add the report beside it, which pushes the A4 page to two. (b) Show the saved report's table (n of N, the mean, the share at the pass mark, the KPI) in place of the as-filed one, with the settings it was printed with, and the as-filed table only when no report is saved.
+
+Chosen: (b), because the saved report already holds the mean and n of N, so nothing is lost and the page stays one sheet. Its percentages are whole numbers, as on the report, so a judge never sees two numbers for one share.
+
+Reverse it if: the owner wants the recap to carry the report in full.
+
+To reverse: `obe` in `src/app/recap.ts` and its part in `src/ui/screens/Recap.tsx`.
+
+## 2026-10-22 22:53, D4a: record tables on paper
+
+Options: (a) leave print to the screen rules, under which A4's content width, about 688 px, falls below the 760 px phone breakpoint, so every record table prints as stacked cards: the recap and the report each ran to two pages. (b) On paper a record table stays a table, whatever the width.
+
+Chosen: (b), because a printed table reads as a table and fits: the recap is back on one A4 page and the report fits on one. It changes the recap's print from cards to tables, which reads closer to a course file.
+
+Reverse it if: a course with many outcomes overflows A4.
+
+To reverse: the print block in `src/theme/global.css`.
+
+## 2026-10-22 22:59, D4a: the OBE report in the course file
+
+Options: (a) leave the manifest's line "not yet built". (b) Put the latest saved report, with its CQI note, into the zip as `obe-course-report.md`, marked sample on the sample course and present otherwise, and "not included", with the reason, when none is saved.
+
+Chosen: (b), because the report is built, so "not yet built" was no longer true, and a course file should carry the report a quality office reads beside the rubrics. Its manifest line names the date, the term, the pass mark and the version it was printed with.
+
+Reverse it if: a campus keeps its reports outside the course file.
+
+To reverse: `OBE_FILE`, the manifest entry and `obeReportMarkdown` in `src/lib/courseFile.ts`, and the export in `src/ui/screens/CourseWorkspace.tsx`.

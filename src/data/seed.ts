@@ -28,6 +28,9 @@ import { SYNTHETIC_COHORT } from "./synthetic-cohort.ts";
 import type { CourseDefinition, Rubric, TeachingPlan } from "../types.ts";
 import { CS310_BEFORE, CS310_OUTCOME_IDS, CS310_RUBRICS, DEMO_PLOS } from "./sample-course/cs310.ts";
 import { CS310_TEACHING_PLAN } from "./sample-course/sessions.ts";
+import { RESULTS_HEADER, RESULTS_PRIOR } from "./sample-course/results.ts";
+import { DEMO_INSTITUTION } from "./institution.ts";
+import { interpretLocally } from "../agents/intakeLocal.ts";
 
 // ---------- identifiers ----------
 export const PROGRAMME_ID = "BSC-CS";
@@ -220,6 +223,14 @@ export const DATA_SOURCES: DataSource[] = [
 ];
 
 // ---------- a prior filed result (closed-loop context) ----------
+/** Last term's sample results for CS310 (depth plan Section 8.4), read by the same local intake a lecturer's file goes
+ *  through: each outcome's marks sorted with no identifier, at the profile's pass mark. */
+function priorCs310Rows(): ResultUpload["rows"] {
+  const table = { name: RESULTS_PRIOR.sheetName, rows: [RESULTS_HEADER, ...RESULTS_PRIOR.rows.map((r) => r.map(String))] };
+  const interp = interpretLocally({ fileName: RESULTS_PRIOR.fileName, kind: "xlsx", pages: [], tables: [table] }, SEED_SUBJECTS, SEED_CLOS);
+  return (interp.mappedRows ?? []).map((r) => ({ ...r, passMarkAtFiling: DEMO_INSTITUTION.kpi.passMark }));
+}
+
 export const SEED_RESULT_UPLOADS: ResultUpload[] = [
   {
     id: "RU-CS220-2024S2",
@@ -228,6 +239,18 @@ export const SEED_RESULT_UPLOADS: ResultUpload[] = [
     term: PRIOR_TERM,
     rows: [{ cloId: "CLO4", meanScore: 0.59, sd: 0.21, n: 198 }],
     filedAt: "2026-01-22T14:40:00Z",
+  },
+  // CS310's prior term on version CS310-v1, sample and synthetic: an example of the report's direct line, never counted.
+  {
+    id: "RU-CS310-2025-26-S2",
+    subjectId: "CS310",
+    uploadedBy: PEOPLE_IDS.tan,
+    term: RESULTS_PRIOR.term,
+    rows: priorCs310Rows(),
+    filedAt: "2026-07-08T03:00:00Z",
+    sourceFileName: RESULTS_PRIOR.fileName,
+    courseVersionId: "CS310-v1",
+    sample: true,
   },
 ];
 

@@ -222,7 +222,7 @@ try {
   await new Promise((r) => setTimeout(r, 500));
   const courseFile = await JSZip.loadAsync(readFileSync(zipPath));
   const manifest = await courseFile.file("MANIFEST.md").async("string");
-  for (const [item, status] of [["the week 7 quiz", "not yet built"], ["The OBE course report with its CQI note", "not yet built"], ["the lab sheets", "sample"], ["the project brief", "sample"], ["the teaching packs", "sample"], ["Assessment rubrics", "sample"], ["Decisions and versions", "present"], ["The external examiner's report", "not included"]])
+  for (const [item, status] of [["the week 7 quiz", "not yet built"], ["The OBE course report with its CQI note", "not included"], ["the lab sheets", "sample"], ["the project brief", "sample"], ["the teaching packs", "sample"], ["Assessment rubrics", "sample"], ["Decisions and versions", "present"], ["The external examiner's report", "not included"]])
     assert.ok(manifest.includes(item + " | " + status + " |"), "the manifest marks " + item + " " + status);
   assert.ok(manifest.includes("No accreditation is claimed.") && manifest.includes("A demo course at UTP"));
   const names = Object.keys(courseFile.files).filter((n) => !courseFile.files[n].dir);

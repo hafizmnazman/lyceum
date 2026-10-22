@@ -12,7 +12,7 @@ Reviewed 22 October 2026. Generated from the same section catalogue used by the 
 6. **Decide**. A coordinator or the programme owner who received the brief records adopt, retain, defer or return with a required reason. A decision on your own brief is self-recorded and stays open until a second person decides, except on a personal single-owner course. A record is never edited; deciding again adds a new one. Retain is a complete outcome: Update then shows no change this term.
 7. **Update**. An existing course needs **Start course revision**; a new personal course starts with an empty revision. Record the course brief and only the constraints you know; add CLO wording, Bloom level, achievement evidence and optional programme-outcome mappings; add topics, hours, weeks, CLO links and prerequisites; protect foundational content that must remain. **Save revision**, then **Check saved revision**: errors such as broken links, prerequisite cycles and exceeded time budgets block the candidate, while unknown budgets and missing evidence remain visible warnings. Inspect **Before and after** (the change in words, each changed outcome as a redline with **Hide changes** for the clean text, and the topics and hours as current against proposed) and the affected teaching work, record why and the teaching term, then the coordinator (or the owner of a personal course) chooses **Use as my course version**. The baseline is preserved; university approval stays in its existing process. **Discard revision** requires a reason and leaves the current version unchanged. With no revision open, Update shows the change in use against the version it replaced; **History** names the decision behind each version and compares it with the one before, the week's pack included.
 8. **Teach**. Save course notes and add a session with a week, topic, duration, CLO links, activity and check for understanding. Ready and delivered sessions require preparation details; those checks do not establish teaching effectiveness. Course changes flag affected sessions and assessments for review while keeping the content. **Teaching pack (.pptx)** on any session downloads an editable deck built from the saved session and the evidence linked to its outcomes, with a preview of every slide on its card; the meeting brief also downloads as slides. The generator adds no text of its own. On the demo course, the term's fourteen sample sessions sit below your own, with four weeks of full slides, outline packs for the rest, lab sheets and the project brief, all written for this prototype and labelled synthetic; they stay as written and never count as your teaching. A card whose pack changed with a new course version shows what changed, slide by slide. The assessment blueprint and template items sit behind a disclosure on this step; an affected assessment needs a recorded course-change review and repaired links before another submission.
-9. **Learn**. File the term's results or a CLO survey on this step; you confirm the course version the results are for, by default the version this term's sessions were saved on, and the step is done when this term's results are filed and matched to it. Attainment per outcome is shown as filed, with n of N. No learning gain is claimed; the benchmark has not been run. **History** keeps the course versions and the recorded decisions on one timeline and exports a previous outline. **Export current outline** and **Export plan (.md)** write readable Markdown documents, which are not slide decks or restorable backups.
+9. **Learn**. File the term's results or a CLO survey on this step; you confirm the course version the results are for, by default the version this term's sessions were saved on, and the step is done when this term's results are filed and matched to it. Attainment per outcome is shown against the institution's stated pass mark and KPI, with n of N. The OBE course report sets the Course Outcome Survey beside the marks, never averaged with them, lists the programme outcomes with no index and keeps the CQI note; save it as printed, and print it at A4. No learning gain is claimed; the benchmark has not been run. **History** keeps the course versions and the recorded decisions on one timeline and exports a previous outline. **Export current outline** and **Export plan (.md)** write readable Markdown documents, which are not slide decks or restorable backups.
 10. In **Guide & progress** or the Backups panel on **Courses**, download a JSON workspace backup. To restore, choose the JSON file, review counts and export date, acknowledge replacement, then restore. Download the pre-restore recovery copy to recover the previous workspace. Backups exclude original uploaded files, credentials and unsaved edits.
 11. The earlier proposal and approval chain, with its illustrative acceptance forecast, is kept in the research sandbox and labelled illustrative. Decisions on the loop are recorded in Decide.
 
@@ -146,14 +146,15 @@ Explore the prototype's earlier proposal and approval chain in the illustrative 
 
 See what came back for each outcome, as far as we can honestly tell.
 
-1. Read attainment per outcome from the latest results file: the mean mark as filed, its spread, and n of N, where N is the most students the file records for any one outcome.
-2. File the term's results or a CLO survey. You see what was read beside what it was taken to mean, and you confirm the course version the results are for; by default it is the version this term's sessions were saved on.
-3. Check the results and surveys filed for the course. A seeded example is labelled and never counts.
-4. Open the benchmark protocol and its status, and read what is planned for the pilot.
+1. Read attainment per outcome from the latest results file: the students at or above the institution's pass mark over n, the KPI, the mean and its spread, and n of N, where N is the students the file lists; an interval shows only when some have no mark.
+2. Read the OBE course report: the Course Outcome Survey's share beside the marks, never averaged with them, and the programme outcomes listed with no index. Write the CQI note, save the report as printed, and print it at A4.
+3. File the term's results or a CLO survey. You see what was read beside what it was taken to mean, and you confirm the course version the results are for; by default it is the version this term's sessions were saved on.
+4. Check the results and surveys filed for the course. A seeded example is labelled and never counts.
+5. Open the benchmark protocol and its status, and read what is planned for the pilot.
 
-**Output:** A results file matched to the version taught, and attainment per outcome with n of N.
+**Output:** A results file matched to the version taught, attainment per outcome against a stated threshold with n of N, and the OBE course report saved as printed.
 
-**Current limit:** No learning gain is claimed; the benchmark has not been run. Intervals, response adequacy, pooling, perception beside attainment and scored predictions are planned. N is read from the file, not from an enrolment record.
+**Current limit:** No learning gain is claimed; the benchmark has not been run. Pooling, frozen predictions, comment themes and the programme's PLO figure are planned. N is read from the file, not from an enrolment record.
 
 ## Upload
 
@@ -364,7 +365,7 @@ One page per course and term from the records: what employers asked for, what wa
 
 **Output:** A printable A4 recap with the sample line and the honesty line.
 
-**Current limit:** The OBE report against a stated threshold and the surveys beside the marks are planned. The recap does not attest institutional approval.
+**Current limit:** The OBE report shows here once it is saved on Learn, as printed. The recap does not attest institutional approval.
 
 ## What has not been built yet
 

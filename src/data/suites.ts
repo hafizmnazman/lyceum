@@ -6,7 +6,7 @@ export const SUITES: Array<[string, number, string]> = [
   ["Backtest (synthetic)", 4, "closed-loop arithmetic on synthetic data"],
   ["Flow and roles", 28, "store, permissions, state machine"],
   ["Signal reveal (fixture)", 12, "the staged fixture reveal"],
-  ["Intake parsing", 18, "xlsx, csv, pdf, pptx parse and interpret"],
+  ["Intake parsing", 22, "xlsx, csv, pdf, pptx parse and interpret; each results column on its own course's outcome by label, the listed students, the marks kept sorted with no identifier and the missing counted"],
   ["Integrity", 13, "evidence edge cases, approval guards"],
   ["Teaching plans", 10, "scope, validation, export"],
   ["Curriculum", 28, "revisions, constraints, adoption, recovery"],
@@ -24,6 +24,7 @@ export const SUITES: Array<[string, number, string]> = [
   ["Before and after", 8, "the word diff and both texts back from it, topic hours before and after, the week 6 pack under each version changing only where the outcome did, a region for every changed part, renamed and added slides, results marked not comparable when an outcome is reworded, the summary in words, and the decision behind each version read from the event log"],
   ["The judge's way through", 5, "every walk stop rendered by its screen with a route that opens it, captions within twenty words with their labels, the host at the two ends only, the not-built list word for word, the sample workspace restored with the current one kept, and the recap's numbers against their records"],
   ["The two student surveys", 8, "the instruments from the record and the profile, the link under 2,000 characters with no secret in it, the collector's token against its own hash, the floor and the release showing nothing early, one response per device and booth responses never as evidence, the Microsoft Forms importer on its fixture, backups, and the sample's counts"],
+  ["Attainment against a stated threshold", 10, "the direct line against a hand-computed fixture with missing marks, no interval at a census and the finite-population interval below it, the recomputation after a change to the pass mark with the saved report keeping its own, the survey beside the marks never averaged and never from the booth, the programme outcomes listed with no index, marks without identifiers, the CQI note, Lens's moods, and backups"],
 ];
 
 export const SUITE_TOTAL = SUITES.reduce((n, s) => n + s[1], 0);

@@ -4,8 +4,10 @@
 // it) or not included, so the file shows its own gaps. Course-file shape, not accreditation: nothing here claims the
 // course is accredited or accreditable. jszip is loaded on demand, like pptxgenjs, so the main bundle stays small.
 
-import type { BriefDecision, CourseDefinition, EvidenceBrief, InstitutionProfile, Person, ProgrammeOutcome, Rubric, Subject, SubjectVersion, TeachingSession } from "../types.ts";
+import type { BriefDecision, CourseDefinition, CqiNote, EvidenceBrief, InstitutionProfile, ObeReport, Person, ProgrammeOutcome, Rubric, Subject, SubjectVersion, TeachingSession } from "../types.ts";
+import { NON_RESPONSE_LABEL, PLO_LINE, constructsLine, methodLine, pctText } from "./attainment.ts";
 import { assessmentOf, capitalise, learningTime, listText, tableOfSpecifications, topicHours } from "./curriculum.ts";
+import { LEARN_CLAIM } from "./learn.ts";
 
 export type ManifestStatus = "present" | "sample" | "not yet built" | "not included";
 export interface ManifestEntry { item: string; status: ManifestStatus; detail: string; files: string[] }
@@ -14,6 +16,8 @@ export interface CourseFileInput {
   subject: Subject; definition: CourseDefinition; versionId: string; rubrics: Rubric[]; plos: ProgrammeOutcome[];
   versions: SubjectVersion[]; decisions: BriefDecision[]; briefs: EvidenceBrief[]; people: Person[];
   packs: CourseFilePack[]; sessions?: TeachingSession[]; institution: InstitutionProfile; mark: Uint8Array | null; demoLine: string | null; generatedAt: string;
+  // D4a: the latest OBE course report saved for the course, as printed, and the CQI note it carries.
+  obeReport?: ObeReport | null; cqiNote?: CqiNote | null;
 }
 
 export const MARK_FILE = "institution-mark.png";
@@ -24,6 +28,7 @@ const personName = (people: Person[], id: string) => people.find((p) => p.id ===
 const rubricFile = (r: Rubric) => "rubrics/" + r.id + ".md";
 const labFile = (subject: Subject, s: TeachingSession) => "lab-sheets/" + subject.id + "-week-" + s.week + "-lab-sheet.md";
 const briefFile = (subject: Subject, s: TeachingSession) => "project/" + subject.id + "-week-" + s.week + "-project-brief.md";
+export const OBE_FILE = "obe-course-report.md";
 const count = (n: number, noun: string) => n + " " + noun + (n === 1 ? "" : "s");
 
 /** The files the zip holds, by path. */
@@ -33,6 +38,7 @@ function files(input: CourseFileInput): Map<string, string | Uint8Array> {
   const exams = (input.definition.assessment ?? []).filter((a) => a.kind === "exam");
   if (exams.length) out.set("final-examination-outline.md", examMarkdown(input));
   for (const r of input.rubrics) out.set(rubricFile(r), rubricMarkdown(input, r));
+  if (input.obeReport) out.set(OBE_FILE, obeReportMarkdown(input, input.obeReport));
   out.set("decisions-and-versions.md", decisionsMarkdown(input));
   for (const p of input.packs) out.set("packs/" + p.fileName, p.bytes);
   for (const s of input.sessions ?? []) {
@@ -70,7 +76,10 @@ export function courseFileManifest(input: CourseFileInput): ManifestEntry[] {
         ownPacks.length ? count(ownPacks.length, "pack") + " from the lecturer's own sessions" : ""].filter(Boolean).join(" and ") : "No session is saved yet" },
     { item: "Samples of projects at low, medium and high grades", status: "not included", files: [], detail: "Synthetic student work would be one step too far from honest" },
     { item: "Assessment rubrics", status: have(input.rubrics.length > 0), files: input.rubrics.map(rubricFile), detail: input.rubrics.length ? count(input.rubrics.length, "rubric") + " with marks per criterion and the outcomes each evidences; the spreadsheet export comes with D7" : "No rubric is recorded" },
-    { item: "The OBE course report with its CQI note", status: "not yet built", files: [], detail: "Attainment against the stated threshold comes with D4" },
+    { item: "The OBE course report with its CQI note", status: input.obeReport ? (input.obeReport.sample || sample ? "sample" : "present") : "not included", files: input.obeReport ? [OBE_FILE] : [],
+      detail: input.obeReport ? "Saved on " + input.obeReport.printedAt.slice(0, 10) + " for " + input.obeReport.term + " at a pass mark of " + input.obeReport.passMark + " and a KPI of " + pctText(input.obeReport.studentShare)
+        + " of students, on " + (input.obeReport.versionId ?? "a version not recorded") + (input.cqiNote ? ", with its CQI note" : "; no CQI note was saved with it")
+        : "No OBE report is saved for this course yet; Learn builds it from the term's results and saves it as printed" },
     { item: "Decisions and versions", status: "present", files: ["decisions-and-versions.md"], detail: count(input.versions.length, "version") + " and " + count(input.decisions.length, "decision") + " on record" },
     { item: "The external examiner's report", status: "not included", files: [], detail: "No external examiner has reviewed this course" },
   ];
@@ -151,6 +160,29 @@ function decisionsMarkdown(input: CourseFileInput): string {
   lines.push(input.versions.length ? table(["Version", "Saved", "By", "Term", "Reason"], input.versions.map((v) => [v.id + (v.id === input.versionId ? " (current)" : ""), v.changedAt.slice(0, 10), personName(input.people, v.changedBy), v.effectiveTerm || "Not recorded", v.reason])) : "No version recorded.", "", "## Decisions", "");
   lines.push(input.decisions.length ? table(["Recorded", "By", "Decision", "Reason", "On the brief of", "Course version"], input.decisions.map((x) => [x.at.slice(0, 16).replace("T", " "), personName(input.people, x.byPersonId), x.outcome, x.note,
     input.briefs.find((b) => b.id === x.briefId)?.createdAt.slice(0, 10) ?? "an earlier date", x.courseVersionId])) : "No decision recorded.", "");
+  return lines.join("\n");
+}
+
+/** The OBE course report as saved (depth plan Section 8.3): the settings it was printed with, the direct and indirect
+ *  lines, the programme outcomes listed with no index, the CQI note and the sentence that stays. */
+function obeReportMarkdown(input: CourseFileInput, r: ObeReport): string {
+  const target = r.surveyTarget ?? input.institution.surveyScale.target;
+  const ind = new Map(r.indirect.map((x) => [x.cloId, x]));
+  const lines = ["# " + r.subjectId + " " + input.definition.title + ": OBE course report, " + r.term, ""];
+  if (input.demoLine) lines.push("> " + input.demoLine, "");
+  lines.push(table(["Field", "Value"], [["Version taught", r.versionId ?? "Not recorded"], ["Pass mark and KPI", r.passMark + ", and " + pctText(r.studentShare) + " of students"], ["Method", "Share of students at or above the pass mark"],
+    ["Results", (r.sourceFileName ?? "The results file") + (r.sample ? ", synthetic marks" : "")], ["Survey wording", r.surveyTitle ? r.surveyTitle + ", on " + (r.surveyVersionId ?? "a version not recorded") : "No Course Outcome Survey"],
+    ["Saved", r.printedAt.slice(0, 16).replace("T", " ") + " by " + personName(input.people, r.printedBy)]]), "");
+  lines.push(methodLine(r.passMark, r.studentShare), "", table(["Outcome", "n of N", "Mean", "At " + r.passMark + " or above", "KPI " + pctText(r.studentShare), "Survey, " + target + " or higher"],
+    r.direct.map((d) => [d.label, d.n + " of " + d.N + (d.filed && d.missing ? " (" + d.missing + " without a mark)" : ""), d.mean === null ? "not filed" : d.mean.toFixed(1),
+      d.share === null ? "distribution not filed" : d.atOrAbove + ", " + pctText(d.share) + (d.interval ? "; 95% interval " + pctText(d.interval.low) + " to " + pctText(d.interval.high) + ", " + NON_RESPONSE_LABEL : ""),
+      d.kpiMet === null ? "not computed" : d.kpiMet ? "met" : "not met", ind.get(d.cloId) ? ind.get(d.cloId)!.atTarget + " of " + ind.get(d.cloId)!.n + ", " + pctText(ind.get(d.cloId)!.share) : r.surveyOpen ? "no item" : "not open"])), "");
+  lines.push(constructsLine(r.passMark, target), "");
+  if (r.surveyNote) lines.push(r.surveyNote, "");
+  if (r.respondents !== null) lines.push("The survey's response rate: " + (r.rate ?? r.respondents + " responses, the class size not recorded") + "; its floor is " + r.floorRequired + " responses.", "");
+  lines.push("## Programme outcomes, listed", "", ...(r.plos.length ? r.plos.map((p) => "- " + p.ploId + " (" + p.text + "): " + p.links.map((l) => l.label + " (" + l.level + ") " + pctText(l.share)).join("; ")) : ["The course record links no programme outcome."]), "", PLO_LINE, "");
+  lines.push("## CQI note", "", input.cqiNote ? input.cqiNote.text + " (" + personName(input.people, input.cqiNote.byPersonId) + ", " + input.cqiNote.at.slice(0, 10) + ")" : "No CQI note was saved with this report.", "");
+  lines.push(LEARN_CLAIM, "");
   return lines.join("\n");
 }
 

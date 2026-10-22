@@ -36,7 +36,7 @@ export const WALK: WalkStop[] = [
   { id: "teach", route: "#/course/CS310/teach", target: "session-preview-*", open: true, screen: "src/ui/screens/CourseWorkspace.tsx",
     caption: "Teach: a preview of the week 6 pack, built from the session, the course record and the evidence.", label: "Sample, synthetic" },
   { id: "learn", route: "#/course/CS310/learn", target: "learn-attainment", screen: "src/ui/screens/Learn.tsx",
-    caption: "Learn: the term's results matched to the version taught, with n of N; the OBE table is planned.", label: "Synthetic marks" },
+    caption: "Learn: the term's results against the stated pass mark, with n of N, and the OBE report beside them.", label: "Synthetic marks" },
   { id: "history", route: "#/course/CS310/history", target: "history-decision-link-*", screen: "src/ui/screens/CurriculumWorkspace.tsx",
     caption: "History: each version names the decision that authorised it, and opens it.", label: "Prototype" },
   { id: "home", route: "#/inbox", target: "journey-card", screen: "src/ui/screens/Inbox.tsx",

@@ -321,9 +321,12 @@ function CourseFileExport({ state, subject, definition }: { state: AppState; sub
           if (packs.some((p) => p.fileName === fileName)) fileName = fileName.replace(".pptx", "-" + session.id + ".pptx");
           packs.push({ fileName, week: session.week, bytes: await deckBytes(spec), sample: Boolean(session.sample), full: Boolean(session.slides?.length) });
         }
+        // The latest OBE course report saved for the course, as printed (depth plan Section 8.3).
+        const obeReport = state.obeReports.filter((r) => r.subjectId === subject.id).sort((a, b) => a.printedAt.localeCompare(b.printedAt)).at(-1) ?? null;
         const result = await buildCourseFile({ subject, definition, versionId: subject.currentVersionId, rubrics: state.rubrics.filter((r) => r.subjectId === subject.id),
           plos: state.programme.plos ?? [], versions: state.subjectVersions.filter((v) => v.subjectId === subject.id), decisions: state.briefDecisions.filter((d) => d.subjectId === subject.id),
-          briefs: state.evidenceBriefs.filter((b) => b.subjectId === subject.id), people: state.people, packs, sessions, institution, mark, demoLine: definition.sample ? DEMO_LINE : null, generatedAt: nowIso() });
+          briefs: state.evidenceBriefs.filter((b) => b.subjectId === subject.id), people: state.people, packs, sessions, institution, mark, demoLine: definition.sample ? DEMO_LINE : null, generatedAt: nowIso(),
+          obeReport, cqiNote: obeReport?.cqiNoteId ? state.cqiNotes.find((n) => n.id === obeReport.cqiNoteId) ?? null : null });
         downloadBytes(subject.id + "-course-file.zip", result.bytes);
         const count = (status: string) => result.manifest.filter((m) => m.status === status).length;
         setMessage("Course file downloaded: " + (count("present") + count("sample")) + " items in it, " + count("not yet built") + " not yet built and " + count("not included") + " not included, each named in MANIFEST.md.");

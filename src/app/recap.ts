@@ -2,8 +2,8 @@
 // the records it reads, so prove-judge can check every number against them: what employers asked for (the top skills over
 // the reviewed postings, with their intervals), what was decided (the decision behind the version in use), what changed
 // (the summary of that version against the one it replaced), what was taught (the lecturer's own sessions and their packs)
-// and what came back (the results filed for the term, as filed, or "not filed", and the Course Outcome Survey under its rules,
-// booth responses never among them).
+// and what came back (the results filed for the term, as filed, or "not filed"; the OBE course report saved for the term,
+// with the settings it was printed with; and the Course Outcome Survey under its rules, booth responses never among them).
 
 import { SEED_RESULT_UPLOADS } from "../data/seed.ts";
 import { DEMO_LINE } from "../data/sample-course/index.ts";
@@ -27,6 +27,8 @@ export interface Recap {
   taught: Array<{ id: string; week: number; topic: string; slides: number; versionId: string | null }>;
   samples: number;
   results: { file: string; term: string; N: number; versionId: string | null; sample: boolean; rows: Array<{ label: string; mean: number; n: number }> } | null;
+  obe: { id: string; savedAt: string; by: string; passMark: number; studentShare: number; versionId: string | null;
+    rows: Array<{ label: string; n: number; N: number; mean: number | null; atOrAbove: number | null; share: number | null; kpiMet: boolean | null }> } | null;
   survey: { title: string; respondents: number; rate: string | null; open: boolean; released: boolean; required: number; booth: number;
     items: Array<{ label: string; n: number; atTarget: number; share: number | null }>; target: number } | null;
   builtAt: string;
@@ -77,6 +79,12 @@ export function recapFor(state: AppState, subjectId: string, at: string): Recap 
     samples: sessions.filter((s) => s.sample).length,
     results: upload && filed ? { file: upload.sourceFileName ?? "Results", term: upload.term, N: filed.N, versionId: upload.courseVersionId ?? null, sample: Boolean(upload.sample),
       rows: filed.rows.map((r) => ({ label: r.clo?.label ?? r.cloId, mean: r.meanScore, n: r.n })) } : null,
+    obe: (() => {
+      // The latest OBE report saved for the term, as printed: its figures and the threshold it was printed with.
+      const saved = window.term ? state.obeReports.filter((r) => r.subjectId === subjectId && r.term === window.term).sort((a, b) => a.printedAt.localeCompare(b.printedAt)).at(-1) : undefined;
+      return saved ? { id: saved.id, savedAt: saved.printedAt, by: name(saved.printedBy), passMark: saved.passMark, studentShare: saved.studentShare, versionId: saved.versionId,
+        rows: saved.direct.map((r) => ({ label: r.label, n: r.n, N: r.N, mean: r.mean, atOrAbove: r.atOrAbove, share: r.share, kpiMet: r.kpiMet })) } : null;
+    })(),
     survey: (() => {
       const form = state.surveys.find((x) => x.subjectId === subjectId && x.kind === "course-outcome" && !x.sample && x.term === window.term);
       if (!form || !window.term) return null;
