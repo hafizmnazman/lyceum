@@ -264,6 +264,21 @@ export interface TeachingSession {
   status: "draft" | "ready" | "delivered";
   updatedAt: string;
   updatedBy: PersonId;
+  // Track C (depth plan Section 5.1), optional so older records load:
+  slides?: SlideDraft[]; // the session's own slides; without them the pack is built from the records
+  labSheet?: string; // markdown
+  projectBrief?: string; // markdown
+  topicId?: string; // the course topic this session teaches
+  sample?: boolean; // a labelled fixture written for the prototype; never counted as this term's teaching
+}
+/** One slide a lecturer wrote: a title, bullets and speaker notes, with an optional second column or figure. */
+export interface SlideDraft {
+  title: string;
+  bullets: string[];
+  notes: string;
+  right?: string[]; // a second column: the slide uses the two-column master
+  section?: boolean; // a section divider
+  figure?: { kind: "table"; header: string[]; rows: string[][]; alt: string } | { kind: "placeholder"; label: string };
 }
 
 export interface TeachingPlan {
@@ -648,7 +663,7 @@ export interface InstitutionProfile {
   name: string; // "Universiti Teknologi PETRONAS (demo)": a demo profile keeps the word demo in its name
   shortName: string;
   showMark: boolean; // false for a campus that must not show its mark on sample material
-  mark: { svg: string; png: string; pngSmall: string; alt: string }; // served from public/brand/partners/
+  mark: { svg: string; png: string; pngSmall: string; wide?: string; alt: string }; // served from public/brand/partners/; wide fits a slide corner
   kpi: { passMark: number; studentShare: number; method: "share-above-mark" }; // a mark out of 100; a share from 0 to 1
   surveyScale: { min: number; max: number; target: number }; // the agreement scale and the "target or higher" point
   surveyFloor: number; // the fewest responses before any aggregate is shown

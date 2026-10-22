@@ -14,6 +14,7 @@ export const DEMO_INSTITUTION: InstitutionProfile = {
     svg: "/brand/partners/utp.svg",
     png: "/brand/partners/utp-1024.png",
     pngSmall: "/brand/partners/utp-256.png",
+    wide: "/brand/partners/utp-wide.png",
     alt: "Universiti Teknologi PETRONAS mark, demo course",
   },
   kpi: { passMark: 55, studentShare: 0.5, method: "share-above-mark" },

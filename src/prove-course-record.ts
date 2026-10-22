@@ -142,20 +142,23 @@ const input = (overrides: Partial<CourseFileInput> = {}): CourseFileInput => {
   resetDemoState(); login(PEOPLE_IDS.sobri);
   const s = getState(), subject = s.subjects.find((x) => x.id === "CS310")!;
   return { subject, definition: CS310_BEFORE, versionId: subject.currentVersionId, rubrics: s.rubrics, plos: s.programme.plos!, versions: s.subjectVersions.filter((v) => v.subjectId === "CS310"),
-    decisions: [], briefs: [], people: s.people, packs: [], institution: DEMO_INSTITUTION, mark: new Uint8Array([137, 80, 78, 71]), demoLine: DEMO_LINE, generatedAt: "2026-10-22T10:00:00Z", ...overrides };
+    decisions: [], briefs: [], people: s.people, packs: [], sessions: s.teachingPlans.find((p) => p.subjectId === "CS310")!.sessions, institution: DEMO_INSTITUTION, mark: new Uint8Array([137, 80, 78, 71]), demoLine: DEMO_LINE, generatedAt: "2026-10-22T10:00:00Z", ...overrides };
 };
 
 test("the course file lists its parts, and the manifest marks what is sample, not yet built and not included", async () => {
   const built = await buildCourseFile(input());
   const zip = await JSZip.loadAsync(built.bytes);
   const names = Object.values(zip.files).filter((f) => !f.dir).map((f) => f.name).sort();
-  assert.deepEqual(names, ["MANIFEST.md", "course-information.md", "decisions-and-versions.md", "final-examination-outline.md", MARK_FILE, "rubrics/CS310-R1.md", "rubrics/CS310-R2.md"].sort());
+  assert.deepEqual(names, ["MANIFEST.md", "course-information.md", "decisions-and-versions.md", "final-examination-outline.md", MARK_FILE, "rubrics/CS310-R1.md", "rubrics/CS310-R2.md",
+    "lab-sheets/CS310-week-1-lab-sheet.md", "lab-sheets/CS310-week-6-lab-sheet.md", "lab-sheets/CS310-week-7-lab-sheet.md", "project/CS310-week-8-project-brief.md"].sort());
   const manifest = await zip.file("MANIFEST.md")!.async("string");
   for (const m of built.manifest) assert.ok(manifest.includes(m.item) && manifest.includes(m.status), m.item);
   const status = (item: RegExp) => built.manifest.find((m) => item.test(m.item))!.status;
   assert.equal(status(/^Course learning outcomes/), "sample", "the sample course's parts say sample");
-  assert.equal(status(/project brief/), "not yet built");
-  assert.match(built.manifest.find((m) => /project brief/.test(m.item))!.detail, /\(D2\)/, "naming the package that builds it");
+  assert.equal(status(/project brief/), "sample", "the week 8 brief, written for the prototype");
+  assert.equal(status(/lab sheets/), "sample");
+  assert.equal(built.manifest.find((m) => /lab sheets/.test(m.item))!.files.length, 3, "lab sheets for weeks 1, 6 and 7");
+  assert.equal(status(/week 7 quiz/), "not yet built", "naming the package that builds it");
   assert.match(built.manifest.find((m) => /week 7 quiz/.test(m.item))!.detail, /D7/);
   assert.match(built.manifest.find((m) => /OBE course report/.test(m.item))!.detail, /D4/);
   assert.equal(status(/^Graded examination papers/), "not included");

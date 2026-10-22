@@ -9,11 +9,13 @@ import {
 import { DEMO_LINE } from "../../data/sample-course/index.ts";
 import { buildCourseFile, type CourseFilePack } from "../../lib/courseFile.ts";
 import { downloadBytes } from "../../lib/download.ts";
-import { AssessmentPanel, hasCourseRecord, OutcomesPanel, ReferencesPanel, SchedulePanel, SynopsisPanel } from "./CourseRecord.tsx";
+import { AssessmentPanel, hasCourseRecord, MaterialsPanel, OutcomesPanel, ReferencesPanel, SchedulePanel, SynopsisPanel } from "./CourseRecord.tsx";
 import { evidenceReport } from "../../lib/evidence.ts";
-import { deckBytes, sessionDeck } from "../../lib/slides.ts";
-import { planSummary, teachingPlanMarkdown, type SessionInput } from "../../lib/teachingPlan.ts";
-import type { ChangeProposal, CourseDefinition, Person, Subject, TeachingPlan } from "../../types.ts";
+import { brandFor, deckBytes, sessionDeck, type DeckSpec } from "../../lib/slides.ts";
+import { downloadText } from "../../lib/download.ts";
+import { DeckFilmstrip, DeckThumb, useMarkData } from "../primitives/DeckPreview.tsx";
+import { planSummary, suggestedWeek, teachingPlanMarkdown, type SessionInput } from "../../lib/teachingPlan.ts";
+import type { ChangeProposal, CourseDefinition, Person, Subject, TeachingPlan, TeachingSession } from "../../types.ts";
 import { Button, Disclosure, Field, Input, Select, Tag, Textarea } from "../primitives/index.tsx";
 import { Meter } from "../primitives/loop.tsx";
 import { useUnsavedEditor } from "../useUnsavedEditor.ts";
@@ -40,6 +42,11 @@ export function CourseOverview({ state, person, subject, proposal, onPlan, onPro
   const fresh = evidenceSources === 0;
   const outcomeOf = (id: string) => definition?.outcomes.find((o) => o.id === id);
   const record = hasCourseRecord(definition) ? definition : null;
+  const markData = useMarkData(record?.sample && state.institution.showMark ? state.institution.mark.wide ?? state.institution.mark.png : null);
+  const sessions = plan?.sessions ?? [];
+  const report = evidenceReport(subject.id, state.evidenceSources, state.skillMentions, state.skillMappings, clos);
+  const deckFor = (session: TeachingSession) => sessionDeck(subject, session, clos, report, state.skillMentions, state.evidenceSources, state.people, nowIso(),
+    { definition, brand: brandFor(state.institution, definition, subject, session.week, markData) });
   return (
     <div className="course-outline">
       <section className="workspace-panel" aria-labelledby="current-outcomes">
@@ -64,9 +71,10 @@ export function CourseOverview({ state, person, subject, proposal, onPlan, onPro
 
       {record ? <>
         <SynopsisPanel definition={record} />
-        <OutcomesPanel definition={record} plos={state.programme.plos ?? []} sessions={summary.sessions} />
+        <OutcomesPanel definition={record} plos={state.programme.plos ?? []} sessions={sessions} />
         <AssessmentPanel definition={record} rubrics={state.rubrics.filter((r) => r.subjectId === subject.id)} />
-        <SchedulePanel definition={record} />
+        <SchedulePanel definition={record} sessions={sessions} deckFor={deckFor} markSrc={state.institution.mark.wide ?? state.institution.mark.png} />
+        {sessions.length ? <MaterialsPanel courseId={subject.id} sessions={sessions} onTeach={onPlan} /> : null}
         <ReferencesPanel definition={record} />
       </> : null}
 
@@ -136,6 +144,7 @@ export function TeachingPlanPanel({ state, person, subject }: CourseProps) {
   const [message, setMessage] = useState("");
   const [deleting, setDeleting] = useState<string | null>(null);
   const [filter, setFilter] = useState("all");
+  const [week, setWeek] = useState("all");
   const titleRef = useRef<HTMLInputElement>(null);
   const addButtonRef = useRef<HTMLButtonElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
@@ -143,9 +152,17 @@ export function TeachingPlanPanel({ state, person, subject }: CourseProps) {
   const editorOpen = editor !== null;
   useEffect(() => { if (editorOpen) titleRef.current?.focus(); }, [editorOpen]);
   useUnsavedEditor(editorOpen);
+  const definition = definitionForCourse(subject.id);
+  const markData = useMarkData(definition?.sample && state.institution.showMark ? state.institution.mark.wide ?? state.institution.mark.png : null);
+  const report = evidenceReport(subject.id, state.evidenceSources, state.skillMentions, state.skillMappings, clos);
+  const deckFor = (session: TeachingSession) => sessionDeck(subject, session, clos, report, state.skillMentions, state.evidenceSources, state.people, nowIso(),
+    { definition, brand: brandFor(state.institution, definition, subject, session.week, markData) });
   function add() {
     setMessage(""); setError("");
-    setEditor({ week: Math.min(52, (summary.sessions.at(-1)?.week ?? 0) + 1), topic: "", minutes: 60,
+    // The first week that teaches an outcome the latest version changed, otherwise the week after your last session.
+    const versions = state.subjectVersions.filter((v) => v.subjectId === subject.id).sort((a, b) => a.changedAt.localeCompare(b.changedAt));
+    const previous = versions.length > 1 && versions.at(-1)?.id === subject.currentVersionId ? versions.at(-2)?.definition ?? null : null;
+    setEditor({ week: suggestedWeek(summary.sessions, definition, previous), topic: "", minutes: 60,
       cloIds: [], activity: "", learningCheck: "", resources: "", status: "draft" });
   }
   function exportPlan() {
@@ -155,7 +172,14 @@ export function TeachingPlanPanel({ state, person, subject }: CourseProps) {
     link.href = url; link.download = subject.id + "-teaching-plan.md"; link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
-  const filtered = summary.sessions.filter((s) => filter === "all" || s.status === filter);
+  const all = [...summary.sessions, ...summary.samples];
+  const filtered = all.filter((s) => (filter === "all" || s.status === filter) && (week === "all" || String(s.week) === week));
+  const own = filtered.filter((s) => !s.sample), samples = filtered.filter((s) => s.sample);
+  const weeks = [...new Set(all.map((s) => s.week))].sort((a, b) => a - b);
+  const cardProps = { subject, clos, mayEdit, editorOpen, deleting, deckFor, markSrc: state.institution.mark.wide ?? state.institution.mark.png,
+    onEdit: (session: TeachingSession) => { setEditor({ ...session, cloIds: [...session.cloIds] }); setError(""); setMessage(""); },
+    onAskRemove: (id: string | null) => setDeleting(id),
+    onRemove: (id: string) => { const result = deleteTeachingSession(subject.id, id); setMessage(result.ok ? "Session removed." : result.error); setDeleting(null); } };
   return (
     <div>
       <div className="section-heading">
@@ -202,28 +226,56 @@ export function TeachingPlanPanel({ state, person, subject }: CourseProps) {
           <div className="button-row"><Button type="submit" variant="primary" data-demo-id="session-save">Save session</Button><Button type="button" variant="quiet" onClick={() => { setEditor(null); setError(""); requestAnimationFrame(() => addButtonRef.current?.focus({ preventScroll: true })); }}>Cancel edits</Button></div>
         </form>
       ) : null}
-      <div className="section-heading"><h3>Session sequence</h3><label className="inline-field">Show <Select aria-label="Filter sessions" value={filter} onChange={(e) => setFilter(e.target.value)}><option value="all">All sessions</option><option value="draft">Drafts</option><option value="ready">Ready to teach</option><option value="delivered">Delivered</option></Select></label></div>
-      {/* Session cards by week (plan Section 5.3), each with its outcomes and its teaching pack. */}
-      {filtered.length ? <ol className="session-cards">{filtered.map((session) => (
-        <li key={session.id}><article className="session-card teaching-session" data-demo-id={"session-" + session.id}>
-          <div className="session-card-head"><span className="session-week"><span className="eyebrow">Week</span><strong className="tabular">{session.week}</strong></span>
-            <div className="session-card-title"><h3>{session.topic}</h3><span className="muted">{session.minutes} minutes</span></div>
-            <Tag tone={session.needsReview ? "warn" : session.status === "draft" ? "neutral" : "ok"}>{session.needsReview ? "Review course change" : session.status === "ready" ? "Ready to teach" : session.status === "delivered" ? "Delivered" : "Draft"}</Tag></div>
-          {session.needsReview ? <p className="limitation">The course changed. Review this session and its outcome links before reuse.</p> : null}
-          <div className="session-outcomes" aria-label="Linked outcomes">{session.cloIds.length ? session.cloIds.map(id => { const clo = clos.find(c => c.id === id); return <Tag key={id} tone={clo ? "accent" : "warn"}>{clo ? clo.label ?? clo.id : id + " (removed)"}</Tag>; }) : <span className="muted">No outcome linked yet</span>}</div>
-          <div className="session-content"><div><h4>Learning activity</h4><p className="preserve-lines">{session.activity || "Add an activity students will take part in."}</p></div><div><h4>Check for understanding</h4><p className="preserve-lines">{session.learningCheck || "Add how you will check their learning."}</p></div></div>
-          {session.resources ? <details><summary>Resources & slide brief</summary><p className="preserve-lines">{session.resources}</p></details> : null}
-          <div className="button-row"><Button data-demo-id={"session-slides-" + session.id} aria-label={"Download teaching pack for " + session.topic} onClick={() => void downloadPack(subject.id, sessionDeck(subject, session, clos, evidenceReport(subject.id, state.evidenceSources, state.skillMentions, state.skillMappings, clos), state.skillMentions, state.evidenceSources, state.people, nowIso()))}><Download size={15} /> Teaching pack (.pptx)</Button><span className="muted">Editable slides from this session and the evidence linked to its outcomes. No AI text.</span></div>
-          {mayEdit ? <div className="button-row session-actions">
-            <Button disabled={editorOpen} aria-label={"Edit " + session.topic} onClick={() => { setEditor({ ...session, cloIds: [...session.cloIds] }); setError(""); setMessage(""); }}>Edit session</Button>
-            {deleting === session.id ? <><span>Remove this session?</span><Button variant="danger" onClick={() => { const result = deleteTeachingSession(subject.id, session.id); if (result.ok) setMessage("Session removed."); else setMessage(result.error); setDeleting(null); }}>Confirm removal</Button><Button variant="quiet" onClick={() => setDeleting(null)}>Keep session</Button></>
-              : <Button variant="quiet" disabled={editorOpen} aria-label={"Remove " + session.topic} onClick={() => setDeleting(session.id)}>Remove</Button>}
-          </div> : null}
-        </article></li>
-      ))}</ol> : null}
-      {!filtered.length ? <div className="workspace-panel"><h3>{summary.sessions.length ? "No sessions match this filter" : "Build your first teaching session"}</h3><p>{summary.sessions.length ? "Choose All sessions to see the rest of your plan." : "Start with the next class you need to teach. You can save a topic as a draft, then return to add its activity, CLO links and materials."}</p>{!editor && mayEdit && !summary.sessions.length ? <Button onClick={add}>Add the first session</Button> : null}</div> : null}
+      <div className="section-heading"><h3>Session sequence</h3><div className="button-row">
+        <label className="inline-field">Show <Select aria-label="Filter sessions" value={filter} onChange={(e) => setFilter(e.target.value)}><option value="all">All sessions</option><option value="draft">Drafts</option><option value="ready">Ready to teach</option><option value="delivered">Delivered</option></Select></label>
+        <label className="inline-field">Week <Select aria-label="Week in view" data-demo-id="teach-week" value={week} onChange={(e) => setWeek(e.target.value)}><option value="all">All weeks</option>{weeks.map((w) => <option key={w} value={String(w)}>Week {w}</option>)}</Select></label>
+      </div></div>
+      {/* Session cards by week (plan Section 5.3; depth plan Section 5.4), the lecturer's own first, then the term's sample sessions. */}
+      {own.length ? <ol className="session-cards">{own.map((session) => <SessionCard key={session.id} {...cardProps} session={session} />)}</ol>
+        : samples.length && filter === "all" && week === "all" ? <p className="muted">None of your own yet. Add a session; the sample sessions below are written for the prototype.</p> : null}
+      {samples.length ? <section className="sample-sessions" aria-labelledby="sample-sessions" data-demo-id="sample-sessions">
+        <div className="section-heading"><h3 id="sample-sessions">Sample sessions for the term</h3><Tag tone="warn">Sample, synthetic</Tag></div>
+        <p className="muted">{DEMO_LINE} Four weeks carry full slides; the others are outline packs built from the course record.</p>
+        <ol className="session-cards">{samples.map((session) => <SessionCard key={session.id} {...cardProps} session={session} />)}</ol>
+      </section> : null}
+      {!filtered.length ? <div className="workspace-panel"><h3>{all.length ? "No sessions match this filter" : "Build your first teaching session"}</h3><p>{all.length ? "Choose All sessions to see the rest of your plan." : "Start with the next class you need to teach. You can save a topic as a draft, then return to add its activity, CLO links and materials."}</p>{!editor && mayEdit && !all.length ? <Button onClick={add}>Add the first session</Button> : null}</div> : null}
     </div>
   );
+}
+
+/** One session's card (depth plan Section 5.4): the week, the topic and its status, a thumbnail of the pack, the outcomes, the
+ *  activity and the check, the pack with its filmstrip, and the lab sheet or the project brief where the session has one. */
+function SessionCard({ session, subject, clos, mayEdit, editorOpen, deleting, deckFor, markSrc, onEdit, onAskRemove, onRemove }: {
+  session: TeachingSession; subject: Subject; clos: AppState["clos"]; mayEdit: boolean; editorOpen: boolean; deleting: string | null; markSrc: string;
+  deckFor: (session: TeachingSession) => DeckSpec; onEdit: (session: TeachingSession) => void; onAskRemove: (id: string | null) => void; onRemove: (id: string) => void;
+}) {
+  const spec = deckFor(session);
+  const kind = session.slides?.length ? "Full slides" : session.sample ? "Outline pack" : null;
+  const file = (suffix: string) => subject.id + "-week-" + session.week + "-" + suffix + ".md";
+  return <li><article className={"session-card teaching-session" + (session.sample ? " is-sample" : "")} data-demo-id={"session-" + session.id}>
+    <div className="session-card-head"><span className="session-week"><span className="eyebrow">Week</span><strong className="tabular">{session.week}</strong></span>
+      <div className="session-card-title"><h3>{session.topic}</h3><span className="muted">{session.minutes} minutes</span></div>
+      <Tag tone={session.needsReview ? "warn" : session.status === "draft" ? "neutral" : "ok"}>{session.needsReview ? "Review course change" : session.status === "ready" ? "Ready to teach" : session.status === "delivered" ? "Delivered" : "Draft"}</Tag></div>
+    {session.needsReview ? <p className="limitation">The course changed. Review this session and its outcome links before reuse.</p> : null}
+    <div className="session-card-body">
+      <DeckThumb spec={spec} markSrc={markSrc} />
+      <div>
+        <div className="session-outcomes" aria-label="Linked outcomes">{kind ? <Tag>{kind}</Tag> : null}{session.cloIds.length ? session.cloIds.map(id => { const clo = clos.find(c => c.id === id); return <Tag key={id} tone={clo ? "accent" : "warn"}>{clo ? clo.label ?? clo.id : id + " (removed)"}</Tag>; }) : <span className="muted">No outcome linked yet</span>}</div>
+        <div className="session-content"><div><h4>Learning activity</h4><p className="preserve-lines">{session.activity || "Add an activity students will take part in."}</p></div><div><h4>Check for understanding</h4><p className="preserve-lines">{session.learningCheck || "Add how you will check their learning."}</p></div></div>
+      </div>
+    </div>
+    {session.resources ? <details><summary>Resources & slide brief</summary><p className="preserve-lines">{session.resources}</p></details> : null}
+    <Disclosure summary="Preview the pack" count={spec.slides.length + " slides"} data-demo-id={"session-preview-" + session.id}><DeckFilmstrip spec={spec} markSrc={markSrc} /></Disclosure>
+    <div className="button-row"><Button data-demo-id={"session-slides-" + session.id} aria-label={"Download teaching pack for " + session.topic} onClick={() => void downloadPack(subject.id, spec)}><Download size={15} /> Teaching pack (.pptx)</Button>
+      {session.labSheet ? <Button data-demo-id={"session-lab-" + session.id} onClick={() => downloadText(file("lab-sheet"), session.labSheet!)}><Download size={15} /> Lab sheet (.md)</Button> : null}
+      {session.projectBrief ? <Button data-demo-id={"session-brief-" + session.id} onClick={() => downloadText(file("project-brief"), session.projectBrief!)}><Download size={15} /> Project brief (.md)</Button> : null}
+      <span className="muted">{session.slides?.length && session.sample ? "Sample slides written for this prototype; every slide says so." : session.sample ? "An outline pack from the course record; the lecturer's slides are not written yet." : "Editable slides built from this session, the course record and the evidence linked to its outcomes; the generator adds no text of its own."}</span></div>
+    {mayEdit ? <div className="button-row session-actions">
+      {session.sample ? null : <Button disabled={editorOpen} aria-label={"Edit " + session.topic} onClick={() => onEdit(session)}>Edit session</Button>}
+      {deleting === session.id ? <><span>Remove this session?</span><Button variant="danger" onClick={() => onRemove(session.id)}>Confirm removal</Button><Button variant="quiet" onClick={() => onAskRemove(null)}>Keep session</Button></>
+        : <Button variant="quiet" disabled={editorOpen} aria-label={"Remove " + session.topic} onClick={() => onAskRemove(session.id)}>Remove</Button>}
+    </div> : null}
+  </article></li>;
 }
 
 /** The course file in one click (depth plan Section 4.4): the record, the rubrics, the decisions and versions and the packs of
@@ -240,14 +292,26 @@ function CourseFileExport({ state, subject, definition }: { state: AppState; sub
         if (institution.showMark) try { mark = new Uint8Array(await (await fetch(institution.mark.pngSmall)).arrayBuffer()); } catch { mark = null; }
         const clos = state.clos.filter((c) => c.subjectId === subject.id);
         const report = evidenceReport(subject.id, state.evidenceSources, state.skillMentions, state.skillMappings, clos);
+        // Every session's pack with the course's brand; the wide mark fits the slides' corners.
+        let wide: string | null = null;
+        if (institution.showMark && definition.sample) try {
+          const bytes = new Uint8Array(await (await fetch(institution.mark.wide ?? institution.mark.png)).arrayBuffer());
+          let binary = ""; for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+          wide = btoa(binary);
+        } catch { wide = null; }
+        const sessions = state.teachingPlans.find((p) => p.subjectId === subject.id)?.sessions ?? [];
         const packs: CourseFilePack[] = [];
-        for (const session of state.teachingPlans.find((p) => p.subjectId === subject.id)?.sessions ?? []) {
-          const spec = sessionDeck(subject, session, clos, report, state.skillMentions, state.evidenceSources, state.people, nowIso());
-          packs.push({ fileName: spec.fileName, week: session.week, bytes: await deckBytes(spec) });
+        for (const session of sessions) {
+          const spec = sessionDeck(subject, session, clos, report, state.skillMentions, state.evidenceSources, state.people, nowIso(),
+            { definition, brand: brandFor(institution, definition, subject, session.week, wide) });
+          // Two sessions can share a week (a sample one and the lecturer's own), so each pack keeps its own name.
+          let fileName = session.sample ? spec.fileName.replace("-teaching-pack", "-sample-teaching-pack") : spec.fileName;
+          if (packs.some((p) => p.fileName === fileName)) fileName = fileName.replace(".pptx", "-" + session.id + ".pptx");
+          packs.push({ fileName, week: session.week, bytes: await deckBytes(spec), sample: Boolean(session.sample), full: Boolean(session.slides?.length) });
         }
         const result = await buildCourseFile({ subject, definition, versionId: subject.currentVersionId, rubrics: state.rubrics.filter((r) => r.subjectId === subject.id),
           plos: state.programme.plos ?? [], versions: state.subjectVersions.filter((v) => v.subjectId === subject.id), decisions: state.briefDecisions.filter((d) => d.subjectId === subject.id),
-          briefs: state.evidenceBriefs.filter((b) => b.subjectId === subject.id), people: state.people, packs, institution, mark, demoLine: definition.sample ? DEMO_LINE : null, generatedAt: nowIso() });
+          briefs: state.evidenceBriefs.filter((b) => b.subjectId === subject.id), people: state.people, packs, sessions, institution, mark, demoLine: definition.sample ? DEMO_LINE : null, generatedAt: nowIso() });
         downloadBytes(subject.id + "-course-file.zip", result.bytes);
         const count = (status: string) => result.manifest.filter((m) => m.status === status).length;
         setMessage("Course file downloaded: " + (count("present") + count("sample")) + " items in it, " + count("not yet built") + " not yet built and " + count("not included") + " not included, each named in MANIFEST.md.");

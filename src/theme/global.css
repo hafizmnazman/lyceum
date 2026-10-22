@@ -1925,3 +1925,20 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; }
 .topic-entry-head { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
 .topic-entry-body { display: grid; gap: 12px; margin-top: 12px; }
 .plo-levels label { display: inline-flex; align-items: center; gap: 8px; margin-right: 16px; }
+/* The teaching pack on screen (depth plan Section 5.3): a thumbnail on each session card and the filmstrip. */
+.slide-svg { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 6px; background: var(--white); }
+.slide-svg-text { font-family: Calibri, var(--font-body); }
+/* The cards sit three across, so the thumbnail stands above the text rather than beside it. */
+.session-card-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-items: start; margin: 4px 0; }
+.deck-thumb { width: 100%; max-width: 360px; }
+.deck-filmstrip ol { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.deck-filmstrip li { position: relative; }
+.deck-filmstrip-num { position: absolute; left: 6px; bottom: 6px; font-size: 12px; font-family: var(--font-mono); background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; color: var(--ink-2); }
+.sample-sessions { margin-top: 28px; }
+.session-card.is-sample { background: var(--tint-1); }
+/* The schedule's material column: the pack's thumbnail and what the week holds. */
+.schedule-material { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-2); }
+.schedule-thumb { width: 96px; flex: none; }
+.schedule-thumb .deck-thumb { width: 96px; }
+@media (min-width: 761px) { .record-hours { white-space: nowrap; } }
+@media (max-width: 760px) { .schedule-material { justify-content: flex-start; } }

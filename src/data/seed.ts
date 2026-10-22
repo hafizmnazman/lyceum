@@ -25,8 +25,9 @@ import type {
 } from "../types.ts";
 import type { RawCohort } from "../lib/spine/cohort.ts";
 import { SYNTHETIC_COHORT } from "./synthetic-cohort.ts";
-import type { CourseDefinition, Rubric } from "../types.ts";
+import type { CourseDefinition, Rubric, TeachingPlan } from "../types.ts";
 import { CS310_BEFORE, CS310_OUTCOME_IDS, CS310_RUBRICS, DEMO_PLOS } from "./sample-course/cs310.ts";
+import { CS310_TEACHING_PLAN } from "./sample-course/sessions.ts";
 
 // ---------- identifiers ----------
 export const PROGRAMME_ID = "BSC-CS";
@@ -146,6 +147,8 @@ export const SEED_CLOS: CLO[] = [...CLOS.filter((c) => c.subjectId !== "CS310"),
 export const SEED_SUBJECTS: Subject[] = SUBJECTS.map((s) => (s.id === "CS310" ? { ...s, cloIds: [...CS310_OUTCOME_IDS] } : s));
 export const SEED_COURSE_DEFINITIONS: Record<string, CourseDefinition> = { CS310: CS310_BEFORE };
 export const SEED_RUBRICS: Rubric[] = CS310_RUBRICS;
+// Its fourteen sample sessions, one a week (depth plan Section 5.1): labelled sample and never counted as this term's teaching.
+export const SEED_TEACHING_PLANS: TeachingPlan[] = [CS310_TEACHING_PLAN];
 
 // ---------- programme ----------
 export const PROGRAMME: Programme = {

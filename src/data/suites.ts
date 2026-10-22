@@ -20,6 +20,7 @@ export const SUITES: Array<[string, number, string]> = [
   ["Moods", 8, "each mood a pure function of the records, the requests in flight and the clock"],
   ["The local door", 5, "every MCP tool through the protocol against the sample workspace: receipts, the export time, read-only annotations, the pack never overwriting, nothing written to the workspace, refusals and the call log"],
   ["The course record", 12, "the sample course in both states, its learning time, the assessment plan and its table of specifications, the matrix levels, the references gap, the rubrics, the tour's revision through the store, and the course file with its manifest"],
+  ["Teaching material", 8, "the fourteen sample sessions and their packs read back slide by slide, 18 pt body text, the mark and the demo line in every master, the repair of the parts pptxgenjs declares but does not write, the preview against the file, and samples kept out of the term's teaching"],
 ];
 
 export const SUITE_TOTAL = SUITES.reduce((n, s) => n + s[1], 0);

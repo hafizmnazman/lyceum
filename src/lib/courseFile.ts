@@ -4,16 +4,16 @@
 // it) or not included, so the file shows its own gaps. Course-file shape, not accreditation: nothing here claims the
 // course is accredited or accreditable. jszip is loaded on demand, like pptxgenjs, so the main bundle stays small.
 
-import type { BriefDecision, CourseDefinition, EvidenceBrief, InstitutionProfile, Person, ProgrammeOutcome, Rubric, Subject, SubjectVersion } from "../types.ts";
+import type { BriefDecision, CourseDefinition, EvidenceBrief, InstitutionProfile, Person, ProgrammeOutcome, Rubric, Subject, SubjectVersion, TeachingSession } from "../types.ts";
 import { assessmentOf, capitalise, learningTime, listText, tableOfSpecifications, topicHours } from "./curriculum.ts";
 
 export type ManifestStatus = "present" | "sample" | "not yet built" | "not included";
 export interface ManifestEntry { item: string; status: ManifestStatus; detail: string; files: string[] }
-export interface CourseFilePack { fileName: string; week: number; bytes: Uint8Array }
+export interface CourseFilePack { fileName: string; week: number; bytes: Uint8Array; sample?: boolean; full?: boolean }
 export interface CourseFileInput {
   subject: Subject; definition: CourseDefinition; versionId: string; rubrics: Rubric[]; plos: ProgrammeOutcome[];
   versions: SubjectVersion[]; decisions: BriefDecision[]; briefs: EvidenceBrief[]; people: Person[];
-  packs: CourseFilePack[]; institution: InstitutionProfile; mark: Uint8Array | null; demoLine: string | null; generatedAt: string;
+  packs: CourseFilePack[]; sessions?: TeachingSession[]; institution: InstitutionProfile; mark: Uint8Array | null; demoLine: string | null; generatedAt: string;
 }
 
 export const MARK_FILE = "institution-mark.png";
@@ -22,6 +22,8 @@ const row = (cells: Array<string | number>) => "| " + cells.map((c) => pipe(Stri
 const table = (header: string[], rows: Array<Array<string | number>>) => [row(header), "|" + header.map(() => ":--").join("|") + "|", ...rows.map(row)].join("\n");
 const personName = (people: Person[], id: string) => people.find((p) => p.id === id)?.name ?? id;
 const rubricFile = (r: Rubric) => "rubrics/" + r.id + ".md";
+const labFile = (subject: Subject, s: TeachingSession) => "lab-sheets/" + subject.id + "-week-" + s.week + "-lab-sheet.md";
+const briefFile = (subject: Subject, s: TeachingSession) => "project/" + subject.id + "-week-" + s.week + "-project-brief.md";
 const count = (n: number, noun: string) => n + " " + noun + (n === 1 ? "" : "s");
 
 /** The files the zip holds, by path. */
@@ -33,6 +35,10 @@ function files(input: CourseFileInput): Map<string, string | Uint8Array> {
   for (const r of input.rubrics) out.set(rubricFile(r), rubricMarkdown(input, r));
   out.set("decisions-and-versions.md", decisionsMarkdown(input));
   for (const p of input.packs) out.set("packs/" + p.fileName, p.bytes);
+  for (const s of input.sessions ?? []) {
+    if (s.labSheet) out.set(labFile(input.subject, s), s.labSheet);
+    if (s.projectBrief) out.set(briefFile(input.subject, s), s.projectBrief);
+  }
   if (input.mark && input.institution.showMark) out.set(MARK_FILE, input.mark);
   return out;
 }
@@ -44,6 +50,9 @@ export function courseFileManifest(input: CourseFileInput): ManifestEntry[] {
   const linked = d.outcomes.some((o) => (o.ploLinks ?? []).length || o.ploIds.length);
   const exams = (d.assessment ?? []).filter((a) => a.kind === "exam");
   const info = ["course-information.md"];
+  const labs = (input.sessions ?? []).filter((s) => s.labSheet), briefs = (input.sessions ?? []).filter((s) => s.projectBrief);
+  const samplePacks = input.packs.filter((p) => p.sample), ownPacks = input.packs.filter((p) => !p.sample);
+  const fromSample = (list: TeachingSession[]) => (list.some((s) => s.sample) ? "sample" : "present") as ManifestStatus;
   return [
     { item: "Course learning outcomes", status: have(d.outcomes.length > 0), files: info, detail: d.outcomes.length + " outcomes, each with its Bloom level" + (d.outcomes.some((o) => o.mqfCluster) ? ", MQF cluster" : "") + " and the assessment that evidences it" },
     { item: "The matrix linking course outcomes to programme outcomes", status: have(linked), files: linked ? info : [], detail: linked ? "A level, H, M or L, in every linked cell; the levels are strengths, not scores" : "No programme outcome mapping is recorded for this course" },
@@ -52,10 +61,13 @@ export function courseFileManifest(input: CourseFileInput): ManifestEntry[] {
     { item: "Examination papers with marking schemes: the final examination's outline", status: have(exams.length > 0), files: exams.length ? ["final-examination-outline.md"] : [], detail: exams.length ? "Its sections, marks by outcome and Bloom level, and the marking scheme" : "No examination is recorded" },
     { item: "Examination papers with marking schemes: the week 7 quiz", status: "not yet built", files: [], detail: "Drafted items with the surface lint and a Moodle export come with D7" },
     { item: "Graded examination papers at low, medium and high grades", status: "not included", files: [], detail: "Synthetic student work would be one step too far from honest" },
-    { item: "Projects: the project brief", status: "not yet built", files: [], detail: "The week 8 brief comes with the teaching material (D2)" },
-    { item: "Tutorial questions and assignments: the lab sheets", status: "not yet built", files: [], detail: "Lab sheets for weeks 1, 6 and 7 come with the teaching material (D2); each lab's task is in the schedule" },
-    { item: "Copies of the course notes: the teaching packs", status: input.packs.length ? "present" : "not yet built", files: input.packs.map((p) => "packs/" + p.fileName),
-      detail: input.packs.length ? count(input.packs.length, "editable teaching pack") + " generated from the saved sessions" : "No session is saved yet; the sample weeks' slides come with the teaching material (D2)" },
+    { item: "Projects: the project brief", status: briefs.length ? fromSample(briefs) : "not included", files: briefs.map((s) => briefFile(input.subject, s)),
+      detail: briefs.length ? "Released in week " + briefs.map((s) => s.week).join(", ") + ": the task, what is handed in, the defence, the dates and the marking" : "No project brief is saved" },
+    { item: "Tutorial questions and assignments: the lab sheets", status: labs.length ? fromSample(labs) : "not included", files: labs.map((s) => labFile(input.subject, s)),
+      detail: labs.length ? count(labs.length, "lab sheet") + ", for week" + (labs.length > 1 ? "s " : " ") + listText(labs.map((s) => String(s.week))) + "; every lab's task is in the schedule" : "No lab sheet is saved; each lab's task is in the schedule" },
+    { item: "Copies of the course notes: the teaching packs", status: samplePacks.length ? "sample" : ownPacks.length ? "present" : "not included", files: input.packs.map((p) => "packs/" + p.fileName),
+      detail: input.packs.length ? [samplePacks.length ? count(samplePacks.length, "sample pack") + " (" + samplePacks.filter((p) => p.full).length + " with full slides, the rest outline packs that say the lecturer's slides are not written yet)" : "",
+        ownPacks.length ? count(ownPacks.length, "pack") + " from the lecturer's own sessions" : ""].filter(Boolean).join(" and ") : "No session is saved yet" },
     { item: "Samples of projects at low, medium and high grades", status: "not included", files: [], detail: "Synthetic student work would be one step too far from honest" },
     { item: "Assessment rubrics", status: have(input.rubrics.length > 0), files: input.rubrics.map(rubricFile), detail: input.rubrics.length ? count(input.rubrics.length, "rubric") + " with marks per criterion and the outcomes each evidences; the spreadsheet export comes with D7" : "No rubric is recorded" },
     { item: "The OBE course report with its CQI note", status: "not yet built", files: [], detail: "Attainment against the stated threshold comes with D4" },

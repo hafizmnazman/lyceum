@@ -14,7 +14,7 @@ export function institutionError(p: unknown): string | null {
   if (x.demo === true && !/\bdemo\b/i.test(x.name!)) return "A demo profile keeps the word demo in its name.";
   if (typeof x.showMark !== "boolean" || typeof x.demo !== "boolean") return "Invalid institution profile.";
   const m = x.mark;
-  if (!m || ![m.svg, m.png, m.pngSmall].every(path => typeof path === "string" && /^\/brand\/partners\/[\w.-]+$/.test(path)) || !text(m.alt, 200))
+  if (!m || ![m.svg, m.png, m.pngSmall, m.wide ?? m.png].every(path => typeof path === "string" && /^\/brand\/partners\/[\w.-]+$/.test(path)) || !text(m.alt, 200))
     return "The mark must be a file under /brand/partners/ with alt text.";
   const k = x.kpi;
   if (!k || typeof k.passMark !== "number" || !Number.isFinite(k.passMark) || k.passMark <= 0 || k.passMark > 100) return "Use a pass mark above 0 and at most 100.";

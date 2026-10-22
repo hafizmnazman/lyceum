@@ -1077,3 +1077,93 @@ Chosen: (b), because a mood must follow a record (master plan Section 7.2) and t
 Reverse it if: the owner wants exports on the event log, which would also put them on the How it works timeline.
 
 To reverse: `InFlightRequest` in `src/app/store.ts`, `moodsFor` in `src/app/moods.ts`.
+
+## 2026-10-22 19:14, D2: where the term's sample sessions live
+
+Options: (a) keep the fourteen sample sessions outside the store, as a read-only catalogue that only Teach and the course file show. (b) Seed them into CS310's teaching plan as sessions flagged `sample: true`, so the schedule, the pack generator, the course file and the local door read them where they read every session.
+
+Chosen: (b), because the plan says the sample saves fourteen sessions, one per week (Section 5.1), and every reader of material already reads the plan's sessions. The flag keeps them out of Teach's done rule, the version taught, the plan's counts, the timeline and the moods.
+
+Reverse it if: the owner wants a fresh workspace to open with an empty plan and the samples behind a button.
+
+To reverse: `src/data/sample-course/sessions.ts`, `SEED_TEACHING_PLANS` in `src/data/seed.ts` and the store's seed, and the `sample` filters in `src/app/loop.ts`, `src/lib/teachingPlan.ts`, `src/app/runs.ts` and `src/app/moods.ts`.
+
+## 2026-10-22 19:18, D2: the pack's body on a slide master
+
+Options: (a) give each master a body placeholder and fill it per slide. (b) Masters carry the title placeholder, the mark, the footer and the slide number; the body, the two columns, the table and the figure go on as text boxes and shapes at the layout's positions (`src/lib/deckLayout.ts`).
+
+Chosen: (b), because pptxgenjs 4.0.1 takes a placeholder's position from the layout and adds every layout placeholder a slide leaves unfilled to that slide, empty, so a body placeholder puts an empty "click to add text" box on every slide with a table or two columns. Text boxes keep the same positions, the 18 pt floor and the editable text, with nothing empty.
+
+Reverse it if: a pptxgenjs release drops unfilled placeholders, or the owner wants the body to follow a campus template's layout.
+
+To reverse: `renderBranded` in `src/lib/slides.ts` and `LAYOUT` in `src/lib/deckLayout.ts`.
+
+## 2026-10-22 19:18, D2: which packs carry the UTP mark
+
+Options: (a) put the institution's mark on every pack whenever the profile's `showMark` is on. (b) Put the mark and the demo line on the sample course's packs only (`definition.sample` and `showMark`), from a wide render cropped to the mark's own bounds; a lecturer's own course keeps the plain footer and no mark.
+
+Chosen: (b), because the owner approved the mark for the demo course, labelled demo, and a course a lecturer creates in this prototype is not UTP's to brand. The wide render fills the corner and the plate at the mark's own proportions, where the square render's margin shrank it.
+
+Reverse it if: a pilot campus's profile carries its own permission to show its mark on its lecturers' courses.
+
+To reverse: `brandFor` in `src/lib/slides.ts`, the `wide` render in `scripts/gen-partner-marks.mjs` and `mark.wide` in `src/data/institution.ts`.
+
+## 2026-10-22 19:21, D2: the parts pptxgenjs declares and never writes
+
+Options: (a) ship the file as pptxgenjs writes it. (b) After writing, drop the `[Content_Types].xml` overrides whose parts are not in the package (pptxgenjs issue 1449: it declares a slide master for every slide and writes only the first, so a twelve-slide pack names eleven parts it does not hold), and nothing else, with a proof that the repair removes exactly those.
+
+Chosen: (b), because a declared part that is missing is a package error that some readers answer with a repair prompt, and a lecturer's first sight of the pack should not be one. The repair touches only overrides that name absent parts, so a correct file passes through unchanged.
+
+Reverse it if: pptxgenjs fixes issue 1449; the proof's first assertion then fails and says so.
+
+To reverse: `repairPptx` and its calls in `deckBytes`, `deckBuffer` and `downloadDeck` in `src/lib/slides.ts`, and the repair test in `src/prove-materials.ts`.
+
+## 2026-10-22 19:23, D2: the week a new session starts on
+
+Options: (a) keep Track A's rule, the week after the last session in the plan, which with fourteen seeded sessions is week 15. (b) The first week whose topic teaches an outcome the latest version changed; otherwise the week after the lecturer's own last session, samples aside (`suggestedWeek`).
+
+Chosen: (b), because the plan says the session the tour saves is week 6, and week 6 is the first week that teaches CLO5, the outcome the tour's revision rewords. A lecturer who just changed a course is most likely planning the first class that teaches the change.
+
+Reverse it if: lecturers in the pilot plan in calendar order rather than from the change.
+
+To reverse: `suggestedWeek` in `src/lib/teachingPlan.ts` and `add()` in `TeachingPlanPanel` (`src/ui/screens/CourseWorkspace.tsx`).
+
+## 2026-10-22 19:25, D2: the samples beside the lecturer's own sessions in Teach
+
+Options: (a) one list in week order, the samples mixed in with a tag each. (b) The lecturer's own sessions first, then "Sample sessions for the term" under its own heading, the Sample, synthetic tag and the demo line.
+
+Chosen: (b), because the tour's pack download targets `session-slides-*` and the runner takes the first match, so the lecturer's own pack must come first in the page; a separate group also makes the label impossible to miss. The week filter covers both groups.
+
+Reverse it if: the tour's target becomes the session's own id, and the owner prefers one list.
+
+To reverse: `TeachingPlanPanel` and `SessionCard` in `src/ui/screens/CourseWorkspace.tsx`.
+
+## 2026-10-22 19:28, D2: two packs for one week in the course file
+
+Options: (a) one pack per week, named by the week. (b) Every session's pack, named so no two collide: a sample pack ends `-sample-teaching-pack`, and a second pack for the same week takes the session's id.
+
+Chosen: (b), because after the tour week 6 holds the lecturer's own session beside the sample one, and a zip keeps only one file per name. The manifest counts sample packs and the lecturer's packs apart.
+
+Reverse it if: the owner wants the course file to carry only the lecturer's packs.
+
+To reverse: `CourseFileExport` in `src/ui/screens/CourseWorkspace.tsx` and the packs line of `courseFileManifest` in `src/lib/courseFile.ts`.
+
+## 2026-10-22 19:42, D2: what counts as the lecturer's teaching plan
+
+Options: (a) count every session in the plan wherever sessions are counted. (b) Count only the lecturer's own: `planSummary` returns their sessions and keeps the samples apart in `samples`, and Home, Courses, the Course step's checklist, the timeline, Prism's mood, the tour's wait for a saved session and the tour's "reset your saved work?" check all follow it.
+
+Chosen: (b), because nobody here saved the samples: counting them put "Continue teaching plan, next class week 1" on a fresh Home, fourteen "Session saved" lines on the timeline, passed the tour's wait before its save, and made the tour ask to reset a fresh workspace, which held the headless smoke on the dialog until it timed out. The course record still shows them, labelled, where the record is the subject: the schedule, the materials and each outcome's linked sessions.
+
+Reverse it if: the owner wants the term's samples to count as the plan the lecturer starts from.
+
+To reverse: `planSummary` and `teachingPlanMarkdown` in `src/lib/teachingPlan.ts`, `src/ui/screens/Inbox.tsx`, `src/ui/screens/Courses.tsx`, `src/app/runs.ts`, `src/app/moods.ts`, the `session-saved` predicate in `src/demo/runner.ts` and `hasSavedWork` in `src/demo/DemoOverlay.tsx`.
+
+## 2026-10-22 19:43, D2: a lecturer's edit to a sample session
+
+Options: (a) let a lecturer edit a sample session in place. (b) Sample sessions stay as written: the store refuses an edit to one, Teach offers Remove but not Edit on them, and every save is the lecturer's own, without the sample flag, slides, lab sheet or brief; a sample pack's cover names no one, where the lecturer's says who prepared it.
+
+Chosen: (b), because CLAUDE.md now says a lecturer's own artefacts never carry model text, and an edit in place would either put a lecturer's words inside a record labelled synthetic or carry the build session's slides into the lecturer's pack. The samples' records name Dr Sobri only because the backup needs a person on every record, so the cover does not repeat it.
+
+Reverse it if: a slide editor for lecturers lands; the save then keeps the lecturer's own slides and strips only the flag.
+
+To reverse: `saveTeachingSession` in `src/app/store.ts`, `SessionCard` in `src/ui/screens/CourseWorkspace.tsx`, the cover in `sessionDeck` (`src/lib/slides.ts`), and the last test in `src/prove-materials.ts`.

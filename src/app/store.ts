@@ -116,6 +116,7 @@ import {
   SEED_RESULT_UPLOADS,
   SEED_RUBRICS,
   SEED_SUBJECTS,
+  SEED_TEACHING_PLANS,
   SEED_SUBJECT_VERSIONS,
   SUBJECTS,
   SURVEY,
@@ -260,7 +261,7 @@ function seedState(): AppState {
     dataSources: [...DATA_SOURCES],
     subjectVersions: [...SEED_SUBJECT_VERSIONS],
     testDrafts: [],
-    teachingPlans: [],
+    teachingPlans: structuredClone(SEED_TEACHING_PLANS),
     courseDefinitions: structuredClone(SEED_COURSE_DEFINITIONS),
     rubrics: structuredClone(SEED_RUBRICS),
     curriculumDrafts: [],
@@ -478,12 +479,17 @@ export function saveTeachingPlanDetails(subjectId: SubjectId, details: { term: s
 export function saveTeachingSession(subjectId: SubjectId, input: SessionInput): SaveResult {
   if (!mayPlan(subjectId)) return { ok: false, error: "Only an assigned lecturer or coordinator can edit this teaching plan." };
   const previous = state.teachingPlans.find((p) => p.subjectId === subjectId);
-  if (input.id && !previous?.sessions.some((s) => s.id === input.id))
+  const target = input.id ? previous?.sessions.find((s) => s.id === input.id) : undefined;
+  if (input.id && !target)
     return { ok: false, error: "This session no longer exists. Add a new session instead." };
+  // The term's sample sessions stay as written for the prototype (depth plan Section 5.1); what a lecturer saves is their own.
+  if (target?.sample) return { ok: false, error: "Sample sessions stay as written for the prototype. Add your own session for week " + target.week + " instead." };
   const issues = sessionIssues(input, state.clos.filter((c) => c.subjectId === subjectId));
   if (issues.length) return { ok: false, error: issues.join(" ") };
+  // The slides, lab sheets and brief in this build are sample fixtures; a lecturer's own session never carries their text (CLAUDE.md).
+  const { sample: _sample, slides: _slides, labSheet: _labSheet, projectBrief: _projectBrief, ...own } = input;
   const session = {
-    ...input, id: input.id ?? nextId("TS"), topic: input.topic.trim(),
+    ...own, id: input.id ?? nextId("TS"), topic: input.topic.trim(),
     cloIds: [...new Set(input.cloIds)], activity: input.activity.trim(),
     learningCheck: input.learningCheck.trim(), resources: input.resources.trim(),
     updatedAt: nowIso(), updatedBy: state.currentPersonId!,

@@ -217,7 +217,7 @@ function RevisionEditor({ state, subject, draft, baseline, mayEdit }: Props & {
       {issues.length ? <ul className="revision-issues">{issues.map((i,n) => <li key={n}><Tag tone={i.severity === "error" ? "danger" : "warn"}>{i.severity === "error" ? "Fix" : "Review"}</Tag><span>{i.message}</span></li>)}</ul> : <p>No configured constraint issues found. The lecturer still reviews educational quality.</p>}
       <Disclosure summary={impact.sessions.length + " teaching sessions and " + impact.assessments.length + " assessments will be flagged for review"}>
         {impact.sessions.length || impact.assessments.length ? <ul className="impact-list">
-          {impact.sessions.map(s => <li key={s.id}>Week {s.week}: {s.topic}</li>)}
+          {impact.sessions.map(s => <li key={s.id}>Week {s.week}: {s.topic}{s.sample ? " (sample)" : ""}</li>)}
           {impact.assessments.map(a => <li key={a.id}>Assessment {a.id}, {a.items.length} template items</li>)}
         </ul> : <p className="muted">No saved session or assessment depends on what changed.</p>}
         <p className="muted">Existing work is retained; each flagged item asks for your review before reuse.</p>

@@ -10,7 +10,8 @@ import { estimateTotalMs, INTRO_HOLDS } from "./script.ts";
 import { runDemo } from "./runner.ts";
 import { demoAudio } from "./audio.ts";
 import { scaleMs } from "./timing.ts";
-import { CANONICAL_PROPOSAL, ROLE_ASSIGNMENTS } from "../data/seed.ts";
+import { CANONICAL_PROPOSAL, ROLE_ASSIGNMENTS, SEED_TEACHING_PLANS } from "../data/seed.ts";
+import { DEMO_INSTITUTION } from "../data/institution.ts";
 
 type Phase = "idle" | "intro" | "walkthrough" | "done";
 
@@ -69,7 +70,9 @@ export function DemoOverlay() {
 
   async function play() {
     if (phase !== "idle") return;
-    const hasSavedWork = state.teachingPlans.length > 0 || state.testDrafts.length > 0
+    // Saved work is anything beyond the seed: the term's sample sessions and the demo institution come with every fresh workspace.
+    const hasSavedWork = JSON.stringify(state.teachingPlans) !== JSON.stringify(SEED_TEACHING_PLANS) || state.testDrafts.length > 0
+      || JSON.stringify(state.institution) !== JSON.stringify(DEMO_INSTITUTION)
       || state.evidenceSources.length > 0 || state.skillMentions.length > 0 || state.skillMappings.length > 0 || state.evidenceBriefs.length > 0 || state.curriculumDrafts.length > 0
       || JSON.stringify(state.proposals) !== JSON.stringify([CANONICAL_PROPOSAL])
       || JSON.stringify(state.assignments) !== JSON.stringify(ROLE_ASSIGNMENTS)

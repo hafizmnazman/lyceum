@@ -112,7 +112,7 @@ test("each read tool answers from the export with its receipts and says when the
 test("the pack tool writes one new PPTX, the same deck the app builds, and refuses to overwrite or to write anywhere vague", async () => {
   const { dir, path, backup } = sampleCopy();
   const { call, close } = await door(path);
-  const session = backup.data.teachingPlans.find((p) => p.subjectId === "CS310")!.sessions[0];
+  const session = backup.data.teachingPlans.find((p) => p.subjectId === "CS310")!.sessions.find((s) => !s.sample)!; // the tour's own session, beside the sample ones
   const out = join(dir, "pack.pptx");
   const written = await call("lyceum_teaching_pack", { course: "CS310", session: String(session.week), path: out });
   assert.ok(!written.isError, written.text);

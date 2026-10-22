@@ -12,7 +12,7 @@ import { loopState } from "../src/app/loop.ts";
 import type { AppState } from "../src/app/store.ts";
 import { courseDefinition, curriculumMarkdown } from "../src/lib/curriculum.ts";
 import { evidenceMarkdown, evidenceReport, meetingBriefMarkdown, RECOMMENDATION_LABEL } from "../src/lib/evidence.ts";
-import { deckBuffer, sessionDeck } from "../src/lib/slides.ts";
+import { brandFor, deckBuffer, sessionDeck } from "../src/lib/slides.ts";
 import { MAX_BACKUP_BYTES, parseWorkspaceBackup, type WorkspaceBackup } from "../src/lib/workspaceBackup.ts";
 import type { BriefRecommendation, Person, Subject } from "../src/types.ts";
 
@@ -109,12 +109,19 @@ export async function writeTeachingPack(backup: WorkspaceBackup, courseId: strin
   if (!existsSync(dirname(path))) return fail("The folder " + dirname(path) + " does not exist.");
   const d = backup.data, clos = d.clos.filter((c) => c.subjectId === subject.id);
   const sessions = d.teachingPlans.find((p) => p.subjectId === subject.id)?.sessions ?? [];
-  const chosen = sessions.find((s) => s.id === session) ?? sessions.find((s) => String(s.week) === session.replace(/^week\s*/i, ""));
+  // A week names the lecturer's own session before a sample one (depth plan Section 5.1: the sample is a labelled fixture).
+  const inWeek = (list: typeof sessions) => list.find((s) => String(s.week) === session.replace(/^week\s*/i, ""));
+  const chosen = sessions.find((s) => s.id === session) ?? inWeek(sessions.filter((s) => !s.sample)) ?? inWeek(sessions);
   if (!chosen) return fail("No session " + session + " in " + subject.id + ". Sessions: " + (sessions.map((s) => s.id + " (week " + s.week + ", " + s.topic + ")").join("; ") || "none saved") + ".");
   const report = evidenceReport(subject.id, d.evidenceSources, d.skillMentions, d.skillMappings, clos);
-  const spec = sessionDeck(subject, chosen, clos, report, d.skillMentions, d.evidenceSources, PEOPLE, backup.exportedAt);
+  const definition = d.courseDefinitions[subject.id] ?? null;
+  const markFile = new URL("../public" + (d.institution.mark.wide ?? d.institution.mark.png), import.meta.url);
+  const markData = existsSync(markFile) ? readFileSync(markFile).toString("base64") : null;
+  const spec = sessionDeck(subject, chosen, clos, report, d.skillMentions, d.evidenceSources, PEOPLE, backup.exportedAt,
+    { definition, brand: brandFor(d.institution, definition, subject, chosen.week, markData) });
   const bytes = await deckBuffer(spec);
   writeFileSync(path, bytes, { flag: "wx" });
   return { text: stamp(backup) + "\n\nWrote the teaching pack for week " + chosen.week + ", " + chosen.topic + ": " + spec.slides.length + " editable slides, " + bytes.length + " bytes, at " + path
-    + ". It is generated from the saved session and the evidence linked to its outcomes; no model wrote a word.", records: [chosen.id] };
+    + (chosen.sample ? ". A sample session, written for this prototype and labelled synthetic on every slide; the generator adds no text of its own."
+      : ". It is generated from the saved session, the course record and the evidence linked to its outcomes; the generator adds no text of its own" + (definition?.sample ? ", and the course record is a sample written for this prototype." : ".")), records: [chosen.id] };
 }

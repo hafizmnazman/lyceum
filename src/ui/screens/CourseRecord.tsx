@@ -3,9 +3,13 @@
 // level in text in every cell, so nothing is said by colour alone.
 
 import type { CourseDefinition, ProgrammeOutcome, Rubric, TeachingSession } from "../../types.ts";
+import type { DeckSpec } from "../../lib/slides.ts";
+import { downloadText } from "../../lib/download.ts";
+import { DeckThumb } from "../primitives/DeckPreview.tsx";
 import { assessmentOf, capitalise, learningTime, listText, tableOfSpecifications, topicHours, type LearningTime } from "../../lib/curriculum.ts";
-import { Disclosure, Tag } from "../primitives/index.tsx";
+import { Button, Disclosure, Tag } from "../primitives/index.tsx";
 import { Meter } from "../primitives/loop.tsx";
+import { plural } from "../../app/loop.ts";
 
 /** A course whose definition carries the course file's parts gets the record; a thinner course keeps the outline cards. */
 export function hasCourseRecord(def: CourseDefinition | null): def is CourseDefinition {
@@ -58,12 +62,14 @@ export function OutcomesPanel({ definition: d, plos, sessions }: { definition: C
     <h2 id="record-outcomes">Course learning outcomes</h2>
     <ul className="outline-cards record-outcomes">{d.outcomes.map((o) => {
       const assessed = assessmentOf(d, o.id);
-      const linked = sessions.filter((s) => s.cloIds.includes(o.id)).length;
+      const linked = sessions.filter((s) => s.cloIds.includes(o.id) && !s.sample).length, sampled = sessions.filter((s) => s.cloIds.includes(o.id) && s.sample).length;
+      const sessionText = linked && sampled ? plural(linked, "linked session", "linked sessions") + ", plus " + sampled + " sample"
+        : sampled ? plural(sampled, "linked sample session", "linked sample sessions") : plural(linked, "linked session", "linked sessions");
       return <li key={o.id} className="outline-card" data-demo-id={"record-outcome-" + o.label}>
         <div className="outline-card-head"><strong>{o.label}</strong><Tag>{o.bloomLevel}</Tag></div>
         <p>{o.text}</p>
         {o.mqfCluster ? <p className="muted">MQF cluster: {o.mqfCluster}</p> : null}
-        <p className="muted">{assessed.length ? "Assessed by " + listText(assessed.map((a) => a.title.toLowerCase() + " (" + a.marks + " marks)")) : o.assessmentEvidence || "Achievement evidence not recorded"} · {linked} {linked === 1 ? "linked session" : "linked sessions"}</p>
+        <p className="muted">{assessed.length ? "Assessed by " + listText(assessed.map((a) => a.title.toLowerCase() + " (" + a.marks + " marks)")) : o.assessmentEvidence || "Achievement evidence not recorded"} · {sessionText}</p>
       </li>;
     })}</ul>
     <PloMatrix definition={d} plos={plos} />
@@ -136,7 +142,11 @@ function RubricTable({ rubric, label }: { rubric: Rubric; label: (id: string) =>
   </table>;
 }
 
-export function SchedulePanel({ definition: d }: { definition: CourseDefinition }) {
+/** The sessions that teach a topic: the session saved against it, or failing that a session in its week. */
+const sessionsFor = (sessions: TeachingSession[], topicId: string, week: number | null) =>
+  sessions.filter((s) => s.topicId === topicId || (!s.topicId && s.week === week));
+
+export function SchedulePanel({ definition: d, sessions = [], deckFor, markSrc }: { definition: CourseDefinition; sessions?: TeachingSession[]; deckFor?: (s: TeachingSession) => DeckSpec; markSrc?: string }) {
   const label = (id: string) => d.outcomes.find((o) => o.id === id)?.label ?? id;
   const contact = d.topics.reduce((n, t) => n + t.contactHours, 0), budget = d.brief.contactHours;
   const topics = [...d.topics].sort((a, b) => (a.week ?? 99) - (b.week ?? 99));
@@ -145,12 +155,20 @@ export function SchedulePanel({ definition: d }: { definition: CourseDefinition 
     {budget !== null ? <Meter value={contact} max={budget} over={contact > budget} label={<><strong className="tabular">{contact}</strong> of <span className="tabular">{budget}</span> contact hours outlined{contact < budget ? ", " + (budget - contact) + " unallocated" : ""}</>} note={contact > budget ? "Over the contact-hour budget: Update blocks a version like this." : undefined} />
       : <p className="muted">{contact} contact hours outlined; the contact-hour budget is not recorded.</p>}
     <table className="record-table schedule-table">
-      <thead><tr><th scope="col">Week</th><th scope="col">Topic</th><th scope="col">Hours</th><th scope="col">Outcomes</th></tr></thead>
+      <thead><tr><th scope="col">Week</th><th scope="col">Topic</th><th scope="col">Hours</th><th scope="col">Outcomes</th><th scope="col">Material</th></tr></thead>
       <tbody>{topics.map((t) => <tr key={t.id} data-demo-id={"schedule-" + t.id}>
         <td data-label="Week" className="tabular">{t.week ?? "Not set"}</td>
         <th scope="row" data-label="Topic">{t.title}{t.kind && t.kind !== "mixed" ? <span className="muted"> · {KIND_LABEL[t.kind] ?? t.kind}</span> : null}{t.protected ? <> <Tag>Protected</Tag></> : null}</th>
-        <td data-label="Hours">{topicHours(t)}</td>
+        <td data-label="Hours" className="record-hours">{topicHours(t)}</td>
         <td data-label="Outcomes">{t.cloIds.map(label).join(", ") || "None linked"}</td>
+        <td data-label="Material">{(() => {
+          const here = sessionsFor(sessions, t.id, t.week), first = here[0];
+          if (!first) return <span className="muted">No session</span>;
+          return <div className="schedule-material">
+            {deckFor ? <div className="schedule-thumb"><DeckThumb spec={deckFor(first)} markSrc={markSrc} /></div> : null}
+            <span>{first.slides?.length ? "Full slides" : first.sample ? "Outline pack" : "Pack"}{here.some((s) => s.labSheet) ? " · lab sheet" : ""}{here.some((s) => s.projectBrief) ? " · project brief" : ""}</span>
+          </div>;
+        })()}</td>
       </tr>)}</tbody>
     </table>
     <Disclosure summary="Activities, readings and misconceptions, week by week">
@@ -161,6 +179,28 @@ export function SchedulePanel({ definition: d }: { definition: CourseDefinition 
         {t.misconceptions?.length ? <p className="muted">Misconceptions to address: {t.misconceptions.join(" ")}</p> : null}
       </li>)}</ol>
     </Disclosure>
+  </section>;
+}
+
+/** The teaching material the record holds (depth plan Sections 4.4 and 5): the packs by kind, the lab sheets and the project brief. */
+export function MaterialsPanel({ courseId, sessions, onTeach }: { courseId: string; sessions: TeachingSession[]; onTeach: () => void }) {
+  const samples = sessions.filter((s) => s.sample), own = sessions.filter((s) => !s.sample);
+  const full = samples.filter((s) => s.slides?.length).length;
+  const file = (s: TeachingSession, suffix: string) => courseId + "-week-" + s.week + "-" + suffix + ".md";
+  return <section className="workspace-panel" aria-labelledby="record-materials" data-demo-id="record-materials">
+    <h2 id="record-materials">Materials</h2>
+    <dl className="record-facts">
+      <div><dt>Sample packs</dt><dd>{samples.length ? samples.length + " (" + full + " with full slides, " + (samples.length - full) + " outline)" : "None"}</dd></div>
+      <div><dt>Your packs</dt><dd>{own.length}</dd></div>
+      <div><dt>Lab sheets</dt><dd>{sessions.filter((s) => s.labSheet).length}</dd></div>
+      <div><dt>Project brief</dt><dd>{sessions.some((s) => s.projectBrief) ? "Week " + sessions.filter((s) => s.projectBrief).map((s) => s.week).join(", ") : "None"}</dd></div>
+    </dl>
+    <div className="button-row">
+      {sessions.filter((s) => s.labSheet).map((s) => <Button key={s.id} onClick={() => downloadText(file(s, "lab-sheet"), s.labSheet!)}>Lab sheet, week {s.week} (.md)</Button>)}
+      {sessions.filter((s) => s.projectBrief).map((s) => <Button key={s.id} onClick={() => downloadText(file(s, "project-brief"), s.projectBrief!)}>Project brief (.md)</Button>)}
+      <Button variant="quiet" onClick={onTeach}>Every pack, with its preview, in Teach</Button>
+    </div>
+    {samples.length ? <p className="muted">The sample material is written for this prototype and labelled synthetic; the outline packs say the lecturer's slides are not written yet.</p> : null}
   </section>;
 }
 

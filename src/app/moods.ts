@@ -32,7 +32,7 @@ export function moodsFor(state: AppState, requests: readonly InFlightRequest[], 
   const mappings = state.skillMappings.filter((m) => m.subjectId === subjectId);
   const briefs = state.evidenceBriefs.filter((b) => b.subjectId === subjectId);
   const drafts = state.curriculumDrafts.filter((d) => d.subjectId === subjectId);
-  const sessions = state.teachingPlans.find((p) => p.subjectId === subjectId)?.sessions ?? [];
+  const sessions = (state.teachingPlans.find((p) => p.subjectId === subjectId)?.sessions ?? []).filter((s) => !s.sample); // the term's samples were never saved here
   const uploads = state.resultUploads.filter((u) => u.subjectId === subjectId);
   const filed = state.dataSources.filter((d) => d.subjectId === subjectId);
   const pending = state.pendingIntake?.interp;

@@ -72,7 +72,7 @@ try {
   await page.select(selector("session-status"), "ready");
   await click("session-save");
   await textIncludes("Link at least one CLO");
-  assert.equal(await page.evaluate(() => window.__lyceum.getState().teachingPlans.length), 0);
+  assert.equal(await page.evaluate(() => window.__lyceum.getState().teachingPlans.find((p) => p.subjectId === "CS310").sessions.filter((s) => !s.sample).length), 0, "no session of the lecturer's own yet, beside the sample ones");
   await click("session-clo-CLO5");
   await page.type(selector("session-activity"), "Critique two charts in pairs and redesign the weaker example.");
   await page.type(selector("session-check"), "Explain one justified encoding choice in an exit ticket.");
@@ -83,9 +83,9 @@ try {
   await page.keyboard.down("Shift"); await page.keyboard.press("Tab"); await page.keyboard.up("Shift");
   assert.equal(await page.$eval(selector("session-resources"), (e) => getComputedStyle(e).outlineStyle), "solid");
   await click("session-save");
-  await page.waitForFunction(() => window.__lyceum.getState().teachingPlans[0]?.sessions.length === 1);
+  await page.waitForFunction(() => window.__lyceum.getState().teachingPlans.find((p) => p.subjectId === "CS310").sessions.filter((s) => !s.sample).length === 1);
   await page.reload({ waitUntil: "networkidle0" });
-  assert.equal(await page.evaluate(() => window.__lyceum.getState().teachingPlans[0].sessions[0].topic), "Designing clear visual encodings");
+  assert.equal(await page.evaluate(() => window.__lyceum.getState().teachingPlans.find((p) => p.subjectId === "CS310").sessions.filter((s) => !s.sample)[0].topic), "Designing clear visual encodings");
   await click("rail-teach");
   await clickText("Edit course notes");
   await fillLabel("Teaching term", "September 2026");
@@ -118,7 +118,7 @@ try {
   await clickText("Edit session");
   await page.select(selector("session-status"), "delivered");
   await click("session-save");
-  await page.waitForFunction(() => window.__lyceum.getState().teachingPlans[0].sessions[0].status === "delivered");
+  await page.waitForFunction(() => window.__lyceum.getState().teachingPlans.find((p) => p.subjectId === "CS310").sessions.filter((s) => !s.sample)[0].status === "delivered");
   await click("nav-guide");
   await textIncludes("What has not been built yet");
   await clickText("All roles");
@@ -151,7 +151,7 @@ try {
   await click("rail-teach");
   await page.waitForFunction(() => window.__lyceum.getState().persistenceStatus === "unavailable");
   await textIncludes("Browser storage is unavailable.");
-  assert.equal(await page.evaluate(() => window.__lyceum.getState().teachingPlans[0].sessions.length), 1);
+  assert.equal(await page.evaluate(() => window.__lyceum.getState().teachingPlans.find((p) => p.subjectId === "CS310").sessions.filter((s) => !s.sample).length), 1);
   console.log("PASS role-scoped course selection and visible storage failure without losing in-memory work");
 
   const blocked = await browser.newPage();

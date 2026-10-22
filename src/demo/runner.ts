@@ -173,7 +173,7 @@ function predicate(key: string): boolean {
   if (key === "signal-done") return s.signalSim?.phase === "done";
   if (key === "drill-done") return s.drillStep >= 5;
   if (key === "revision-adopted") return s.curriculumDrafts.some((d) => d.subjectId === "CS310" && d.status === "adopted");
-  if (key === "session-saved") return (s.teachingPlans.find((p) => p.subjectId === "CS310")?.sessions.length ?? 0) > 0;
+  if (key === "session-saved") return (s.teachingPlans.find((p) => p.subjectId === "CS310")?.sessions.filter((x) => !x.sample).length ?? 0) > 0;
   if (key === "items-generated") return s.testDrafts.some((t) => t.subjectId === "CS310" && t.items.length > 0);
   if (key === "collect-done") return s.collectRun?.status === "done" || s.collectRun?.status === "failed";
   if (key === "sources-imported") return s.evidenceSources.some((x) => x.subjectId === "CS310");
