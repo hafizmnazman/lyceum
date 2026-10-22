@@ -15,7 +15,7 @@
 </div>
 
 <p align="center">
-  <a href="#hafizlyceum-npm-run-proveall"><img src="https://img.shields.io/badge/checks-185_passing-8BC34A?style=for-the-badge&labelColor=161b22" alt="checks: 185 passing"></a>
+  <a href="#hafizlyceum-npm-run-proveall"><img src="https://img.shields.io/badge/checks-218_passing-8BC34A?style=for-the-badge&labelColor=161b22" alt="checks: 218 passing"></a>
   <a href="#hafizlyceum-open-report"><img src="https://img.shields.io/badge/evidence-real_postings_with_receipts-B8F23A?style=for-the-badge&labelColor=161b22" alt="evidence: real postings with receipts"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/licence-proprietary-B9CDBF?style=for-the-badge&labelColor=161b22" alt="licence: proprietary"></a>
 </p>
@@ -46,11 +46,11 @@ A lecturer can suggest a change before the next review, but cannot show why: no 
 
 | step | the question | the record it leaves |
 |:--|:--|:--|
-| Course | What does this course promise today, and for which term? | the outline, and the term every later record carries |
+| Course | What does this course promise today, and for which term? | the course record, in the shape of a course file, and the term every later record carries |
 | Watch | What are employers asking for, right now? | postings fetched on request from a permitted board, each with its link, date and fingerprint |
 | Report | What exactly do they ask, how often, and what does the course do about it? | exact quotations, the reviewed denominator, counts with Wilson intervals, a mapping, the brief |
 | Decide | What will we do, and who said so? | a decision record: adopt, retain, defer or return, by whom, when, why, on which brief, version and term |
-| Update | What does the approved change look like, within our hours? | a checked revision, adopted as a new version, the old one kept |
+| Update | What does the approved change look like, within our hours? | a checked revision, adopted as a new version, the old one kept, with the before and after and the decision behind it |
 | Teach | What will the class do, and with what? | a session linked to an outcome and its editable teaching pack |
 | Learn | Did it work, as far as we can honestly tell? | the term's results, matched to the version taught, with n of N |
 
@@ -97,7 +97,7 @@ A requirement is an exact substring of its saved source, or it is refused; a par
   </tr>
 </table>
 
-The screenshots are real captures of the app in its demo mode, on the dated saved sample of Stripe's public job board (`npm run shots`); the results on Learn come from the app's sample file and their marks are synthetic, as the screen says; the pack slide is PowerPoint's own rendering of the downloaded file.
+The screenshots are real captures of the app in its demo mode, on the dated saved sample of Stripe's public job board (`npm run shots`); the results on Learn come from the app's sample file and their marks are synthetic, as the screen says; the pack slide is PowerPoint's own rendering of the downloaded file. They record the build of 22 October, morning: the course record, the sample sessions with their branded packs, the before and after, the judge's walk and the term recap came later that day and are captured once, at the end.
 
 ### <samp>hafiz@lyceum:~$ npm run dev</samp>
 
@@ -110,7 +110,7 @@ npm run build      # the production build into dist/
 npm run preview    # the workspace alone; parsing and live collection need the API
 ```
 
-The core needs no AI key and no account: work is saved in this browser. Live board collection (Greenhouse and Lever) and document parsing go through the local API; the dated saved sample works without it. **Watch the tour** on the landing page plays the whole loop over the real app in about 7 minutes; [JUDGES.md](JUDGES.md) is the five-minute way in.
+The core needs no AI key and no account: work is saved in this browser. Live board collection (Greenhouse and Lever) and document parsing go through the local API; the dated saved sample works without it. **Watch the tour** on the landing page plays the whole loop over the real app in about 7 minutes; **For judges: walk with Tualang** opens the judge's page (`#/judge`), where the walk takes ten stops over the real app on the sample workspace, Next, Back and Esc by hand. [JUDGES.md](JUDGES.md) is the five-minute way in.
 
 ### <samp>hafiz@lyceum:~$ npm run prove:all</samp>
 
@@ -133,9 +133,13 @@ The core needs no AI key and no account: work is saved in this browser. Live boa
 | Evidence snapshots | 6 | frozen windows, change called only when intervals separate, identity matching, backups |
 | Moods | 8 | each mood a pure function of the records, the requests in flight and the clock |
 | The local door | 5 | every MCP tool through the protocol against the sample workspace: receipts, the export time, read-only annotations, the pack never overwriting, nothing written to the workspace, refusals and the call log |
-| **total** | **185** | seventeen suites |
+| The course record | 12 | the sample course in both states, its learning time, the assessment plan and its table of specifications, the matrix levels, the references gap, the rubrics, the tour's revision through the store, and the course file with its manifest |
+| Teaching material | 8 | the fourteen sample sessions and their packs read back slide by slide, 18 pt body text, the mark and the demo line in every master, the repair of the parts pptxgenjs declares but does not write, the preview against the file, and samples kept out of the term's teaching |
+| Before and after | 8 | the word diff, topic hours before and after, the week 6 pack under each version, a region for every changed part, renamed and added slides, results marked not comparable when an outcome is reworded, the summary in words, and the decision behind each version |
+| The judge's way through | 5 | every walk stop rendered by its screen, captions within twenty words with their labels, the host at the two ends only, the not-built list word for word, the sample workspace restored with the current one kept, and the recap's numbers against their records |
+| **total** | **218** | twenty-one suites |
 
-After `npm run build`, four headless browser runs drive the built app: `npm run smoke` (the whole tour, the decision record, both downloads, the closed ring), `smoke:integrity` (the landing page carries no synthetic figure), `smoke:workspace` (save, reload, export, keyboard and 320 px layouts) and `smoke:curriculum` (Watch to Update with real downloads and a restore). `npm run deck` checks every figure in the pitch against the claims register; `node scripts/generate-guide.mjs --check`, `node scripts/contrast-check.mjs` and `node scripts/dash-scan.mjs` keep the guide, the palette and the prose honest. These are software checks, not learning validation. Results with dates: [docs/as-built.md](docs/as-built.md).
+After `npm run build`, four headless browser runs drive the built app: `npm run smoke` (the whole tour, the decision record, both downloads, the closed ring), `smoke:integrity` (the landing page carries no synthetic figure; the judge's page shows the register's figures and the not-built list word for word), `smoke:workspace` (save, reload, export, keyboard and 320 px layouts; the judge's walk by keyboard and the course file with its manifest) and `smoke:curriculum` (Watch to Update with real downloads and a restore; the before and after at 320 px). `npm run deck` checks every figure in the pitch against the claims register; `node scripts/generate-guide.mjs --check`, `node scripts/contrast-check.mjs` and `node scripts/dash-scan.mjs` keep the guide, the palette and the prose honest. These are software checks, not learning validation. Results with dates: [docs/as-built.md](docs/as-built.md).
 
 ### <samp>hafiz@lyceum:~$ tree ./architecture</samp>
 
@@ -145,7 +149,9 @@ After `npm run build`, four headless browser runs drive the built app: `npm run 
 
 ```text
 src/lib/            the deterministic core: evidence, counts, curriculum checks, decisions, slides, backups
-src/app/            the store, the loop and its ring, roles, moods, routes
+src/app/            the store, the loop and its ring, roles, moods, routes, the term recap
+src/data/sample-course/  the demo course record and its term's material, labelled synthetic
+src/demo/           the tour and the judge's walk over the real app
 src/ui/             primitives, the shell, one screen per loop step, the mascots
 src/prove-*.ts      the checks
 server/             the local API: parsing, permitted board collection
@@ -164,6 +170,7 @@ docs/               the plan, the as-built record, the claims, the decisions, th
 3. **One decision record.** Adopt, retain, defer or return, immutable, bound to the brief, the version and the term; a decision on one's own brief is self-recorded and stays open until a second person confirms. The cost: a second person, which a small department may not have.
 4. **Local first.** One course runs in the browser with no account, and backups are validated JSON. The cost: no shared workspace, no sign-in and no server-side permissions until the department tier.
 5. **The look from one file.** Every colour comes from `src/theme/tokens.ts`, checked against the WCAG audit by `scripts/contrast-check.mjs`, and the fonts are bundled. The cost: a new colour is a change to the audit first.
+6. **A labelled demo course.** The demo's CS310 is a course record written for this prototype at UTP, the team's own university, and labelled demo and synthetic wherever it shows (the team's advisor confirmed the team represents the university); the mark appears only on the demo course, with the demo line beside it. The cost: every surface that shows the mark carries the line, and the lecturer's own courses carry neither.
 
 Every decision of the build, dated, with its options and how to reverse it: [docs/decisions.md](docs/decisions.md).
 
@@ -172,6 +179,7 @@ Every decision of the build, dated, with its options and how to reverse it: [doc
 | file | what it is |
 |:--|:--|
 | [lyceum-upgrade-plan.md](docs/lyceum-upgrade-plan.md) | the plan for Amsterdam and after |
+| [lyceum-depth-plan.md](docs/lyceum-depth-plan.md) | the depth plan: the course record, the material, the before and after, the judge's way through |
 | [as-built.md](docs/as-built.md) | the system as built, with every verification run and its date |
 | [claims.md](docs/claims.md) | every number on every surface, with its source |
 | [decisions.md](docs/decisions.md) | every choice made in the build, with its trade-off and how to reverse it |
@@ -191,6 +199,12 @@ Built for the Grand Final, package by package, each with its checks in [docs/as-
 - **The local door.** A read-only MCP server over an exported workspace, with the skill folder.
 - **The pitch and the print.** The HTML deck with its PDF and PPTX, the architecture diagram, the brief and the A1 poster.
 - **The film.** Two cuts built on a capture of the real app; silent until the team records the voices.
+- **The course record.** The demo course in the shape of a course file: outcomes and the CLO to PLO matrix, the assessment plan and rubrics, the schedule, learning time and references, exported as a zip with an honest manifest.
+- **Teaching material.** Fourteen labelled sample sessions, four with full slides, branded packs with a preview on screen, lab sheets and the project brief.
+- **Before and after.** The change as a redline, the hours as current against proposed, the week's pack under both versions, and the decision behind each version.
+- **The judge's way through.** The judge's page with Tualang, a ten-stop walk on the sample workspace, and a printable term recap.
+
+In progress for the final: the two student surveys and attainment against a stated threshold.
 
 Next, in the order a pilot needs it (plan Section 17.2):
 
@@ -206,6 +220,7 @@ Next, in the order a pilot needs it (plan Section 17.2):
 - **Feeds the boards do not permit.** Never LinkedIn, Indeed or Workday; only employer boards with a documented public API, read on request.
 - **Formal approval.** It stays in the university's process; Lyceum records the decision that feeds it.
 - **Predictions about a real cohort.** Nothing predictive runs on a real course; the planned protocol freezes a prediction before a term and scores it after, against the last cohort carried forward.
+- **Accreditation.** The course file follows the order EAC lists and names what it does not hold; no course is claimed accredited or accreditable.
 
 ### <samp>hafiz@lyceum:~$ cat ./licences</samp>
 
@@ -214,6 +229,7 @@ Next, in the order a pilot needs it (plan Section 17.2):
 | Lyceum | proprietary, all rights reserved ([LICENSE](LICENSE)) |
 | Bricolage Grotesque, Plus Jakarta Sans, JetBrains Mono | SIL Open Font License, bundled from Fontsource (`public/fonts`) |
 | Simple Icons | CC0 as a project; each mark keeps its owner's terms ([docs/brand-use.md](docs/brand-use.md)) |
+| The Universiti Teknologi PETRONAS mark | the university's own; shown on the demo course on the team advisor's confirmation that the team represents the university, labelled demo ([docs/brand-use.md](docs/brand-use.md)) |
 | Remotion (the film only) | Remotion's own licence; which tier applies is open ([video/README.md](video/README.md)) |
 
 <sub>The banner and card are generated by <code>.github/readme/build.py</code> (standard library Python). Change a value at the top and run it again.</sub>

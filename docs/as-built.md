@@ -4,8 +4,8 @@
 
 **Stamp.**
 
-- Last updated: 22 October 2026, 15:05 Kuala Lumpur time.
-- Reflects: `main` after the A8 commit (`b4bfdc4`), with the owner's follow-ups of the same day, uncommitted (the seed clock, the kept files, the public landing page and its QR code, the friendlier workspace, the team repository, the text pass); the base is `f5b26a4`, tagged `pre-overhaul`. Nothing is pushed; `amsterdam-2026` is the owner's tag at the freeze.
+- Last updated: 22 October 2026, 21:25 Kuala Lumpur time, after Track C's Tier 1 (D8a).
+- Reflects: `main` after Track C's D0, D1, D2, D5a and D6a (`87d585d`, `81072d1`, `5715efc`, `02f5c73`, `963b0f2`) and D8a's documentation and checks; Track A ended at `b4bfdc4`, with the owner's follow-ups committed as `ba980e7`; the base is `f5b26a4`, tagged `pre-overhaul`. Nothing is pushed; `amsterdam-2026` is the owner's tag at the freeze. Sections 1 to 5 describe Track A's build and its run of 22 October, afternoon; Track C's additions and their verification are in Section 8.
 - Project: Lyceum, Universiti Teknologi PETRONAS, for the Grand Final on 29 October 2026 in Amsterdam ([docs/competition/grand-final-2026.md](competition/grand-final-2026.md)).
 
 **Rollback.** `git checkout pre-overhaul` returns the tree as it stood before the overhaul: the whole October workspace, committed on 22 October 2026 at 03:25 as "Checkpoint before the overhaul".
@@ -163,6 +163,9 @@ What this run could not do on its own, with where each item stands. The owner's 
 | Remotion's licence tier | Who owns Lyceum, the team or the university, decides which applies | Recorded in [video/README.md](../video/README.md); confirm before the film is published |
 | The GitHub repository's description | The house style asks for one plain sentence on GitHub, which changes a setting off this machine | Suggested: "Lyceum turns real job postings into a course decision with receipts, every semester." |
 | Section 19's remaining documents | `problem-statement.md`, `ui-accessibility-review.md` (with the axe and NVDA passes) and `user-study.md` (the pilot protocol) | Not written in this run |
+| The tour's Course caption (Track C) | The captions are frozen; step 3 still says "One outcome" over a course with five | Needs the owner 1 in [run-log.md](run-log.md), with a replacement for that one caption |
+| The "no AI text" lines (Track C) | The tour's Teach caption, the deck's note, the booth script and the README card say the pack has no model text, while the sample course's wording is a labelled fixture the build session wrote | Needs the owner 2 in [run-log.md](run-log.md), with a replacement that stays true; the booth script carries a "do not say" guard meanwhile |
+| The recording go (Track C) | The screenshots, the film, the deck, the brief, the poster and the pack's PowerPoint renders are captured once, on the owner's written go | The stale list and the exact commands are under "Verification after Tier 1" in Section 8 |
 
 ## 7. Changelog: Track A, package by package
 
@@ -503,3 +506,31 @@ The depth plan's packages ([lyceum-depth-plan.md](lyceum-depth-plan.md)), each w
 - `JUDGES.md` opens with Tualang and the things to try; `docs/demo-script.md` gains the before and after, the survey (planned until D3a) and the recap at the close.
 - Not built in D6a, left to D6b: the programme wall, the kiosk and the count-up of the register's figures.
 - Checks: typecheck; prove:all 218 passed, twenty-one suites (the new `prove-judge`, 5); the build; `smoke` 19 of 19; `smoke:integrity` 3 of 3 (the judge's page added); `smoke:workspace` 8 of 8 (the walk by keyboard at 1440 and 320 px added); `smoke:curriculum` 6 of 6; the walk; the contrast, dash, guide, migration, sample and partner-mark checks.
+
+### Verification after Tier 1 (D8a): 22 October 2026
+
+The full run after D0, D1, D2, D5a and D6a, on the build machine between 21:17 and 21:23 Kuala Lumpur time, on the code committed as D8a. No gated command ran.
+
+| Command | Result |
+|:--|:--|
+| `npm run typecheck` | Passed |
+| `npm run prove:all` | 218 passed, 0 failed, twenty-one suites (Track C's four: the course record 12, teaching material 8, before and after 8, the judge's way through 5) |
+| `npm run build` | Passed; the sizes below |
+| `npm run smoke` | 19 of 19, DEMO SMOKE OK: the whole tour, the decision record, both downloads, the closed ring, with the term's fourteen sample sessions beside the tour's own |
+| `npm run smoke:integrity` | 3 of 3: no synthetic figure on the landing page; the judge's page with the register's figures and the not-built list word for word, at 1440 and 320 px; the notice only on the sandbox screens |
+| `npm run smoke:workspace` | 8 of 8: the earlier seven, and the judge's walk by keyboard at 1440 and 320 px with the host at the two ends, Esc, the recap from Home, and CS310's course file with its manifest checked against what has shipped |
+| `npm run smoke:curriculum` | 6 of 6: Watch to Update with real downloads and a restore; History's before and after at 390 and 320 px, naming no decision where the decision was retain |
+| `node scripts/walk.mjs` | WALK OK, 23 checks: every screen and every loop step, the term recap and the judge's page at their addresses, the real upload pipeline, no page error |
+| `node scripts/generate-guide.mjs --check` | The lecturer guide matches the in-app section catalogue (23 sections, Judge, Recap and Institution among them) |
+| `node scripts/contrast-check.mjs` | CONTRAST CHECK OK: 61 ratios against `tokens.ts`, 217 files scanned for hand-written colours, 41 generated SVGs; `public/brand/partners/` by its exception |
+| `node scripts/dash-scan.mjs` | No en or em dash in 311 text files (`docs/history` and `docs/review` kept as written; the saved postings, in `public/demo/collected-sample.json` and both copies of the sample workspace, kept verbatim) |
+| `node scripts/check-backup-migration.mjs` | BACKUP MIGRATION OK, 28 checks: schemas 3, 4, 5 and 6 restore |
+| `node mcp/sample.ts --check` | The sample workspace matches the tour's end state, in `mcp/` and in `public/demo/` |
+| `node scripts/gen-partner-marks.mjs --check` | The partner mark matches: the copy, 3 PNGs and the manifest |
+| `node scripts/gen-theme-css.mjs --check`, `gen-mascots.mjs --check`, `gen-architecture.mjs --check` | All match: the theme outputs and the three fonts, 35 SVGs and 72 PNGs, the diagram |
+
+**The bundle.** The main chunk is 869.56 kB (255.93 kB gzipped), against 720.08 kB at Track C's baseline; the stylesheet 86.82 kB (16.42 kB gzipped). pptxgenjs (275.35 kB), SheetJS (429.53 kB) and jszip (97.54 kB) load only when a pack, a sheet or a zip is built. Track C's source is about 141 kB, of which the sample course (about 39 kB) loads with the seed and the comparison views (about 24 kB) stay in the main chunk (docs/decisions.md). Vite's warning about chunks over 500 kB stands, as it did in Track A.
+
+**Stale until D9** (plan Section 13.1). Each is a true record of the 22 October build before Track C and says so where it shows a date: the screenshots of Course, Teach, Learn, History and Courses (`docs/screenshots/`, `docs/presentation/shot-*.png`, the README's seven in `.github/readme/shots/`); the film's capture and both renders (`video/out/`, `deck/media/loop90.mp4`); the deck's slides 6 and 7 if the owner takes Section 18 item 6, and the deck's Teach line (Needs the owner 2); the brief's page with the pack; the poster's screenshots; the pack as PowerPoint draws it (`docs/presentation/pack/`) and the two sample decks; the README's card, which says "no model text" (Needs the owner 2). Nothing in the list was regenerated; `scripts/gen-sample-decks.mjs` now takes the tour's own session with the brand, for D9.
+
+**The D9 commands, waiting for the owner's written go**, in order (plan Section 13.2): `npm run build`; `npm run shots` (the README's seven copied); `npm run gen:sample-decks` with PowerPoint (also the pack's clipping check); if Section 18 item 6 says so, the deck's slides 6 and 7, then `npm run deck`; `node scripts/gen-brief-pdf.mjs`; `node scripts/gen-poster.mjs`; `node video/capture/capture.mjs`; in `video/remotion`, `npm run render:loop90`, `npm run render:afternoon` and `npm run check:determinism`; the film copied into `deck/media/` and `npm run deck` again.

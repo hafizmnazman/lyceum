@@ -125,6 +125,21 @@ try {
     check(`loop step ${step} renders at its address`, await page.evaluate((target) => window.__lyceum.getState().screen === target, screen) && (step === "course" ? /^#\/course\/[^/]+$/.test(hash) : hash.includes("/" + step)), hash);
   }
 
+  // Track C's two new addresses: the course's term recap from History, and the judge's page from the Guide, signed in.
+  await click("history-recap");
+  await sleep(450);
+  await shot("12-recap");
+  check("the term recap renders at its address", await page.evaluate(() => window.__lyceum.getState().screen === "recap" && /^#\/course\/[^/]+\/recap$/.test(location.hash) && Boolean(document.querySelector('[data-demo-id="recap"]'))));
+  await click("nav-guide");
+  await sleep(300);
+  await click("guide-judge");
+  await sleep(450);
+  await shot("13-judge");
+  check("the judge's page renders signed in", await page.evaluate(() => location.hash === "#/judge" && Boolean(document.querySelector('[data-demo-id="judge-greeting"]'))));
+  // Back to the course's History, where the path across the top leads on to Learn.
+  await page.evaluate(() => (window.location.hash = "#/course/" + window.__lyceum.getState().selectedSubjectId + "/history"));
+  await sleep(450);
+
   // The real upload pipeline on a sample file, from Learn (xlsx parses in-browser
   // here, since there is no api server: the fallback path under test).
   await click("rail-learn");

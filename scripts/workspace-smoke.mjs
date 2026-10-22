@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { preview } from "vite";
 import puppeteer from "puppeteer-core";
+import JSZip from "jszip";
 import { WALK } from "../src/demo/walk.ts";
 
 const executablePath = ["C:/Program Files/Google/Chrome/Application/chrome.exe", "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"].find(existsSync);
@@ -123,7 +124,7 @@ try {
   await click("nav-guide");
   await textIncludes("What has not been built yet");
   await clickText("All roles");
-  assert.equal(await page.$$(".guide-entry").then((entries) => entries.length), 22);
+  assert.equal(await page.$$(".guide-entry").then((entries) => entries.length), 23);
   await page.type('input[type="search"]', "slide");
   assert.ok(await page.$$(".guide-entry").then((entries) => entries.length) > 0);
   console.log("PASS resume path, session updates and all-role section guide");
@@ -208,8 +209,27 @@ try {
   await walkPage.keyboard.press("Escape");
   await walkPage.waitForFunction(() => !document.querySelector('[data-demo-id="walk-card"]'));
   assert.equal(await walkPage.evaluate(() => location.hash), WALK[1].route, "Esc leaves the walk where it stood");
+  // The course file (depth plan Section 4.4), downloaded from CS310 on the sample workspace: its manifest names what has shipped.
+  const walkCdp = await walkPage.createCDPSession();
+  await walkCdp.send("Browser.setDownloadBehavior", { behavior: "allow", downloadPath: output });
+  await walkPage.setViewport({ width: 1440, height: 1000 });
+  await walkPage.evaluate(() => { location.hash = "#/course/CS310"; });
+  await walkPage.waitForSelector(selector("course-file-export"), { visible: true });
+  await walkPage.click(selector("course-file-export"));
+  const zipPath = join(output, "CS310-course-file.zip");
+  for (let tries = 0; tries < 300 && !existsSync(zipPath); tries++) await new Promise((r) => setTimeout(r, 200));
+  assert.ok(existsSync(zipPath), "the course file downloaded");
+  await new Promise((r) => setTimeout(r, 500));
+  const courseFile = await JSZip.loadAsync(readFileSync(zipPath));
+  const manifest = await courseFile.file("MANIFEST.md").async("string");
+  for (const [item, status] of [["the week 7 quiz", "not yet built"], ["The OBE course report with its CQI note", "not yet built"], ["the lab sheets", "sample"], ["the project brief", "sample"], ["the teaching packs", "sample"], ["Assessment rubrics", "sample"], ["Decisions and versions", "present"], ["The external examiner's report", "not included"]])
+    assert.ok(manifest.includes(item + " | " + status + " |"), "the manifest marks " + item + " " + status);
+  assert.ok(manifest.includes("No accreditation is claimed.") && manifest.includes("A demo course at UTP"));
+  const names = Object.keys(courseFile.files).filter((n) => !courseFile.files[n].dir);
+  assert.equal(names.filter((n) => n.startsWith("packs/") && n.endsWith(".pptx")).length, 15, "fourteen sample packs and the lecturer's own");
+  assert.equal(names.filter((n) => n.startsWith("lab-sheets/")).length, 3);
   await walkPage.close();
-  console.log("PASS the judge's walk by keyboard on the sample workspace at 1440 and 320 px, the host at the two ends, Esc leaves, and the recap from Home");
+  console.log("PASS the judge's walk by keyboard on the sample workspace at 1440 and 320 px, the host at the two ends, Esc leaves, the recap from Home, and the course file with its manifest");
   assert.deepEqual(errors, []);
   console.log("PASS zero page errors");
   console.log("Screenshots and exported plan: " + output);

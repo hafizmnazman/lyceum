@@ -1317,3 +1317,33 @@ Chosen: (b), because the two files are identical and `node mcp/sample.ts --check
 Reverse it if: the walk stops fetching the sample workspace.
 
 To reverse: `VERBATIM_EVIDENCE` in `scripts/dash-scan.mjs`.
+
+## 2026-10-22 21:10, D8a: the institution's help lines and the claims register
+
+Options: (a) add a register row for each sourced example in the Institution panel's help (UTHM's 50% at 55, McGill's floor by class size, McLennan's five). (b) Keep the register to the surfaces it names (the landing page, the deck, the brief, the poster, the film and the README), and let the help lines carry their sources beside the figures, as they already do.
+
+Chosen: (b), because the register's scope is the judge-facing surfaces and `prove-journey` checks those, while the help lines are settings guidance that name their source where they say the figure. A row without a surface to check would be a promise no check keeps.
+
+Reverse it if: the Institution panel's help appears on a judge-facing surface, a slide or a screenshot.
+
+To reverse: add the rows to `docs/claims.md` and their check to `src/prove-journey.ts`.
+
+## 2026-10-22 21:15, D8a: the Institution entry in the section guides
+
+Options: (a) leave Institution out of the catalogue, since its panel lives on the Guide page, whose screen id the catalogue excluded. (b) Let the catalogue take the Guide page's id for the Institution entry, as the plan's Section 12 lists it, and drop the "How to use" pill on the Guide page, which is the guide itself.
+
+Chosen: (b), because the plan asks for the guides to gain Judge, Recap and Institution, and the lecturer guide should say where the settings that shape a figure live. Without the change the Guide page would have opened with "How to use Institution settings".
+
+Reverse it if: the institution settings move to a screen of their own.
+
+To reverse: `SectionGuide` in `src/app/sectionGuides.ts` and the `SectionHelp` line in `src/ui/shell/Shell.tsx`.
+
+## 2026-10-22 21:17, D8a: the comparison views in the main chunk
+
+Options: (a) load `compare.tsx` and `diff.ts` behind a dynamic import, as pptxgenjs, SheetJS and jszip are. (b) Keep them in the main chunk, about 24 kB of source among the 141 kB Track C added.
+
+Chosen: (b), because they render on Update, Teach, History and the recap, three of them stops in the walk, and a loading boundary there would put a flicker under the spotlight for a few kilobytes; the large libraries are already split. The main chunk is 869.56 kB, 255.93 kB gzipped, measured and recorded in the as-built table.
+
+Reverse it if: a slow-network test on the venue's wifi shows the first load too slow, or the gzipped main chunk passes 300 kB.
+
+To reverse: import the views with `React.lazy` in `CurriculumWorkspace.tsx`, `CourseWorkspace.tsx` and `Recap.tsx`.

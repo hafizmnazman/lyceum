@@ -167,7 +167,13 @@ try {
   await click("assessment-course-change-ack");await click("assessment-course-change-review");
   await page.waitForFunction(()=>window.__lyceum.getState().testDrafts.find(t=>t.subjectId==="BUS205").needsReview===false);
   await click("rail-history");await text("Versions and decisions");await text("Previous");await text("Revision decisions");await text("Retain the course as it is");
-  console.log("PASS reload, linked teaching session, changed-outcome impact, explicit assessment review, version history and the decision on record");
+  // Before and after in History (depth plan Section 6.2): the new version against the one it replaced, as a redline, and no decision named,
+  // because the decision on record was retain; the comparison reflows at 390 and 320 px.
+  await page.waitForSelector('[data-demo-id^="history-compare-"][open]');await text("No decision on record for this change.");
+  assert.ok(await page.evaluate(()=>Boolean(document.querySelector('[data-demo-id="outcome-redline"] ins'))&&Boolean(document.querySelector('[data-demo-id="outcome-redline"] del'))),"the reworded outcome as a redline");
+  for(const width of [390,320]) {await page.setViewport({width,height:844});await noOverflow("History compare "+width);}
+  await page.setViewport({width:1440,height:1000});
+  console.log("PASS reload, linked teaching session, changed-outcome impact, explicit assessment review, version history, the before and after at 390 and 320 px, and the decision on record");
   await click("nav-guide");await click("backup-export");const backup=await waitDownload("lyceum-workspace-backup.json");
   const saved=JSON.parse(readFileSync(backup,"utf8"));assert.equal(saved.application,"Lyceum");assert.ok(saved.data.courseDefinitions.BUS205);
   assert.equal(saved.schemaVersion,6);assert.equal(saved.data.briefDecisions.length,1);
