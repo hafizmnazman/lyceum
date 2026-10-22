@@ -1167,3 +1167,63 @@ Chosen: (b), because CLAUDE.md now says a lecturer's own artefacts never carry m
 Reverse it if: a slide editor for lecturers lands; the save then keeps the lecturer's own slides and strips only the flag.
 
 To reverse: `saveTeachingSession` in `src/app/store.ts`, `SessionCard` in `src/ui/screens/CourseWorkspace.tsx`, the cover in `sessionDeck` (`src/lib/slides.ts`), and the last test in `src/prove-materials.ts`.
+
+## 2026-10-22 20:12, D5a: how History finds the decision behind a version
+
+Options: (a) the latest decision on the course's newest brief, whatever its outcome and whenever it was recorded. (b) Read the event log: before the version's `version-adopted` event, each person's standing decision on each brief, and of those the latest to adopt a change, bound to the version the revision started from; otherwise "No decision on record for this change" (`authorisingDecision`).
+
+Chosen: (b), because the plan says the link is found through the `decision-recorded` and `version-adopted` events, and only (b) refuses a decision taken after the change, one amended to retain before it, or one about another version. The first version on record says so instead of claiming a missing decision.
+
+Reverse it if: the owner wants a self-recorded decision on a shared course to be shown as not authorising until a second person confirms it.
+
+To reverse: `authorisingDecision` in `src/lib/decisions.ts`, the version entry in `CurriculumHistoryPanel` (`src/ui/screens/CurriculumWorkspace.tsx`), and the last test in `src/prove-diff.ts`.
+
+## 2026-10-22 20:13, D5a: which week's pack Update and History compare
+
+Options: (a) always the week 6 pack, as the plan's table names it. (b) The first week whose topic teaches an outcome the version rewords or adds, taking the lecturer's own session in that week before the sample one (`changedOutcomeWeek`, `sessionInWeek`), the rule `suggestedWeek` already follows.
+
+Chosen: (b), because for the tour's change it is week 6, so the plan's view is what the judge sees, and for any other change it still picks the class the change reaches first instead of an unrelated week. When no session teaches the change, the screen says no pack is compared.
+
+Reverse it if: the owner wants every changed pack listed in History rather than the first.
+
+To reverse: `changedOutcomeWeek` and `sessionInWeek` in `src/lib/teachingPlan.ts`, their uses in `RevisionEditor` and `CurriculumHistoryPanel`.
+
+## 2026-10-22 20:14, D5a: the colour of a changed region on a slide preview
+
+Options: (a) the warn token, the colour the app uses for things to review. (b) A dashed outline in emerald on light slides and lime on forest ones, with the list of changes beside it carrying the meaning.
+
+Chosen: (b), because the audit keeps warn for warnings and stale reviews and allows lime only on forest, and a changed slide is not a warning. The outline is never the only signal: the list names every change in words.
+
+Reverse it if: the owner wants changes to read as warnings across the app.
+
+To reverse: the outlines in `SlideSvg` (`src/ui/primitives/DeckPreview.tsx`).
+
+## 2026-10-22 20:15, D5a: the unchanged topics in the two-column table
+
+Options: (a) every topic, always, fifteen rows with one change among them. (b) The topics that changed, the totals and "Show all 15 topics (14 unchanged)", and a sentence instead of the table when no topic changed.
+
+Chosen: (b), because the note's comparison tools (Confluence among them) fold what did not change, and the committee convention puts the change in front. The full table is one click away and the totals always show.
+
+Reverse it if: a committee asks to see the whole schedule beside the change by default.
+
+To reverse: `TwoColumn` in `src/ui/primitives/compare.tsx`.
+
+## 2026-10-22 20:19, D5a: which Teach cards show what changed in their pack
+
+Options: (a) only the week 6 card. (b) Every card whose pack, built under the version before the current one, differs from the pack built now, with "What changed in this pack since" and the slide diff behind it.
+
+Chosen: (b), because the same generator applies the same rule to every pack, and showing week 6 alone would hide that the sample weeks 12, 13 and 14, which teach CLO5 too and which the revision flagged for review, changed as well. A card whose pack did not change shows nothing extra.
+
+Reverse it if: the owner finds five disclosures in Teach crowd the tour's stop.
+
+To reverse: `priorPack` in `TeachingPlanPanel` and the disclosure in `SessionCard` (`src/ui/screens/CourseWorkspace.tsx`).
+
+## 2026-10-22 20:22, D5a: a renamed slide or a replaced one
+
+Options: (a) pair slides by position whenever titles differ, so a new slide in an old slide's place reads as an edit. (b) Pair by title first (a pack's titles are unique), then by position only when the slide keeps some of its content; otherwise a removal and an addition.
+
+Chosen: (b), because the proof caught (a) calling an unrelated slide a rename, and a lecturer reading "changed" would look for an edit that is not there. Records rarely rename a slide, so the position match is only a fallback.
+
+Reverse it if: lecturer-written slides arrive and renames with all-new text become common.
+
+To reverse: `match` inside `deckDiff` in `src/lib/diff.ts`, and the renamed-slide test in `src/prove-diff.ts`.

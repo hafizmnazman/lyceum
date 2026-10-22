@@ -7,8 +7,8 @@
 // five slide masters with the institution's brand (depth plan Section 5.2); the
 // meeting brief keeps the plain renderer.
 
-import type { CLO, CourseDefinition, EvidenceBrief, EvidenceSource, InstitutionProfile, Person, SkillMention, Subject, TeachingSession } from "../types.ts";
-import { RECOMMENDATION_LABEL, STAGE_LABEL, skillKey, type EvidenceReport } from "./evidence.ts";
+import type { CLO, CourseDefinition, EvidenceBrief, EvidenceSource, InstitutionProfile, Person, SkillMapping, SkillMention, Subject, TeachingSession } from "../types.ts";
+import { RECOMMENDATION_LABEL, STAGE_LABEL, evidenceReport, skillKey, type EvidenceReport } from "./evidence.ts";
 import { bareHex } from "../theme/tokens.ts";
 import { DEMO_LINE } from "../data/sample-course/index.ts";
 import { BODY_PT, LAYOUT, footerText, isForest, masterOf, type Box } from "./deckLayout.ts";
@@ -176,6 +176,15 @@ export function sessionDeck(subject: Subject, session: TeachingSession, clos: CL
   }
   return { fileName: safeFile(subject.id) + "-week-" + session.week + "-teaching-pack.pptx", title: subject.id + " week " + session.week + " teaching pack",
     author: session.sample ? "Lyceum prototype (sample)" : name(people, session.updatedBy), generatedAt, footer: brand.footer, slides, brand };
+}
+
+/** A session's pack as the generator builds it under one course version (depth plan Section 6.2): that version's outcome
+ *  snapshot and record, with the evidence report over those outcomes, so two versions' packs compare record by record. */
+export function packUnderVersion(subject: Subject, session: TeachingSession, version: { cloSnapshot: CLO[]; definition?: CourseDefinition | null },
+  evidence: { sources: EvidenceSource[]; mentions: SkillMention[]; mappings: SkillMapping[] }, people: Person[], generatedAt: string, brand: Brand | null): DeckSpec {
+  const clos = version.cloSnapshot.filter((c) => c.subjectId === subject.id);
+  const report = evidenceReport(subject.id, evidence.sources, evidence.mentions, evidence.mappings, clos);
+  return sessionDeck(subject, session, clos, report, evidence.mentions, evidence.sources, people, generatedAt, { definition: version.definition ?? null, brand });
 }
 
 // ---------- rendering ----------

@@ -13,12 +13,17 @@ const TONE: Record<PreviewSlide["texts"][number]["tone"], string> = {
 };
 const px = (inches: number) => Math.round(inches * PX * 10) / 10;
 
-export function SlideSvg({ slide, number, markSrc }: { slide: PreviewSlide; number: number; markSrc?: string }) {
+/** A region to outline on a slide: one of its parts, or the whole slide when it was added or removed. */
+export type SlideHighlight = keyof PreviewSlide["regions"] | "whole";
+
+export function SlideSvg({ slide, number, markSrc, highlight = [] }: { slide: PreviewSlide; number: number; markSrc?: string; highlight?: SlideHighlight[] }) {
   const forest = slide.master === "TITLE" || slide.master === "CLOSING";
   const background = forest ? "var(--forest)" : slide.master === "SECTION" ? "var(--tint-1)" : "var(--white)";
   const f = slide.figure;
+  // A comparison's outlines: lime on the forest masters, emerald on the light ones (the audit's rule for each surface).
+  const outlines = highlight.map((h) => (h === "whole" ? { x: 0.06, y: 0.06, w: 9.88, h: 5.5 } : slide.regions[h])).filter((b): b is NonNullable<typeof b> => Boolean(b));
   return (
-    <svg viewBox="0 0 960 540" className="slide-svg" role="img" aria-label={"Slide " + number + ": " + slide.title}>
+    <svg viewBox="0 0 960 540" className="slide-svg" role="img" aria-label={"Slide " + number + ": " + slide.title + (outlines.length ? ", with the changed parts outlined" : "")}>
       <rect width="960" height="540" fill={background} />
       {slide.plate ? <rect x={px(slide.plate.x)} y={px(slide.plate.y)} width={px(slide.plate.w)} height={px(slide.plate.h)} fill="var(--white)" /> : null}
       {slide.mark && markSrc ? <image href={markSrc} x={px(slide.mark.x)} y={px(slide.mark.y)} width={px(slide.mark.w)} height={px(slide.mark.h)} preserveAspectRatio="xMidYMid meet" /> : null}
@@ -35,6 +40,8 @@ export function SlideSvg({ slide, number, markSrc }: { slide: PreviewSlide; numb
           {t.lines.map((line, j) => <tspan key={j} x={px(t.box.x)} dy={j === 0 ? size : size * 1.25}>{line}</tspan>)}
         </text>;
       })}
+      {outlines.map((b, i) => <rect key={"o" + i} className="slide-outline" x={px(b.x) - 6} y={px(b.y) - 6} width={px(b.w) + 12} height={px(b.h) + 12} rx={8}
+        fill="none" stroke={forest ? "var(--lime)" : "var(--emerald)"} strokeWidth={6} strokeDasharray="16 8" />)}
     </svg>
   );
 }

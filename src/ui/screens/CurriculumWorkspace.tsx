@@ -1,13 +1,18 @@
 import { useRef, useState, type InputHTMLAttributes } from "react";
 import { can } from "../../app/roles.ts";
-import { adoptCurriculumRevision, checkCurriculumRevision, definitionForCourse, discardCurriculumRevision,
+import { adoptCurriculumRevision, checkCurriculumRevision, definitionForCourse, discardCurriculumRevision, nowIso,
   saveCurriculumRevision, startCurriculumRevision, type AppState } from "../../app/store.ts";
 import { BLOOM_LEVELS, curriculumChanges, curriculumImpact, curriculumMarkdown, learningTime, nextFreeSlot, splitForSlot, topicHours, validateCourseDefinition, withDerivedFields } from "../../lib/curriculum.ts";
 import { downloadText } from "../../lib/download.ts";
 import type { BloomLevel, CourseDefinition, CourseOutcome, CourseTopic, CurriculumDraft, Person, PloLevel, Subject, TopicKind } from "../../types.ts";
 import { Button, Disclosure, Field, Input, Select, Tag, Textarea } from "../primitives/index.tsx";
 import { DecisionCard, Meter } from "../primitives/loop.tsx";
-import { briefDecisionState } from "../../lib/decisions.ts";
+import { authorisingDecision, briefDecisionState, OUTCOME_LABEL } from "../../lib/decisions.ts";
+import { changeSummary, deckDiff } from "../../lib/diff.ts";
+import { changedOutcomeWeek, sessionInWeek } from "../../lib/teachingPlan.ts";
+import { ChangeSummary, OutcomeChanges, SlideDiffList, TwoColumn } from "../primitives/compare.tsx";
+import { useMarkData } from "../primitives/DeckPreview.tsx";
+import { packMaker, previousVersion } from "./packCompare.ts";
 import { useUnsavedEditor } from "../useUnsavedEditor.ts";
 
 type Props = { state: AppState; person: Person; subject: Subject };
@@ -88,7 +93,13 @@ function RevisionEditor({ state, subject, draft, baseline, mayEdit }: Props & {
   // Checked as it will be saved: the stored learning time follows the topics on save (lib/curriculum.ts withDerivedFields).
   const issues = validateCourseDefinition(withDerivedFields(definition), subject.id, baseline);
   const changes = curriculumChanges(baseline, definition);
+  // Course-level changes keep the side-by-side cards; outcomes and topics have their own views above them.
+  const courseChanges = changes.filter(c => c.area === "Course");
   const impact = curriculumImpact(baseline, definition, state.teachingPlans.find(p => p.subjectId === subject.id), state.testDrafts.filter(t => t.subjectId === subject.id));
+  // The pack of the first week that teaches a changed outcome, under the baseline and the candidate, for the summary's slide count.
+  const packSession = sessionInWeek(state.teachingPlans.find(p => p.subjectId === subject.id)?.sessions ?? [], changedOutcomeWeek(definition, baseline));
+  const makePack = packMaker(state, subject, null, nowIso());
+  const packChanges = packSession ? deckDiff(makePack(packSession, { cloSnapshot: baseline.outcomes, definition: baseline }), makePack(packSession, { cloSnapshot: definition.outcomes, definition })) : [];
   const stale = subject.currentVersionId !== draft.baselineVersionId;
   const patchBrief = (patch: Partial<CourseDefinition["brief"]>) => setDefinition(d => ({ ...d, brief: { ...d.brief, ...patch } }));
   const patchOutcome = (id: string, patch: Partial<CourseOutcome>) => setDefinition(d => ({ ...d, outcomes: d.outcomes.map(c => c.id === id ? { ...c, ...patch } : c) }));
@@ -223,8 +234,18 @@ function RevisionEditor({ state, subject, draft, baseline, mayEdit }: Props & {
         <p className="muted">Existing work is retained; each flagged item asks for your review before reuse.</p>
       </Disclosure>
     </section>
-    <section className="workspace-panel"><h3>Before and after</h3>{changes.length ? <div className="revision-diff">{changes.map((c,i) => <article key={i}><div className="button-row"><Tag>{c.kind}</Tag><strong>{c.area}: {c.label}</strong></div>
-      <div className="session-content"><div><h4>Current version</h4><p className="preserve-lines">{c.before || "Not present"}</p></div><div><h4>Candidate</h4><p className="preserve-lines">{c.after || "Removed"}</p></div></div></article>)}</div> : <p>The candidate matches the current course. Make a change to compare it here.</p>}</section>
+    {/* Before and after (depth plan Section 6.2): the summary in words, the outcomes as a redline, the topics and hours as
+        current against proposed, and the rest of the course side by side. */}
+    <section className="workspace-panel revision-compare" aria-labelledby="revision-compare" data-demo-id="revision-compare"><h3 id="revision-compare">Before and after</h3>{changes.length ? <>
+      <ChangeSummary text={changeSummary(baseline, definition, packChanges)} />
+      {packChanges.length && packSession ? <p className="muted">The slides are counted in the week {packSession.week} pack{packSession.sample ? ", a sample session" : ""}; Teach shows them once the version is in use.</p> : null}
+      <h4>Outcomes</h4>
+      <OutcomeChanges before={baseline} after={definition} />
+      <h4>Topics and hours</h4>
+      <TwoColumn before={baseline} after={definition} beforeLabel={draft.baselineVersionId} afterLabel={"Candidate " + draft.revision} />
+      {courseChanges.length ? <><h4>The rest of the course</h4><div className="revision-diff">{courseChanges.map((c,i) => <article key={i}><div className="button-row"><Tag>{c.kind}</Tag><strong>{c.label}</strong></div>
+        <div className="session-content"><div><h4>Current version</h4><p className="preserve-lines">{c.before || "Not present"}</p></div><div><h4>Candidate</h4><p className="preserve-lines">{c.after || "Removed"}</p></div></div></article>)}</div></> : null}
+    </> : <p>The candidate matches the current course. Make a change to compare it here.</p>}</section>
     {mayEdit && !stale ? <section className="workspace-panel"><h3>Lecturer decision</h3>
       <label className="checkbox-line"><input type="checkbox" data-demo-id="curriculum-ack" checked={acknowledgement} onChange={e => setAcknowledgement(e.target.checked)} />I reviewed the changes, warnings and affected teaching work. This saves my local course version; institutional approval remains in the university's process.</label>
       <div className="button-row"><Button variant="primary" data-demo-id="curriculum-adopt" disabled={dirty || draft.checkedRevision !== draft.revision || !acknowledgement} onClick={() => resultMessage(adoptCurriculumRevision(draft.id,draft.revision,acknowledgement),"New course version saved.")}>Use as my course version</Button><Button onClick={() => setDiscarding(true)}>Discard revision</Button></div>
@@ -251,21 +272,45 @@ export function CurriculumHistoryPanel({ state, subject }: { state: AppState; su
     ...decisions.map((d, i) => ({ at: d.at, order: i, kind: "decision" as const, seq: seq.get(d.id), d })),
   ].sort((a, b) => b.at.localeCompare(a.at)
     || (a.seq !== undefined && b.seq !== undefined ? b.seq - a.seq : a.kind !== b.kind ? (a.kind === "version" ? -1 : 1) : b.order - a.order));
+  // Before and after for each version against the one it replaced (depth plan Section 6.2), with the week's pack built
+  // under both from records; the decision that authorised it opens in place.
+  const markData = useMarkData(definitionForCourse(subject.id)?.sample && state.institution.showMark ? state.institution.mark.wide ?? state.institution.mark.png : null);
+  const makePack = packMaker(state, subject, markData, nowIso());
+  const sessions = state.teachingPlans.find(p => p.subjectId === subject.id)?.sessions ?? [];
+  const openDecision = (id: string) => { const el = document.getElementById("decision-" + id); el?.scrollIntoView({ block: "center" }); el?.focus({ preventScroll: true }); };
   return <div>
     <section className="workspace-panel" aria-labelledby="history-title"><h2 id="history-title">Versions and decisions</h2>
       <p className="muted">Newest first. A local version keeps the outline, the reason and the term; it does not attest university approval.</p>
-      {entries.length ? <ol className="history-timeline" data-demo-id="history-timeline">{entries.map(e => e.kind === "version"
-        ? <li key={"v" + e.v.id} className="history-entry">
+      {entries.length ? <ol className="history-timeline" data-demo-id="history-timeline">{entries.map(e => { if (e.kind === "version") {
+        const prev = previousVersion(state, e.v);
+        const decision = prev ? authorisingDecision(e.v.id, state.events, state.briefDecisions, state.curriculumDrafts) : null;
+        const compare = prev?.definition && e.v.definition ? { before: prev.definition, after: e.v.definition } : null;
+        const packSession = compare ? sessionInWeek(sessions, changedOutcomeWeek(compare.after, compare.before)) : null;
+        const packs = compare && packSession ? { before: makePack(packSession, prev!), after: makePack(packSession, e.v) } : null;
+        return <li key={"v" + e.v.id} className="history-entry">
           <span className="history-time mono">{e.at.slice(0, 16).replace("T", " ")}</span>
           <div className="history-body">
             <div className="button-row"><Tag tone="accent">Version</Tag><strong className="tabular">{e.v.id}</strong><span className="muted">{e.v.effectiveTerm || "Term not recorded"} · {name(e.v.changedBy)}</span><Tag>{e.v.id === subject.currentVersionId ? "Current" : "Previous"}</Tag></div>
             <p>{e.v.reason}</p>
+            {!prev ? <p className="muted">The first version on record.</p>
+              : decision ? <p className="history-authorised">Authorised by <button type="button" className="link-button" data-demo-id={"history-decision-link-" + e.v.id} onClick={() => openDecision(decision.id)}>{name(decision.byPersonId)}'s decision of {decision.at.slice(0, 10)}: {OUTCOME_LABEL[decision.outcome].toLowerCase()}</button></p>
+              : <p className="muted">No decision on record for this change.</p>}
+            {compare ? <ChangeSummary text={changeSummary(compare.before, compare.after, packs ? deckDiff(packs.before, packs.after) : [])} /> : null}
+            {compare ? <details className="history-open" open={e.v.id === subject.currentVersionId || undefined} data-demo-id={"history-compare-" + e.v.id}><summary>Compare with {prev!.id}</summary>
+              <h4>Outcomes</h4>
+              <OutcomeChanges before={compare.before} after={compare.after} />
+              <h4>Topics and hours</h4>
+              <TwoColumn before={compare.before} after={compare.after} beforeLabel={prev!.id} afterLabel={e.v.id} />
+              <h4>{packSession ? "The week " + packSession.week + " pack" + (packSession.sample ? ", a sample session" : "") : "The teaching pack"}</h4>
+              {packs ? <SlideDiffList before={packs.before} after={packs.after} beforeLabel={"Under " + prev!.id} afterLabel={"Under " + e.v.id} markSrc={state.institution.mark.wide ?? state.institution.mark.png} />
+                : <p className="muted">No saved session teaches the change, so no pack is compared.</p>}
+            </details> : null}
             <details className="history-open"><summary>Open</summary>
               {e.v.definition ? <><DefinitionSummary definition={e.v.definition} /><Button onClick={() => downloadText(subject.id + "-" + e.v.id + ".md",curriculumMarkdown(subject,e.v.definition!,e.v.id))}>Export this version</Button></> : <ul>{e.v.cloSnapshot.map(c => <li key={c.id}>{c.text}</li>)}</ul>}
             </details>
           </div>
-        </li>
-        : <li key={"d" + e.d.id} className="history-entry">
+        </li>; }
+        return <li key={"d" + e.d.id} id={"decision-" + e.d.id} tabIndex={-1} className="history-entry">
           <span className="history-time mono">{e.at.slice(0, 16).replace("T", " ")}</span>
           <div className="history-body">
             <div className="button-row"><Tag tone="ok">Decision</Tag><span className="muted">on the brief of {state.evidenceBriefs.find(b => b.id === e.d.briefId)?.createdAt.slice(0, 10) ?? "an earlier date"}</span></div>
@@ -273,7 +318,7 @@ export function CurriculumHistoryPanel({ state, subject }: { state: AppState; su
               amended={decisions.some((x, i) => i > decisions.indexOf(e.d) && x.briefId === e.d.briefId && x.byPersonId === e.d.byPersonId)}
               superseded={(() => { const brief = state.evidenceBriefs.find(b => b.id === e.d.briefId); return brief ? Boolean(briefDecisionState(brief, state.evidenceBriefs, state.briefDecisions, Boolean(subject.workspaceOnly)).supersededBy) : false; })()} />
           </div>
-        </li>)}</ol> : <p>Start a revision to preserve the current baseline and record a version history. Decisions recorded in Decide appear here too.</p>}
+        </li>; })}</ol> : <p>Start a revision to preserve the current baseline and record a version history. Decisions recorded in Decide appear here too.</p>}
     </section>
     <section className="workspace-panel" aria-label="Revision decisions">
       <Disclosure summary="Revision decisions: each revision started, saved, checked, adopted or discarded" count={revisions.length}>

@@ -14,6 +14,9 @@ import { evidenceReport } from "../../lib/evidence.ts";
 import { brandFor, deckBytes, sessionDeck, type DeckSpec } from "../../lib/slides.ts";
 import { downloadText } from "../../lib/download.ts";
 import { DeckFilmstrip, DeckThumb, useMarkData } from "../primitives/DeckPreview.tsx";
+import { SlideDiffList } from "../primitives/compare.tsx";
+import { deckDiff } from "../../lib/diff.ts";
+import { packMaker, previousVersion } from "./packCompare.ts";
 import { planSummary, suggestedWeek, teachingPlanMarkdown, type SessionInput } from "../../lib/teachingPlan.ts";
 import type { ChangeProposal, CourseDefinition, Person, Subject, TeachingPlan, TeachingSession } from "../../types.ts";
 import { Button, Disclosure, Field, Input, Select, Tag, Textarea } from "../primitives/index.tsx";
@@ -155,8 +158,14 @@ export function TeachingPlanPanel({ state, person, subject }: CourseProps) {
   const definition = definitionForCourse(subject.id);
   const markData = useMarkData(definition?.sample && state.institution.showMark ? state.institution.mark.wide ?? state.institution.mark.png : null);
   const report = evidenceReport(subject.id, state.evidenceSources, state.skillMentions, state.skillMappings, clos);
-  const deckFor = (session: TeachingSession) => sessionDeck(subject, session, clos, report, state.skillMentions, state.evidenceSources, state.people, nowIso(),
+  const at = nowIso();
+  const deckFor = (session: TeachingSession) => sessionDeck(subject, session, clos, report, state.skillMentions, state.evidenceSources, state.people, at,
     { definition, brand: brandFor(state.institution, definition, subject, session.week, markData) });
+  // The pack as the version before this one would have built it (depth plan Section 6.2), for "What changed in this pack".
+  const currentVersion = state.subjectVersions.find((v) => v.id === subject.currentVersionId);
+  const priorVersion = currentVersion ? previousVersion(state, currentVersion) : null;
+  const makePack = packMaker(state, subject, markData, at);
+  const priorPack = (session: TeachingSession) => (priorVersion ? makePack(session, priorVersion) : null);
   function add() {
     setMessage(""); setError("");
     // The first week that teaches an outcome the latest version changed, otherwise the week after your last session.
@@ -176,7 +185,7 @@ export function TeachingPlanPanel({ state, person, subject }: CourseProps) {
   const filtered = all.filter((s) => (filter === "all" || s.status === filter) && (week === "all" || String(s.week) === week));
   const own = filtered.filter((s) => !s.sample), samples = filtered.filter((s) => s.sample);
   const weeks = [...new Set(all.map((s) => s.week))].sort((a, b) => a - b);
-  const cardProps = { subject, clos, mayEdit, editorOpen, deleting, deckFor, markSrc: state.institution.mark.wide ?? state.institution.mark.png,
+  const cardProps = { subject, clos, mayEdit, editorOpen, deleting, deckFor, priorPack, priorLabel: priorVersion?.id ?? "", currentLabel: subject.currentVersionId, markSrc: state.institution.mark.wide ?? state.institution.mark.png,
     onEdit: (session: TeachingSession) => { setEditor({ ...session, cloIds: [...session.cloIds] }); setError(""); setMessage(""); },
     onAskRemove: (id: string | null) => setDeleting(id),
     onRemove: (id: string) => { const result = deleteTeachingSession(subject.id, id); setMessage(result.ok ? "Session removed." : result.error); setDeleting(null); } };
@@ -245,11 +254,12 @@ export function TeachingPlanPanel({ state, person, subject }: CourseProps) {
 
 /** One session's card (depth plan Section 5.4): the week, the topic and its status, a thumbnail of the pack, the outcomes, the
  *  activity and the check, the pack with its filmstrip, and the lab sheet or the project brief where the session has one. */
-function SessionCard({ session, subject, clos, mayEdit, editorOpen, deleting, deckFor, markSrc, onEdit, onAskRemove, onRemove }: {
+function SessionCard({ session, subject, clos, mayEdit, editorOpen, deleting, deckFor, priorPack, priorLabel, currentLabel, markSrc, onEdit, onAskRemove, onRemove }: {
   session: TeachingSession; subject: Subject; clos: AppState["clos"]; mayEdit: boolean; editorOpen: boolean; deleting: string | null; markSrc: string;
-  deckFor: (session: TeachingSession) => DeckSpec; onEdit: (session: TeachingSession) => void; onAskRemove: (id: string | null) => void; onRemove: (id: string) => void;
+  deckFor: (session: TeachingSession) => DeckSpec; priorPack: (session: TeachingSession) => DeckSpec | null; priorLabel: string; currentLabel: string; onEdit: (session: TeachingSession) => void; onAskRemove: (id: string | null) => void; onRemove: (id: string) => void;
 }) {
   const spec = deckFor(session);
+  const prior = priorPack(session), changes = prior ? deckDiff(prior, spec) : [];
   const kind = session.slides?.length ? "Full slides" : session.sample ? "Outline pack" : null;
   const file = (suffix: string) => subject.id + "-week-" + session.week + "-" + suffix + ".md";
   return <li><article className={"session-card teaching-session" + (session.sample ? " is-sample" : "")} data-demo-id={"session-" + session.id}>
@@ -266,6 +276,8 @@ function SessionCard({ session, subject, clos, mayEdit, editorOpen, deleting, de
     </div>
     {session.resources ? <details><summary>Resources & slide brief</summary><p className="preserve-lines">{session.resources}</p></details> : null}
     <Disclosure summary="Preview the pack" count={spec.slides.length + " slides"} data-demo-id={"session-preview-" + session.id}><DeckFilmstrip spec={spec} markSrc={markSrc} /></Disclosure>
+    {prior && changes.length ? <Disclosure summary={"What changed in this pack since " + priorLabel} count={plural(changes.length, "slide", "slides")} data-demo-id={"session-changes-" + session.id}>
+      <SlideDiffList before={prior} after={spec} beforeLabel={"Under " + priorLabel} afterLabel={"Under " + currentLabel} markSrc={markSrc} /></Disclosure> : null}
     <div className="button-row"><Button data-demo-id={"session-slides-" + session.id} aria-label={"Download teaching pack for " + session.topic} onClick={() => void downloadPack(subject.id, spec)}><Download size={15} /> Teaching pack (.pptx)</Button>
       {session.labSheet ? <Button data-demo-id={"session-lab-" + session.id} onClick={() => downloadText(file("lab-sheet"), session.labSheet!)}><Download size={15} /> Lab sheet (.md)</Button> : null}
       {session.projectBrief ? <Button data-demo-id={"session-brief-" + session.id} onClick={() => downloadText(file("project-brief"), session.projectBrief!)}><Download size={15} /> Project brief (.md)</Button> : null}

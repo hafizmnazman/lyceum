@@ -79,14 +79,24 @@ export function teachingPlanMarkdown(subject: Subject, plan: TeachingPlan, clos:
 /** The week a new session starts on: the first week that teaches an outcome the course's latest version changed (the session to
  *  plan after a change), otherwise the week after the lecturer's own last session. Sample sessions are not the lecturer's. */
 export function suggestedWeek(sessions: TeachingSession[], current: CourseDefinition | null, previous: CourseDefinition | null): number {
-  if (current && previous) {
-    const changed = new Set(current.outcomes.filter((o) => {
-      const before = previous.outcomes.find((p) => p.id === o.id);
-      return !before || before.text !== o.text || before.bloomLevel !== o.bloomLevel;
-    }).map((o) => o.id));
-    const weeks = current.topics.filter((t) => t.week !== null && t.cloIds.some((id) => changed.has(id))).map((t) => t.week!);
-    if (weeks.length) return Math.min(...weeks);
-  }
+  const changed = current && previous ? changedOutcomeWeek(current, previous) : null;
+  if (changed !== null) return changed;
   const own = sessions.filter((s) => !s.sample);
   return Math.min(52, (own.length ? Math.max(...own.map((s) => s.week)) : 0) + 1);
+}
+
+/** The first week whose topic teaches an outcome that is new or reworded in `current`, or null when none is. */
+export function changedOutcomeWeek(current: CourseDefinition, previous: CourseDefinition): number | null {
+  const changed = new Set(current.outcomes.filter((o) => {
+    const before = previous.outcomes.find((p) => p.id === o.id);
+    return !before || before.text !== o.text || before.bloomLevel !== o.bloomLevel;
+  }).map((o) => o.id));
+  const weeks = current.topics.filter((t) => t.week !== null && t.cloIds.some((id) => changed.has(id))).map((t) => t.week!);
+  return weeks.length ? Math.min(...weeks) : null;
+}
+
+/** The session whose pack shows a change: the lecturer's own in that week first, otherwise the term's sample one. */
+export function sessionInWeek(sessions: TeachingSession[], week: number | null): TeachingSession | null {
+  if (week === null) return null;
+  return sessions.find((s) => s.week === week && !s.sample) ?? sessions.find((s) => s.week === week) ?? null;
 }

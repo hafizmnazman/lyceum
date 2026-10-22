@@ -1942,3 +1942,37 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; }
 .schedule-thumb .deck-thumb { width: 96px; }
 @media (min-width: 761px) { .record-hours { white-space: nowrap; } }
 @media (max-width: 760px) { .schedule-material { justify-content: flex-start; } }
+/* Before and after (depth plan Section 6.2): the redline keeps strikethrough and underline beside the colour, the table
+   outlines what changed and says the delta in words, and the slide diff outlines regions on the previews. Nothing moves. */
+.redline del, .redline-del, .slide-diff-part del { color: var(--danger); text-decoration: line-through; text-decoration-thickness: 2px; }
+.redline ins, .redline-ins, .slide-diff-part ins { color: var(--emerald-text); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.redline-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin: 4px 0 8px; }
+.redline-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0; font-size: 13px; color: var(--ink-2); }
+.redline-legend > span { display: inline-flex; align-items: center; gap: 4px; }
+.redline-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.redline-list li { padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-input); background: var(--white); }
+.redline-list p { margin: 4px 0 0; }
+.diff-table td.diff-cell, .diff-table th.diff-cell { outline: 2px solid var(--emerald); outline-offset: -3px; }
+.diff-table tbody tr.diff-row-added, .diff-table tbody tr.diff-row-removed { background: var(--tint-1); }
+.diff-table tfoot th, .diff-table tfoot td { font-weight: 600; border-top: 2px solid var(--forest); border-bottom: 0; }
+.change-summary { margin: 4px 0 12px; padding: 10px 12px; border-left: 4px solid var(--emerald); background: var(--tint-1); border-radius: 0 var(--radius-input) var(--radius-input) 0; }
+.slide-diff { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 16px; }
+.slide-diff-item { padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--white); }
+.slide-diff-head { margin: 0 0 8px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.slide-diff-thumbs { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 320px)); gap: 12px; margin-bottom: 8px; }
+.slide-diff-thumbs figure { margin: 0; }
+.slide-diff-thumbs figcaption { font-size: 12px; font-family: var(--font-mono); color: var(--ink-2); margin-bottom: 4px; }
+.slide-diff-part { margin-top: 6px; }
+.slide-diff-part ul { margin: 2px 0 0; padding-left: 18px; }
+.link-button { border: 0; padding: 0; background: none; font: inherit; color: var(--emerald-text); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; text-align: left; }
+.link-button:hover { color: var(--forest); }
+.history-authorised { margin: 4px 0; }
+.history-open > h4, .revision-compare > h4 { margin: 20px 0 6px; }
+.history-open > h4:first-of-type { margin-top: 12px; }
+.history-entry:focus { outline: 2px solid var(--focus-light); outline-offset: 4px; }
+@media (max-width: 760px) {
+  /* The stacked record table makes rows blocks; the comparison's caption and totals follow, or they shrink to one letter. */
+  .diff-table caption, .diff-table tfoot { display: block; width: 100%; }
+  .diff-table tfoot tr { border: 2px solid var(--forest); }
+  .diff-table tfoot th, .diff-table tfoot td { border-top: 0; }
+}

@@ -51,7 +51,9 @@ export function wrap(text: string, box: Box, pt: number, lineGap = 1.25): string
 }
 
 export interface PreviewText { box: Box; pt: number; lines: string[]; bold?: boolean; tone: "title" | "body" | "muted" | "on-forest" | "on-forest-title" }
-export interface PreviewSlide { master: DeckMaster; title: string; texts: PreviewText[]; figure: { box: Box; label: string; table?: string[][] } | null; mark: Box | null; plate: Box | null }
+/** Where a slide's parts sit, so a comparison can outline the part that changed (lib/diff.ts deckDiff names the parts). */
+export type SlideRegions = Partial<Record<"title" | "body" | "right" | "figure", Box>>;
+export interface PreviewSlide { master: DeckMaster; title: string; texts: PreviewText[]; figure: { box: Box; label: string; table?: string[][] } | null; mark: Box | null; plate: Box | null; regions: SlideRegions }
 
 /** The boxes and lines of each slide, as the renderer places them. */
 export function previewSlides(spec: DeckSpec): PreviewSlide[] {
@@ -59,27 +61,34 @@ export function previewSlides(spec: DeckSpec): PreviewSlide[] {
   return spec.slides.map((slide, index) => {
     const master = masterOf(slide), forest = isForest(master);
     const texts: PreviewText[] = [];
-    const bullets = (items: string[] | undefined) => (items ?? []).map((b) => (b.startsWith("  ") ? "    " + b.trim() : "• " + b)).join("\n");
+    const regions: SlideRegions = {};
+    const bullets =(items: string[] | undefined) => (items ?? []).map((b) => (b.startsWith("  ") ? "    " + b.trim() : "• " + b)).join("\n");
     const body = [...(slide.paragraphs ?? []), bullets(slide.bullets)].filter(Boolean).join("\n");
     if (master === "TITLE") {
       texts.push({ box: LAYOUT.coverTitle, pt: 34, lines: wrap(slide.title, LAYOUT.coverTitle, 34, 1.15), bold: true, tone: "on-forest-title" });
       texts.push({ box: LAYOUT.coverBody, pt: 18, lines: wrap([slide.subtitle, ...(slide.paragraphs ?? [])].filter(Boolean).join("\n"), LAYOUT.coverBody, 18), tone: "on-forest" });
+      Object.assign(regions, { title: LAYOUT.coverTitle, body: LAYOUT.coverBody });
     } else if (master === "SECTION") {
       texts.push({ box: LAYOUT.sectionTitle, pt: 32, lines: wrap(slide.title, LAYOUT.sectionTitle, 32, 1.15), bold: true, tone: "title" });
       texts.push({ box: LAYOUT.sectionBody, pt: BODY_PT, lines: wrap(body, LAYOUT.sectionBody, BODY_PT), tone: "body" });
+      Object.assign(regions, { title: LAYOUT.sectionTitle, body: LAYOUT.sectionBody });
     } else if (master === "CLOSING") {
       texts.push({ box: LAYOUT.title, pt: 28, lines: wrap(slide.title, LAYOUT.title, 28, 1.1), bold: true, tone: "on-forest-title" });
       texts.push({ box: LAYOUT.body, pt: BODY_PT, lines: wrap(body, LAYOUT.body, BODY_PT), tone: "on-forest" });
+      Object.assign(regions, { title: LAYOUT.title, body: LAYOUT.body });
     } else {
       const titleBox = brand?.mark ? LAYOUT.title : LAYOUT.titleWide;
       texts.push({ box: titleBox, pt: 28, lines: wrap(slide.title, titleBox, 28, 1.1), bold: true, tone: "title" });
+      regions.title = titleBox;
       if (master === "TWO_COLUMN") {
         texts.push({ box: LAYOUT.left, pt: BODY_PT, lines: wrap(bullets(slide.bullets), LAYOUT.left, BODY_PT), tone: "body" });
         texts.push({ box: LAYOUT.right, pt: BODY_PT, lines: wrap(bullets(slide.right), LAYOUT.right, BODY_PT), tone: "body" });
+        Object.assign(regions, { body: LAYOUT.left, right: LAYOUT.right });
       } else {
         const hasFigure = Boolean(slide.table || slide.placeholder || slide.chart);
         const box = hasFigure ? LAYOUT.bodyAboveFigure : LAYOUT.body;
         texts.push({ box, pt: BODY_PT, lines: wrap(body, box, BODY_PT), tone: "body" });
+        regions.body = box;
       }
     }
     if (master !== "TITLE" && brand) texts.push({ box: LAYOUT.footer, pt: 9, lines: wrap(footerText(spec), LAYOUT.footer, 9, 1.15), tone: forest ? "on-forest" : "muted" });
@@ -88,7 +97,8 @@ export function previewSlides(spec: DeckSpec): PreviewSlide[] {
       : slide.placeholder ? { box: LAYOUT.figure, label: slide.placeholder }
       : slide.chart ? { box: LAYOUT.figure, label: slide.alt ?? slide.chart.caption } : null;
     const mark = brand?.mark ? (forest ? LAYOUT.markOnPlate : LAYOUT.markCorner) : null;
-    return { master, title: slide.title, texts, figure, mark, plate: brand?.mark && forest ? LAYOUT.markPlate : null };
+    if (figure) regions.figure = figure.box;
+    return { master, title: slide.title, texts, figure, mark, plate: brand?.mark && forest ? LAYOUT.markPlate : null, regions };
   });
 }
 
