@@ -67,7 +67,7 @@ Then open **How it works** for the record of the afternoon by role, and **Evalua
 
 ## Checks
 
-`npm run prove:all` runs 259 checks in twenty-four suites. After `npm run build`, `npm run smoke`, `smoke:integrity`, `smoke:workspace` and `smoke:curriculum` drive the built app in a headless browser: the first plays the whole tour, and the workspace smoke walks the judge's ten stops by keyboard at desktop and phone width and answers the survey from a 320 px phone through the booth collector. [docs/as-built.md](docs/as-built.md) records every run with its date. These are software checks, not learning validation.
+`npm run prove:all` runs 270 checks in twenty-five suites. After `npm run build`, `npm run smoke`, `smoke:integrity`, `smoke:workspace` and `smoke:curriculum` drive the built app in a headless browser: the first plays the whole tour, and the workspace smoke walks the judge's ten stops by keyboard at desktop and phone width and answers the survey from a 320 px phone through the booth collector. [docs/as-built.md](docs/as-built.md) records every run with its date. These are software checks, not learning validation.
 
 ## What is real and what is not
 
@@ -75,5 +75,6 @@ Then open **How it works** for the record of the afternoon by role, and **Evalua
 - **Sample:** the CS310 course record, its fourteen sessions with their slides, lab sheets and project brief, its results for two terms and last term's two surveys with their responses and comments, written for this prototype and labelled synthetic. The SSRT is a demo instrument, unvalidated. UTP appears as a labelled demo institution: CS310 is not a UTP course outline.
 - **Prototype:** the personas, the seeded courses and browser-local role switching. Sending a brief is an in-app local workflow, not a message to anyone.
 - **Illustrative:** the sandbox's market figures and learner records; the sidebar labels the sandbox and its screens carry the notice. The sample results and survey files in `public/demo` hold synthetic marks and responses, and every record filed from them says so.
-- **Planned:** the shared workspace and sign-in, the remote assistant doors, the LMS door, the other survey importers and the paste code, pooling, frozen predictions, comment themes, the programme's PLO figure, the benchmark run, scheduled watching.
+- **Prototype, local (each needs a model, a search service or a signed-in account on the local database):** accounts with Google sign-in, watching on a schedule, agent collection from the open web, and model drafts from Quill, Lens, Atlas and Prism, each checked by code, labelled where it appears and left for a person to confirm.
+- **Planned:** the shared institutional workspace, the remote assistant doors, the LMS door, pooling, frozen predictions, comment themes, the programme's PLO figure, the benchmark run.
 - **Never claimed:** representative labour-market counts, employability scores, learning gains or accreditation. No lecturer pilot has run. Formal approval stays in the university's process.

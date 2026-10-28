@@ -26,11 +26,15 @@ import { EvaluationScreen } from "./Evaluation.tsx";
 import { JudgeScreen } from "./Judge.tsx";
 import { KioskScreen } from "./Kiosk.tsx";
 import { RecapScreen } from "./Recap.tsx";
+import { SettingsScreen } from "./Settings.tsx";
+import { OnboardingScreen } from "./Onboarding.tsx";
 
 export const SCREENS: Record<Screen, ComponentType> = {
   login: LoginScreen,
   index: IndexScreen,
   guide: GuideScreen,
+  settings: SettingsScreen,
+  onboarding: OnboardingScreen,
   inbox: InboxScreen,
   trends: TrendsScreen,
   approval: ApprovalScreen,

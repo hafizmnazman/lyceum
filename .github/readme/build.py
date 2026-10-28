@@ -49,11 +49,11 @@ GROUPS = [
         ("report", "exact quotes, reviewed postings"),
         ("decide", "a person, a reason, a record", {"color": {"dark": "#FFFFFF", "light": "#0F2A20"}}),
         ("update", "checked against the hours"),
-        ("teach", "editable pack, adds no ai text"),
+        ("teach", "editable pack, model text on request"),
         ("learn", "results matched to the version"),
     ],
     [
-        ("checks", "259 passing, 24 suites"),
+        ("checks", "270 passing, 25 suites"),
         ("sample", "stripe's board, 9 oct 2026"),
         ("key", "none needed"),
     ],

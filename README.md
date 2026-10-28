@@ -15,7 +15,7 @@
 </div>
 
 <p align="center">
-  <a href="#hafizlyceum-npm-run-proveall"><img src="https://img.shields.io/badge/checks-259_passing-8BC34A?style=for-the-badge&labelColor=161b22" alt="checks: 259 passing"></a>
+  <a href="#hafizlyceum-npm-run-proveall"><img src="https://img.shields.io/badge/checks-270_passing-8BC34A?style=for-the-badge&labelColor=161b22" alt="checks: 270 passing"></a>
   <a href="#hafizlyceum-open-report"><img src="https://img.shields.io/badge/evidence-real_postings_with_receipts-B8F23A?style=for-the-badge&labelColor=161b22" alt="evidence: real postings with receipts"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/licence-proprietary-B9CDBF?style=for-the-badge&labelColor=161b22" alt="licence: proprietary"></a>
 </p>
@@ -125,10 +125,10 @@ The core needs no AI key and no account: work is saved in this browser. Live boa
 | Integrity | 13 | evidence edge cases, approval guards |
 | Teaching plans | 10 | scope, validation, export |
 | Curriculum | 28 | revisions, constraints, adoption, recovery |
-| Evidence | 13 | citations, duplicates, Wilson intervals, mappings, backups |
+| Evidence | 18 | citations, duplicates, Wilson intervals, mappings, backups; signal from the course's own evidence; Quill's suggestions checked and applied one at a time; Lens's quotations kept only word for word; Atlas's mappings left for the lecturer to judge |
 | Collector | 6 | text extraction, cache, rate limits, timeouts |
 | Research run | 5 | import on request, exact proposals, briefs, decisions and events in backups |
-| Slides | 3 | decks unzipped and read back, chart part included |
+| Slides | 4 | decks unzipped and read back, chart part included; Prism's slides labelled on every slide, kept through an edit and discarded on request |
 | Benchmark and self-checks | 5 | labelled scan set, metric arithmetic, live quotation re-verification, denominator rules |
 | The loop and the record | 9 | done rules per term, the decision record, a new term, the event log first in the timeline, Learn matched to the version taught, the term set inside the ring, the routes, every landing figure in the claims register and every quoted clause in its note |
 | Evidence snapshots | 6 | frozen windows, change called only when intervals separate, identity matching, backups |
@@ -140,8 +140,9 @@ The core needs no AI key and no account: work is saved in this browser. Live boa
 | The judge's way through | 8 | every walk stop rendered by its screen, captions within twenty words with their labels, the host at the two ends only, the not-built list word for word, the sample workspace restored with the current one kept, the recap's numbers against their records, the programme wall's heat table, the kiosk's idle return, and the figures counting up to their exact values |
 | The two student surveys | 12 | the instruments from the record and the profile, the link under 2,000 characters with no secret in it, the collector's token against its own hash, the floor and the release showing nothing early, one response per device and booth responses never as evidence, the Microsoft Forms and Google Forms importers on their fixtures, the Moodle Feedback importer, the document for Forms Quick Import, the paste code, backups, and the sample's counts |
 | Attainment against a stated threshold | 10 | the direct line against a hand-computed fixture with missing marks, no interval at a census and the finite-population interval below it, the recomputation after a change to the pass mark with the saved report keeping its own, the survey beside the marks never averaged and never from the booth, the programme outcomes listed with no index, marks without identifiers, the CQI note, Lens's moods, and backups |
-| Assessment items and exports | 9 | every Bloom level's Arkansas verbs, templates that leave each key to the lecturer, each lint rule failing alone on its fixture, the week 7 sample quiz passing with its distractors from the record, Moodle XML and QTI 2.1 well-formed with their documented elements and labels, the rubric read back as a spreadsheet, reviews as a person's record cleared on a change, and backups |
-| **total** | **259** | twenty-four suites |
+| Assessment items and exports | 11 | every Bloom level's Arkansas verbs, templates that leave each key to the lecturer, each lint rule failing alone on its fixture, the week 7 sample quiz passing with its distractors from the record, Moodle XML and QTI 2.1 well-formed with their documented elements and labels, the rubric read back as a spreadsheet, reviews as a person's record cleared on a change, backups, and Prism's items checked, added unreviewed, linted and repaired once |
+| Watching on a schedule | 3 | what a schedule may hold, a due run claimed once with its failure kept, only the newest run carrying its postings |
+| **total** | **270** | twenty-five suites |
 
 After `npm run build`, four headless browser runs drive the built app: `npm run smoke` (the whole tour, the decision record, both downloads, the closed ring), `smoke:integrity` (the landing page carries no synthetic figure; the judge's page shows the register's figures and the not-built list word for word), `smoke:workspace` (save, reload, export, keyboard and 320 px layouts; the judge's walk by keyboard and the course file with its manifest; the survey's booth round trip from a 320 px phone) and `smoke:curriculum` (Watch to Update with real downloads and a restore; the before and after at 320 px). `npm run deck` checks every figure in the pitch against the claims register; `node scripts/generate-guide.mjs --check`, `node scripts/contrast-check.mjs` and `node scripts/dash-scan.mjs` keep the guide, the palette and the prose honest. These are software checks, not learning validation. Results with dates: [docs/as-built.md](docs/as-built.md).
 
@@ -169,10 +170,10 @@ docs/               the plan, the as-built record, the claims, the decisions, th
 
 ### <samp>hafiz@lyceum:~$ cat ./decisions</samp>
 
-1. **Deterministic core, AI at the doors.** Counts, quotations and decisions come from code, so a number never depends on a model; an assistant reaches Lyceum through the door and may draft, never confirm or decide. The cost: no model writes slides or quiz items yet; the templates draft items from the course record, and the lecturer writes every key.
+1. **Deterministic core, AI at the doors.** Counts, quotations and decisions come from code, so a number never depends on a model; an assistant reaches Lyceum through the door and may draft, never confirm or decide. The cost: a model writes slides or quiz items only when a lecturer asks Prism, labelled and left unreviewed until a person reviews them; the templates draft items from the course record, and the lecturer writes every key.
 2. **Exact quotations or nothing.** A requirement is a substring of its saved source, or it is refused; reviewed postings form the denominator. The cost: a lecturer confirms every quotation and reviews every posting a count uses.
 3. **One decision record.** Adopt, retain, defer or return, immutable, bound to the brief, the version and the term; a decision on one's own brief is self-recorded and stays open until a second person confirms. The cost: a second person, which a small department may not have.
-4. **Local first.** One course runs in the browser with no account, and backups are validated JSON. The cost: no shared workspace, no sign-in and no server-side permissions until the department tier.
+4. **Local first.** One course runs in the browser with no account, and backups are validated JSON. The cost: no shared workspace until the department tier; sign-in with a local PostgreSQL database is a prototype (docs/database.md), and server-side permissions stop at one account's own workspace.
 5. **The look from one file.** Every colour comes from `src/theme/tokens.ts`, checked against the WCAG audit by `scripts/contrast-check.mjs`, and the fonts are bundled. The cost: a new colour is a change to the audit first.
 6. **A labelled demo course.** The demo's CS310 is a course record written for this prototype at UTP, the team's own university, and labelled demo and synthetic wherever it shows (the team's advisor confirmed the team represents the university); the mark appears only on the demo course, with the demo line beside it. The cost: every surface that shows the mark carries the line, and the lecturer's own courses carry neither.
 
@@ -215,7 +216,7 @@ Still to come before the final: the screenshots and the film captured again from
 
 Next, in the order a pilot needs it (plan Section 17.2):
 
-1. **Watch over time.** Snapshots as records, comparable windows, scheduled runs with failure reporting.
+1. **Watch over time.** Snapshots as records and comparable windows; scheduled runs with failure reporting are a local prototype behind a signed-in account.
 2. **Learn's maths.** The adequacy meter, partial pooling, the frozen prediction and its score, and the programme's PLO figure from every course's data.
 3. **The shared core.** An API, identity, server-side permissions, tenancy and the audit log.
 4. **The remote and LMS doors.** MCP over HTTP with OAuth for the assistants a university already runs; LTI 1.3 for its LMS.

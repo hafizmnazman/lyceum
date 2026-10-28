@@ -8,7 +8,7 @@
 import { useState } from "react";
 import { plural } from "../../app/loop.ts";
 import {
-  addEvidenceSource, addSkillMention, evidenceTrendNote, nowIso, removeEvidenceSource, removeSkillMention, setEvidenceSourceReviewed, setSkillMapping, type AppState,
+  addEvidenceSource, addSkillMention, courseSignal, evidenceTrendNote, nowIso, removeEvidenceSource, removeSkillMention, setEvidenceSourceReviewed, setSkillMapping, type AppState,
 } from "../../app/store.ts";
 import {
   COVERAGE_STAGES, EVIDENCE_KINDS, KIND_LABEL, REQUIREMENT_LEVELS, STAGE_LABEL, evidenceMarkdown, evidenceReport, locateExcerpt,
@@ -20,6 +20,8 @@ import { Button, Disclosure, Field, Input, Select, Tag, Textarea } from "../prim
 import { SkillCard } from "../primitives/loop.tsx";
 import { ShareBar } from "../primitives/ShareBar.tsx";
 import { useUnsavedEditor } from "../useUnsavedEditor.ts";
+import { fetchMappingSuggestions } from "../../agents/client.ts";
+import { mappingRequest, outcomeLabel, type MappingSuggestion } from "../../lib/proposals.ts";
 
 type Props = { state: AppState; person: Person; subject: Subject; mayEdit: boolean };
 const pct = (x: number | null) => (x === null ? "Unknown" : Math.round(x * 1000) / 10 + "%");
@@ -240,6 +242,62 @@ export function CountTable({ state, subject }: { state: AppState; subject: Subje
 }
 
 // ---------- Report: Map ----------
+
+/** Atlas proposes which outcomes each unmapped skill belongs to. Applying one records the mapping with its stage and target
+ *  still unknown: those are the lecturer's judgement, set on the ladder below. */
+export function AtlasSuggestions({ state, subject }: { state: AppState; subject: Subject }) {
+  const [list, setList] = useState<MappingSuggestion[] | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  const outcomes = state.clos.filter((c) => c.subjectId === subject.id);
+  const request = mappingRequest(subject.id, courseReport(state, subject.id), state.skillMentions, outcomes);
+  const ask = async () => {
+    setBusy(true); setMessage("");
+    const r = await fetchMappingSuggestions(request);
+    setBusy(false);
+    if (r.ok) setList(r.list); else setMessage(r.error);
+  };
+  const apply = (m: MappingSuggestion) => {
+    const cloIds = m.outcomes.map((l) => outcomes.find((c) => outcomeLabel(c) === l)?.id).filter((id): id is string => Boolean(id));
+    const result = setSkillMapping(subject.id, { skill: m.skill, cloIds, stage: "unknown", target: "unknown", evidence: "" });
+    setMessage(result.ok ? "Mapped " + m.skill + ". Set its stage and target on the ladder below." : result.error);
+    if (result.ok) setList((l) => l && l.filter((x) => x !== m));
+  };
+  return <div className="curriculum-object" data-demo-id="atlas-suggestions">
+    <div className="section-heading"><div><h4>Suggested by Atlas</h4>
+      <p className="muted">{request.skills.length ? request.skills.length + " quoted skills have no outcome yet. Atlas proposes where each belongs; you apply it, then set its stage and target." : "Every quoted skill is mapped."}</p></div>
+      <Button data-demo-id="atlas-run" loading={busy} disabled={!request.skills.length || !outcomes.length} onClick={() => void ask()}>{list ? "Ask again" : "Suggest mappings"}</Button></div>
+    {message ? <p role="status" className="save-status">{message}</p> : null}
+    {list && !list.length ? <p className="muted">No suggestions this time.</p> : null}
+    {list?.length ? <ul className="source-list">{list.map((m) => <li key={m.skill}>
+      <strong>{m.skill}</strong><span>{m.outcomes.length ? "→ " + m.outcomes.join(", ") : "Fits no current outcome: a gap to discuss"} · {m.reason}</span>
+      <div className="button-row">{m.outcomes.length ? <Button onClick={() => apply(m)}>Apply</Button> : null}
+        <Button variant="quiet" onClick={() => setList((l) => l && l.filter((x) => x !== m))}>Dismiss</Button></div>
+    </li>)}</ul> : null}
+  </div>;
+}
+
+/** Signal from this course's own evidence: per outcome, the most-asked mapped skill against the coverage of its skills. */
+export function OutcomeGaps({ state, subject }: { state: AppState; subject: Subject }) {
+  const { outcomes, drift } = courseSignal(subject.id);
+  if (!outcomes.length) return <p className="muted">Map a quoted skill to an outcome to see the gap on that outcome.</p>;
+  const label = (id: string) => state.clos.find((c) => c.id === id)?.text ?? id;
+  return <div>
+    <div className="table-scroll"><table className="evidence-table">
+      <caption className="muted">Demand is the share of reviewed postings asking for the outcome's most-asked mapped skill. Coverage is the demand-weighted share of its mapped skills at or above their target. Gap is demand minus coverage.</caption>
+      <thead><tr><th scope="col">Outcome</th><th scope="col">Most-asked skill</th><th scope="col">Demand</th><th scope="col">Coverage</th><th scope="col">Gap</th></tr></thead>
+      <tbody>{outcomes.map((o) => <tr key={o.cloId}>
+        <th scope="row">{label(o.cloId)}</th><td>{o.skill}</td>
+        <td className="tabular" style={{ whiteSpace: "nowrap" }}>{pct(o.demand)} · {o.postings} of {o.eligible}</td>
+        <td className="tabular">{o.coverage === null ? "Set a stage and target" : pct(o.coverage)}</td>
+        <td className="tabular">{o.gap === null ? "Unknown" : o.gap.toFixed(2)}</td>
+      </tr>)}</tbody>
+    </table></div>
+    <p className="muted" data-demo-id="course-signal">{drift
+      ? drift.flag === "update" ? "Due an update: on at least one outcome, demand's 95% lower bound outpaces coverage by 0.5 or more." : "No outcome is far enough behind demand to flag the course; the flag uses demand's 95% lower bound."
+      : "No outcome has a reviewed stage and target yet, so the course is not judged."}</p>
+  </div>;
+}
 
 const LADDER: CoverageStage[] = ["absent", "introduced", "practised", "assessed"];
 

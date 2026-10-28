@@ -277,6 +277,17 @@ select {
   animation: fadeIn var(--motion-state) var(--ease-out) both;
 }
 
+/* Route-level entrances use the same small lift and settled landing as Home.
+   The direct-child boundary keeps nested controls from replaying the entrance. */
+.route-enter > * {
+  animation: popIn 420ms var(--ease-out) both;
+}
+.route-enter > :nth-child(2) { animation-delay: 60ms; }
+.route-enter > :nth-child(3) { animation-delay: 110ms; }
+.route-enter > :nth-child(4) { animation-delay: 160ms; }
+.route-enter > :nth-child(5) { animation-delay: 210ms; }
+.route-enter > :nth-child(6) { animation-delay: 260ms; }
+
 /* The working shimmer, shown only while a real request runs. */
 .agent-shimmer {
   background: linear-gradient(90deg, var(--tint-1) 0%, var(--tint-2) 50%, var(--tint-1) 100%);
@@ -995,6 +1006,20 @@ input[type="radio"] {
   color: var(--ink-2);
 }
 
+/* The rail arrives as a readable sequence, including its compact course
+   controls. Tooltip bubbles use the same timing when they leave the rail. */
+.app-sidebar .nav-item,
+.app-sidebar .course-chips,
+.app-sidebar .nav-fold {
+  animation: popIn 360ms var(--ease-out) both;
+}
+.app-sidebar .nav-item:nth-of-type(2) { animation-delay: 45ms; }
+.app-sidebar .nav-item:nth-of-type(3) { animation-delay: 90ms; }
+.app-sidebar .nav-item:nth-of-type(4) { animation-delay: 135ms; }
+.app-sidebar .nav-item:nth-of-type(5) { animation-delay: 180ms; }
+.app-sidebar .course-chips { animation-delay: 90ms; }
+.app-sidebar .nav-fold { animation-delay: 180ms; }
+
 .app-main {
   flex: 1;
   overflow-y: auto;
@@ -1021,14 +1046,11 @@ input[type="radio"] {
 
 /* ---------- page furniture ---------- */
 
+/* App pages fill the main column at every window size; only the public landing page keeps a reading width (--content-max). */
 .page-content {
   width: 100%;
-  max-width: var(--content-max);
   padding: 32px 32px 64px;
   margin: 0;
-}
-.page-content.page-wide {
-  max-width: var(--content-wide);
 }
 .page-heading {
   display: flex;
@@ -1140,7 +1162,7 @@ dt { font-weight: 600; }
 .save-status { color: var(--emerald-text); }
 .limitation { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-left: 3px solid var(--warn); background: var(--warn-soft); border-radius: 0 var(--radius-input) var(--radius-input) 0; font-size: 13px; color: var(--ink); }
 .limitation::before { color: var(--warn); }
-.section-help { margin: 12px 32px 0; max-width: 1256px; color: var(--ink-2); font-size: 13px; }
+.section-help { margin: 12px 32px 0; color: var(--ink-2); font-size: 13px; }
 summary { cursor: pointer; padding: 10px 2px; min-height: 44px; }
 .section-help > summary { width: fit-content; }
 .section-help-body { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 12px 20px; }
@@ -1307,6 +1329,14 @@ summary { cursor: pointer; padding: 10px 2px; min-height: 44px; }
 .stat-label { font-size: 14px; color: var(--ink-2); line-height: 1.45; }
 .stat-source { font-size: 13px; }
 .landing { min-height: 100%; overflow-y: auto; }
+.landing > * {
+  animation: popIn 420ms var(--ease-out) both;
+}
+.landing > :nth-child(2) { animation-delay: 70ms; }
+.landing > :nth-child(3) { animation-delay: 130ms; }
+.landing > :nth-child(4) { animation-delay: 190ms; }
+.landing > :nth-child(5) { animation-delay: 250ms; }
+.landing > :nth-child(6) { animation-delay: 310ms; }
 .landing-bar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 24px; background: var(--forest); }
 .landing-bar .wordmark { font-size: 28px; }
 .landing-hero { max-width: var(--content-max); margin: 32px auto 0; padding: 0 24px; }
@@ -1335,7 +1365,6 @@ summary { cursor: pointer; padding: 10px 2px; min-height: 44px; }
 .signin-tagline { font-family: var(--font-display); font-size: 28px; font-weight: 600; line-height: 1.2; color: var(--white) !important; margin: 4px 0 0; }
 .signin-lead { font-size: 16px; line-height: 1.6; margin: 0; max-width: 460px; }
 .signin-foot { margin: auto 0 0; padding-top: 24px; font-size: 13px; }
-.signin-people { flex: 1 1 420px; min-width: 280px; }
 .people-list { border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; margin-bottom: 12px; }
 .person-row { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 64px; padding: 12px 16px; border: 0; border-top: 1px solid var(--border); background: var(--white); color: var(--ink); font: inherit; text-align: left; cursor: pointer; transition: background-color var(--motion-feedback) var(--ease-out); }
 .person-row:first-child { border-top: 0; }
@@ -1393,7 +1422,7 @@ summary { cursor: pointer; padding: 10px 2px; min-height: 44px; }
 .ring-steps li.is-next .ring-step-status { color: var(--ink); }
 .ring-step-count { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .start-here { display: flex; gap: 20px; align-items: flex-start; }
-.start-here-host { flex-shrink: 0; }
+.start-here-host { flex-shrink: 0; align-self: center; }
 .start-here-body { flex: 1; min-width: 0; }
 
 /* the denominator meter and the waffle */
@@ -1440,7 +1469,8 @@ summary { cursor: pointer; padding: 10px 2px; min-height: 44px; }
 .sub-rail { display: flex; gap: 4px; flex-wrap: wrap; margin: 0 0 16px; padding: 4px; border-radius: var(--radius-card); background: var(--white); border: 1px solid var(--border); width: fit-content; max-width: 100%; }
 .sub-rail-tab { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 14px; border: 0; border-radius: var(--radius-button); background: transparent; color: var(--ink-2); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
 .sub-rail-tab:hover { background: var(--tint-1); color: var(--ink); }
-.sub-rail-tab[aria-selected="true"] { background: var(--tint-2); color: var(--ink); box-shadow: inset 0 -3px 0 var(--emerald); }
+.sub-rail-tab[aria-selected="true"] { color: var(--ink); }
+.sub-rail-tab[aria-selected="true"]:hover { background: transparent; }
 .sub-rail-num { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--control-border); font-family: var(--font-mono); font-size: 12px; }
 .sub-rail-tab svg { color: var(--emerald-text); }
 
@@ -1633,6 +1663,58 @@ button.loop-station-button:hover { background: var(--tint-1); }
    a just-saved record gets one spring, and a slow float belongs to the landing page and the film ---------- */
 .mascot { display: inline-flex; line-height: 0; flex-shrink: 0; }
 .mascot-svg { display: block; overflow: visible; }
+/* Idle life, every character at rest: a float and a blink, each on its own clock so two side by side never move in step,
+   and one move of its own prop. All of it sits under :where() at the lowest weight and before the mood rules, so a
+   working prop, a done spring and a celebration still win. A hop under the pointer. */
+.mascot-idle .mascot-svg { animation: mascotFloat var(--float-dur, 3.2s) ease-in-out infinite alternate; }
+.mascot-idle:hover .mascot-svg { animation: mascotSpring 720ms linear both; }
+.mascot-idle :where([data-part="eyes"]) { animation: mascotBlink var(--blink-dur, 5.4s) ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 60%; }
+.mascot-idle :where(.mascot-svg[data-character="host"]) { --float-dur: 3.2s; --blink-dur: 5.4s; }
+.mascot-idle :where(.mascot-svg[data-character="scout"]) { --float-dur: 2.8s; --blink-dur: 4.6s; }
+.mascot-idle :where(.mascot-svg[data-character="folio"]) { --float-dur: 3.6s; --blink-dur: 6.2s; }
+.mascot-idle :where(.mascot-svg[data-character="atlas"]) { --float-dur: 3.4s; --blink-dur: 5.8s; }
+.mascot-idle :where(.mascot-svg[data-character="lens"]) { --float-dur: 3s; --blink-dur: 4.9s; }
+.mascot-idle :where(.mascot-svg[data-character="quill"]) { --float-dur: 3.8s; --blink-dur: 6.6s; }
+.mascot-idle :where(.mascot-svg[data-character="prism"]) { --float-dur: 2.6s; --blink-dur: 5.1s; }
+.mascot-idle :where(.mascot-svg[data-character="steward"]) { --float-dur: 4s; --blink-dur: 7s; }
+/* the host: its leaf in a breeze and a wave now and then */
+.mascot-idle :where([data-character="host"] [data-part="leaf"]) { animation: mascotLeaf 3.8s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 15% 100%; }
+.mascot-idle :where([data-character="host"] [data-arm="right"]) { animation: mascotWave 8s ease-in-out infinite 1.5s; transform-box: view-box; transform-origin: 108px 156px; }
+/* the helpers: Scout sweeps its telescope, Atlas's thread sways, Lens's bracket breathes, Quill tilts its ruler,
+   Prism's rays shimmer, Steward's receipt flutters, Folio rocks its arms */
+.mascot-idle :where([data-character="scout"] [data-part="prop"]) { animation: mascotSweep 4.4s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 20% 80%; }
+.mascot-idle :where([data-character="atlas"] [data-part="prop"]) { animation: mascotSway 3.6s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 0%; }
+.mascot-idle :where([data-character="lens"] [data-part="prop"]) { animation: mascotBreathe 3.2s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 50%; }
+.mascot-idle :where([data-character="quill"] [data-part="prop"]) { animation: mascotTilt 5s ease-in-out infinite; transform-box: fill-box; transform-origin: 30% 70%; }
+.mascot-idle :where([data-character="prism"] [data-part="prop"]) { animation: mascotShimmer 2.8s ease-in-out infinite alternate; }
+.mascot-idle :where([data-character="steward"] [data-part="receipt"]) { animation: mascotFlutter 4.2s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 0%; }
+.mascot-idle :where([data-character="folio"] [data-part="arms"]) { animation: mascotSway 4s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 0%; }
+@keyframes mascotBlink { 0%, 88%, 100% { scale: 1 1; } 91% { scale: 1 0.12; } 94% { scale: 1 1; } }
+@keyframes mascotLeaf { from { rotate: -6deg; } to { rotate: 9deg; } }
+@keyframes mascotWave { 0%, 72%, 100% { rotate: 0deg; } 77% { rotate: -16deg; } 82% { rotate: 7deg; } 87% { rotate: -12deg; } 93% { rotate: 3deg; } }
+@keyframes mascotSweep { from { rotate: -5deg; } to { rotate: 6deg; } }
+@keyframes mascotSway { from { rotate: -3deg; } to { rotate: 3deg; } }
+@keyframes mascotBreathe { from { scale: 1 1; } to { scale: 1.08 1; } }
+@keyframes mascotTilt { 0%, 60%, 100% { rotate: 0deg; } 70% { rotate: -6deg; } 85% { rotate: 4deg; } }
+@keyframes mascotShimmer { from { opacity: 1; } to { opacity: 0.7; } }
+@keyframes mascotFlutter { 0%, 70%, 100% { skew: 0deg 0deg; } 78% { skew: 0deg 3deg; } 88% { skew: 0deg -2deg; } }
+
+/* A character with a chat bubble (MascotChat): it types for a moment, then speaks; pressing it moves to its next line. */
+.mascot-chat { display: flex; flex-direction: column; align-items: center; gap: 14px; min-width: 0; }
+.mascot-chat.is-side { flex-direction: row; align-items: center; }
+.mascot-chat-figure { border: 0; background: none; padding: 0; line-height: 0; border-radius: 50%; }
+button.mascot-chat-figure { cursor: pointer; }
+.mascot-chat-bubble { position: relative; width: 100%; min-width: 0; padding: 12px 14px; background: var(--white); border: 2px solid var(--forest); border-radius: var(--radius-card); box-shadow: 3px 3px 0 var(--forest); }
+.mascot-chat-bubble::before { content: ""; position: absolute; left: 50%; top: -9px; width: 14px; height: 14px; margin-left: -7px; background: var(--white); border-left: 2px solid var(--forest); border-top: 2px solid var(--forest); transform: rotate(45deg); }
+.mascot-chat.is-side .mascot-chat-bubble::before { left: -9px; top: 50%; margin: -7px 0 0; border-top: 0; border-bottom: 2px solid var(--forest); }
+.mascot-chat-name { display: block; font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--emerald-text); }
+.mascot-chat-bubble p { margin: 2px 0 0; font-size: 14px; line-height: 1.45; color: var(--ink); min-height: 20px; }
+.mascot-chat-next { margin-top: 6px; border: 0; background: none; padding: 0; font: inherit; font-size: 13px; font-weight: 700; color: var(--ink); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.mascot-chat-typing { display: inline-flex; gap: 4px; padding: 6px 0; }
+.mascot-chat-typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-2); animation: chatDot 900ms ease-in-out infinite; }
+.mascot-chat-typing i:nth-child(2) { animation-delay: 150ms; }
+.mascot-chat-typing i:nth-child(3) { animation-delay: 300ms; }
+@keyframes chatDot { 0%, 60%, 100% { translate: 0 0; opacity: 0.45; } 30% { translate: 0 -3px; opacity: 1; } }
 .mascot-working [data-part="prop"] { animation: mascotProp 1.4s var(--ease-out) infinite alternate; transform-box: fill-box; transform-origin: 30% 70%; }
 .mascot-done .mascot-svg, .mascot-celebrating .mascot-svg { animation: mascotSpring 720ms linear both; }
 .mascot-float .mascot-svg { animation: mascotFloat 4s ease-in-out infinite alternate; }
@@ -1815,7 +1897,6 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; }
 /* sign-in: each person is a big pressable card; the lime edge marks the one thing to do */
 .signin-brand .wordmark { font-size: 64px; }
 .signin-tagline { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; }
-.forest-backdrop .signin-people.card { border-color: var(--white); box-shadow: 0 6px 0 var(--lime); } /* the lip lies on the forest-deep backdrop */
 .people-list { display: grid; gap: 12px; border: 0; overflow: visible; margin-bottom: 16px; }
 .person-row, .person-row:first-child { min-height: 76px; padding: 12px 18px; border: 2px solid var(--forest); border-radius: var(--radius-card); box-shadow: 0 4px 0 var(--forest); transition: transform var(--motion-feedback) var(--ease-out), box-shadow var(--motion-feedback) var(--ease-out), background-color var(--motion-feedback) var(--ease-out); }
 .person-row:active { transform: translateY(4px); box-shadow: 0 0 0 var(--forest); }
@@ -2231,4 +2312,274 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; }
   .obe-print .obe-cqi-text { padding: 4px 10px; }
   .obe-report h4 { break-after: avoid; }
   .obe-report tr { break-inside: avoid; }
+}
+
+/* ---------- Home: the course's next step beside the work queue ----------
+   One question: what do I do next on my course? Start here answers it, largest and first; the queues (briefs,
+   notifications, courses) sit in a right column on a wide screen and under it otherwise, each keeping its own height. */
+.home-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: stretch; margin-bottom: 32px; }
+@media (min-width: 1280px) { .home-grid { grid-template-columns: minmax(0, 1fr) minmax(340px, 420px); } }
+.home-grid > .workspace-panel, .home-grid > .home-queues { margin: 0; }
+/* Your work: three short queues that are always open, each with one sentence when empty; the link to the course's
+   history is pinned to the foot, so a panel stretched to Start here's height ends on an action, not a hole. */
+.home-queues { display: flex; flex-direction: column; padding: 20px 24px; }
+.home-queues-title { margin: 0 0 4px; }
+.home-queue { padding: 14px 0; border-bottom: 1px solid var(--border); }
+.home-queue:last-of-type { border-bottom: 0; }
+.home-queue h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 15px; }
+.home-queue > p { margin: 0; font-size: 14px; }
+.home-queue .work-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.home-note-top p { margin: 8px 0 10px; font-size: 14px; }
+.home-rows { list-style: none; margin: 0; padding: 0; }
+.home-rows button { display: flex; justify-content: space-between; gap: 12px; width: 100%; min-height: 36px; padding: 6px 8px; margin: 0 -8px; border: 0; border-radius: 8px; background: none; font: inherit; font-size: 14px; color: var(--ink); text-align: left; cursor: pointer; }
+.home-rows button:hover, .home-rows button:focus-visible { background: var(--tint-1); }
+.home-rows button > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.home-rows button > span:last-child { flex: none; }
+.home-queues-foot { margin-top: auto; align-self: flex-start; }
+/* Your courses: one card per course with its own ring, as many across as fit, never an empty slot. */
+.home-courses .section-heading { justify-content: space-between; align-items: center; }
+.home-courses h2 { margin: 0; }
+.home-course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; }
+.home-course { display: flex; gap: 20px; align-items: center; margin: 0; }
+.home-course-body { min-width: 0; }
+.home-course-body h3 { margin: 0 0 4px; }
+.home-course-body p { margin: 0 0 8px; font-size: 14px; }
+.home-course-body .btn { margin-top: 4px; }
+.start-here { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 28px; align-items: center; }
+.start-here-host { align-self: center; min-width: 0; }
+.ring-panel { gap: 28px; flex-wrap: nowrap; align-items: center; }
+/* the seven steps read down two columns: Course to Decide, then Update to Learn; counts on one right edge */
+.ring-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(4, auto); grid-auto-flow: column; gap: 2px 32px; }
+.ring-steps li { grid-template-columns: 24px auto auto minmax(0, 1fr); min-height: 36px; }
+.ring-step-status .tag { padding: 1px 8px; font-size: 12px; }
+.ring-step-count { text-align: right; font-variant-numeric: tabular-nums; }
+@media (max-width: 900px) {
+  .start-here { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .start-here-host .mascot-chat { flex-direction: row; }
+  .start-here-host .mascot-chat-bubble::before { left: -9px; top: 50%; margin: -7px 0 0; border-top: 0; border-bottom: 2px solid var(--forest); }
+}
+@media (max-width: 640px) {
+  .ring-panel { flex-wrap: wrap; justify-content: center; }
+  .ring-steps { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-flow: row; }
+  .start-here-host .mascot-svg { width: 72px; height: 72px; }
+}
+
+/* The landing page's host speaks its line in a bubble inside the loop. */
+.loop-graphic-host-line { position: relative; margin-top: 8px; padding: 6px 10px; background: var(--white); border: 2px solid var(--forest); border-radius: 12px; color: var(--ink); }
+.loop-graphic-host-line::before { content: ""; position: absolute; left: 50%; top: -7px; width: 10px; height: 10px; margin-left: -5px; background: var(--white); border-left: 2px solid var(--forest); border-top: 2px solid var(--forest); transform: rotate(45deg); }
+
+/* ---------- Pop and wait: entrances on Home, and the ring waiting on its next step ----------
+   Transform and opacity only; prefers-reduced-motion (above) ends every one of them at its final frame at once. */
+@keyframes popIn { from { opacity: 0; scale: 0.94; translate: 0 8px; } 60% { opacity: 1; scale: 1.015; translate: 0 0; } to { opacity: 1; scale: 1; translate: 0 0; } }
+.pop-in { display: inline-block; animation: popIn 420ms var(--ease-out) both; transform-origin: 0 50%; }
+/* Home's blocks pop in once, one after another: Start here, Your work, then each course */
+.home-grid > *, .home-course { animation: popIn 480ms var(--ease-out) both; }
+.home-grid > :nth-child(2) { animation-delay: 90ms; }
+.home-course { animation-delay: calc(180ms + var(--n, 0) * 90ms); }
+.home-course:nth-child(2) { --n: 1; } .home-course:nth-child(3) { --n: 2; } .home-course:nth-child(4) { --n: 3; }
+.mascot-chat-bubble { animation: popIn 380ms var(--ease-out) 240ms both; transform-origin: 50% 0; }
+/* the seven steps arrive in reading order */
+.ring-steps li { animation: popIn 360ms var(--ease-out) both; animation-delay: calc(160ms + var(--k, 0) * 45ms); }
+.ring-steps li:nth-child(2) { --k: 1; } .ring-steps li:nth-child(3) { --k: 2; } .ring-steps li:nth-child(4) { --k: 3; }
+.ring-steps li:nth-child(5) { --k: 4; } .ring-steps li:nth-child(6) { --k: 5; } .ring-steps li:nth-child(7) { --k: 6; }
+
+/* The ring: each done segment draws itself in turn; the next segment breathes and its dashes march forward into it. */
+@keyframes ringDraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes ringBreathe { from { opacity: 0.55; } to { opacity: 1; } }
+@keyframes ringMarch { to { stroke-dashoffset: -12; } }
+.ring-seg-done { stroke-dasharray: 1; animation: ringDraw 520ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 110ms); }
+.ring-seg-next { animation: ringBreathe 1.4s ease-in-out infinite alternate; }
+.ring-seg-march { animation: ringMarch 900ms linear infinite; }
+.ring-count { animation: popIn 420ms var(--ease-out) 200ms both; transform-box: fill-box; transform-origin: 50% 50%; }
+/* The next step's mark: its dashed circle turns slowly, and its Next tag gives a soft pulse, waiting to be taken. */
+@keyframes nextPulse { 0%, 100% { scale: 1; } 50% { scale: 1.08; } }
+.ring-steps li.is-next .ring-mark { position: relative; border-color: transparent; }
+.ring-steps li.is-next .ring-mark::before { content: ""; position: absolute; inset: -1.5px; border: 1.5px dashed var(--emerald); border-radius: 50%; animation: spin 8s linear infinite; }
+.ring-steps li.is-next .ring-step-status .tag { animation: nextPulse 1.8s ease-in-out infinite; }
+.settings-loading { display: flex; align-items: center; gap: 8px; }
+/* Each line of a research run pops in as it arrives, so a streaming agent search reads as live work. */
+.collect-log li { animation: popIn 320ms var(--ease-out) both; transform-origin: 0 50%; }
+
+/* ---------- The custom tooltip (primitives/Tooltip.tsx): a forest bubble with an arrow and the brand's flat lip, above
+   its anchor or below when there is no room. A forest surface, so it carries on-forest. Never takes the pointer. */
+@keyframes tooltipIn { from { opacity: 0; scale: 0.94; translate: 0 6px; } 65% { opacity: 1; scale: 1.015; translate: 0 0; } to { opacity: 1; scale: 1; translate: 0 0; } }
+.tooltip { position: fixed; z-index: 1000; max-width: 280px; padding: 8px 12px; display: grid; gap: 2px; background: var(--forest); color: var(--white); border-radius: 10px; font-size: 13px; line-height: 1.4; pointer-events: none; box-shadow: 0 4px 0 var(--forest-deep); transform-origin: var(--arrow-x, 50%) 100%; }
+.tooltip.is-placed { animation: tooltipIn 220ms var(--ease-out) both; }
+.tooltip.is-below { transform-origin: var(--arrow-x, 50%) 0; }
+.tooltip::after { content: ""; position: absolute; left: var(--arrow-x, 50%); bottom: -5px; width: 10px; height: 10px; margin-left: -5px; background: var(--forest); transform: rotate(45deg); }
+.tooltip.is-below::after { bottom: auto; top: -5px; }
+.tooltip-title { font-family: var(--font-display); font-weight: 700; font-size: 14px; }
+.tooltip.on-forest .tooltip-state { margin-left: 6px; padding: 0 7px; border-radius: 999px; background: var(--lime); color: var(--forest); font-size: 11px; font-weight: 800; }
+.tooltip-note { color: var(--tint-2); }
+/* the ring under the pointer: the segment pointed at stays full, the others step back */
+.ring g { transition: opacity 160ms var(--ease-out); }
+.ring.is-pointing g:not(.is-hover) { opacity: 0.4; }
+
+/* ---------- Sign in: two equal columns, the brand and one working card ----------
+   The brand column carries the host and its bubble, so it never stands empty beside the card; the card holds sign in,
+   Google, then the demo's people as one list of compact rows (a hairline between, no box per person). */
+.signin { align-items: center; padding: 32px 24px; }
+.signin-panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 24px; max-width: 1040px; align-items: stretch; flex-wrap: nowrap; }
+.signin-brand { padding: 40px; display: flex; flex-direction: column; justify-content: space-between; gap: 32px; min-width: 0; }
+.signin-brand-copy { display: grid; gap: 12px; }
+.signin-brand .wordmark { margin: 0; }
+.signin-brand .mascot-chat-bubble { color: var(--ink); }
+.signin-brand-foot { display: grid; gap: 12px; justify-items: start; }
+.signin-brand-foot p { margin: 0; font-size: 13px; opacity: 0.85; }
+.signin-card { padding: 28px; display: flex; flex-direction: column; gap: 0; min-width: 0; }
+.forest-backdrop .signin-card.card { border-color: var(--white); box-shadow: 0 6px 0 var(--lime); }
+.signin-tabs { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 20px; }
+.signin-form { display: grid; gap: 14px; }
+.signin-submit { width: 100%; justify-content: center; margin-top: 4px; }
+.signin-google { display: flex; width: 100%; justify-content: center; align-items: center; gap: 10px; margin-top: 12px; text-decoration: none; }
+.signin-google-mark { display: block; flex: none; width: 24px; height: 24px; } /* a link or a disabled button, the same full width as Sign in */
+.password-field { position: relative; }
+.password-field .control { padding-right: 52px; }
+.password-toggle { position: absolute; right: 4px; top: 50%; translate: 0 -50%; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 8px; background: none; color: var(--ink-2); cursor: pointer; }
+.password-toggle:hover { color: var(--ink); background: var(--tint-1); }
+.signin-divider { display: flex; align-items: center; gap: 12px; margin: 22px 0 10px; color: var(--ink-2); font-size: 13px; }
+.signin-divider::before, .signin-divider::after { content: ""; flex: 1; border-top: 1px solid var(--border); }
+.signin-card .people-list { list-style: none; margin: 0; padding: 0; display: block; border: 0; }
+.signin-card .people-list li + li { border-top: 1px solid var(--border); }
+.signin-card .person-row, .signin-card .person-row:first-child { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 8px 8px; margin: 0; border: 0; border-radius: 10px; box-shadow: none; background: none; text-align: left; transition: background-color 160ms var(--ease-out); }
+.signin-card .person-row:hover, .signin-card .person-row:focus-visible { background: var(--tint-1); }
+.signin-card .person-row:active { transform: none; box-shadow: none; }
+.signin-card .avatar { width: 32px; height: 32px; flex: none; font-size: 12px; }
+.signin-card .person-text { display: grid; min-width: 0; flex: 1; }
+.signin-card .person-name { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; font-size: 14px; }
+.signin-card .person-scope { font-size: 13px; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.signin-note { margin: 12px 0 0; font-size: 13px; color: var(--ink-2); }
+@media (max-width: 860px) {
+  .signin-panel { grid-template-columns: minmax(0, 1fr); max-width: 520px; }
+  .signin-brand { padding: 28px; gap: 20px; }
+  .signin-brand .mascot-chat { display: none; }
+}
+.onboarding { display: grid; grid-template-columns: 300px minmax(0, 720px); gap: 40px; align-items: center; width: 100%; max-width: 1120px; animation: popIn 480ms var(--ease-out) both; }
+.onboarding-card { padding: 28px; }
+.onboarding.is-step-1 .onboarding-card { padding: 24px 28px; }
+.onboarding.is-step-1 .onboarding-card form { gap: 12px; }
+.onboarding.is-step-1 .onboarding-card .form-field { margin-bottom: 4px; }
+.onboarding.is-step-1 .onboarding-card .field-label { margin-bottom: 4px; }
+.onboarding.is-step-1 .onboarding-card .field-hint { margin-top: 4px; }
+.onboarding.is-step-1 .onboarding-card .control { min-height: 44px; }
+.onboarding.is-step-1 .outline-drop { padding: 12px 14px; }
+.onboarding-card form { display: grid; gap: 16px; }
+.onboarding-title { margin: 0; font-family: var(--font-display); font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+.onboarding-card form > p { margin: -8px 0 0; }
+.onboarding-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); }
+.onboarding-progress { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 12px; }
+.onboarding-step-marker { position: relative; min-width: 0; }
+.onboarding-step-button { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; max-width: 100%; padding: 0 6px 8px 0; border: 0; border-radius: 6px; background: var(--white); color: var(--ink-2); font: inherit; font-size: 13px; font-weight: 700; text-align: left; }
+button.onboarding-step-button { cursor: pointer; }
+button.onboarding-step-button:hover { color: var(--ink); }
+.onboarding-step-node { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 28px; width: 28px; height: 28px; border: 2px solid var(--border); border-radius: 50%; background: var(--white); color: var(--ink-2); font-family: var(--font-mono); font-size: 12px; transition: background-color 240ms var(--ease-out), border-color 240ms var(--ease-out), color 240ms var(--ease-out), scale 240ms var(--ease-out); }
+.onboarding-step-marker.is-current .onboarding-step-node { border-color: var(--emerald); background: var(--emerald); color: var(--white); scale: 1.12; }
+.onboarding-step-marker.is-current .onboarding-step-button,
+.onboarding-step-marker.is-done .onboarding-step-button { color: var(--ink); }
+.onboarding-step-marker.is-done .onboarding-step-node { border-color: var(--emerald); background: var(--tint-2); color: var(--emerald-text); }
+.onboarding-step-connector { position: absolute; z-index: 0; top: 13px; left: 32px; right: 0; height: 2px; background: var(--border); transition: background-color 300ms var(--ease-out); }
+.onboarding-step-marker.is-done .onboarding-step-connector { background: var(--emerald); }
+.onboarding-next { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 20px; padding: 10px 12px; border-left: 3px solid var(--emerald); background: var(--tint-1); color: var(--ink-2); }
+.onboarding-next .eyebrow { margin: 0; font-size: 11px; }
+.onboarding-next strong { color: var(--ink); font-size: 13px; }
+.onboarding-step-form { animation: onboardingStepForward 360ms var(--ease-out) both; }
+.onboarding-step-form.back { animation-name: onboardingStepBack; }
+@keyframes onboardingStepForward { from { opacity: 0; translate: 18px 0; } to { opacity: 1; translate: 0 0; } }
+@keyframes onboardingStepBack { from { opacity: 0; translate: -18px 0; } to { opacity: 1; translate: 0 0; } }
+.onboarding-host .mascot-chat-bubble { background: var(--white); }
+@media (max-width: 760px) {
+  .onboarding { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .onboarding-host .mascot-chat { flex-direction: row; }
+  .onboarding-host .mascot-chat-bubble::before { left: -9px; top: 50%; margin: -7px 0 0; border-top: 0; border-bottom: 2px solid var(--forest); }
+  .onboarding-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (min-width: 761px) and (max-height: 850px) {
+  .forest-backdrop.signin { padding: 16px 24px; }
+  .onboarding { gap: 28px; }
+  .onboarding.is-step-1 .onboarding-host .mascot-chat { scale: 0.9; transform-origin: center; }
+  .onboarding.is-step-1 .onboarding-card { padding-top: 20px; padding-bottom: 20px; }
+  .onboarding.is-step-1 .onboarding-progress { margin-bottom: 8px; }
+  .onboarding.is-step-1 .onboarding-next { margin-bottom: 12px; padding: 8px 10px; }
+  .onboarding.is-step-1 .onboarding-card form { gap: 8px; }
+  .onboarding.is-step-1 .onboarding-card .form-field { margin-bottom: 0; }
+}
+@media (max-width: 480px) {
+  .onboarding-step-button { gap: 5px; font-size: 11px; }
+  .onboarding-step-node { flex-basis: 24px; width: 24px; height: 24px; }
+  .onboarding-step-connector { top: 11px; left: 28px; }
+  .onboarding-next { align-items: flex-start; flex-direction: column; gap: 2px; }
+}
+/* Settings: the search chain, in the order it is tried */
+.search-chain { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 8px; }
+.search-chain li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 4px 12px; align-items: center; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; }
+.search-chain li.is-off { background: var(--tint-1); }
+.search-chain-name { font-weight: 700; }
+.search-chain-note { grid-column: 1 / -1; font-size: 13px; }
+
+/* ---------- The sliding selection (primitives/Segmented.tsx) ----------
+   One background per row of options that glides to the chosen one, with a slight spring; the options sit above it.
+   Only transform and size move. Reduced motion (above) drops the glide and keeps the move. */
+.slider { position: relative; isolation: isolate; overflow: clip; } /* the sliding background, mid-transition, can never widen the page (the curriculum smoke at 390 and 320 px, 29 October 2026) */
+.slider::before { content: ""; position: absolute; left: 0; top: 0; z-index: -1; width: var(--slide-w, 0); height: var(--slide-h, 0); transform: translate(var(--slide-x, 0), var(--slide-y, 0)); pointer-events: none; }
+.slider.is-ready::before { transition: transform 340ms cubic-bezier(0.3, 1.25, 0.5, 1), width 340ms cubic-bezier(0.3, 1.25, 0.5, 1), height 340ms var(--ease-out); }
+.segmented { display: inline-grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; padding: 4px; background: var(--tint-1); border-radius: 12px; max-width: 100%; }
+.segmented::before { background: var(--white); border-radius: 9px; box-shadow: 0 2px 0 var(--forest); }
+.segmented-option { min-height: 40px; padding: 8px 16px; border: 0; border-radius: 9px; background: none; font: inherit; font-size: 14px; font-weight: 700; color: var(--ink-2); cursor: pointer; white-space: nowrap; transition: color 200ms var(--ease-out); }
+.segmented-option:hover { color: var(--ink); }
+.segmented-option.is-active { color: var(--ink); }
+.signin-tabs .segmented-option { min-height: 44px; }
+.sub-rail.slider::before { background: var(--tint-2); border-radius: var(--radius-button); box-shadow: inset 0 -3px 0 var(--emerald); }
+.sub-rail-tab { position: relative; transition: color 200ms var(--ease-out), background-color 160ms var(--ease-out); }
+
+/* Text inside a white bubble on a forest surface keeps the ink colours, not the forest surface's light ones. */
+.on-forest .mascot-chat-bubble .muted, .on-forest .mascot-chat-next { color: var(--ink-2); }
+.on-forest .mascot-chat-next { color: var(--ink); }
+.signin-google:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; transform: none; }
+.signin-google-off { margin: 6px 0 0; font-size: 12px; line-height: 1.45; color: var(--ink-2); text-align: center; }
+.segmented.signin-tabs { display: grid; width: 100%; } /* the sign in tabs fill the card; other segmented rows fit their options */
+.signin-pair { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 12px; }
+@media (max-width: 480px) { .signin-pair { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- The custom dropdown (primitives/Dropdown.tsx): a control-styled trigger and a list that pops open under it ---------- */
+@keyframes dropdownIn { from { opacity: 0; scale: 0.97; translate: 0 -4px; } to { opacity: 1; scale: 1; translate: 0 0; } }
+.dropdown { position: relative; min-width: 0; }
+.dropdown-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; text-align: left; cursor: pointer; font: inherit; }
+.dropdown-trigger > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dropdown-trigger.is-empty > span { color: var(--ink-2); }
+.dropdown-chevron { flex: none; color: var(--ink-2); transition: rotate 200ms var(--ease-out); }
+.dropdown.is-open .dropdown-chevron { rotate: 180deg; }
+.dropdown-list { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 50; max-height: 264px; overflow-y: auto; margin: 0; padding: 6px; list-style: none;
+  background: var(--white); border: 2px solid var(--forest); border-radius: 12px; box-shadow: 0 4px 0 var(--forest); transform-origin: 50% 0; animation: dropdownIn 160ms var(--ease-out) both; }
+.dropdown-option { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 40px; padding: 8px 10px; border-radius: 8px; font-size: 15px; color: var(--ink); cursor: pointer; transition: background-color 120ms var(--ease-out); }
+.dropdown-option.is-active { background: var(--tint-1); }
+.dropdown-option.is-chosen { font-weight: 700; }
+.dropdown-option svg { flex: none; color: var(--emerald); }
+
+/* ---------- Onboarding's outline import and review ---------- */
+.onboarding.is-wide { max-width: 1100px; grid-template-columns: 240px minmax(0, 760px); }
+.outline-drop { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 16px; border: 2px dashed var(--border); border-radius: 12px; background: var(--tint-1); }
+.outline-drop > div { display: grid; gap: 2px; min-width: 0; flex: 1 1 260px; }
+.outline-drop .muted { font-size: 13px; }
+.outline-section { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; }
+.outline-section legend { font-family: var(--font-display); font-weight: 700; font-size: 17px; margin-bottom: 8px; }
+.outline-section > .btn { justify-self: start; }
+.outline-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.outline-row { display: grid; grid-template-columns: 24px 52px minmax(0, 1fr) 190px; gap: 10px; align-items: start; transition: opacity 160ms var(--ease-out); }
+.outline-row.is-topic { grid-template-columns: 24px minmax(0, 1fr) 90px auto 32px; align-items: center; }
+.outline-row.is-off { opacity: 0.5; }
+.outline-keep { display: grid; place-items: center; min-height: 44px; }
+.outline-keep input { width: 18px; height: 18px; accent-color: var(--emerald); }
+.outline-label { font-weight: 800; padding-top: 12px; font-variant-numeric: tabular-nums; }
+.outline-meta { display: grid; gap: 6px; justify-items: start; }
+.outline-hours { text-align: right; }
+.outline-serves { font-size: 13px; white-space: nowrap; }
+.outline-remove { width: 32px; height: 32px; display: grid; place-items: center; border: 0; border-radius: 8px; background: none; color: var(--ink-2); cursor: pointer; }
+.outline-remove:hover { background: var(--tint-1); color: var(--ink); }
+@media (max-width: 760px) {
+  .onboarding.is-wide { grid-template-columns: minmax(0, 1fr); }
+  .outline-row { grid-template-columns: 24px minmax(0, 1fr); }
+  .outline-row .outline-label { padding-top: 10px; }
+  .outline-row textarea, .outline-row .outline-meta { grid-column: 2; }
+  .outline-row.is-topic { grid-template-columns: 24px minmax(0, 1fr) 80px 32px; }
+  .outline-row.is-topic .outline-serves { display: none; }
 }

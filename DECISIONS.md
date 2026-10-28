@@ -2,6 +2,10 @@
 
 # Lyceum v3: Decisions log
 
+## 29 October 2026: the team's stack taken as it was
+
+On the day of the final the owner merged Sharvin Kanesan's nineteen commits from the team repository (`feat/prism-slide-content` at `b43174e`) into `main` as they were, through `node scripts/team.mjs take`, without the gates the merge plan proposed: agent web search and a Settings page, one OpenAI-compatible model layer for every agent (the Anthropic SDK path of 22 October is gone), signal from a course's own evidence, Lens and Atlas proposals, Quill's suggestions, Prism's items and slides, accounts on PostgreSQL with Google sign-in, onboarding with the outline import, watching on a schedule, and a UI pass with idle motion. Two rules of 22 October (no model text in a lecturer's own artefacts; nothing animates in the workspace without a request or a record) are now crossed by what is on `main`; the dated clauses for CLAUDE.md are written in the merge plan's Section 0a and wait for the owner's hand, because the session's tool guard blocks edits to that file. Fixed in the same commit: the sliding tab background clipped, the auth suite's table list, twelve dashes in two carried documents, the registered count at 270 in twenty-five suites, and the labels for the prototypes. The entries with their options are in [docs/decisions.md](docs/decisions.md) under 2026-10-29; the plan, what is still open and the Tailwind overhaul are in [docs/lyceum-team-merge-plan.md](docs/lyceum-team-merge-plan.md).
+
 ## 22 October 2026: the upgrade plan, and the week to Amsterdam
 
 The Grand Final is on 29 October 2026 in Amsterdam (8 minutes of pitch plus 2 of questions, then a 10-minute booth demo before a second judge team; the briefing slide weights Innovation 30, Technology Readiness 20, Commercial Viability 15, Education Significance 15, Presentation 10, Demo 10, "to be firmed"). The owner asked for an overhaul of the look, the flow and the story with the main idea unchanged. Decisions, recorded in [docs/lyceum-upgrade-plan.md](docs/lyceum-upgrade-plan.md):

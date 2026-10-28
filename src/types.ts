@@ -40,6 +40,7 @@ export interface Person {
   // their edits carry an "unverified" tag and the approval gate shows it.
   email?: string;
   verified?: boolean;
+  account?: boolean; // a real account signed in on the local API (server/auth.ts), not one of the demo's people
 }
 
 export interface RoleAssignment {
@@ -269,6 +270,7 @@ export interface TeachingSession {
   updatedBy: PersonId;
   // Track C (depth plan Section 5.1), optional so older records load:
   slides?: SlideDraft[]; // the session's own slides; without them the pack is built from the records
+  slidesBy?: "prism"; // the slides' text was drafted by the model (Prism), and every slide of the pack says so
   labSheet?: string; // markdown
   projectBrief?: string; // markdown
   topicId?: string; // the course topic this session teaches
@@ -287,7 +289,7 @@ export interface DraftItem {
   answers?: string[]; // shortanswer: the accepted answers
   graderInfo?: string; // essay: what the marker looks for
   responseLines?: number; // essay: the answer box's height
-  source: "template" | "sample"; // drafted by Lyceum's templates, or a sample written for this prototype
+  source: "template" | "sample" | "model"; // drafted by Lyceum's templates, a sample written for this prototype, or drafted by the model (Prism)
   reviewedBy: PersonId | null; reviewedAt: string | null;
 }
 /** One slide a lecturer wrote: a title, bullets and speaker notes, with an optional second column or figure. */
@@ -625,7 +627,7 @@ export interface SkillMapping {
 }
 
 // ---------- the lecturer's research run ----------
-export type CollectionProvider = "sample" | "greenhouse" | "lever";
+export type CollectionProvider = "sample" | "greenhouse" | "lever" | "agent";
 /** Where a collected source came from. The retrieval time is never the publication date. */
 export interface EvidenceCollection { provider: CollectionProvider; board: string; postingId: string; retrievedAt: string; label: string }
 /** One posting fetched from a permitted board, before the lecturer decides to keep it. Transient. */

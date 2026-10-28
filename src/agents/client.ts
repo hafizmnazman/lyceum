@@ -11,9 +11,15 @@
 //  - streamAgent: SSE from /api/agent/:name for the free-text agents
 //    (authoring, evaluator, analogy explainer), yielding chunks.
 
-import type { CLO, CollectedPosting, CollectionProvider, IntakeInterpretation, ParsedDoc, Subject, UploadedFileKind } from "../types.ts";
+import type { CLO, CollectedPosting, CollectionProvider, DraftItem, IntakeInterpretation, SlideDraft, ParsedDoc, Subject, UploadedFileKind } from "../types.ts";
 import { SOURCE_POLICIES, filterPostings } from "../lib/collect.ts";
 import { interpretLocally } from "./intakeLocal.ts";
+import type { OutlineProposal } from "../lib/outline.ts";
+import type { RevisionRequest, RevisionSuggestion } from "../lib/revision.ts";
+import type { MappingRequest, MappingSuggestion, QuoteRequest } from "../lib/proposals.ts";
+import type { MentionProposal } from "../lib/evidence.ts";
+import type { ItemRequest } from "../lib/items.ts";
+import type { SlideRequest } from "../lib/slides.ts";
 
 const PARSE_TIMEOUT_MS = 20000;
 const AGENT_TIMEOUT_MS = 30000;
@@ -184,8 +190,42 @@ export interface CollectionRequest { provider: CollectionProvider; board: string
 export type CollectionOutcome =
   | { ok: true; postings: CollectedPosting[]; retrievedAt: string; cached: boolean; total: number; label: string; endpoint?: string; bytes?: number | null; durationMs?: number | null }
   | { ok: false; error: string };
-export async function fetchCollection(request: CollectionRequest): Promise<CollectionOutcome> {
+const AGENT_TIMEOUT_MS_TOTAL = 7 * 60 * 1000;
+/** Agent web search: the local API streams one JSON object per line, log lines as the agent works and then the result. */
+async function fetchAgentCollection(request: CollectionRequest, onLog: (line: string) => void): Promise<CollectionOutcome> {
+  const res = await withTimeout(fetch("/api/agent-search", { method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ brief: request.board, q: request.query, scope: request.inText ? "text" : "title" }) }), AGENT_TIMEOUT_MS_TOTAL);
+  if (!res.ok || !res.body) {
+    const body = (await res.json().catch(() => null)) as { error?: string } | null;
+    return { ok: false, error: body?.error ?? (res.status === 404 ? "The local API is not running. Start it with npm run dev to use agent search." : "Agent search failed (HTTP " + res.status + ").") };
+  }
+  const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
+  let buffer = "";
+  const deadline = Date.now() + AGENT_TIMEOUT_MS_TOTAL;
+  while (Date.now() < deadline) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += value;
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      const event = JSON.parse(line) as { type: string; line?: string; error?: string; postings?: CollectedPosting[]; total?: number; retrievedAt?: string; durationMs?: number; endpoint?: string; summary?: string };
+      if (event.type === "log" && event.line) onLog(event.line);
+      else if (event.type === "error") return { ok: false, error: event.error ?? "Agent search failed." };
+      else if (event.type === "done" && Array.isArray(event.postings)) {
+        return { ok: true, postings: event.postings, retrievedAt: event.retrievedAt ?? new Date().toISOString(), cached: false, total: event.total ?? event.postings.length,
+          label: SOURCE_POLICIES.agent.name + " \"" + request.board + "\"", endpoint: event.endpoint ?? "/api/agent-search", bytes: null, durationMs: event.durationMs ?? null };
+      }
+    }
+  }
+  await reader.cancel().catch(() => undefined);
+  return { ok: false, error: "The agent search ended without a result." };
+}
+
+export async function fetchCollection(request: CollectionRequest, onLog: (line: string) => void = () => undefined): Promise<CollectionOutcome> {
   try {
+    if (request.provider === "agent") return await fetchAgentCollection(request, onLog);
     if (request.provider === "sample") {
       const started = Date.now();
       const res = await withTimeout(fetch("/demo/collected-sample.json"), COLLECT_TIMEOUT_MS);
@@ -207,5 +247,68 @@ export async function fetchCollection(request: CollectionRequest): Promise<Colle
       bytes: typeof body.bytes === "number" ? body.bytes : null, durationMs: typeof body.durationMs === "number" ? body.durationMs : Date.now() - started };
   } catch (err) {
     return { ok: false, error: err instanceof Error && err.message === "timeout" ? "The collection timed out. Try again, or narrow the keywords." : "The local API is not reachable. Start it with npm run dev to collect from a live board." };
+  }
+}
+
+// ---------- Update: Quill's suggestions on an open revision (src/lib/revision.ts) ----------
+/** Ask the model in .env for suggestions on a revision. Nothing is applied here; the lecturer applies each one. */
+export async function fetchRevisionSuggestions(request: RevisionRequest): Promise<{ ok: true; suggestions: RevisionSuggestion[] } | { ok: false; error: string }> {
+  try {
+    const res = await withTimeout(fetch("/api/agent/revision", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(request) }), OUTLINE_TIMEOUT_MS);
+    const body = (await res.json().catch(() => null)) as { suggestions?: RevisionSuggestion[]; error?: string } | null;
+    if (!res.ok || !body?.suggestions) return { ok: false, error: body?.error ?? "No suggestions came back (HTTP " + res.status + ")." };
+    return { ok: true, suggestions: body.suggestions };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error && err.message === "timeout" ? "The model took too long. Try again." : "The local API is not reachable. Start it with npm run dev." };
+  }
+}
+
+// ---------- Report: Lens's quotations and Atlas's mappings (src/lib/proposals.ts) ----------
+async function postProposals<T>(path: "quotes" | "mappings" | "items" | "slides", request: unknown): Promise<{ ok: true; list: T[] } | { ok: false; error: string }> {
+  try {
+    const res = await withTimeout(fetch("/api/agent/" + path, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(request) }), OUTLINE_TIMEOUT_MS);
+    const body = (await res.json().catch(() => null)) as Record<string, unknown> | null;
+    const list = body?.[path];
+    if (!res.ok || !Array.isArray(list)) return { ok: false, error: typeof body?.error === "string" ? body.error : "Nothing came back (HTTP " + res.status + ")." };
+    return { ok: true, list: list as T[] };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error && err.message === "timeout" ? "The model took too long. Try again." : "The local API is not reachable. Start it with npm run dev." };
+  }
+}
+export const fetchQuoteProposals = (request: QuoteRequest) => postProposals<MentionProposal>("quotes", request);
+export const fetchMappingSuggestions = (request: MappingRequest) => postProposals<MappingSuggestion>("mappings", request);
+export const fetchModelItems = (request: ItemRequest) => postProposals<DraftItem>("items", request);
+export const fetchModelSlides = (request: SlideRequest) => postProposals<SlideDraft>("slides", request);
+
+// ---------- Watch on a schedule (server/watch.ts): the signed-in account's schedule and runs for one course ----------
+export interface WatchSchedule { subjectId: string; provider: "greenhouse" | "lever" | "agent"; board: string; query: string; inText: boolean; everyDays: number; nextRunAt: string }
+export interface WatchRun { id: number; subjectId: string; ranAt: string; provider: string; board: string; status: "ok" | "failed"; error: string | null; total: number; postings: CollectedPosting[] }
+type WatchAnswer = { schedule?: WatchSchedule | null; runs?: WatchRun[]; run?: WatchRun; error?: string };
+/** One call to the watch API; any failure comes back as an error to show, never thrown. */
+export async function watchApi(subjectId: string, method: "GET" | "PUT" | "DELETE" | "POST", path = "", body?: unknown, timeoutMs = 30000): Promise<WatchAnswer & { ok: boolean }> {
+  try {
+    const res = await withTimeout(fetch("/api/watch/" + encodeURIComponent(subjectId) + path, { method, headers: body ? { "content-type": "application/json" } : {},
+      body: body ? JSON.stringify(body) : undefined }), timeoutMs);
+    const answer = ((await res.json().catch(() => null)) ?? {}) as WatchAnswer;
+    return { ...answer, ok: res.ok, error: res.ok ? undefined : answer.error ?? "Watching answered HTTP " + res.status + "." };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error && err.message === "timeout" ? "The run is taking long; it continues on the server. Refresh in a while." : "The local API is not reachable. Start it with npm run dev." };
+  }
+}
+
+// ---------- onboarding: read a course outline (server/outline.ts) ----------
+const OUTLINE_TIMEOUT_MS = 180000;
+/** Parse the lecturer's outline on the local API, then ask the model in .env what it states. The proposal is reviewed before anything saves. */
+export async function readOutlineFile(file: File): Promise<{ ok: true; outline: OutlineProposal; truncated: boolean } | { ok: false; error: string }> {
+  const parsed = await parseFile(file);
+  if (!parsed.doc) return { ok: false, error: parsed.error ?? "The file could not be read." };
+  const text = [...parsed.doc.pages.map((p) => p.text), ...parsed.doc.tables.map((t) => t.rows.map((r) => r.join("  |  ")).join("\n"))].join("\n\n");
+  try {
+    const res = await withTimeout(fetch("/api/agent/outline", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ text, fileName: file.name }) }), OUTLINE_TIMEOUT_MS);
+    const body = (await res.json().catch(() => null)) as { outline?: OutlineProposal; truncated?: boolean; error?: string } | null;
+    if (!res.ok || !body?.outline) return { ok: false, error: body?.error ?? "The outline could not be read (HTTP " + res.status + ")." };
+    return { ok: true, outline: body.outline, truncated: Boolean(body.truncated) };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error && err.message === "timeout" ? "Reading the outline took too long. Try again, or type the outcomes." : "The local API is not reachable. Start it with npm run dev." };
   }
 }

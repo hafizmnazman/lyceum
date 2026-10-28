@@ -10,10 +10,10 @@ export const SUITES: Array<[string, number, string]> = [
   ["Integrity", 13, "evidence edge cases, approval guards"],
   ["Teaching plans", 10, "scope, validation, export"],
   ["Curriculum", 28, "revisions, constraints, adoption, recovery"],
-  ["Evidence", 13, "citations, duplicates, Wilson intervals, mappings, backups"],
+  ["Evidence", 18, "citations, duplicates, Wilson intervals, mappings, backups; signal from the course's own evidence on demand's lower bound; Quill's suggestions checked and applied one at a time; Lens's quotations kept only word for word; Atlas's mappings proposed for unmapped skills and left for the lecturer to judge"],
   ["Collector", 6, "text extraction, cache, rate limits, timeouts"],
   ["Research run", 5, "import on request, exact proposals, briefs, decisions and events in backups"],
-  ["Slides", 3, "decks unzipped and read back, chart part included"],
+  ["Slides", 4, "decks unzipped and read back, chart part included; Prism's slides checked, labelled on every slide, kept through an edit and discarded on request"],
   ["Benchmark and self-checks", 5, "labelled scan set, metric arithmetic, live quotation re-verification, denominator rules"],
   ["The loop and the record", 9, "done rules per term, the decision record, a new term, the event log first in the timeline, Learn matched to the version taught, the term set inside the ring, the routes, every landing figure in the claims register and every quoted clause in its note"],
   ["Evidence snapshots", 6, "frozen windows, change called only when intervals separate, identity matching, backups"],
@@ -25,7 +25,8 @@ export const SUITES: Array<[string, number, string]> = [
   ["The judge's way through", 8, "every walk stop rendered by its screen with a route that opens it, captions within twenty words with their labels, the host at the two ends only, the not-built list word for word, the sample workspace restored with the current one kept, the recap's numbers against their records, the programme wall's heat table from the recorded outlines, the kiosk's idle return on time with Tualang silent, and the register's figures counting up to exactly their values"],
   ["The two student surveys", 12, "the instruments from the record and the profile, the link under 2,000 characters with no secret in it, the collector's token against its own hash, the floor and the release showing nothing early, one response per device and booth responses never as evidence, the Microsoft Forms importer on its fixture, backups, the sample's counts, the Google Forms importer on its CSV fixture, the Moodle Feedback importer with no repeat dropped without a time column, the document for Forms Quick Import, and the paste code read once per device"],
   ["Attainment against a stated threshold", 10, "the direct line against a hand-computed fixture with missing marks, no interval at a census and the finite-population interval below it, the recomputation after a change to the pass mark with the saved report keeping its own, the survey beside the marks never averaged and never from the booth, the programme outcomes listed with no index, marks without identifiers, the CQI note, Lens's moods, and backups"],
-  ["Assessment items and exports", 9, "every Bloom level's Arkansas verbs, templates that leave each key to the lecturer, each lint rule failing alone on its fixture, the week 7 sample quiz passing with its distractors from the record, Moodle XML and QTI 2.1 well-formed with their documented elements and labels, the rubric read back as a spreadsheet, reviews as a person's record cleared on a change, and backups"],
+  ["Assessment items and exports", 11, "every Bloom level's Arkansas verbs, templates that leave each key to the lecturer, each lint rule failing alone on its fixture, the week 7 sample quiz passing with its distractors from the record, Moodle XML and QTI 2.1 well-formed with their documented elements and labels, the rubric read back as a spreadsheet, reviews as a person's record cleared on a change, backups, and Prism's items checked, added unreviewed, linted like any other and repaired once"],
+  ["Watching on a schedule", 3, "what a schedule may hold, a due run claimed once with its failure kept, only the newest run carrying its postings and stopping keeping the runs (on PGlite)"],
 ];
 
 export const SUITE_TOTAL = SUITES.reduce((n, s) => n + s[1], 0);

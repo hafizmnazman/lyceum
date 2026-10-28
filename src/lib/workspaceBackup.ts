@@ -39,7 +39,7 @@ const item = shape({ id, text: str, targetCLO: id, bloomLevel: bloom, difficulty
 // A check's item (depth plan Section 10): drafted for a lecturer's review; a review names a person and a date.
 const draftItem = shape({ id, kind: one("multichoice", "shortanswer", "essay"), cloId: id, bloomLevel: bloom, stem: str, marks: nonnegative,
   options: opt(array(shape({ text: str, correct: boolean, feedback: opt(str) }), 10)), answers: opt(array(str, 20)), graderInfo: opt(str), responseLines: opt(integer),
-  source: one("template", "sample"), reviewedBy: x => x === null || id(x), reviewedAt: x => x === null || str(x) });
+  source: one("template", "sample", "model"), reviewedBy: x => x === null || id(x), reviewedAt: x => x === null || str(x) });
 const blueprint = shape({ subjectId: id, totalMarks: num, cloWeights: array(shape({ cloId: id, weight: num }), 1000), bloomMix: dict(num) });
 const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
   programme: shape({ id, title: str, departmentOwnerId: id, subjectIds: strings, plos: opt(array(shape({ id, text: str, cluster: str }), 100)) }),
@@ -79,7 +79,7 @@ const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
       needsReview: opt(boolean), courseVersionId: opt(id),
       slides: opt(array(shape({ title: str, bullets: array(str, 100), notes: str, right: opt(array(str, 100)), section: opt(boolean),
         figure: opt(x => record(x) && ((x.kind === "table" && array(str, 20)(x.header) && array(array(str, 20), 100)(x.rows) && str(x.alt)) || (x.kind === "placeholder" && str(x.label)))) }), 100)),
-      labSheet: opt(str), projectBrief: opt(str), topicId: opt(id), sample: opt(boolean), items: opt(array(draftItem, 200)) })) })),
+      labSheet: opt(str), projectBrief: opt(str), topicId: opt(id), sample: opt(boolean), slidesBy: opt(one("prism")), items: opt(array(draftItem, 200)) })) })),
   courseDefinitions: dict(x => record(x)),
   rubrics: array(shape({ id, subjectId: id, componentId: id, title: str, sample: opt(boolean),
     criteria: array(shape({ name: str, marks: nonnegative, cloIds: strings, levels: x => Array.isArray(x) && x.length === 4 && x.every(str) }), 100) }), 1000),
@@ -88,7 +88,7 @@ const predicates: Record<typeof WORKSPACE_DATA_KEYS[number], Check> = {
     history: array(shape({ at: str, byPersonId: id, action: one("created","saved","checked","adopted","discarded"), note: str, revision: integer })) })),
   evidenceSources: array(shape({ id, subjectId: id, kind: one(...EVIDENCE_KINDS), title: str, organisation: str, url: str, sourceDate: str, text: str,
     textHash: str, duplicateOf: x => x === null || id(x), provenance: one("lecturer-supplied", "collected"),
-    collection: opt(shape({ provider: one("sample", "greenhouse", "lever"), board: str, postingId: str, retrievedAt: str, label: str })), reviewed: boolean, addedBy: id, addedAt: str }), 10000),
+    collection: opt(shape({ provider: one("sample", "greenhouse", "lever", "agent"), board: str, postingId: str, retrievedAt: str, label: str })), reviewed: boolean, addedBy: id, addedAt: str }), 10000),
   skillMentions: array(shape({ id, sourceId: id, subjectId: id, skill: str, excerpt: str, requirement: one(...REQUIREMENT_LEVELS), addedBy: id, addedAt: str })),
   skillMappings: array(shape({ subjectId: id, skill: str, cloIds: strings, stage: one(...COVERAGE_STAGES), target: one(...COVERAGE_STAGES), evidence: str, updatedBy: id, updatedAt: str })),
   evidenceBriefs: array(shape({ id, subjectId: id, createdBy: id, createdAt: str, recommendation: one("keep", "refresh", "revise", "undecided"), notes: str, markdown: str,

@@ -2045,3 +2045,53 @@ Chosen: (b). The register and that decision both say software TRL 6, and a range
 Reverse it if: the owner decides the self-assessment is 5 to 6.
 
 To reverse: change the claims row first (`docs/claims.md`, `deck-trl`), then the deck, the brief and the poster.
+
+## 2026-10-29 02:07, Track T: the team's stack taken as it was
+
+Options: (a) The merge plan's order: T0, then the take, then the gates of T2 and T3 (the workspace at rest, the denylist, the server quiet without a database, model drafting behind a switch) before anything reaches main. (b) The take as the teammate built it, with only the failing checks fixed, the count and the labels made true, and the gates left open in the plan.
+
+Chosen: (b), on the owner's word at 02:00 on the day of the final ("just merge it", "your rules aint winning us"). The stack was green on every check but two small ones on 28 October, so what reached main is what the teammate tested; the two rules the plan gated on need a dated clause in CLAUDE.md, which waits for the owner's hand (the session's tool guard blocks edits to that file; the wording is in the merge plan's Section 0a), and each gate stays listed in the plan as an open item the owner may still ask for.
+
+Reverse it if: the owner wants a gate after all. Each is a package of its own in the merge plan's Section 7 and needs no revert.
+
+To reverse: the whole take, `git revert` of the take commit; one file, its copy under `.git/lyceum-team-backup/2026-10-28T18-07-17-194Z/`.
+
+## 2026-10-29 02:15, the sliding tab background clipped
+
+Options: (a) `overflow: clip` on `.slider`, so the sliding background can never extend the page while it glides. (b) Drop the slider from the sub-rail and keep the selected tab's own colour. (c) Give the curriculum smoke time to settle before it measures.
+
+Chosen: (a). The smoke measured what a person would see on a phone turned mid-transition, so the smoke was right and the screen was wrong; the clip keeps the teammate's motion and costs one declaration. Focus rings on the tabs sit inside the rail's padding, so nothing visible is cut.
+
+Reverse it if: a control inside a `.slider` needs to paint outside its box (a tooltip is a portal, so not that).
+
+To reverse: remove `overflow: clip` from `.slider` in `src/theme/global.css` and make the smoke wait instead.
+
+## 2026-10-29 02:18, the two carried documents kept, with their dashes replaced
+
+Options: (a) Replace `docs/GOOGLE_AUTH_PORTABLE.md` and `docs/web-search-feature.md` with `docs/accounts.md` in Lyceum's words, as the merge plan's T4 asks. (b) Keep them as the teammate wrote them and replace only the twelve en and em dashes, so the dash scan passes and the content the teammate relies on stays.
+
+Chosen: (b) for now. The owner asked for the merge, not the rewrite; the house rule on dashes is the owner's own and costs nothing to keep. The rewrite stays in the plan's T4 as open.
+
+Reverse it if: the owner wants the documents in Lyceum's words before the team repository is published.
+
+To reverse: write `docs/accounts.md` and delete the two files; `docs/database.md` stays.
+
+## 2026-10-29 02:30, the count at 270 and the labels made true
+
+Options: (a) Leave the registered count at 259 and the labels as they were until a later T4. (b) Register the four suites that grew (evidence 18, slides 4, items 11, watching on a schedule 3) and write 270 with today's date everywhere a live surface shows the count; rewrite the lines that called accounts, scheduled watching and model drafts planned as prototypes; leave the frozen renders (the deck's export, the poster's PDF, the film, the README's shots) at 259 as dated, and update only their sources.
+
+Chosen: (b). `prove-journey` ties the landing figure to the suites table, so a stale count is a failing check the moment the table is right; and a label that says planned beside a built thing is false on the day the judges read it. The deck's and poster's planned strips still say "a shared workspace with sign-in" is planned, which stays true: accounts are local, the shared workspace is B3.
+
+Reverse it if: the owner wants the day's figures frozen at 23 October on every surface.
+
+To reverse: `git revert` the take commit's edits to `src/data/suites.ts`, `src/data/proof.ts`, `docs/claims.md`, the two READMEs, JUDGES.md, `deck/index.html`, `scripts/gen-poster.mjs`, `video/script.md`, `video/storyboard.md`, `.github/readme/build.py` and the card SVGs.
+
+## 2026-10-29 02:35, the Tailwind move: yes, after the publish
+
+Options: (a) No, as the merge plan's Decision 6 recommended: `tokens.ts` and the generated CSS already are the design system, and the move touches every screen for no visible gain. (b) Yes, as the teammate's roadmap asked and the owner decided: the tokens mapped into a generated `@theme`, one screen at a time, a pixel diff of the walk as the regression gate, after the publish so the branch starts from the taken main.
+
+Chosen: (b), the owner's word. The merge plan's Section 14 is the package (T7), with the facts measured today, the rules it must keep and the order of the slices.
+
+Reverse it if: the first slice shows a visual regression the pixel diff cannot bound, or the team's time is needed for the pilot.
+
+To reverse: stop after any slice; each leaves the app green, with both stylesheets side by side until the end.

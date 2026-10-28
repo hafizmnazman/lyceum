@@ -3,9 +3,9 @@
 // confirm each exact quotation, vouch for the extraction, then turn the result
 // into a meeting brief that can be downloaded or sent to a colleague.
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  clearCollection, clearProposals, confirmProposals, dismissProposal, downloadPack, evidenceTrendNote, importCollectedPostings, nowIso, prepareEvidenceBrief, runCollection,
+  addProposals, openWatchRun, clearCollection, clearProposals, definitionForCourse, navigate, confirmProposals, dismissProposal, downloadPack, evidenceTrendNote, importCollectedPostings, nowIso, prepareEvidenceBrief, runCollection,
   scanForRequirements, selectBrief, sendEvidenceBrief, setSkillLexicon, setSourcesReviewed, type AppState,
 } from "../../app/store.ts";
 import { briefDeck } from "../../lib/slides.ts";
@@ -16,13 +16,23 @@ import type { BriefRecommendation, CollectionProvider, MentionRequirement, Perso
 import { Button, Disclosure, Field, Input, Select, Tag, Textarea } from "../primitives/index.tsx";
 import { Meter, SourcePane } from "../primitives/loop.tsx";
 import { useUnsavedEditor } from "../useUnsavedEditor.ts";
+import { fetchQuoteProposals, watchApi, type WatchRun, type WatchSchedule } from "../../agents/client.ts";
+import { quoteRequest } from "../../lib/proposals.ts";
 
 type Props = { state: AppState; person: Person; subject: Subject; mayEdit: boolean };
 const PROVIDERS = Object.keys(SOURCE_POLICIES) as CollectionProvider[];
 
 export function ResearchRun({ state, subject, mayEdit }: Props) {
-  const [provider, setProvider] = useState<CollectionProvider>("sample");
+  const [provider, setProvider] = useState<CollectionProvider>("agent");
   const [board, setBoard] = useState("");
+  // The agent's brief starts from where the course's graduates go, as onboarding or the course brief recorded it.
+  const [brief, setBrief] = useState(() => definitionForCourse(subject.id)?.brief.targetRoles ?? "");
+  // Agent web search is the default source; when .env does not set it up yet, the panel says what is missing.
+  const [agentMissing, setAgentMissing] = useState<string[] | null>(null);
+  useEffect(() => {
+    fetch("/api/agent-settings").then((r) => (r.ok ? r.json() : null)).then((d: { missing?: string[] } | null) => setAgentMissing(d && Array.isArray(d.missing) ? d.missing : null))
+      .catch(() => setAgentMissing(null));
+  }, []);
   const [query, setQuery] = useState("");
   const [inText, setInText] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
@@ -32,10 +42,11 @@ export function ResearchRun({ state, subject, mayEdit }: Props) {
   const postings = run?.status === "done" ? run.postings : [];
   const keywords = parseKeywords(run?.query ?? "");
   const imported = new Set(state.evidenceSources.filter((s) => s.subjectId === subject.id).map((s) => s.collection?.postingId ?? ""));
-  const boardOk = provider === "sample" || BOARD_TOKEN.test(board.trim());
+  const agent = provider === "agent";
+  const boardOk = provider === "sample" || (agent ? brief.trim().length >= 3 : BOARD_TOKEN.test(board.trim()));
   async function fetchNow() {
     setMessage(""); setSelected([]);
-    const result = await runCollection(subject.id, { provider, board, query, inText });
+    const result = await runCollection(subject.id, { provider, board: agent ? brief : board, query, inText });
     if (!result.ok) setMessage(result.error);
   }
   return <section className="workspace-panel" aria-labelledby="research-run">
@@ -43,18 +54,22 @@ export function ResearchRun({ state, subject, mayEdit }: Props) {
     {mayEdit ? <>
       <div className="form-grid form-grid-wide-first">
         <Field label="Source"><Select data-demo-id="collect-provider" value={provider} onChange={(e) => { setProvider(e.target.value as CollectionProvider); setMessage(""); }}>{PROVIDERS.map((p) => <option key={p} value={p}>{SOURCE_POLICIES[p].name}</option>)}</Select></Field>
-        {provider !== "sample" ? <Field label="Employer board token" hint={provider === "greenhouse" ? "The name in boards.greenhouse.io/NAME, or in an employer's careers link." : "The name in jobs.lever.co/NAME."}><Input data-demo-id="collect-board" maxLength={80} value={board} onChange={(e) => setBoard(e.target.value)} placeholder={provider === "greenhouse" ? "e.g. stripe" : "e.g. palantir"} /></Field> : null}
+        {agent ? <Field label="What should the agent look for?" hint="Roles, place and anything else that matters. The model and search provider are chosen in Settings."><Input data-demo-id="collect-brief" maxLength={300} value={brief} onChange={(e) => setBrief(e.target.value)} placeholder="e.g. data analyst internships in Malaysia posted this year" /></Field> : null}
+        {provider !== "sample" && !agent ? <Field label="Employer board token" hint={provider === "greenhouse" ? "The name in boards.greenhouse.io/NAME, or in an employer's careers link." : "The name in jobs.lever.co/NAME."}><Input data-demo-id="collect-board" maxLength={80} value={board} onChange={(e) => setBoard(e.target.value)} placeholder={provider === "greenhouse" ? "e.g. stripe" : "e.g. palantir"} /></Field> : null}
         <Field label="Role keywords" hint="Comma-separated, matched against posting titles."><Input data-demo-id="collect-query" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="e.g. data analyst, analytics" /></Field>
       </div>
       <label className="checkbox-line"><input type="checkbox" checked={inText} onChange={(e) => setInText(e.target.checked)} />Also match keywords inside the posting text</label>
       <details className="guide-entry"><summary><span>Source policy: {policy.name}</span><Tag tone={policy.enabled ? "ok" : "warn"}>{policy.enabled ? "Permitted on request" : "Disabled"}</Tag></summary>
         <div className="guide-entry-body"><dl className="context-list"><div><dt>Owner</dt><dd>{policy.owner}</dd></div><div><dt>Method</dt><dd>{policy.method}</dd></div><div><dt>Retention</dt><dd>{policy.retention}</dd></div><div><dt>Refresh</dt><dd>{policy.refresh}</dd></div><div><dt>Policy reviewed</dt><dd>{policy.policyReviewedOn}</dd></div></dl><p className="muted">{policy.note}</p></div></details>
       <div className="button-row">
-        <Button variant="primary" data-demo-id="collect-run" disabled={run?.status === "running" || !boardOk} onClick={() => void fetchNow()}>{run?.status === "running" ? "Fetching..." : "Fetch postings"}</Button>
+        <Button variant="primary" data-demo-id="collect-run" loading={run?.status === "running"} disabled={!boardOk} onClick={() => void fetchNow()}>{run?.status === "running" ? (agent ? "Agent searching..." : "Fetching...") : agent ? "Run agent search" : "Fetch postings"}</Button>
+        {agent ? <Button onClick={() => navigate("settings")}>Agent settings</Button> : null}
         {run ? <Button onClick={() => { clearCollection(); setSelected([]); setMessage(""); }}>Clear results</Button> : null}
       </div>
+      {provider !== "sample" ? <WatchPanel state={state} subject={subject} imported={imported} source={{ provider, board: agent ? brief : board, query, inText }} sourceOk={boardOk} /> : null}
+      {agent && agentMissing?.length ? <p className="form-error">Agent search is not set up yet. Add {agentMissing.join(", ")} to .env (see Settings), or choose another source.</p> : null}
       {message ? <p role="alert" className="form-error">{message}</p> : null}
-      {run ? <div data-demo-id="collect-log"><div className="button-row"><h4>Collection log</h4>{run.status === "running" ? <Tag tone="warn">Fetching now</Tag> : run.status === "failed" ? <Tag tone="danger">Failed</Tag> : run.provider === "sample" ? <Tag>Saved sample, no network</Tag> : run.cached ? <Tag tone="accent">Local cache of a live fetch</Tag> : <Tag tone="ok">Fetched live</Tag>}</div>
+      {run ? <div data-demo-id="collect-log"><div className="button-row"><h4>Collection log</h4>{run.status === "running" ? <Tag tone="warn">Fetching now</Tag> : run.status === "failed" ? <Tag tone="danger">Failed</Tag> : run.provider === "sample" ? <Tag>Saved sample, no network</Tag> : run.provider === "agent" ? <Tag tone="accent">Found by the agent, read live</Tag> : run.cached ? <Tag tone="accent">Local cache of a live fetch</Tag> : <Tag tone="ok">Fetched live</Tag>}</div>
         <ol className="collect-log" aria-live="polite">{run.log.map((line, i) => <li key={i}>{line}</li>)}</ol></div> : null}
       {run?.status === "failed" ? <p role="alert" className="form-error">{run.error}</p> : null}
       {run?.status === "done" ? <div>
@@ -84,6 +99,60 @@ export function ResearchRun({ state, subject, mayEdit }: Props) {
   </section>;
 }
 
+const when = (at: string) => new Date(at).toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+/** Watch on a schedule (server/watch.ts): the server runs this source every few days and keeps each run; the lecturer opens a
+ *  run and imports what it wants, as after a run by hand. Needs a signed-in account, since the server does the watching. */
+function WatchPanel({ state, subject, imported, source, sourceOk }: { state: AppState; subject: Subject; imported: Set<string>;
+  source: { provider: CollectionProvider; board: string; query: string; inText: boolean }; sourceOk: boolean }) {
+  const [schedule, setSchedule] = useState<WatchSchedule | null>(null);
+  const [runs, setRuns] = useState<WatchRun[]>([]);
+  const [everyDays, setEveryDays] = useState(7);
+  const [busy, setBusy] = useState("");
+  const [message, setMessage] = useState("");
+  const signedIn = Boolean(state.account);
+  useEffect(() => {
+    if (!signedIn) return;
+    void watchApi(subject.id, "GET").then((r) => { if (r.ok) { setSchedule(r.schedule ?? null); setRuns(r.runs ?? []); if (r.schedule) setEveryDays(r.schedule.everyDays); } else setMessage(r.error ?? ""); });
+  }, [signedIn, subject.id]);
+  if (!signedIn) return <p className="muted" data-demo-id="watch-schedule">Watching on a schedule needs a signed-in account: the server runs it while Lyceum is closed.</p>;
+  const act = async (label: string, call: () => ReturnType<typeof watchApi>, done: string) => {
+    setBusy(label); setMessage("");
+    const r = await call();
+    setBusy("");
+    if (!r.ok) { setMessage(r.error ?? ""); return; }
+    if ("schedule" in r) setSchedule(r.schedule ?? null);
+    if (r.runs) setRuns(r.runs);
+    setMessage(done);
+  };
+  const open = async (run: WatchRun) => {
+    const full = run.postings.length || run.status === "failed" ? run : (await watchApi(subject.id, "GET", "/runs/" + run.id)).run;
+    if (full) openWatchRun(subject.id, full, schedule?.query ?? "", schedule?.inText ?? false);
+  };
+  const latest = runs[0];
+  const fresh = latest ? latest.postings.filter((p) => !imported.has(p.id)).length : 0;
+  return <div className="curriculum-object" data-demo-id="watch-schedule">
+    <div className="section-heading"><div><h4>Watch on a schedule</h4>
+      <p className="muted">{schedule
+        ? "Watching " + (schedule.provider === "agent" ? "with the agent: \"" + schedule.board + "\"" : SOURCE_POLICIES[schedule.provider].name + " \"" + schedule.board + "\"") + " every " + schedule.everyDays + " days. Next run " + when(schedule.nextRunAt) + "."
+        : "Run this source every few days on the server, even while Lyceum is closed. Each run is kept; you open it and import what you want."}</p></div></div>
+    <div className="button-row">
+      <Field label="Every (days)"><Input type="number" min={1} max={90} value={everyDays} onChange={(e) => setEveryDays(Number(e.target.value))} style={{ width: 90 }} /></Field>
+      <Button variant={schedule ? undefined : "primary"} data-demo-id="watch-save" loading={busy === "save"} disabled={!sourceOk} onClick={() => void act("save",
+        () => watchApi(subject.id, "PUT", "", { ...source, everyDays }), "Saved. The first run is due now; it runs within 15 minutes, or run it now.")}>{schedule ? "Update the schedule" : "Watch this source"}</Button>
+      {schedule ? <>
+        <Button data-demo-id="watch-run-now" loading={busy === "run"} onClick={() => void act("run", () => watchApi(subject.id, "POST", "/run", undefined, 7 * 60 * 1000), "Run finished.")}>Run now</Button>
+        <Button variant="quiet" loading={busy === "stop"} onClick={() => void act("stop", async () => ({ ...(await watchApi(subject.id, "DELETE")), schedule: null }), "Stopped watching. Past runs are kept.")}>Stop watching</Button>
+      </> : null}
+    </div>
+    {message ? <p role="status" className="save-status">{message}</p> : null}
+    {latest ? <p className="save-status" data-demo-id="watch-new">{latest.status === "failed" ? "The last run, " + when(latest.ranAt) + ", failed: " + latest.error
+      : fresh + " new " + (fresh === 1 ? "posting" : "postings") + ", not yet imported, in the run of " + when(latest.ranAt) + "."}</p> : null}
+    {runs.length ? <ul className="source-list">{runs.map((r) => <li key={r.id}><strong>{when(r.ranAt)}</strong>
+      <span>{r.status === "failed" ? "Failed: " + r.error : r.postings.length ? r.postings.length + " of " + r.total + " postings kept" : r.total + " postings at the source"}</span>
+      {r.status === "ok" ? <Button variant="quiet" data-demo-id={"watch-open-" + r.id} onClick={() => void open(r)}>Open</Button> : null}</li>)}</ul> : null}
+  </div>;
+}
+
 /** Report, Quote: name the skills, scan the kept postings, and judge each proposed sentence beside its source. */
 export function QuoteProposals({ state, subject, mayEdit }: Props) {
   const saved = state.skillLexicon[subject.id] ?? [];
@@ -96,14 +165,25 @@ export function QuoteProposals({ state, subject, mayEdit }: Props) {
   const dirty = JSON.stringify(parseLexicon(terms)) !== JSON.stringify(saved);
   useUnsavedEditor(dirty);
   const withLevel = (p: MentionProposal) => ({ ...p, requirement: levels[key(p)] ?? p.requirement });
+  const [lensBusy, setLensBusy] = useState(false);
+  // Lens reads the least-quoted postings; every quotation it returns was found word for word in its posting.
+  const askLens = async () => {
+    const request = quoteRequest(postings, state.skillMentions.filter((m) => m.subjectId === subject.id), saved);
+    setLensBusy(true);
+    const result = await fetchQuoteProposals(request);
+    setLensBusy(false);
+    setMessage(result.ok ? "Lens read " + request.postings.length + " postings and proposed " + addProposals(subject.id, result.list) + " quotations, each found word for word in its posting. Confirm the ones you accept." : result.error);
+  };
   if (!mayEdit) return <p className="muted">Only assigned lecturers and coordinators can quote evidence for this course.</p>;
   return <section aria-labelledby="requirement-scan">
     <div className="section-heading"><div><h3 id="requirement-scan">Proposed quotations</h3><p className="muted">Name the skills, then scan the kept postings for them.</p></div>
+      <div className="button-row">
       <Button variant="primary" data-demo-id="scan-run" disabled={dirty || !saved.length || !postings.length} onClick={() => {
         const result = scanForRequirements(subject.id);
         setMessage(result.ok ? result.count + " proposals across " + postings.length + " postings. Confirm the quotations you accept." : result.error);
         setLevels({});
-      }}>Scan postings</Button></div>
+      }}>Scan postings</Button>
+      <Button data-demo-id="lens-run" loading={lensBusy} disabled={!postings.length} onClick={() => void askLens()}>Find with Lens</Button></div></div>
     <Disclosure summary={saved.length ? "Skills to look for: " + saved.length + " saved" : "Skills to look for"} defaultOpen={!saved.length} data-demo-id="lexicon">
       <Field label="Skills to look for" hint="Comma-separated. Use | for an alias, for example machine learning|ML. Matching is whole-word and case-insensitive."><Textarea data-demo-id="lexicon-terms" value={terms} onChange={(e) => setTerms(e.target.value)} placeholder="e.g. SQL, Python, dashboards|dashboard, data visualisation, stakeholders|stakeholder" /></Field>
       <Button data-demo-id="lexicon-save" disabled={!dirty} onClick={() => { const result = setSkillLexicon(subject.id, parseLexicon(terms)); setMessage(result.ok ? "Terms saved with the course. Scan the postings next." : result.error); }}>Save terms</Button>

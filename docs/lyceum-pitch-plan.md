@@ -49,7 +49,7 @@ Read on 24 October from the plan, the depth plan, the as-built record, the code 
   - Helpers and doors:
     - The seven helpers are steps drawn as mascots. Their moods come from saved records, and none calls a model.
     - The MCP door calls no model. It lets an outside AI assistant call Lyceum's tools; Claude does today, locally.
-  - Where a model can run (only with an Anthropic key set on the local API):
+  - Where a model can run (only with a model set in `.env` on the local API; since the take of 29 October 2026 that is any OpenAI-compatible endpoint through `LYCEUM_AGENT_*`, and the Anthropic SDK path of 22 October is gone):
     - The intake read of an uploaded file: its classification, shown for a person to confirm.
     - Two sandbox panels: the critique lines and the verdict prose.
   - Rules:

@@ -1,10 +1,10 @@
 // The thin Lyceum server (spec Section 1). Its jobs:
 //   POST /api/parse            file bytes in, ParsedDoc out (xlsx/csv/pdf/pptx/docx)
-//   POST /api/agent/:name      LLM proxy: intake returns forced JSON; the
-//                              free-text agents stream SSE
+//   POST /api/agent/:name      LLM proxy on the LYCEUM_AGENT_* model: intake
+//                              returns JSON; the free-text agents answer as SSE
 //   /api/collect, /api/survey  the research run's board collection, and the
 //                              booth's survey collector (depth plan Section 7.2)
-// No key or an LLM error never breaks the client: routes answer with
+// No model or an LLM error never breaks the client: routes answer with
 // { fallback: true } or an error status and the client falls back to its
 // deterministic local path.
 
@@ -14,9 +14,19 @@ import { serve, type HttpBindings } from "@hono/node-server";
 import { parseSheet } from "./parse/sheet.ts";
 import { parsePdf } from "./parse/pdf.ts";
 import { parseDocx, parsePptx } from "./parse/office.ts";
-import { hasKey, MODEL, runIntakeLLM, streamAgentLLM } from "./llm.ts";
+import { startWatching, watchRoutes } from "./watch.ts";
+import { agentModel, draftModelItems, draftSlides, proposeMappings, proposeQuotes, runIntakeLLM, streamAgentLLM, suggestRevision } from "./llm.ts";
 import { CollectError, collectBoard } from "./collect.ts";
 import { filterPostings } from "../src/lib/collect.ts";
+import { missingSettings, publicSettings, type AgentSettings } from "../src/lib/agentSettings.ts";
+import type { MappingRequest, QuoteRequest } from "../src/lib/proposals.ts";
+import type { ItemRequest } from "../src/lib/items.ts";
+import type { SlideRequest } from "../src/lib/slides.ts";
+import { ENV_PATH, liveDeps, loadAgentSettings, openAiChat, runAgentSearch, TOOLS } from "./agentSearch.ts";
+import { searchWeb } from "./webTools.ts";
+import { readOutline, MAX_OUTLINE_CHARS } from "./outline.ts";
+import { AuthStore, authRoutes } from "./auth.ts";
+import { DATABASE_URL, postgresDb } from "./db.ts";
 import { createHash } from "node:crypto";
 import { networkInterfaces } from "node:os";
 
@@ -42,9 +52,24 @@ app.use("/api/*", async (c, next) => {
 });
 app.use("/api/*", cors());
 
-app.get("/api/health", (c) =>
-  c.json({ ok: true, live: hasKey(), model: hasKey() ? MODEL : null }),
-);
+// Accounts (email and password, and Google when GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are set), sessions and each
+// account's workspace (server/auth.ts), in PostgreSQL at DATABASE_URL (server/db.ts; npm run db:up starts one). The store
+// opens on first use; while the database is down the account routes answer 503 and everything else still works.
+const database = postgresDb(DATABASE_URL); // one pool; it connects when first asked and again after Postgres restarts
+let opening: Promise<AuthStore> | null = null;
+const getStore = () => (opening ??= AuthStore.open(database).catch((err) => { opening = null; throw err; }));
+// Watching on a schedule (server/watch.ts): each signed-in account's courses, checked every 15 minutes.
+watchRoutes(app, getStore, database);
+if (process.env.LYCEUM_WATCH !== "off") startWatching(database);
+authRoutes(app, getStore, {
+  appUrl: process.env.APP_URL || "http://localhost:5173",
+  google: { clientId: process.env.GOOGLE_CLIENT_ID ?? "", clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "" },
+});
+
+app.get("/api/health", async (c) => {
+  const { s, missing } = await agentModel();
+  return c.json({ ok: true, live: !missing.length, model: missing.length ? null : s.model.model });
+});
 
 app.post("/api/parse", async (c) => {
   const name = c.req.query("name") ?? "upload.bin";
@@ -81,6 +106,124 @@ app.get("/api/collect/:provider/:board", async (c) => {
     console.error("collect failed:", err);
     return c.json({ error: "The board could not be collected." }, 502);
   }
+});
+
+// Agent web search (server/agentSearch.ts). Its settings come from .env; the browser only ever sees key hints.
+app.get("/api/agent-settings", async (c) => {
+  const s = await loadAgentSettings();
+  return c.json({ settings: publicSettings(s), missing: missingSettings(s), path: ENV_PATH });
+});
+app.post("/api/agent-settings/test/:target", async (c) => {
+  const s = await loadAgentSettings(), target = c.req.param("target");
+  try {
+    if (target === "model") {
+      if (!s.model.baseUrl || !s.model.model) return c.json({ ok: false, error: "Set LYCEUM_AGENT_MODEL (and LYCEUM_AGENT_BASE_URL for a custom endpoint) in .env first." });
+      const reply = await openAiChat(s)([{ role: "user", content: "Call the web_search tool with the query \"connection test\". Do nothing else." }], TOOLS);
+      const called = reply.tool_calls?.some((t) => t.function.name === "web_search");
+      return c.json({ ok: true, detail: called ? "The model answered and called a tool, so tool calling works." : "The model answered but did not call the tool. It may not support tool calling well; try another model.", toolCalling: Boolean(called) });
+    }
+    if (target === "search") {
+      const r = await searchWeb(s.search, "software engineer job posting", s.search.timeFilter, 5);
+      const skipped = r.skipped.map((x) => x.provider + " skipped (" + x.why + ")").join("; ");
+      return c.json({ ok: r.hits.length > 0, detail: r.hits.length + " results from " + (r.provider ?? "no provider") + (r.hits[0] ? ", the first: " + r.hits[0].title + " (" + r.hits[0].url + ")" : "") + (skipped ? ". " + skipped : ""),
+        error: r.hits.length ? undefined : "No provider found results. " + skipped });
+    }
+    return c.json({ error: "unknown test" }, 404);
+  } catch (err) {
+    return c.json({ ok: false, error: err instanceof Error ? err.message : String(err) });
+  }
+});
+// Onboarding's outline import (server/outline.ts): a parsed document's text in, the model's proposal out, checked against
+// the text. Uses the model in .env; without one it says so, and the lecturer types the outline instead.
+app.post("/api/agent/outline", async (c) => {
+  let body: { text?: unknown; fileName?: unknown };
+  try { body = await c.req.json(); } catch { return c.json({ error: "Send the outline's text as JSON." }, 400); }
+  const text = typeof body.text === "string" ? body.text : "", fileName = typeof body.fileName === "string" ? body.fileName.slice(0, 200) : "outline";
+  if (text.trim().length < 40) return c.json({ error: "That file has too little text to read an outline from. Is it a scanned image?" }, 400);
+  const { s, missing: needs } = await agentModel();
+  if (needs.length) return c.json({ error: "Reading an outline needs the model set up: add " + needs.join(", ") + " to .env (see Settings). You can type the outcomes below instead." }, 400);
+  try {
+    return c.json({ outline: await readOutline(text, fileName, s), truncated: text.length > MAX_OUTLINE_CHARS });
+  } catch (err) {
+    console.error("outline read failed:", err);
+    return c.json({ error: "The model could not read this outline: " + (err instanceof Error ? err.message : String(err)).slice(0, 300) + " You can type the outcomes below instead." }, 502);
+  }
+});
+
+// Quill's suggestions on an open revision (src/lib/revision.ts): the outline and the gaps in, checked suggestions out.
+app.post("/api/agent/revision", async (c) => {
+  let request: Parameters<typeof suggestRevision>[1];
+  try { request = await c.req.json(); } catch { return c.json({ error: "Send the revision as JSON." }, 400); }
+  if (!request?.course || !Array.isArray(request.course.outcomes) || !Array.isArray(request.gaps)) return c.json({ error: "Send the course outline and its gaps." }, 400);
+  const { s, missing } = await agentModel();
+  if (missing.length) return c.json({ error: "Suggestions need the model set up: add " + missing.join(", ") + " to .env (see Settings)." }, 400);
+  try {
+    return c.json({ suggestions: await suggestRevision(s, request) });
+  } catch (err) {
+    console.error("revision suggestions failed:", err);
+    return c.json({ error: "The model could not suggest changes: " + (err instanceof Error ? err.message : String(err)).slice(0, 300) }, 502);
+  }
+});
+
+// Lens's quotations and Atlas's mappings on Report (src/lib/proposals.ts): checked proposals out, nothing recorded.
+function proposalRoute<B>(path: string, valid: (body: B) => boolean, run: (s: AgentSettings, body: B) => Promise<unknown>) {
+  app.post("/api/agent/" + path, async (c) => {
+    let body: B;
+    try { body = await c.req.json(); } catch { return c.json({ error: "Send the request as JSON." }, 400); }
+    if (!valid(body)) return c.json({ error: "That request is missing what the agent reads." }, 400);
+    const { s, missing } = await agentModel();
+    if (missing.length) return c.json({ error: "This needs the model set up: add " + missing.join(", ") + " to .env (see Settings)." }, 400);
+    try {
+      return c.json({ [path]: await run(s, body) });
+    } catch (err) {
+      console.error(path + " proposals failed:", err);
+      return c.json({ error: "The model could not propose " + path + ": " + (err instanceof Error ? err.message : String(err)).slice(0, 300) }, 502);
+    }
+  });
+}
+proposalRoute<QuoteRequest>("quotes", (b) => Array.isArray(b?.postings), proposeQuotes);
+proposalRoute<MappingRequest>("mappings", (b) => Array.isArray(b?.skills) && Array.isArray(b?.outcomes), proposeMappings);
+proposalRoute<SlideRequest>("slides", (b) => typeof b?.topic === "string" && Array.isArray(b?.outcomes), draftSlides);
+proposalRoute<ItemRequest>("items", (b) => Array.isArray(b?.outcomes) && b.outcomes.length > 0 && Array.isArray(b?.misconceptions), draftModelItems);
+
+// One agent run, streamed as lines of JSON: {type:"log"} as it works, then {type:"done"} with the postings or {type:"error"}.
+const AGENT_RUN_MS = 6 * 60 * 1000;
+let agentRunning = false;
+app.post("/api/agent-search", async (c) => {
+  let body: { brief?: unknown; q?: unknown; scope?: unknown };
+  try { body = await c.req.json(); } catch { return c.json({ error: "send the brief as JSON" }, 400); }
+  const brief = typeof body.brief === "string" ? body.brief.trim().slice(0, 300) : "";
+  if (brief.length < 3) return c.json({ error: "Describe what the agent should look for." }, 400);
+  const s = await loadAgentSettings(), missing = missingSettings(s);
+  if (missing.length) return c.json({ error: "Agent search is not set up yet. Add " + missing.join(", ") + " to .env (see .env.example and Settings)." }, 400);
+  if (agentRunning) return c.json({ error: "An agent search is already running. Wait for it to finish." }, 429);
+  agentRunning = true;
+  const started = Date.now(), enc = new TextEncoder();
+  c.header("content-type", "application/x-ndjson");
+  c.header("cache-control", "no-cache");
+  return c.body(new ReadableStream({
+    async start(controller) {
+      let open = true;
+      const send = (event: Record<string, unknown>) => { if (open) controller.enqueue(enc.encode(JSON.stringify(event) + "\n")); };
+      const stop = new AbortController();
+      const timer = setTimeout(() => stop.abort(new Error("The agent did not finish within " + AGENT_RUN_MS / 60000 + " minutes.")), AGENT_RUN_MS);
+      try {
+        const result = await runAgentSearch(brief, liveDeps(s), s, (line) => send({ type: "log", line }), stop.signal);
+        const query = typeof body.q === "string" ? body.q : "";
+        send({ type: "done", postings: filterPostings(result.postings, query, body.scope === "text"), total: result.postings.length, retrievedAt: new Date(started).toISOString(),
+          durationMs: Date.now() - started, summary: result.summary, pagesRead: result.pagesRead, searches: result.searches,
+          endpoint: "/api/agent-search (" + s.model.model + ", " + s.search.provider + ")" });
+      } catch (err) {
+        console.error("agent search failed:", err);
+        send({ type: "error", error: err instanceof Error ? err.message : "The agent search failed." });
+      } finally {
+        clearTimeout(timer);
+        agentRunning = false;
+        open = false;
+        controller.close();
+      }
+    },
+  }));
 });
 
 // The booth's survey collector (depth plan Section 7.2): append-only, in memory, one response per device, and nothing that
@@ -171,10 +314,11 @@ app.get("/api/survey/:formToken/responses", (c) => {
 });
 
 app.post("/api/agent/intake", async (c) => {
-  if (!hasKey()) return c.json({ fallback: true });
+  const { s, missing } = await agentModel();
+  if (missing.length) return c.json({ fallback: true });
   try {
-    const payload = (await c.req.json()) as Parameters<typeof runIntakeLLM>[0];
-    const interpretation = await runIntakeLLM(payload);
+    const payload = (await c.req.json()) as Parameters<typeof runIntakeLLM>[1];
+    const interpretation = await runIntakeLLM(s, payload);
     if (!interpretation) return c.json({ fallback: true });
     return c.json({ interpretation });
   } catch (err) {
@@ -188,7 +332,8 @@ app.post("/api/agent/:name", async (c) => {
   if (!["authoring", "evaluator", "analogy", "signal"].includes(name)) {
     return c.json({ error: "unknown agent" }, 404);
   }
-  if (!hasKey()) return c.json({ fallback: true }, 503);
+  const { s, missing } = await agentModel();
+  if (missing.length) return c.json({ fallback: true }, 503);
   const payload = await c.req.json();
   c.header("content-type", "text/event-stream");
   c.header("cache-control", "no-cache");
@@ -197,7 +342,7 @@ app.post("/api/agent/:name", async (c) => {
       async start(controller) {
         const enc = new TextEncoder();
         try {
-          await streamAgentLLM(name, payload, (text) => {
+          await streamAgentLLM(s, name, payload, (text) => {
             controller.enqueue(enc.encode(`data: ${JSON.stringify({ text })}\n\n`));
           });
           controller.enqueue(enc.encode("data: [DONE]\n\n"));
@@ -214,7 +359,7 @@ app.post("/api/agent/:name", async (c) => {
 
 const port = Number(process.env.PORT || 8787);
 serve({ fetch: app.fetch, port }, () => {
-  console.log(
-    `lyceum api on http://localhost:${port}  (${hasKey() ? `live agents: ${MODEL}` : "no key: fixture mode"})`,
-  );
+  void agentModel().then(({ s, missing }) => console.log(
+    `lyceum api on http://localhost:${port}  (${missing.length ? "no model: fixture mode" : `live agents: ${s.model.model}`})`,
+  ));
 });

@@ -704,3 +704,27 @@ The full run after D7, D5b, D6b and D3b, on the build machine between 01:18 and 
 The D9 command for the poster is unchanged, `node scripts/gen-poster.mjs`; it now writes the portrait sheet, and `node scripts/gen-partner-logos.mjs --check` joins the checks run beside it. Until it runs, `docs/presentation/poster-a1.pdf` is the landscape poster of A6.
 
 Published to the team's main as `fdb3cbb` (23 October, 04:12), with `docs/lyceum-depth-plan.md` now left out of team snapshots by `scripts/team.mjs`, as the owner's rule for plans asks.
+
+### Taken from the team, Sharvin's stack: 29 October 2026
+
+On the owner's word at 02:00 on the day of the final, the team's stack of 27 and 28 October (`feat/prism-slide-content` at `b43174e`, nineteen commits, 77 files) was taken into `main` as it was with `node scripts/team.mjs take` at 02:07 (74 files taken, 3 merged with the owner's Word-slip rows, no conflict marker, the originals under `.git/lyceum-team-backup/2026-10-28T18-07-17-194Z/`), then `npm ci`. What it adds is in the merge plan's Section 3. Fixed after the take: `overflow: clip` on `.slider` so the sub-rail's sliding background can never widen a phone-width page; the auth suite's expected table list (migration 002 adds `watch_schedules` and `watch_runs`); the twelve en and em dashes in `docs/GOOGLE_AUTH_PORTABLE.md` and `docs/web-search-feature.md`; the registered count (evidence 18, slides 4, items 11, watching on a schedule 3: 270 in twenty-five suites) on the landing page, the register, the README's badge, table and card, JUDGES.md, the team README, the deck's and the poster's sources and the film's script; and the labels for the prototypes (accounts, scheduled watching, agent collection, model drafts) on the landing page, the README, JUDGES.md and the section guides, with the lecturer guide regenerated. The gates of the merge plan (T2, T3) did not run; the two rules of CLAUDE.md that the stack crosses still read as on 22 October, and their dated clauses wait for the owner (merge plan Section 0a). The frozen renders of 23 October (the deck's export, the poster's PDF, the film and the README's shots) still show 259 as dated and wait for D9. The eight screenshots the smokes and the walk rewrite were restored.
+
+| Command | Result |
+|:--|:--|
+| `node scripts/team.mjs status` | 02:05: the eleven branches as on 28 October, the tip `b43174e` thirteen hours old, ten pull requests open; no new push since the review |
+| `npm run typecheck` | Passed |
+| `npm run prove:all` | 270 passed, 0 failed, twenty-five suites |
+| `node --test src/prove-auth.ts`, `prove-agent-search.ts`, `prove-outline.ts` | 17 of 17 (after the table list fix); 13 of 13; 5 of 5. Not in `prove:all`; the first two run on PGlite, no database needed |
+| `npm run build` | Passed; the main chunk 1,171.05 kB (348.47 kB gzipped) against 1,005.38 kB (298.86 kB) on 23 October; the stylesheet 123.99 kB against 99.89 kB |
+| `npm run smoke` | DEMO SMOKE OK: the whole tour, no page error |
+| `npm run smoke:integrity` | PASS: the landing page, the judge's page at 1440 and 320 px, eleven signed-in screens |
+| `npm run smoke:workspace` | PASS: the judge's walk, the booth round trip, the kiosk and the wall, no page error |
+| `npm run smoke:curriculum` | PASS: the 390 and 320 px reflow on Report, the labels and the keyboard sub-rail, after the clip |
+| `node scripts/walk.mjs` | WALK OK, no page error; its screenshots restored |
+| `node scripts/dash-scan.mjs` | No en or em dash in 380 text files |
+| `node scripts/contrast-check.mjs` | CONTRAST CHECK OK: 61 ratios, 259 files, 41 generated SVGs, theme outputs current |
+| `node scripts/generate-guide.mjs --check` | Matches, after the guide was regenerated |
+| `node scripts/check-backup-migration.mjs` | BACKUP MIGRATION OK |
+| `node mcp/sample.ts --check` | The sample workspace matches the tour's end state |
+| `npm run deck:check` | Deck check passed: 11 slides, 5 figures in the claims register, the receipt in its source, the clauses word for word, no dash; the count at 270 read against the register row |
+| The API without a database | As the merge plan's Section 11 found: the account and watch routes answer 503 and the log carries a connection error at start, on each account call and every fifteen minutes; the demo works without it |

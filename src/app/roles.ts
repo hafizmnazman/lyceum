@@ -43,6 +43,8 @@ export type Screen =
   | "office" // how Lyceum works: the roles in order and the real run record
   | "evaluation" // how it is tested: live checks, benchmarks, protocol
   | "guide"
+  | "settings" // agent web search: the model and the search provider
+  | "onboarding" // a new account's first steps: who they are, then their first course
   | "judge" // the judge's page, public like the landing page (depth plan Section 9.1)
   | "kiosk" // the booth's screen between judge teams, public like the judge's page (Section 9.1, D6b)
   | "recap"; // a course's term recap, at #/course/:id/recap
@@ -142,14 +144,16 @@ export function can(
  *  "what needs me"). Shared screens (closed loop, agents, data room) are
  *  appended for all; the public index sits last. */
 export function navFor(person: Person, assignments: RoleAssignment[]): Screen[] {
-  const shared: Screen[] = ["backtest", "office", "evaluation", "dataroom", "index", "guide", "judge", "recap"];
+  const shared: Screen[] = ["backtest", "office", "evaluation", "dataroom", "index", "guide", "settings", "judge", "recap"];
   if (person.orgRole === "management") {
     return ["inbox", "trends", "approval", ...shared];
   }
   if (person.orgRole === "department") {
     return ["inbox", "programme", "new-subject", "assignments", "decide", "trends", ...shared];
   }
-  // academic: union of coordinator + lecturer screens
+  // academic: union of coordinator + lecturer screens. A real account works on its own records only, so the
+  // illustrative sandbox built on the demo's synthetic cohort is left out of its nav.
+  if (person.account) return ["inbox", "courses", "studio", "watch", "report", "decide", "upload", "learn", "office", "evaluation", "guide", "settings", "judge", "recap"];
   const nav: Screen[] = ["inbox"];
   const isCoord = isCoordinatorAnywhere(person.id, assignments);
   const isLect = isLecturerAnywhere(person.id, assignments);
@@ -167,5 +171,8 @@ export function landingScreen(person: Person, assignments: RoleAssignment[]): Sc
 
 /** Does this person's nav include the screen? */
 export function navAllows(person: Person, assignments: RoleAssignment[], screen: Screen): boolean {
+  if (screen === "onboarding") return Boolean(person.account);
+  // A signed-in account leaves by signing out, never by opening the sign in page inside its own workspace.
+  if (screen === "login" && person.account) return false;
   return screen === "login" || screen === "index" || screen === "judge" || screen === "kiosk" || navFor(person, assignments).includes(screen);
 }

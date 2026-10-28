@@ -23,6 +23,7 @@
 
 import { useSyncExternalStore } from "react";
 import type {
+  SlideDraft,
   SurveyDefinition,
   SurveyResponse,
   CqiNote,
@@ -89,7 +90,7 @@ import { streamAgent } from "../agents/client.ts";
 import { runIntake, type ParsedSheet } from "../agents/intake.ts";
 import { runAuthoring } from "../agents/authoring.ts";
 import { runAnalogy } from "../agents/analogy.ts";
-import { runSignal } from "../agents/signal.ts";
+import { marketGapByCLO, runSignal, signalFromEvidence, type OutcomeSignal, type SignalResult } from "../agents/signal.ts";
 import { computeRelevanceRatings } from "../data/market.ts";
 import { backupSummary, parseWorkspaceBackup, serializeWorkspaceBackup, workspaceFingerprint } from "../lib/workspaceBackup.ts";
 import { courseDefinition, curriculumChanges, curriculumImpact, draftStructureError, validateCourseDefinition, withDerivedFields } from "../lib/curriculum.ts";
@@ -101,7 +102,7 @@ import {
 import { BOARD_TOKEN, SOURCE_POLICIES } from "../lib/collect.ts";
 import { CURRENT_ID, buildSnapshot, compareSnapshots, comparisonMarkdown, snapshotLabelError, type SnapshotComparison } from "../lib/snapshots.ts";
 import { fetchCollection, type CollectionOutcome, type CollectionRequest } from "../agents/client.ts";
-import { downloadDeck, type DeckSpec } from "../lib/slides.ts";
+import { downloadDeck, slideRequest, type DeckSpec, type SlideRequest } from "../lib/slides.ts";
 import { DECISION_OUTCOMES, NOTE_MAX, OUTCOME_LABEL, briefDecisionState } from "../lib/decisions.ts";
 import { courseVersionIds, stepDef, stepForTab, taughtVersionId, termWindow, type CourseStep, type ReportTab } from "./loop.ts";
 export { REPORT_TABS, type ReportTab } from "./loop.ts";
@@ -112,8 +113,10 @@ import { institutionError } from "../lib/institution.ts";
 import { boothAnswers, courseOutcomeSurvey, formTokenFor, gradesReleased, importResponseRows, newReaderSecret, readPasteCodes, ssrtSurvey, studentForm, type ImportResult, type PasteResult } from "../lib/surveys.ts";
 import { DEMO_LINE } from "../data/sample-course/index.ts";
 import { listedStudents, obeReport } from "../lib/attainment.ts";
-import { templateItems } from "../lib/items.ts";
+import { itemRequest, templateItems, type ItemRequest } from "../lib/items.ts";
 import { PRIOR_SURVEYS, PRIOR_SURVEY_RESPONSES } from "../data/sample-course/surveys.ts";
+import { outlineDefinition } from "../lib/outline.ts";
+import { loadWorkspace, markOnboarded, saveWorkspace, signOut, updateProfile, whoAmI, type AccountUser } from "./account.ts";
 import {
   CANONICAL_PROPOSAL,
   CLOS,
@@ -228,6 +231,7 @@ export interface AppState {
   flashUpload: ResultUpload | null; // last filed upload, for the Upload receipt
   toast: string | null;
   persistenceStatus: "pending" | "saved" | "unavailable";
+  account: { user: AccountUser; version: number } | null; // a signed-in real account: its workspace saves to the server, never to this browser
   collectRun: CollectRun | null; // the current research run, never persisted
   scanProposals: MentionProposal[]; // proposed quotations awaiting the lecturer
   selectedBriefId: string | null;
@@ -308,6 +312,7 @@ function seedState(): AppState {
     flashUpload: null,
     toast: null,
     persistenceStatus: "saved",
+    account: null,
     collectRun: null,
     scanProposals: [],
     selectedBriefId: null,
@@ -386,6 +391,8 @@ export function flushPersistence() {
   if (typeof window === "undefined") return;
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = null;
+  // A real account's workspace goes to the server; the demo's browser copy is never touched while one is open.
+  if (state.account) { syncAccountWorkspace(); return; }
   let status: AppState["persistenceStatus"] = "saved";
   try {
     const out: Record<string, unknown> = {};
@@ -517,8 +524,9 @@ export function saveTeachingSession(subjectId: SubjectId, input: SessionInput): 
     learningCheck: input.learningCheck.trim(), resources: input.resources.trim(),
     updatedAt: nowIso(), updatedBy: state.currentPersonId!,
     courseVersionId: subjectById(subjectId)?.currentVersionId, needsReview: false,
-    // The session's items are kept as they are; they change only through the item actions below.
+    // The session's items, and slides Prism drafted, are kept as they are; they change only through their own actions below.
     ...(target?.items ? { items: target.items } : {}),
+    ...(target?.slides && target.slidesBy ? { slides: target.slides, slidesBy: target.slidesBy } : {}),
   };
   updateTeachingPlan(subjectId, (plan) => ({ ...plan, sessions: [...plan.sessions.filter((s) => s.id !== session.id), session] }));
   return { ok: true };
@@ -559,6 +567,49 @@ export function draftSessionItems(subjectId: SubjectId, sessionId: string): Save
   const drafted = templateItems(definition, session, outcomes, () => nextId("ITEM-" + subjectId));
   setSessionItems(subjectId, sessionId, [...(session.items ?? []), ...drafted]);
   set({ toast: drafted.length + " items drafted for your review. Write each key and accepted answer; the lint shows what is left." });
+  return { ok: true };
+}
+
+/** What Prism reads for one of the lecturer's own sessions (lib/items.ts itemRequest), or why it cannot draft yet. */
+export function sessionItemRequest(subjectId: SubjectId, sessionId: string): ItemRequest | string {
+  const session = ownSession(subjectId, sessionId);
+  if (typeof session === "string") return session;
+  const definition = definitionForCourse(subjectId);
+  const request = itemRequest(definition, session, definition?.outcomes ?? []);
+  return request.outcomes.length ? request : "Link the session to an outcome first; Prism writes from it.";
+}
+/** Add Prism's items to a session, each with its own id and unreviewed: the lint and a person's review still decide. */
+export function addModelItems(subjectId: SubjectId, sessionId: string, items: DraftItem[]): SaveResult {
+  const session = ownSession(subjectId, sessionId);
+  if (typeof session === "string") return { ok: false, error: session };
+  const outcomeIds = new Set(session.cloIds);
+  const added = items.filter((i) => outcomeIds.has(i.cloId) && !itemError(i))
+    .map((i) => ({ ...i, id: nextId("ITEM-" + subjectId), source: "model" as const, reviewedBy: null, reviewedAt: null }));
+  if (!added.length) return { ok: false, error: "Prism's draft had no usable item. Try again, or draft from the templates." };
+  setSessionItems(subjectId, sessionId, [...(session.items ?? []), ...added]);
+  set({ toast: added.length + " items drafted by Prism for your review. Check each key; the lint shows what is left." });
+  return { ok: true };
+}
+
+/** What Prism reads to draft one of the lecturer's own sessions' slides (lib/slides.ts slideRequest), or why it cannot yet. */
+export function sessionSlideRequest(subjectId: SubjectId, sessionId: string): SlideRequest | string {
+  const session = ownSession(subjectId, sessionId);
+  if (typeof session === "string") return session;
+  const subject = subjectById(subjectId)!;
+  return slideRequest(subject, session, state.clos.filter((c) => c.subjectId === subjectId), definitionForCourse(subjectId), evidenceReportForCourse(subjectId), state.skillMentions);
+}
+/** Prism's slides for one of the lecturer's own sessions, replacing any it drafted before; the pack then says on every slide
+ *  that its text was drafted by the model. `null` discards them, and the pack goes back to being built from the records. */
+export function setSessionSlides(subjectId: SubjectId, sessionId: string, slides: SlideDraft[] | null): SaveResult {
+  const session = ownSession(subjectId, sessionId);
+  if (typeof session === "string") return { ok: false, error: session };
+  if (slides && !slides.length) return { ok: false, error: "Prism's draft had no usable slide. Try again." };
+  updateTeachingPlan(subjectId, (plan) => ({ ...plan, sessions: plan.sessions.map((s) => {
+    if (s.id !== sessionId) return s;
+    const { slides: _slides, slidesBy: _by, ...rest } = s;
+    return slides ? { ...rest, slides, slidesBy: "prism" as const } : rest;
+  }) }));
+  set({ toast: slides ? slides.length + " slides drafted by Prism. Preview the pack, download it and edit it in PowerPoint." : "Prism's slides discarded; the pack is built from the session again." });
   return { ok: true };
 }
 
@@ -689,7 +740,153 @@ export function login(personId: PersonId) {
 }
 export function logout() {
   if (!confirmLeaveEditor()) return;
+  if (state.account) { void signOutAccount(); return; }
   set({ currentPersonId: null, screen: "login", courseStep: null });
+}
+
+// ---------- real accounts (server/auth.ts, app/account.ts) ----------
+/** Change state and tell the screens without scheduling a save: for what the save itself reports back. */
+function setQuiet(patch: Partial<AppState>) {
+  state = { ...state, ...patch };
+  for (const l of listeners) l();
+}
+/** A new account's workspace: this person alone, no course yet, and an institution and programme named in onboarding.
+ *  The demo's courses, people, surveys and sandbox data are left out. */
+function freshWorkspace(me: Person, institution = ""): Partial<AppState> {
+  return {
+    programme: { id: "PRG-" + me.id, title: "My programme", departmentOwnerId: me.id, subjectIds: [] },
+    institution: { ...structuredClone(DEMO_INSTITUTION), name: institution || "My institution", shortName: institution ? shortNameOf(institution) : "Mine", demo: false, showMark: false },
+    assignments: [], subjects: [], clos: [], survey: [], proposals: [], notifications: [], predictions: [], resultUploads: [], dataSources: [],
+    subjectVersions: [], testDrafts: [], teachingPlans: [], courseDefinitions: {}, rubrics: [], curriculumDrafts: [], evidenceSources: [],
+    skillMentions: [], skillMappings: [], evidenceBriefs: [], evidenceSnapshots: [], briefDecisions: [], events: [], surveys: [],
+    surveyResponses: [], obeReports: [], cqiNotes: [], skillLexicon: {}, relevanceRatings: [], idSeq: 1,
+  };
+}
+const accountPerson = (user: AccountUser): Person => ({ id: user.personId, name: user.name, orgRole: "academic", email: user.email, verified: false, account: true });
+/** Open a signed-in account's workspace: the saved one, or a fresh one that starts at onboarding. */
+export function openAccountWorkspace(user: AccountUser, saved: { backup: string; version: number } | null): SaveResult {
+  const me = accountPerson(user);
+  let data: Partial<AppState> = freshWorkspace(me, user.institution);
+  if (saved) {
+    const parsed = parseWorkspaceBackup(saved.backup, [me.id]);
+    if (!parsed.ok) return parsed;
+    data = structuredClone(parsed.backup.data);
+  }
+  resetAgents();
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = null;
+  const onboarded = user.onboarded;
+  state = { ...seedState(), ...data, people: [me], account: { user, version: saved?.version ?? 0 }, currentPersonId: me.id,
+    screen: onboarded ? "inbox" : "onboarding", selectedSubjectId: null, selectedProposalId: null, persistenceStatus: "saved", toast: null };
+  for (const l of listeners) l();
+  return { ok: true };
+}
+/** After a sign in or sign up: load the account's saved workspace from the server and open it. */
+export async function enterAccount(user: AccountUser): Promise<SaveResult> {
+  const saved = await loadWorkspace();
+  if (!saved.ok) return saved;
+  return openAccountWorkspace(user, saved.workspace);
+}
+/** On page load: a session cookie from an earlier visit opens that account again; without one the demo stays as it was. */
+export async function restoreAccountSession(): Promise<void> {
+  if (typeof window === "undefined") return;
+  const me = await whoAmI();
+  if (me.ok && me.user && !state.account) await enterAccount(me.user);
+}
+/** Back to the demo workspace kept in this browser, signed out. */
+function closeAccountWorkspace() {
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = null;
+  const persisted = loadPersisted();
+  state = { ...seedState(), ...(persisted ?? {}), currentPersonId: null, screen: "login", account: null };
+  for (const l of listeners) l();
+}
+export async function signOutAccount() {
+  flushPersistence();
+  await accountSync;
+  await signOut();
+  closeAccountWorkspace();
+}
+let accountSync: Promise<void> | null = null, accountDirty = false;
+/** Save the open account's workspace over the version it was loaded at. One save at a time; edits made meanwhile go in
+ *  the next. When another window saved first, its copy is loaded here and the person is told. */
+function syncAccountWorkspace() {
+  const account = state.account;
+  if (!account) return;
+  if (accountSync) { accountDirty = true; return; }
+  accountSync = saveWorkspace(serializeWorkspaceBackup(state, nowIso()), account.version).then(async (result) => {
+    if (state.account?.user.id !== account.user.id) return;
+    if (result.ok) setQuiet({ account: { ...state.account, version: result.version }, persistenceStatus: "saved" });
+    else if (result.status === 409) {
+      const latest = await loadWorkspace();
+      if (latest.ok && latest.workspace) {
+        openAccountWorkspace(account.user, latest.workspace);
+        setQuiet({ toast: "This workspace was saved from another window, so its newer copy is open here. Your last change in this window was not kept." });
+      }
+    } else setQuiet({ persistenceStatus: "unavailable", toast: "Not saved: " + result.error });
+  }).finally(() => {
+    accountSync = null;
+    if (accountDirty) { accountDirty = false; syncAccountWorkspace(); }
+  });
+}
+/** An institution's initials for its short name: Universiti Teknologi PETRONAS, UTP. */
+function shortNameOf(institution: string): string {
+  return institution.split(/\s+/).filter((w) => /^[A-Za-z]/.test(w)).map((w) => w[0]).join("").toUpperCase().slice(0, 10) || institution.slice(0, 10);
+}
+/** Onboarding's course step, after createCourseWorkspace: the outline the lecturer accepted (imported or typed) becomes the
+ *  course's first version through the same save, check and adopt as any revision, and the term is set on its teaching plan.
+ *  If the check finds a problem the course is kept with the revision open, and the message says what to fix in Update. */
+export function applyOnboardingOutline(subjectId: SubjectId, rows: Parameters<typeof outlineDefinition>[2], term: string, source: string): SaveResult {
+  const draft = state.curriculumDrafts.find((d) => d.subjectId === subjectId && d.status === "drafting");
+  const base = definitionForCourse(subjectId);
+  if (!draft || !base) return { ok: false, error: "The course was not found." };
+  if (term.trim()) {
+    const planned = saveTeachingPlanDetails(subjectId, { term, notes: "" });
+    if (!planned.ok) return planned;
+  }
+  if (!rows.outcomes.length) return { ok: true }; // nothing to adopt: the lecturer adds outcomes in Update
+  const reason = "The first outline, " + (source ? "imported from " + source + " and reviewed" : "entered") + " at onboarding.";
+  const saved = saveCurriculumRevision(draft.id, draft.revision, { definition: outlineDefinition(base, subjectId, rows), reason, effectiveTerm: term.trim() || "Not set" });
+  if (!saved.ok) return saved;
+  const checked = checkCurriculumRevision(draft.id, draft.revision + 1);
+  const adopted = checked.ok ? adoptCurriculumRevision(draft.id, draft.revision + 1, true) : checked;
+  if (!adopted.ok) {
+    const error = "Your course is made, and its outline is saved as a revision, but it needs a fix before it becomes the course version: " + adopted.error + " Open Update to correct it.";
+    set({ toast: error });
+    return { ok: false, error };
+  }
+  set({ toast: "Your course is ready, with its outline as the first version. Watch is next." });
+  return adopted;
+}
+/** Onboarding's last step, after the first course is made: the account now counts (server/auth.ts, pending accounts). */
+export async function completeOnboarding(): Promise<SaveResult> {
+  const account = state.account;
+  if (!account) return { ok: false, error: "Sign in first." };
+  const done = await markOnboarded();
+  if (!done.ok) return done;
+  setQuiet({ account: { ...state.account!, user: done.user } });
+  return { ok: true };
+}
+/** Onboarding's first step: the person's name, role and institution (kept on the account) and their programme. */
+export async function saveOnboardingProfile(input: { name: string; institution: string; programme: string; jobRole?: string }): Promise<SaveResult> {
+  const account = state.account;
+  if (!account) return { ok: false, error: "Sign in first." };
+  const name = input.name.trim(), institution = input.institution.trim(), programme = input.programme.trim();
+  if (!name || name.length > 100) return { ok: false, error: "Enter your name, up to 100 characters." };
+  if (!institution || institution.length > 200) return { ok: false, error: "Enter your institution's name." };
+  if (!programme || programme.length > 200) return { ok: false, error: "Enter the programme your courses belong to." };
+  if (input.jobRole !== undefined && !input.jobRole) return { ok: false, error: "Choose your role." };
+  let user = account.user;
+  const changes = { ...(name !== user.name ? { name } : {}), ...(institution !== user.institution ? { institution } : {}), ...(input.jobRole && input.jobRole !== user.jobRole ? { jobRole: input.jobRole } : {}) };
+  if (Object.keys(changes).length) {
+    const saved = await updateProfile(changes);
+    if (!saved.ok) return saved;
+    user = saved.user;
+  }
+  const shortName = shortNameOf(institution);
+  set((s) => ({ account: { ...account, user }, people: s.people.map((p) => (p.id === user.personId ? { ...p, name } : p)),
+    institution: { ...s.institution, name: institution, shortName }, programme: { ...s.programme, title: programme } }));
+  return { ok: true };
 }
 /** Person switch (the account menu): change who we are, clamp the screen. */
 export function switchUser(personId: PersonId) {
@@ -705,6 +902,7 @@ export function switchUser(personId: PersonId) {
 }
 /** Go to a screen, or, with a course route, to one step of that course's loop (#/course/:id/<step>). */
 export function navigate(screen: Screen, course?: CourseRoute) {
+  if (screen === "login" && state.account) return; // an account leaves by signing out (logout), not by opening sign in
   const target = course ? stepDef(course.step).screen : screen;
   const leaving = target !== state.screen || (course !== undefined && course.subjectId !== state.selectedSubjectId);
   if (leaving && !confirmLeaveEditor()) {
@@ -831,8 +1029,27 @@ function authorIsCoordinator(p: ChangeProposal): boolean {
 }
 
 // ---------- Trends -> routing (spec Section 7) ----------
+/** The course's signal from its own evidence (signalFromEvidence), once it has a reviewed demand and coverage. */
+export function courseSignal(subjectId: SubjectId) {
+  return signalFromEvidence(subjectId, evidenceReportForCourse(subjectId), state.clos.filter((c) => c.subjectId === subjectId).map((c) => c.id));
+}
+/** The programme's signal: the fixture, with each course that has its own reviewed evidence judged on that instead. */
+export function currentSignal(): SignalResult {
+  const fixture = runSignal(state.programme.id);
+  const live = new Map(state.subjects.flatMap((s) => { const d = courseSignal(s.id).drift; return d ? [[s.id, d] as const] : []; }));
+  if (!live.size) return fixture;
+  return { ...fixture, subjectDrift: [...fixture.subjectDrift.filter((d) => !live.has(d.subjectId)), ...live.values()] };
+}
+/** Demand, coverage and gap per outcome for Trends: the fixture's programme outcomes, plus each course's own outcomes
+ *  once judged on its evidence (those carry `live`). */
+export function currentGaps(): Record<string, { demand: number; coverage: number; gap: number; live?: OutcomeSignal }> {
+  const out: Record<string, { demand: number; coverage: number; gap: number; live?: OutcomeSignal }> = { ...marketGapByCLO() };
+  for (const s of state.subjects) for (const o of courseSignal(s.id).outcomes)
+    if (o.coverage !== null) out[o.cloId] = { demand: o.demand, coverage: o.coverage, gap: o.gap!, live: o };
+  return out;
+}
 export function routeDrift(subjectId: SubjectId) {
-  const signal = runSignal(state.programme.id);
+  const signal = currentSignal();
   setAgent("signal", "done");
   setAgent("curriculum", "done");
   const drift = signal.subjectDrift.find((d) => d.subjectId === subjectId);
@@ -840,10 +1057,14 @@ export function routeDrift(subjectId: SubjectId) {
   const sources = rating
     ? new Set(rating.evidence.map((e) => e.sourceId)).size
     : 0;
-  const findings =
-    `Demand on this subject's outcomes is outpacing coverage (gap ${(drift?.gap ?? 0).toFixed(2)}` +
-    (sources > 0 ? `, corroborated across ${sources} market sources` : "") +
-    `). Sampled from the skills signal over the programme.`;
+  const own = courseSignal(subjectId);
+  const top = own.drift ? own.outcomes.filter((o) => o.gap !== null).sort((a, b) => b.gap! - a.gap!)[0] : undefined;
+  const findings = top
+    ? `Demand on this subject's outcomes is outpacing coverage (gap ${top.gap!.toFixed(2)} on ${top.cloId}): ` +
+      `${top.postings} of ${top.eligible} reviewed postings ask for ${top.skill}. From the course's own evidence.`
+    : `Demand on this subject's outcomes is outpacing coverage (gap ${(drift?.gap ?? 0).toFixed(2)}` +
+      (sources > 0 ? `, corroborated across ${sources} market sources` : "") +
+      `). Sampled from the skills signal over the programme.`;
   if (drift?.flag === "new-subject") {
     notify({
       toPersonId: state.programme.departmentOwnerId,
@@ -1878,6 +2099,14 @@ export function setAgentState(agent: AgentId, st: AgentState) {
 /** Reset the mutable world to seed and stop every timer. Used by the account
  *  menu's "Reset workspace" and by the self-driving demo on each Play. */
 export function resetDemoState() {
+  // A real account's reset empties its own workspace and starts onboarding again; it never loads the demo into the account.
+  if (state.account) {
+    const user = state.account.user, version = state.account.version;
+    openAccountWorkspace(user, null);
+    state = { ...state, account: { user, version } };
+    emit();
+    return;
+  }
   if (simTimer) clearInterval(simTimer);
   simTimer = null;
   if (signalTimer) clearInterval(signalTimer);
@@ -2060,10 +2289,10 @@ export function restoreWorkspaceBackup(raw: string, expectedFingerprint: string,
   const parsed = parseWorkspaceBackup(raw, state.people.map(p => p.id));
   if (!parsed.ok) return parsed;
   const recovery = exportWorkspaceBackup();
-  const next: AppState = { ...seedState(), ...structuredClone(parsed.backup.data),
+  const next: AppState = { ...seedState(), ...structuredClone(parsed.backup.data), people: state.people, account: state.account,
     currentPersonId: state.currentPersonId, screen: "guide", persistenceStatus: "saved",
     selectedSubjectId: null, selectedProposalId: null, toast: "Workspace restored. A pre-restore recovery backup is available." };
-  if (typeof window !== "undefined") {
+  if (typeof window !== "undefined" && !state.account) {
     try {
       localStorage.setItem(RECOVERY_KEY, recovery);
       const persisted = Object.fromEntries(PERSISTED_KEYS.map(k => [k, next[k]]));
@@ -2369,34 +2598,49 @@ export interface CollectRun {
   endpoint: string | null; bytes: number | null; durationMs: number | null;
 }
 const clock = () => new Date().toTimeString().slice(0, 8);
-type CollectionLoader = (request: CollectionRequest) => Promise<CollectionOutcome>;
+type CollectionLoader = (request: CollectionRequest, onLog?: (line: string) => void) => Promise<CollectionOutcome>;
 /** Fetch postings from a permitted board or the saved sample. Only on request; nothing is imported until the lecturer chooses. */
 export async function runCollection(subjectId: SubjectId, input: { provider: CollectionProvider; board: string; query: string; inText: boolean }, loader: CollectionLoader = fetchCollection): Promise<SaveResult> {
   if (!mayPlan(subjectId)) return { ok: false, error: "Only an assigned lecturer or coordinator can collect evidence for this course." };
   if (!SOURCE_POLICIES[input.provider]?.enabled) return { ok: false, error: "Choose a supported source." };
-  const board = input.provider === "sample" ? "sample" : input.board.trim().toLowerCase();
-  if (input.provider !== "sample" && !BOARD_TOKEN.test(board)) return { ok: false, error: "Enter the employer's board token: letters, digits, hyphens or underscores, for example the NAME in jobs.lever.co/NAME or boards.greenhouse.io/NAME." };
+  const agent = input.provider === "agent";
+  const board = input.provider === "sample" ? "sample" : agent ? input.board.trim().replace(/\s+/g, " ").slice(0, 300) : input.board.trim().toLowerCase();
+  if (agent && board.length < 3) return { ok: false, error: "Describe what the agent should look for, for example: data analyst internships in Malaysia." };
+  if (input.provider !== "sample" && !agent && !BOARD_TOKEN.test(board)) return { ok: false, error: "Enter the employer's board token: letters, digits, hyphens or underscores, for example the NAME in jobs.lever.co/NAME or boards.greenhouse.io/NAME." };
   const run = { subjectId, provider: input.provider, board, query: input.query.trim(), inText: Boolean(input.inText) };
   const opening = clock() + (input.provider === "sample"
     ? " Loading the saved sample shipped with the app. No network request."
+    : agent ? " Asking the agent, through the local API (/api/agent-search), to find postings for \"" + board + "\". It searches and reads the web with the model and search provider in Settings."
     : " Requesting " + SOURCE_POLICIES[input.provider].name + " \"" + board + "\" through the local API (/api/collect/" + input.provider + "/" + board + "). Only this host is permitted.");
   set({ collectRun: { ...run, status: "running", postings: [], retrievedAt: null, cached: false, total: 0, error: null, label: "", log: [opening], endpoint: null, bytes: null, durationMs: null } });
-  const result = await trackRequest("collect", subjectId, () => loader(run));
+  // The agent's steps arrive while it works; each joins the log of the run that asked for them.
+  const onLog = (line: string) => {
+    const live = state.collectRun;
+    if (live && live.status === "running" && live.subjectId === subjectId && live.board === board && live.provider === input.provider) set({ collectRun: { ...live, log: [...live.log, clock() + " " + line] } });
+  };
+  const result = await trackRequest("collect", subjectId, () => loader(run, onLog));
   const current = state.collectRun;
   if (!current || current.status !== "running" || current.subjectId !== subjectId || current.board !== board || current.provider !== input.provider) return { ok: true };
   if (result.ok) {
     const size = typeof result.bytes === "number" ? " (" + (result.bytes >= 1048576 ? (result.bytes / 1048576).toFixed(1) + " MB" : Math.round(result.bytes / 1024) + " kB") + ")" : "";
     const took = typeof result.durationMs === "number" ? " in " + (result.durationMs / 1000).toFixed(1) + " s" : "";
-    const received = clock() + " Received " + result.total + " postings" + size + " from " + (result.endpoint ?? "the source") + took + (input.provider === "sample" ? ". Sample retrieved " + result.retrievedAt + "." : result.cached ? ". Served from the local cache; fetched live at " + result.retrievedAt + "." : ". Fetched live at " + result.retrievedAt + ".");
+    const received = clock() + (agent ? " The agent kept " : " Received ") + result.total + " postings" + size + " from " + (result.endpoint ?? "the source") + took + (agent ? ". Retrieved from the web on request, starting " + result.retrievedAt + "." : input.provider === "sample" ? ". Sample retrieved " + result.retrievedAt + "." : result.cached ? ". Served from the local cache; fetched live at " + result.retrievedAt + "." : ". Fetched live at " + result.retrievedAt + ".");
     const matched = clock() + " Kept " + result.postings.length + " of " + result.total + (run.query ? " whose " + (run.inText ? "title or text" : "title") + " matches \"" + run.query + "\"." : " (no keywords).") + " Nothing is imported until you choose.";
     set({ collectRun: { ...run, status: "done", postings: result.postings, retrievedAt: result.retrievedAt, cached: result.cached, total: result.total, error: null, label: result.label,
-      log: [opening, received, matched], endpoint: result.endpoint ?? null, bytes: result.bytes ?? null, durationMs: result.durationMs ?? null } });
+      log: [...(state.collectRun?.log ?? [opening]), received, matched], endpoint: result.endpoint ?? null, bytes: result.bytes ?? null, durationMs: result.durationMs ?? null } });
     return { ok: true };
   }
-  set({ collectRun: { ...run, status: "failed", postings: [], retrievedAt: null, cached: false, total: 0, error: result.error, label: "", log: [opening, clock() + " Failed: " + result.error], endpoint: null, bytes: null, durationMs: null } });
+  set({ collectRun: { ...run, status: "failed", postings: [], retrievedAt: null, cached: false, total: 0, error: result.error, label: "", log: [...(state.collectRun?.log ?? [opening]), clock() + " Failed: " + result.error], endpoint: null, bytes: null, durationMs: null } });
   return { ok: false, error: result.error };
 }
 export function clearCollection() { set({ collectRun: null }); }
+/** Open a scheduled run (server/watch.ts) as the course's research run, so its postings are imported the same way. */
+export function openWatchRun(subjectId: SubjectId, run: { provider: string; board: string; ranAt: string; total: number; postings: CollectedPosting[] }, query: string, inText: boolean) {
+  const provider = run.provider as CollectionProvider;
+  set({ collectRun: { subjectId, provider, board: run.board, query, inText, status: "done", postings: run.postings, retrievedAt: run.ranAt, cached: false, total: run.total,
+    error: null, label: (SOURCE_POLICIES[provider]?.name ?? provider) + " \"" + run.board + "\" (scheduled run)", endpoint: null, bytes: null, durationMs: null,
+    log: [clock() + " Opened the scheduled run of " + run.ranAt.slice(0, 16).replace("T", " ") + ": " + run.postings.length + " of " + run.total + " postings kept. Nothing is imported until you choose."] } });
+}
 /** Keep chosen postings as sources. Each is a receipt with its link, publication date and retrieval time; it counts only after review. */
 export function importCollectedPostings(subjectId: SubjectId, postingIds: string[]): SaveResult & { imported?: number; skipped?: number } {
   if (!mayPlan(subjectId)) return { ok: false, error: "Only an assigned lecturer or coordinator can import evidence for this course." };
@@ -2438,6 +2682,14 @@ export function scanForRequirements(subjectId: SubjectId): SaveResult & { count?
   const proposals = proposeMentions(state.evidenceSources.filter((s) => s.subjectId === subjectId), terms, state.skillMentions.filter((m) => m.subjectId === subjectId));
   set({ scanProposals: proposals, toast: proposals.length ? proposals.length + " quotations proposed. Confirm the ones you accept." : "No new sentence names those terms." });
   return { ok: true, count: proposals.length };
+}
+/** Lens's quotations, already checked against their postings, join the scan's list to be confirmed like any other. */
+export function addProposals(subjectId: SubjectId, proposals: MentionProposal[]): number {
+  const ours = new Set(state.evidenceSources.filter((s) => s.subjectId === subjectId).map((s) => s.id));
+  const have = new Set([...state.scanProposals, ...state.skillMentions].map((p) => p.sourceId + "\n" + skillKey(p.skill)));
+  const fresh = proposals.filter((p) => ours.has(p.sourceId) && !have.has(p.sourceId + "\n" + skillKey(p.skill)));
+  set((s) => ({ scanProposals: [...s.scanProposals, ...fresh] }));
+  return fresh.length;
 }
 export function confirmProposals(subjectId: SubjectId, proposals: MentionProposal[]): { added: number; skipped: number } {
   let added = 0, skipped = 0;

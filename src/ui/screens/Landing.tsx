@@ -86,10 +86,10 @@ export function LandingScreen() {
       <ul className="proof-list">
         <li><CheckCircle2 size={16} /> Live collection from the Greenhouse and Lever employer board APIs, on request, with the source policy shown.</li>
         <li><CheckCircle2 size={16} /> Decisions recorded as data: adopt, retain, defer or return, with the reason, the person, the course version and the term.</li>
-        <li><CheckCircle2 size={16} /> Editable teaching packs and brief decks generated from saved data, with speaker notes and no AI-written text.</li>
+        <li><CheckCircle2 size={16} /> Editable teaching packs and brief decks generated from saved data, with speaker notes and no AI-written text; Prism drafts slide text only when a lecturer asks, and every such slide says so.</li>
         <li><CheckCircle2 size={16} /> Versioned course revisions checked against hours, links and protected foundations.</li>
         <li><CheckCircle2 size={16} /> A local, read-only door: an MCP server over an exported workspace answers with the same counts and quotations, and writes nothing to the workspace.</li>
-        <li><ShieldCheck size={16} /> Not built yet: shared accounts, the remote and planned doors above, collectors for sites without an API, model-drafted slide text, and any learning claim. The earlier illustrative screens stay behind sign-in, labelled.</li>
+        <li><ShieldCheck size={16} /> Prototype, local: accounts on a local database, watching on a schedule, agent collection for sites without an API, and model-drafted items and slides, each labelled where it appears. Not built yet: a shared institutional workspace, the remote and planned doors above, and any learning claim. The earlier illustrative screens stay behind sign-in, labelled.</li>
       </ul>
     </section>
 

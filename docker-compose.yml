@@ -1,0 +1,37 @@
+# Lyceum's local services, each bound to this computer only.
+#   postgres: accounts, sessions and workspaces (server/db.ts, docs/database.md).  npm run db:up
+#   searxng:  keyless web search for agent web search (Watch > Research run).       npm run search:up
+# Stop both: npm run services:down (the database's data stays in the lyceum-pgdata volume).
+services:
+  postgres:
+    image: docker.io/library/postgres:17-alpine
+    container_name: lyceum-postgres
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5432:5432" # DBeaver and the API connect here; nothing else on the network can
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-lyceum}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lyceum}
+      POSTGRES_DB: ${POSTGRES_DB:-lyceum}
+    volumes:
+      - lyceum-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  searxng:
+    image: docker.io/searxng/searxng:latest
+    container_name: lyceum-searxng
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080" # this computer only; nothing else on the network can use it
+    volumes:
+      - ./searxng:/etc/searxng # settings.yml turns on the JSON output Lyceum reads
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8080/
+      - SEARXNG_SECRET=${SEARXNG_SECRET:-lyceum-local-only-change-me}
+
+volumes:
+  lyceum-pgdata:

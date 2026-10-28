@@ -79,7 +79,7 @@ Set up the course, make the decided change, prepare classes and keep a traceable
 
 **Output:** An editable course definition, candidate and active local versions, the decision history, a teaching plan, Markdown outlines and an assessment draft.
 
-**Current limit:** One teaching plan per course in this browser. Local version activation does not attest institutional approval. Slide packs are generated from saved data and the generator adds no text of its own; the sample course's slides are written for this prototype and labelled synthetic. Model-drafted slide content and template import remain to be built. A template never writes an item's key, and the lint cannot judge whether a key is defensible or a distractor plausible; the Moodle export is not yet imported into a Moodle and the QTI package is unvalidated. Configurable institution-wide reviews, term archives and accurate assessment allocation remain to be built. Agent drafting still uses fixtures.
+**Current limit:** One teaching plan per course in this browser. Local version activation does not attest institutional approval. Slide packs are generated from saved data and the generator adds no text of its own; the sample course's slides are written for this prototype and labelled synthetic. Prism drafts slide text and quiz items only when a lecturer asks, labelled on every slide and item and unreviewed until a person reviews them; template import remains to be built. A template never writes an item's key, and the lint cannot judge whether a key is defensible or a distractor plausible; the Moodle export is not yet imported into a Moodle and the QTI package is unvalidated. Configurable institution-wide reviews, term archives and accurate assessment allocation remain to be built. Agent drafting still uses fixtures.
 
 ## Watch
 
@@ -87,14 +87,14 @@ Set up the course, make the decided change, prepare classes and keep a traceable
 
 See what employers are asking for, right now and over time.
 
-1. Run a research run against a permitted employer board (Greenhouse or Lever, through the local API) or the dated saved sample. Collection happens only when you ask.
+1. Run a research run against a permitted employer board (Greenhouse or Lever, through the local API), the dated saved sample, or Agent web search, where a model you choose in Settings searches the web and reads pages for your brief. Collection happens only when you ask.
 2. Keep the postings worth reading. Each keeps its link, publication date, retrieval time and fingerprint; a copy of a kept posting is flagged as a duplicate and not counted twice.
 3. Paste a document you are permitted to keep, such as an employer letter or an advisory board note, with its exact text.
 4. Freeze a snapshot of the reviewed evidence at each review and compare a later window with it. A skill is called rising or falling only when the two 95% intervals separate.
 
 **Output:** Dated sources with their receipts, and frozen snapshots to compare.
 
-**Current limit:** Two documented board APIs and a dated saved sample only; no other sites, no scheduled refresh and no employer-balanced view. A convenience sample describes the postings kept, not the labour market.
+**Current limit:** Two documented board APIs, a dated saved sample, and agent web search when a model and search key are set; watching on a schedule for a signed-in account on the local database (prototype); no employer-balanced view. Many job sites block or forbid automated reading. A convenience sample describes the postings kept, not the labour market.
 
 ## Report
 
@@ -255,7 +255,7 @@ Assign lecturer and coordinator responsibilities by subject.
 
 **Output:** Updated local course responsibilities and navigation.
 
-**Current limit:** People are prototype identities. There are no invitations, real institutional sign-in or shared accounts yet.
+**Current limit:** The demo people are prototype identities. Accounts with email and password or Google sign-in are a local prototype on a PostgreSQL database (docs/database.md); there are no invitations or shared institutional workspaces yet.
 
 ## Closed loop
 
@@ -327,6 +327,20 @@ Explore the prototype's course relevance and source-agreement presentation.
 
 **Current limit:** Source agreement describes direction only, not reliability or truth. All shipped market records are synthetic; this is not a live labour-market ranking.
 
+## Settings
+
+**For:** Whoever runs this copy of Lyceum · **Status:** Partial
+
+See which model and web search provider agent web search will use, as set in .env, and test both.
+
+1. In .env, set LYCEUM_AGENT_PROVIDER (openai, openrouter, gemini, groq, ollama, or custom with LYCEUM_AGENT_BASE_URL), LYCEUM_AGENT_MODEL and LYCEUM_AGENT_API_KEY. The model must support tool calling.
+2. Search needs nothing set: it tries SearXNG (npm run search:up starts one with Docker), then DuckDuckGo. To change the order, set LYCEUM_SEARCH_PROVIDER and LYCEUM_SEARCH_FALLBACK, and add a key such as TAVILY_API_KEY for a keyed provider; LYCEUM_SEARCH_TIME sets the default window.
+3. Open Settings to check what the local API read, and test the model (it must call a tool) and the search. Edits to .env apply on the next request.
+
+**Output:** A read-only view of the agent's settings, with keys shown only as their last four characters.
+
+**Current limit:** Keys sit unencrypted in .env on this computer. One run at a time. The agent's choices vary by model; every kept posting still needs the lecturer's review, and its text is the page as fetched.
+
 ## Institution settings
 
 **For:** Everyone reads; a coordinator edits · **Status:** Working locally
@@ -388,10 +402,10 @@ One page per course and term from the records: what employers asked for, what wa
 
 ## What has not been built yet
 
-- **Evidence collection:** On-request collection from the Greenhouse and Lever board APIs, exact-excerpt receipts, fingerprint duplicate detection, lexicon-assisted scanning, reviewed denominators and meeting briefs work. Scrapling page adapters, snapshots of arbitrary sites, cross-site vacancy clustering, scheduled refresh and refresh-failure reporting remain planned. Frozen evidence snapshots and their comparison work; a re-collected posting is matched by its board posting id.
+- **Evidence collection:** On-request collection from the Greenhouse and Lever board APIs, exact-excerpt receipts, fingerprint duplicate detection, lexicon-assisted scanning, reviewed denominators and meeting briefs work. Agent collection from the open web (a model choosing what to read, the page's own text kept, labelled prototype) and watching on a schedule with each run's failure kept are local prototypes that need a model, a search service and a signed-in account. Snapshots of arbitrary sites and cross-site vacancy clustering remain planned. Frozen evidence snapshots and their comparison work; a re-collected posting is matched by its board posting id.
 - **Defensible calculations:** Observed shares with explicit numerators and denominators, Wilson intervals, reviewed coverage stages and a demand-weighted coverage index work for recorded evidence. Comparable time windows, employer-balanced sensitivity views, publication gates and validation against real course/cohort data remain planned.
 - **Institutional review:** Local CLO/topic editing, constraints, word-level before and after views and version activation work; decisions on briefs are recorded with their reason, person, course version and term, and each version names the decision behind it. One institution profile per workspace works, the demo's, labelled demo. Configurable review authorities, positions as data, term archives and server-enforced decisions remain to be built.
-- **Teaching materials:** Editable PPTX teaching packs and brief decks are generated from saved sessions, outcomes and evidence receipts, with speaker notes; the generator adds no text of its own. The sample course's packs carry slide masters with the demo institution's mark, and its sample slides are written for this prototype and labelled synthetic. A session's check can carry items, drafted from templates with a surface lint and a person's review, exported as Moodle XML and QTI 2.1. Model-drafted slide content with lecturer review, selective regeneration, a campus's own template, handouts, accessibility checks of exported decks, a real import into a Moodle, validation against the QTI schema and item statistics remain planned.
+- **Teaching materials:** Editable PPTX teaching packs and brief decks are generated from saved sessions, outcomes and evidence receipts, with speaker notes; the generator adds no text of its own. The sample course's packs carry slide masters with the demo institution's mark, and its sample slides are written for this prototype and labelled synthetic. A session's check can carry items, drafted from templates with a surface lint and a person's review, exported as Moodle XML and QTI 2.1. Prism's model-drafted slide text and quiz items, on request, labelled and left for the lecturer's review, are a prototype that needs a model. Selective regeneration, a campus's own template, handouts, accessibility checks of exported decks, a real import into a Moodle, validation against the QTI schema and item statistics remain planned.
 - **Results and student surveys:** Attainment per outcome against a stated pass mark, with n of N and an interval only when some students have no mark, works, and so does the OBE course report saved as printed, with the Course Outcome Survey beside the marks, the programme outcomes listed and the CQI note. The two student surveys work with a booth collector on the local API, importers for Microsoft Forms, Google Forms and Moodle Feedback exports (the Moodle one not yet tried on a Moodle export), a document for Microsoft Forms Quick Import (not yet imported into Forms), a paste code labelled not anonymous, a response floor and a release rule. Pooling, frozen predictions, comment themes, the programme's PLO figure and a validated survey instrument remain planned.
 - **Agent integrations:** A local, read-only MCP server over an exported workspace works (mcp/, docs/doors.md), with a skill folder for assistants. Remote access with OAuth, the Teams, Google Workspace and LMS doors, structured model output, provider SDK adapters, job retries, usage and cost controls and evaluation fixtures remain planned.
 - **Shared institutional workspace:** Database, authenticated roles, durable source files, validated legacy migration, term/cohort separation and collaboration. JSON backup/restore works locally; it does not include original uploaded files.

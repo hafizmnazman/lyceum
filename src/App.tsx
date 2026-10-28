@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { navAllows, subjectsForPerson } from "./app/roles.ts";
 import { stepDef } from "./app/loop.ts";
 import { hashFor, parseRoute, type CourseRoute } from "./app/routes.ts";
-import { currentPerson, getState, navigate, openRecap, useStore } from "./app/store.ts";
+import { currentPerson, getState, navigate, openRecap, restoreAccountSession, useStore } from "./app/store.ts";
 import { Shell } from "./ui/shell/Shell.tsx";
 import { SCREENS } from "./ui/screens/index.ts";
 import { DemoOverlay } from "./demo/DemoOverlay.tsx";
@@ -65,7 +65,8 @@ export default function App() {
         if (window.location.hash !== hashFor(s)) navigate(stepDef(route.course.step).screen, route.course);
         return;
       }
-      if (navAllows(person, s.assignments, route.screen) && route.screen !== s.screen) navigate(route.screen);
+      if (!navAllows(person, s.assignments, route.screen)) { window.history.replaceState(null, "", hashFor(s)); return; } // keep the URL honest
+      if (route.screen !== s.screen) navigate(route.screen);
     }
     // On first load, honour a deep link.
     onHashChange();
@@ -76,6 +77,9 @@ export default function App() {
       window.removeEventListener("popstate", onHashChange);
     };
   }, []);
+
+  // A session cookie from an earlier visit opens that account's workspace again (server/auth.ts).
+  useEffect(() => { void restoreAccountSession(); }, []);
 
   // The student's survey page renders on its own, outside the workspace and without the tour or the walk.
   const [hash, setHash] = useState(() => window.location.hash);
@@ -98,6 +102,9 @@ export default function App() {
   } else if (state.screen === "login") {
     const Login = SCREENS.login;
     content = <Login />;
+  } else if (state.screen === "onboarding" || (state.account && !state.account.user.onboarded)) {
+    // A new account's first steps render bare, like sign in, and nothing else opens until they are done.
+    content = <SCREENS.onboarding />;
   } else if (state.screen === "judge") {
     // The judge's page is the same bare page signed in or out (depth plan Section 9.1).
     content = <JudgeScreen />;
