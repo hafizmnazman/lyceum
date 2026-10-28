@@ -32,7 +32,9 @@ const EXCLUDE = [
   // The owner's plans, records and reviews stay here too (the owner's word, 22 October 2026): the team gets
   // the working code and what its checks read (docs/claims.md, docs/research/, the guide, the palette, the shots).
   (p) => ["CLAUDE.md", "DECISIONS.md", "JUDGES.md"].includes(p),
-  (p) => /^docs\/(lyceum-upgrade-plan|lyceum-improvement-plan|lyceum-depth-plan|run-log|decisions|as-built|demo-script)\.md$/.test(p),
+  // Every plan (upgrade, improvement, depth, pitch, team-merge and the next one) stays here (widened 29 October 2026).
+  (p) => /^docs\/(lyceum-[\w-]+-plan|run-log|decisions|as-built|demo-script)\.md$/.test(p),
+  (p) => p === "docs/presentation/poster-brief-chatgpt.md", // the owner's brief to a poster tool (24 October), the owner's material
   (p) => /^docs\/(review|history|competition)\//.test(p),
   // Screenshots from before the current shot script, which nothing reads.
   (p) => /^docs\/presentation\/shot-(agents|evidence-table|home-with-brief|how-it-works|inbox-brief|meeting-brief|studio-journey|update-hours)\.png$/.test(p),

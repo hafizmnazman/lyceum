@@ -151,7 +151,7 @@ const FILES = [
   ["googleforms.svg", "Google Forms", "Survey exports in"],
   ["moodle.svg", "Moodle", "Feedback in, quiz XML out; not yet on a Moodle site"],
   ["microsoft-powerpoint.svg", "Microsoft PowerPoint", "The editable pack out"],
-  ["microsoft-word.svg", "Microsoft Word", "The course file out"],
+  ["microsoft-word.svg", "Microsoft Word", "The survey document out"],
 ];
 const chips = (names, cls = "") => names.map((n) => `<span class="chip ${cls}"${ref(n)}>${n}</span>`).join("");
 
