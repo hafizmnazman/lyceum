@@ -26,6 +26,64 @@
 7. **The day.** This working tree is now the taken stack, rebuilt; the build of 23 October survives only on a laptop that already holds it. Section 8's sentence ("It is not in this build") is no longer true of this tree; the owner says which build the booth runs.
 8. **T7, the Tailwind overhaul,** is new, at the owner's word: Section 14.
 
+## 0b. 29 October, after the take: the teammate reorganized the pull requests, and the owner holds
+
+Within the hour after the take, around 02:40 Kuala Lumpur time, Sharvin restructured the team repository and kept working on the backend. The owner, the same day ("don't want to disturb their flow ... don't want to delete available branch ... play it safe"), holds: nothing is merged, closed, re-targeted or deleted on the team repository, and no new branch is taken into `main`. What the owner's `main` already holds from the take (Section 0a) is unchanged.
+
+**What the teammate did** (read on 29 October at 02:55 Kuala Lumpur time; his commits are stamped UTC+1):
+
+1. **A new consolidated branch and pull request.** `feat/live-agents` (`6b2619f`) folds the whole stack, the dependency upgrade and a new storage commit into one line, and **pull request #11** ("Feat/live agents") opens it against `feat/onboarding-auth`. Its own text says it **supersedes #1, #4, #5, #6, #7, #8, #9, #10**.
+2. **The old pull requests are closed, unmerged.** #1, #2, #4, #5, #6, #7, #8, #9 and #10 were all closed with no merge commit at 02:48 to 02:49. **#3** (`feat/onboarding-auth`) stays open but now targets **`feat/agent-web-search`**, not `main`.
+3. **`team/main` is still the 22 October snapshot** (`fdb3cbb`). None of the team's feature work has landed on it; it all lives on the branches, and the two open pull requests form a stack that points at each other, not at `main`.
+4. **New work since the take, in flight:** the dependency upgrade (now merged into `feat/live-agents`), and a Cloudflare R2 file store with OCR. The R2 commit (`56679bc`) is **a plan in `docs/TODO.md`, not built code**: it names two buckets, migration `003` for a `files` table, `server/storage.ts` with `put` and `get`, and `@aws-sdk/client-s3` against R2's S3-compatible endpoint, all described as the next step and "Supabase-ready" (plain Postgres, the move a `DATABASE_URL` change). This is the "supabase and other backend function" the teammate is still writing.
+
+**Why the owner's pasted flow cannot run as written.** The teammate sent a six-step order (merge `chore/update-dependencies` first, then `feat/onboarding-auth`, `refactor/unify-agent-model`, `feat/signal-from-evidence`, `feat/live-intake-authoring`, `feat/atlas-lens-proposals`, each into `main`). It was written before his own reorganization and no longer matches the repository:
+
+- Five of its six pull requests are now **closed** (#1, #4, #5, #6, #7); the sixth, #3, **no longer targets `main`**.
+- His own **#11 already folds the dependency upgrade into `feat/live-agents`**, so "merge deps first" is moot, and a local test-merge shows the bump **conflicts** with the stack on `package.json` and `package-lock.json` in either order.
+- Merging or re-targeting those pull requests now would run straight through the branches he is pushing to, the disturbance the owner asked to avoid; and `team/main` is a protected branch that needs a review, so a direct merge is not clean anyway.
+
+**What the owner does instead: nothing on the team repository, for now.**
+
+- The owner's `main` already carries the stable stack from the take (Section 0a). The two pieces it does **not** have are the ones in flight: the **dependency upgrade** and the **R2 and Supabase** work. Both wait.
+- No pull request is merged, closed or re-targeted by the owner; no branch is deleted (including `feature/evidence-snapshots`, whose T0 delete is also held); nothing is published to the team repository.
+- The teammate drives his own pull requests. The owner integrates through `node scripts/team.mjs take`, never by merging team pull requests by hand.
+
+**When the teammate says the branches are settled** (the one message to wait for), the resume order:
+
+1. `node scripts/team.mjs status`, then `review <the branch he names>`, to see what `team/main`, or his final branch, holds beyond the current `main`.
+2. **The dependency upgrade is still T6** (Section 7): after the pilot pressure is off, one major at a time with the four smokes each (React 19 with its types and `@vitejs/plugin-react`, then Vite 8, then TypeScript 7, then the rest), not in one jump. The `package.json` conflict the test-merge shows is expected and small; `take` resolves it per file.
+3. **R2 and Supabase are Track B infrastructure (B3), after the pilot names its stack** (master plan 11.2), as Section 4 already records; the free tier keeps files in the browser until then. Take the storage code only once it is built and the owner wants the file store.
+4. The gates of Section 7 (T2, T3) stay available to apply over whatever is taken, by name, if the owner asks.
+
+The six-step flow is kept here as the teammate's intent on 29 October; his own #11 is the current shape, and the owner's integration path is `take`, not a pull-request merge.
+
+
+## 0c. 29 October, 04:45: pull request #11 verified for the merge
+
+The teammate said the branches are settled, and the owner said merge pull request #11 (`feat/live-agents`, Sharvin Kanesan, with cjseven007's Supabase work merged in). Since Section 0b it grew to 31 commits and 430 files: the repository split into `web/`, `api/`, `shared/` and `tests/`; accounts on Supabase; every model call and helper proposal recorded (`agent_calls`, `agent_proposals`); Prism suggests changes to the lecturer's own slides instead of drafting them; and a database workflow.
+
+What ran on the exact head `f2d5000`, in a scratch worktree after `npm ci` (removed afterwards):
+
+| check | result |
+|:--|:--|
+| typecheck (TypeScript 7) | pass |
+| build (Vite 8) | pass |
+| prove:all | pass: 284 checks, no failures (the app still says 259) |
+| smoke, smoke:integrity | pass |
+| smoke:workspace | fails on a stale path: the script uploads `public/demo/...`, now `web/public/demo/...`; passes with the path fixed |
+| smoke:curriculum | fails twice: the Report quote overflows at 390 px (the `.slider` rule lacks `overflow: clip`, fixed in this repository on 29 October but never published), then the script looks for "Teaching pack (.pptx)", which a session with no slides now labels "Slides to add (.pptx)" |
+| contrast, guide, theme, MCP sample | pass |
+| dash scan | fails: 12 lines in `docs/GOOGLE_AUTH_PORTABLE.md` and `docs/web-search-feature.md` |
+| deck:check | fails: three mascot images point at `../public/brand/`, which the split moved |
+
+The app works. Three test-script fixes, one CSS line, the deck's image paths, the dashes and the count are the team's to make on `main` after the merge.
+
+The merge: the session's approve-and-merge call (approve as the code owner, merge commit, branch kept, `--match-head-commit f2d5000`) was refused by the session's permission guard, so the owner approves and merges by hand. Merging fires `.github/workflows/database.yml`. With no `production` environment and no `DATABASE_URL` secret, it stops at its own "Secrets present?" step and touches no database. Once the owner adds that secret, the next push to `main` applies the pending migrations (watch, agent records); a scan found no drop, truncate, delete or rename in them.
+
+After the merge, `team/main` holds the split layout and this repository does not. `node scripts/team.mjs publish` refuses until `take main`. Never run `publish --force`: it would put the old layout back over the team's work. Taking the split needs a rename-aware take (the per-file take would leave the old `src/` beside the new `web/src/`), and the owner-only surfaces (README, JUDGES.md, CLAUDE.md's "Where things are", the deck) name the old paths.
+
+
 ## 1. Where the repositories stand on 28 October
 
 Read with `git` on 28 October 2026 in Kuala Lumpur time unless the row says otherwise.
@@ -43,6 +101,8 @@ Read with `git` on 28 October 2026 in Kuala Lumpur time unless the row says othe
 | The teammate's commit clock | The commits of 27 and 28 October are stamped at UTC+1 |
 
 ## 2. The eleven branches
+
+**Stale after 29 October (Section 0b).** The teammate reorganized these the same day: pull requests #1, #2 and #4 to #10 are closed unmerged, #3 now targets `feat/agent-web-search`, and `feat/live-agents` (pull request #11) consolidates the stack with the dependency upgrade and an R2 storage plan. The table below is the state of 28 October, kept as written.
 
 | Branch | Tip | Ahead of `team/main` | Author, date | What it is | Verdict |
 |:--|:--|:--|:--|:--|:--|

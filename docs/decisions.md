@@ -2095,3 +2095,33 @@ Chosen: (b), the owner's word. The merge plan's Section 14 is the package (T7), 
 Reverse it if: the first slice shows a visual regression the pixel diff cannot bound, or the team's time is needed for the pilot.
 
 To reverse: stop after any slice; each leaves the app green, with both stylesheets side by side until the end.
+
+## 2026-10-29 03:00, Track T: hold the team repository while the teammate works
+
+Options: (a) Run the teammate's pasted six-step pull-request merge flow on the team repository now. (b) Take the new consolidated branch (`feat/live-agents`) into the owner's `main` now, pulling the dependency upgrade and the R2 plan. (c) Hold: touch nothing on the team repository, take no new branch, and wait for the teammate to say the branches are settled.
+
+Chosen: (c), the owner's word ("don't want to disturb their flow", "play it safe", "don't want to delete available branch"). The teammate reorganized the pull requests minutes after the take and is still pushing backend work, so (a) is stale and would collide with his live branches, and (b) would pull half-built R2 and Supabase code and five major dependency bumps the day of the final; the owner's `main` already holds the stable stack.
+
+Reverse it if: the teammate says his branches are settled, or the owner wants the dependency upgrade or the file store sooner.
+
+To reverse: `node scripts/team.mjs status`, then `review` and `take` the branch he names (the dependency upgrade is T6, one major at a time; R2 and Supabase are B3); the merge plan's Section 0b is the resume point.
+
+## 2026-10-29 04:45, Track T: merge pull request #11 on the team repository
+
+Options: (a) Merge pull request #11 as it is, on the teammate's word and the owner's. (b) Hold the merge until the stale smokes, the dashes and the deck paths are fixed on the branch.
+
+Chosen: (a), the owner's word ("just merge"). The app's checks pass on the exact head `f2d5000`; what fails is three test scripts, one CSS line, the deck's image paths, twelve dashes and a stale count, all fixable on `main` after the merge, and none of it touches this repository. The session's permission guard refused to approve and merge in the owner's name, so the owner does both by hand.
+
+Reverse it if: the merge breaks the team's deployment or the database workflow misbehaves.
+
+To reverse: revert the merge commit on the team repository through a pull request; the branch `feat/live-agents` is kept.
+
+## 2026-10-29 05:16, Track T: teammates push to the team repository's main
+
+Options: (a) Drop the rule that every change to `main` needs a pull request with the owner's review, and keep force pushes and deletion of `main` blocked. (b) Drop the branch protection on `main` entirely. (c) Keep the review rule.
+
+Chosen: (a), the owner's word ("this is not real project just competition dont be too strict"). Teammates with write access push to `main` directly and can merge pull request #11 themselves; nobody can rewrite or delete `main`. The session's permission guard refused the settings change, so the owner makes it by hand: Settings, Branches, the rule for `main`, untick "Require a pull request before merging".
+
+Reverse it if: a push to `main` breaks the team's build before the final.
+
+To reverse: tick "Require a pull request before merging" again on the rule for `main`.
