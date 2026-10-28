@@ -1,6 +1,21 @@
 # Run log
 
-Two autonomous runs: Track C (docs/lyceum-depth-plan.md Section 16), the current one, and Track A (docs/lyceum-upgrade-plan.md Section 17.5) below it, kept as written. Times are Kuala Lumpur time (GMT+8).
+Three runs: Track T (the team's stack taken on 29 October 2026, docs/lyceum-team-merge-plan.md), then Track C (docs/lyceum-depth-plan.md Section 16) and Track A (docs/lyceum-upgrade-plan.md Section 17.5) below it, kept as written. Times are Kuala Lumpur time (GMT+8).
+
+## Track T: the team's stack, 29 October 2026
+
+Not an autonomous run: the owner was in the session. Times are Kuala Lumpur time.
+
+- 02:00 the owner read the merge plan of 28 October and said to merge the stack now without the gates, to add the Tailwind move to the plan, and to check for new pushes.
+- 02:05 `node scripts/team.mjs status`: no new push; the tip `b43174e`, ten pull requests open.
+- 02:06 T0: the 24 October tree committed as `701f15c` (the pitch plan, the poster brief, the pitch-gaps note, the Word-slip fix, the 4V claims rows, the merge plan as written); `EXCLUDE` in `scripts/team.mjs` widened to every `docs/lyceum-*-plan.md` and the poster brief; a dry-run publish named no plan. The delete of `feature/evidence-snapshots` on the team repository was not pushed (the owner's hand, or T5).
+- 02:07 T1: `node scripts/team.mjs take feat/prism-slide-content`: 74 taken, 3 merged, no marker; `npm ci`.
+- 02:10 typecheck passed; `prove:all` 270 of 270; the dash scan found twelve lines in the two carried documents; `prove-auth` 16 of 17.
+- 02:15 fixed: `overflow: clip` on `.slider`; the auth table list; the twelve dashes. Dash scan clean (380 files); `prove-auth` 17 of 17; build passed.
+- 02:20 the four smokes passed, the curriculum one at 390 and 320 px on Report; contrast, guide, backup migration and sample checks passed; agent search 13, outline 5, watch 3; the walk passed; eight rewritten screenshots restored.
+- 02:30 the count at 270 (suites, proof, the register, both READMEs, JUDGES, the deck's and poster's sources, the film's script, the README card regenerated); the labels for the prototypes; the lecturer guide regenerated; the records written. The two dated clauses for CLAUDE.md could not be written by the session (its tool guard blocks edits to that file) and wait for the owner (merge plan Section 0a).
+- 02:39 the full verification again (docs/as-built.md, "Taken from the team"); committed as `e0e93ed`.
+- Open after Track T: the two CLAUDE.md clauses (the owner's hand), the rest of T4 (`docs/accounts.md`, `docs/TODO.md`'s move, the deck's and poster's planned strips as the owner decides), T5 (the publish and the pull requests, on the owner's word), T6 (held), T7 (the Tailwind overhaul, merge plan Section 14), D9 (gated), the origin repository (Decision 7).
 
 ## Track C
 
